@@ -9,7 +9,7 @@ namespace MedievilArchipelago
 {
     public class Constants
     {
-        public static class Level_Complete_Flags
+        public static class Level_Complete_Flag_Addresses
         {
             public const uint THE_GRAVEYARD = 0x000F81E1;
             public const uint RETURN_TO_THE_GRAVEYARD = 0x000F81E2;
@@ -33,7 +33,7 @@ namespace MedievilArchipelago
             public const uint THE_TIME_DEVICE = 0x000F81F5;
             public const uint THE_LAKE = 0x000F81F6;
         }
-        public static class Inventory_Items
+        public static class Inventory_Item_Addresses
         {
             public const uint GOLD = 0x000DD7C5;
             public const uint DAGGER_AMMO = 0x000f8240;
@@ -42,7 +42,7 @@ namespace MedievilArchipelago
             public const uint LONGBOW_AMMO = 0x000f8250;
         }
 
-        public static class Weapons
+        public static class Weapon_Addresses
         {
             public const uint SMALL_SWORD = 0x000f822c;
             public const uint BROADSWORD = 0x000f8230;
@@ -61,7 +61,7 @@ namespace MedievilArchipelago
             public const uint GOOD_LIGHTNING = 0x000f8264;
         }
 
-        public static class Shields_And_Armour
+        public static class Shields_And_Armour_Addresses
         {
             public const uint COPPER_SHIELD = 0x000f82b4;
             public const uint SILVER_SHIELD = 0x000f82b8;

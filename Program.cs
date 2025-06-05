@@ -23,7 +23,6 @@ if (!connected)
 }
 
 Console.WriteLine("Successfully connected to Duckstation.");
-Console.WriteLine($"{}");
 try
 {
     ulong cheatChoice = 0x000EEE68;
@@ -38,6 +37,20 @@ catch (Exception ex)
 }
 
 Console.WriteLine("Enter AP url: eg,archipelago.gg");
-Console.
-Console.ReadLine();
+string url = "https://" + Console.ReadLine();
+
 Console.WriteLine("Enter Port: eg, 80001");
+string port = Console.ReadLine();
+
+Console.WriteLine("Enter Slot Name:");
+string slot = Console.ReadLine();
+
+Console.WriteLine("Room Password:");
+string password = Console.ReadLine();
+
+await archipelagoClient.Connect(url, "Medievil");
+
+await archipelagoClient.Login(slot, !string.IsNullOrWhiteSpace(password) ? password : null);
+
+archipelagoClient.MonitorLocations();
+

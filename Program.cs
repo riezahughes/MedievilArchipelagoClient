@@ -21,9 +21,9 @@ var archipelagoClient = new ArchipelagoClient(gameClient);
 
 
 // set values
-byte US_OFFSET = 0x38;
-int percentageMax = 100;
-int countMax = 32767;
+const byte US_OFFSET = 0x38;
+const int percentageMax = 100;
+const int countMax = 32767;
 
 // Connection details
 string url;
@@ -56,19 +56,12 @@ async void OnDisconnected(object sender, EventArgs args, ArchipelagoClient Clien
     }
 }
 
-// Item Getters
-
-int GetItemMemoryValue(ulong itemMemoryAddress)
-{
-    var item = Memory.ReadByte(itemMemoryAddress);
-    return (int)item;
-}
 
 int SetItemMemoryValue(string itemName, ulong itemMemoryAddress, int itemUpdateValue, int maxCount)
 {
-    int addition = itemUpdateValue > maxCount ? maxCount : itemUpdateValue;
+    int addition = Math.Min(itemUpdateValue, maxCount);
 
-    var count = archipelagoClient.GameState?.ReceivedItems.Where(x => x.Name.StartsWith(itemName)).Sum(x => x.Quantity) ?? 0;
+    // var count = archipelagoClient.GameState?.ReceivedItems.Where(x => x.Name.StartsWith(itemName)).Sum(x => x.Quantity) ?? 0;
 
     Memory.WriteByte(itemMemoryAddress, (byte)addition);
 
@@ -76,13 +69,11 @@ int SetItemMemoryValue(string itemName, ulong itemMemoryAddress, int itemUpdateV
     return itemUpdateValue;
 }
 
-    //item setters
-
 // Update functions with correct logic
 
 void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAddress, bool isCountType)
 {
-    var currentNumberAmount = GetItemMemoryValue(itemMemoryAddress);
+    var currentNumberAmount = Memory.ReadByte(itemMemoryAddress);
     int maxValue = isCountType ? countMax : percentageMax; // Max count limit for gold, percentage for energy
     var newNumberAmount = Math.Min(currentNumberAmount + numberUpdate, maxValue); // Max count limit
     SetItemMemoryValue(itemName, itemMemoryAddress, newNumberAmount, countMax);
@@ -98,117 +89,35 @@ int ExtractBracketAmount(string itemName)
     return 0; // Return 0 if no valid number is found
 }
 
-
+void ReceiveCountType(Item item)
+{
+    var addressDict = Helpers.AmmoAddressDictionary;
+    Console.WriteLine($"{item.Name} has been received!");
+    var amount = ExtractBracketAmount(item.Name);
+    Console.WriteLine($"{amount} to be precise!");
+    UpdateCurrentItemValue(item.Name, amount, addressDict[item.Name], true);
+}
+void ReceiveChargeType(Item item)
+{
+    var addressDict = Helpers.AmmoAddressDictionary;
+    Console.WriteLine($"{item.Name} charge has been received!");
+    var amount = ExtractBracketAmount(item.Name);
+    Console.WriteLine($"{amount} to be precise!");
+    UpdateCurrentItemValue(item.Name, amount, addressDict[item.Name], false);
+}
 // logic for item receiving goes here (gold, health, ammo, etc)
 void ItemReceived(object sender, ItemReceivedEventArgs args)
 {
     Console.WriteLine(args.Item.Id);
     Console.WriteLine($"Item Received: {args.Item.Name} x{args.Item.Quantity}");
 
-    if (args.Item == null)
+    switch (args.Item)
     {
-        Console.WriteLine("Received an item with null data. Skipping.");
-        return;
-    }
-
-    if (args.Item.Name.Contains("Gold"))
-    {
-        Console.WriteLine("Gold has been received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("Gold", amount, Addresses.CurrentGold, true);
-    }
-    else if (args.Item.Name.Contains("Broadsword"))
-    {
-        Console.WriteLine("Broadsword Charge has been received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("\"Broadsword", amount, Addresses.BroadswordCharge, false);
-    }
-    else if (args.Item.Name.Contains("Daggers"))
-    {
-        Console.WriteLine("Daggers has been received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("\"Daggers", amount, Addresses.DaggersAmmo, true);
-    }
-    else if (args.Item.Name.Contains("Club"))
-    {
-        Console.WriteLine("Club Charge has been received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("\"Club", amount, Addresses.ClubCharge, false);
-    }
-    else if (args.Item.Name.Contains("Chicken Drumsticks"))
-    {
-        Console.WriteLine("Chicken Drumsticks received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("\"Club", amount, Addresses.ChickenDrumsticksAmmo, true);
-    }
-    else if (args.Item.Name.Contains("Crossbow"))
-    {
-        Console.WriteLine("Crossbow Ammo received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("\"Club", amount, Addresses.CrossbowAmmo, true);
-    }
-    else if (args.Item.Name.StartsWith("Longbow"))
-    {
-        Console.WriteLine("Longbow Ammo received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("\"Longbow", amount, Addresses.LongbowAmmo, true);
-    }
-    else if (args.Item.Name.Contains("Fire Longbow"))
-    {
-        Console.WriteLine("Fire Longbow Ammo received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("\"Fire Longbow", amount, Addresses.FireLongbowAmmo, true);
-    }
-    else if (args.Item.Name.Contains("Magic Longbow"))
-    {
-        Console.WriteLine("Magic Longbow Ammo received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("\"Magic Longbow", amount, Addresses.MagicLongbowAmmo, true);
-    }
-    else if (args.Item.Name.Contains("Spear"))
-    {
-        Console.WriteLine("Spear Ammo received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("\"Spear", amount, Addresses.SpearAmmo, true);
-    }
-    else if (args.Item.Name.Contains("Lightning Charge"))
-    {
-        Console.WriteLine("Lightning Charge received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("\"Lightning", amount, Addresses.LightningCharge, false);
-    }
-    else if (args.Item.Name.Contains("Copper Shield"))
-    {
-        Console.WriteLine("Copper Shield Charge received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("\"Copper Shield", amount, Addresses.CopperShieldAmmo, true);
-    }
-    else if (args.Item.Name.Contains("Silver Shield"))
-    {
-        Console.WriteLine("Silver Shield Charge received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("\"Silver Shield", amount, Addresses.SilverShieldAmmo, true);
-    }
-    else if (args.Item.Name.Contains("Gold Shield"))
-    {
-        Console.WriteLine("Gold Shield Charge received!");
-        var amount = ExtractBracketAmount(args.Item.Name);
-        Console.WriteLine($"{amount} to be precise!");
-        UpdateCurrentItemValue("\"Gold Shield", amount, Addresses.GoldShieldAmmo, true);
-    }
+        case var x when x.Name.ContainsAny("Gold", "Daggers", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
+        case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x); break;
+        case null: Console.WriteLine("Received an item with null data. Skipping."); break;
+        default: Console.WriteLine("Item not recognised. Skipping"); break;
+    };
 }
 
 

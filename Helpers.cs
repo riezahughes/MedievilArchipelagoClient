@@ -16,23 +16,6 @@ namespace MedievilArchipelago
 {
     public class Helpers
     {
-        public static string OpenEmbeddedResource(string resourceName)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                string jsonFile = reader.ReadToEnd();
-                return jsonFile;
-            }
-        }
-        public static ulong GetDuckstationOffset()
-        {
-            var baseAddress = Memory.GetBaseAddress("duckstation-qt-x64-ReleaseLTCG");
-            var offset = Memory.ReadULong(baseAddress + 0x008C4FA8);
-            return offset;
-        }
-
         public static Dictionary<string, Tuple<int, uint>> GetLevelCompleteStatuses ()
         {
             return new Dictionary<string, Tuple<int, uint>>
@@ -88,7 +71,23 @@ namespace MedievilArchipelago
             }
             return locations;
         }
-
+        internal static readonly Dictionary<string, uint> AmmoAddressDictionary = new()
+        {
+            ["Gold"] = Addresses.CurrentGold,
+            ["Daggers"] = Addresses.DaggersAmmo,
+            ["Broadsword"] = Addresses.BroadswordCharge,
+            ["Club"] = Addresses.ClubCharge,
+            ["Chicken Drumsticks"] = Addresses.ChickenDrumsticksAmmo,
+            ["Crossbow"] = Addresses.CrossbowAmmo,
+            ["Longbow"] = Addresses.LongbowAmmo,
+            ["Fire Longbow"] = Addresses.FireLongbowAmmo,
+            ["Magic Longbow"] = Addresses.MagicLongbowAmmo,
+            ["Spear"] = Addresses.SpearAmmo,
+            ["Copper Shield"] = Addresses.CopperShieldAmmo,
+            ["Silver Shield"] = Addresses.SilverShieldAmmo,
+            ["Gold Shield"] = Addresses.GoldShieldAmmo,
+            ["Lightning"] = Addresses.LightningCharge
+        };
         private static List<LevelData> GetLevelData()
         {
             List<LevelData> levels = new List<LevelData>()

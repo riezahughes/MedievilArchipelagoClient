@@ -44,10 +44,7 @@ void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
 
 async void OnDisconnected(object sender, EventArgs args, ArchipelagoClient Client)
 {
-    if (!archipelagoClient.IsConnected)
-    {
-        return;
-    }
+
     Console.WriteLine("Disconnected from Archipelago. Reconnecting...");
     try
     {
@@ -61,13 +58,18 @@ async void OnDisconnected(object sender, EventArgs args, ArchipelagoClient Clien
 }
 
 
-int SetItemMemoryValue(string itemName, ulong itemMemoryAddress, int itemUpdateValue, int maxCount)
+int SetItemMemoryValue(uint itemMemoryAddress, int itemUpdateValue, int maxCount, bool isString = false)
 {
     int addition = Math.Min(itemUpdateValue, maxCount);
 
-    // var count = archipelagoClient.GameState?.ReceivedItems.Where(x => x.Name.StartsWith(itemName)).Sum(x => x.Quantity) ?? 0;
+    Console.WriteLine($"ITEM NUMBER UPDATED TO {addition} on {itemMemoryAddress:X}");
 
-    Memory.WriteByte(itemMemoryAddress, (byte)addition);
+    if (isString) { 
+        Memory.WriteString(itemMemoryAddress, addition.ToString());
+    } else
+    {
+        Memory.WriteByteArray(itemMemoryAddress, [(byte)addition, 0]);
+    }
 
     // Add more types as needed
     return itemUpdateValue;
@@ -75,16 +77,17 @@ int SetItemMemoryValue(string itemName, ulong itemMemoryAddress, int itemUpdateV
 
 // Update functions with correct logic
 
-void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAddress, bool isCountType)
+void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAddress, bool isCountType, bool isEquipmentType)
 {
     var currentNumberAmount = Memory.ReadByte(itemMemoryAddress);
     // leaving for the sake of debugging
     Console.WriteLine($"{ itemName} current amount: {currentNumberAmount}, update amount: {numberUpdate}");
+
     int maxValue = isCountType ? countMax : percentageMax; // Max count limit for gold, percentage for energy
-    var newNumberAmount = Math.Min(currentNumberAmount + numberUpdate, maxValue); // Max count limit
+
+    var newNumberAmount = isEquipmentType ? 0 : Math.Min(currentNumberAmount + numberUpdate, maxValue); // Max count limit
     // leaving for the sake of debugging
-    Console.Write(newNumberAmount);
-    SetItemMemoryValue(itemName, itemMemoryAddress, newNumberAmount, countMax);
+    SetItemMemoryValue(itemMemoryAddress, newNumberAmount, countMax);
 }
 
 int ExtractBracketAmount(string itemName)
@@ -99,7 +102,7 @@ int ExtractBracketAmount(string itemName)
 
 string ExtractDictName(string itemName)
 {
-    var match = Regex.Match(itemName, @"^(.*?)(?:\s*\(\d+\))?$");
+    var match = Regex.Match(itemName, @"^(.*?)(?:\s*\(.*?\))?$");
     if (match.Success)
     {
         return match.Groups[1].Value.Trim();
@@ -112,13 +115,29 @@ void ReceiveCountType(Item item)
     var addressDict = Helpers.AmmoAddressDictionary;
     var amount = ExtractBracketAmount(item.Name);
     var name = ExtractDictName(item.Name);
-    UpdateCurrentItemValue(item.Name, amount, addressDict[name], true);
+    UpdateCurrentItemValue(item.Name, amount, addressDict[name], true, false);
 }
 void ReceiveChargeType(Item item)
 {
     var addressDict = Helpers.AmmoAddressDictionary;
     var amount = ExtractBracketAmount(item.Name);
-    UpdateCurrentItemValue(item.Name, amount, addressDict[item.Name], false);
+    UpdateCurrentItemValue(item.Name, amount, addressDict[item.Name], false, false);
+}
+
+void ReceiveEquipment(Item item)
+{
+    var addressDict = Helpers.AmmoAddressDictionary;
+    var name = ExtractDictName(item.Name);
+    Console.WriteLine($"{name} is whats been extracted");
+    // sets 1, as doing so gives you the item in your inventory.
+    UpdateCurrentItemValue(item.Name, 0, addressDict[name], true, true);
+}
+
+void ReceiveLifeBottle(Item item)
+{
+    var addressDict = Helpers.AmmoAddressDictionary;
+    
+    UpdateCurrentItemValue("Life Bottle", 1, addressDict["Life Bottle"], false, false);
 }
 // logic for item receiving goes here (gold, health, ammo, etc)
 void ItemReceived(object sender, ItemReceivedEventArgs args)
@@ -128,7 +147,9 @@ void ItemReceived(object sender, ItemReceivedEventArgs args)
 
     switch (args.Item)
     {
-        case var x when x.Name.ContainsAny("Gold", "Daggers", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
+        case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
+        case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle (x); break;
+        case var x when x.Name.ContainsAny("Health", "Gold", "Daggers", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
         case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x); break;
         case null: Console.WriteLine("Received an item with null data. Skipping."); break;
         default: Console.WriteLine("Item not recognised. Skipping"); break;
@@ -190,7 +211,7 @@ if (!connected)
 Console.WriteLine("Successfully connected to Duckstation.");
 try
 {
-    ulong cheatChoice = 0x000EEE68;
+    uint cheatChoice = 0x000EEE68;
     Memory.GlobalOffset = Memory.GetDuckstationOffset();
     Console.WriteLine($"Memory Location: {cheatChoice} ");
     Memory.WriteByte(cheatChoice, 0x09); // Adjust offset as needed

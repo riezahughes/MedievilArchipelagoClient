@@ -74,8 +74,17 @@ namespace MedievilArchipelago
         internal static readonly Dictionary<string, uint> AmmoAddressDictionary = new()
         {
             ["Gold"] = Addresses.CurrentGold,
+            ["Health"] = Addresses.CurrentEnergy,
+            ["Small Sword"] = Addresses.SmallSword,
+            ["Magic Sword"] = Addresses.MagicSword,
+            ["Hammer"] = Addresses.Hammer,
+            ["Axe"] = Addresses.Axe,
+            ["Good Lightning"] = Addresses.GoodLightning,
+            ["Dragon Armour"] = Addresses.DragonArmour,
+            ["Life Bottle"] = Addresses.CurrentLifePotions,
+            ["Energy"] = Addresses.CurrentEnergy,
             ["Daggers"] = Addresses.DaggersAmmo,
-            ["Broadsword"] = Addresses.BroadswordCharge,
+            ["BroadSword"] = Addresses.BroadswordCharge,
             ["Club"] = Addresses.ClubCharge,
             ["Chicken Drumsticks"] = Addresses.ChickenDrumsticksAmmo,
             ["Crossbow"] = Addresses.CrossbowAmmo,
@@ -88,6 +97,8 @@ namespace MedievilArchipelago
             ["Gold Shield"] = Addresses.GoldShieldAmmo,
             ["Lightning"] = Addresses.LightningCharge
         };
+
+
         private static List<LevelData> GetLevelData()
         {
             List<LevelData> levels = new List<LevelData>()

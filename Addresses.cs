@@ -50,6 +50,7 @@ namespace MedievilArchipelago
         public const uint ShieldEquipped = 0x000f81bc;
 
         // Items Without Ammo
+        public const uint SmallSword = 0x000f822c;
         public const uint MagicSword = 0x000f8234;
         public const uint Hammer = 0x000f823c;
         public const uint Axe = 0x000f8244;

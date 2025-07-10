@@ -44,6 +44,10 @@ void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
 
 async void OnDisconnected(object sender, EventArgs args, ArchipelagoClient Client)
 {
+    if (!archipelagoClient.IsConnected)
+    {
+        return;
+    }
     Console.WriteLine("Disconnected from Archipelago. Reconnecting...");
     try
     {
@@ -74,8 +78,12 @@ int SetItemMemoryValue(string itemName, ulong itemMemoryAddress, int itemUpdateV
 void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAddress, bool isCountType)
 {
     var currentNumberAmount = Memory.ReadByte(itemMemoryAddress);
+    // leaving for the sake of debugging
+    Console.WriteLine($"{ itemName} current amount: {currentNumberAmount}, update amount: {numberUpdate}");
     int maxValue = isCountType ? countMax : percentageMax; // Max count limit for gold, percentage for energy
     var newNumberAmount = Math.Min(currentNumberAmount + numberUpdate, maxValue); // Max count limit
+    // leaving for the sake of debugging
+    Console.Write(newNumberAmount);
     SetItemMemoryValue(itemName, itemMemoryAddress, newNumberAmount, countMax);
 }
 
@@ -89,20 +97,27 @@ int ExtractBracketAmount(string itemName)
     return 0; // Return 0 if no valid number is found
 }
 
+string ExtractDictName(string itemName)
+{
+    var match = Regex.Match(itemName, @"^(.*?)(?:\s*\(\d+\))?$");
+    if (match.Success)
+    {
+        return match.Groups[1].Value.Trim();
+    }
+    return "N/A"; // Return the original string if no match is found  
+}
+
 void ReceiveCountType(Item item)
 {
     var addressDict = Helpers.AmmoAddressDictionary;
-    Console.WriteLine($"{item.Name} has been received!");
     var amount = ExtractBracketAmount(item.Name);
-    Console.WriteLine($"{amount} to be precise!");
-    UpdateCurrentItemValue(item.Name, amount, addressDict[item.Name], true);
+    var name = ExtractDictName(item.Name);
+    UpdateCurrentItemValue(item.Name, amount, addressDict[name], true);
 }
 void ReceiveChargeType(Item item)
 {
     var addressDict = Helpers.AmmoAddressDictionary;
-    Console.WriteLine($"{item.Name} charge has been received!");
     var amount = ExtractBracketAmount(item.Name);
-    Console.WriteLine($"{amount} to be precise!");
     UpdateCurrentItemValue(item.Name, amount, addressDict[item.Name], false);
 }
 // logic for item receiving goes here (gold, health, ammo, etc)
@@ -274,4 +289,5 @@ finally
 {
     // Perform any necessary cleanup here
     Console.WriteLine("Shutting down...");
+
 }

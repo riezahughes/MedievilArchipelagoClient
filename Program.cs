@@ -58,18 +58,15 @@ async void OnDisconnected(object sender, EventArgs args, ArchipelagoClient Clien
 }
 
 
-int SetItemMemoryValue(uint itemMemoryAddress, int itemUpdateValue, int maxCount, bool isString = false)
+int SetItemMemoryValue(uint itemMemoryAddress, int itemUpdateValue, int maxCount)
 {
     int addition = Math.Min(itemUpdateValue, maxCount);
 
+    byte[] byteArray = BitConverter.GetBytes(addition);
+
     Console.WriteLine($"ITEM NUMBER UPDATED TO {addition} on {itemMemoryAddress:X}");
 
-    if (isString) { 
-        Memory.WriteString(itemMemoryAddress, addition.ToString());
-    } else
-    {
-        Memory.WriteByteArray(itemMemoryAddress, [(byte)addition, 0]);
-    }
+    Memory.WriteByteArray(itemMemoryAddress, byteArray);
 
     // Add more types as needed
     return itemUpdateValue;
@@ -79,13 +76,27 @@ int SetItemMemoryValue(uint itemMemoryAddress, int itemUpdateValue, int maxCount
 
 void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAddress, bool isCountType, bool isEquipmentType)
 {
-    var currentNumberAmount = Memory.ReadByte(itemMemoryAddress);
+    var currentNumberAmount = Memory.ReadShort(itemMemoryAddress);
+
+    if(itemName == "Life Bottle" && currentNumberAmount == 0)
+    {
+        currentNumberAmount = 1;
+    }
+
     // leaving for the sake of debugging
     Console.WriteLine($"{ itemName} current amount: {currentNumberAmount}, update amount: {numberUpdate}");
+
+    // there needs to be some logic here. It has to go something like:
+    // if ammo and you don't have the equipment, then don't trigger, but save the ammo for when you have it.
+    // There's also an interesting issue with lifebottles where when you get your first one, it's automatically equipping a sword.
+    // I think i need to look into some sort of "global state" for the player using archipelago's slot data. Though i'm not sure
+    // how much of this is "too much" as it says in the docs to use it sparingly. Loading Dan's state should be fine though. Hopefully.
+    // just need to make sure to not trigger the state until you are actually loaded into a level.
 
     int maxValue = isCountType ? countMax : percentageMax; // Max count limit for gold, percentage for energy
 
     var newNumberAmount = isEquipmentType ? 0 : Math.Min(currentNumberAmount + numberUpdate, maxValue); // Max count limit
+
     // leaving for the sake of debugging
     SetItemMemoryValue(itemMemoryAddress, newNumberAmount, countMax);
 }
@@ -115,6 +126,7 @@ void ReceiveCountType(Item item)
     var addressDict = Helpers.AmmoAddressDictionary;
     var amount = ExtractBracketAmount(item.Name);
     var name = ExtractDictName(item.Name);
+
     UpdateCurrentItemValue(item.Name, amount, addressDict[name], true, false);
 }
 void ReceiveChargeType(Item item)
@@ -149,7 +161,7 @@ void ItemReceived(object sender, ItemReceivedEventArgs args)
     {
         case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
         case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle (x); break;
-        case var x when x.Name.ContainsAny("Health", "Gold", "Daggers", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
+        case var x when x.Name.ContainsAny("Health", "Gold Coins", "Dagger", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
         case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x); break;
         case null: Console.WriteLine("Received an item with null data. Skipping."); break;
         default: Console.WriteLine("Item not recognised. Skipping"); break;
@@ -198,7 +210,11 @@ async void RunLagTrap()
     }
 }
 
+////////////////////////////
+//
 // Main Program Flow
+//
+////////////////////////////
 
 if (!connected)
 {
@@ -268,9 +284,9 @@ try
     archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
 
     GameLocations = Helpers.BuildLocationList();
-    Console.WriteLine("Loaded Locations");
+    Console.WriteLine("Built Locations list. Launching Monitor");
     await archipelagoClient.MonitorLocations(GameLocations);
-    Console.WriteLine("Monitoring Locations...:");
+    Console.WriteLine("Watching Locations...");
 }
 catch (Exception ex)
 {
@@ -283,7 +299,6 @@ var cts = new CancellationTokenSource();
 Task inputTask = Task.Run(() =>
 {
     // listening to background commands.
-    Console.WriteLine("Type 'exit' to quit the application.");
     while (!cts.Token.IsCancellationRequested)
     {
 

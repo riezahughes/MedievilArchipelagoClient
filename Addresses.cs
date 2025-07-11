@@ -65,7 +65,7 @@ namespace MedievilArchipelago
 
         // Item Ammo
 
-        public const uint DaggersAmmo = 0x000f8240;
+        public const uint DaggerAmmo = 0x000f8240;
         public const uint ChickenDrumsticksAmmo = 0x000f8248;
         public const uint CrossbowAmmo = 0x000f824c;
         public const uint LongbowAmmo = 0x000f8250;

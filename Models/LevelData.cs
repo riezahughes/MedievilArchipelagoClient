@@ -9,15 +9,15 @@ namespace MedievilArchipelago.Models
     public class LevelData
     {
         public string Name { get; set; }
-        public uint Address { get; set; }
+        public int LevelId { get; set; }
 
         public List<string> UniqueLevelItems { get; set; } = new List<string>();
 
         public List<string> RunesRequired { get; set; } = new List<string>();
-        public LevelData(string name, uint address, List<string> uniqueLevelItems, List<string> runesRequired)
+        public LevelData(string name, int levelId, List<string> uniqueLevelItems, List<string> runesRequired)
         {
             Name = name;
-            Address = address;
+            LevelId = levelId;
             UniqueLevelItems = new List<string>();
             RunesRequired = new List<string>();
         }

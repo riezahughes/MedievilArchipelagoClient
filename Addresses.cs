@@ -13,6 +13,41 @@ namespace MedievilArchipelago
 {
     public static class Addresses
     {
+        // Current Level
+        public const uint CurrentLevel = 0x000eee68;
+        /*
+            0x00=None/Out of Game
+            0x01=The Graveyard
+            0x02=Return to the Graveyard
+            0x03=Cemetery Hill
+            0x04=The Hilltop Mausoleum
+            0x05=Scarecrow Fields
+            0x06=Dan's Crypt
+            0x07=The Ant Caves
+            0x08=The Crystal Caves
+            0x09=Pumpkin Gorge
+            0x0A=The Pumpkin Serpent
+            0x0B=The Sleeping Village
+            0x0C=Pools Of The Ancient Dead
+            0x0D=The Asylum Grounds
+            0x0E=Inside The Asylum
+            0x0F=The Enchanted Earth
+            0x10=The Gallows Gauntlet
+            0x11=The Haunted Ruins
+            0x12=Hall of Heroes
+            0x13=The Ghost Ship
+            0x14=The Entrance Hall
+            0x15=The Time Device
+            0x16=The Lake
+            0x17=Zarok's Lair
+            0x18=Programmers's Playground (Freezes)
+         */
+
+        public const uint CurrentChalicePercentage = 0x000f82c0;
+        // 0x1000 (4096) = 100%
+
+        public const uint DaringDashSkill = 0x000F81C4;
+
         // Completed levels
         public const uint TheGraveyardLevelStatus = 0x000f81e1;
         public const uint ReturnToTheGraveyardLevelStatus = 0x000F81E2;
@@ -35,6 +70,29 @@ namespace MedievilArchipelago
         public const uint TheEntranceHallLevelStatus = 0x000F81F4;
         public const uint TheTimeDeviceLevelStatus = 0x000F81F5;
         public const uint TheLakeLevelStatus = 0x000F81F6;
+
+        // List of Hall of Heroes encounters
+
+        public const uint CannyTim1 = 0x000197BA;
+        public const uint CannyTim2 = 0x000197C2;
+        public const uint StanyerIronHewer1 = 0x000197CA;
+        public const uint StanyerIronHewer2 = 0x000197D2;
+        public const uint WodenTheMighty1 = 0x000197EA;
+        public const uint WodenTheMighty2 = 0x000197F2;
+        public const uint RavenHoovesTheArcher1 = 0x0001978A;
+        public const uint RavenHoovesTheArcher2 = 0x00019792;
+        public const uint RavenHoovesTheArcher3 = 0x0001979A;
+        public const uint RavenHoovesTheArcher4 = 0x000197A2;
+        public const uint Imanzi1 = 0x0001977A;
+        public const uint Imanzi2 = 0x00019782;
+        public const uint DarkSteadfast1 = 0x000197FA;
+        public const uint DarkSteadfast2 = 0x00019802;
+        public const uint KarlStungard1 = 0x0001980A;
+        public const uint KarlStungard2 = 0x00019812;
+        public const uint BloodmonathSkillCleaver1 = 0x000197AA;
+        public const uint BloodmonathSkillCleaver2 = 0x000197B2;
+        public const uint MegwynneStormbinder1 = 0x000197DA;
+        public const uint MegwynneStormbinder2 = 0x000197E2;
 
 
         // Killing Zarok Win Condition

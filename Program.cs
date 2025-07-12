@@ -78,6 +78,7 @@ void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAd
 {
     var currentNumberAmount = Memory.ReadShort(itemMemoryAddress);
 
+    // life bottles have 1 in the chamber before showing
     if(itemName == "Life Bottle" && currentNumberAmount == 0)
     {
         currentNumberAmount = 1;
@@ -133,7 +134,8 @@ void ReceiveChargeType(Item item)
 {
     var addressDict = Helpers.AmmoAddressDictionary;
     var amount = ExtractBracketAmount(item.Name);
-    UpdateCurrentItemValue(item.Name, amount, addressDict[item.Name], false, false);
+    var name = ExtractDictName(item.Name);
+    UpdateCurrentItemValue(item.Name, amount, addressDict[name], false, false);
 }
 
 void ReceiveEquipment(Item item)
@@ -151,6 +153,17 @@ void ReceiveLifeBottle(Item item)
     
     UpdateCurrentItemValue("Life Bottle", 1, addressDict["Life Bottle"], false, false);
 }
+
+void ReceiveSkill(Item item)
+{   
+    // there's literally only one skill in this game but i made a skill dict anyway for future projects
+    // and to keep things in line
+
+    var skillDict = Helpers.SkillDictionary;
+
+    UpdateCurrentItemValue("Daring Dash", 1, skillDict["Daring Dash"], false, false);
+}
+
 // logic for item receiving goes here (gold, health, ammo, etc)
 void ItemReceived(object sender, ItemReceivedEventArgs args)
 {
@@ -159,6 +172,7 @@ void ItemReceived(object sender, ItemReceivedEventArgs args)
 
     switch (args.Item)
     {
+        case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
         case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
         case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle (x); break;
         case var x when x.Name.ContainsAny("Health", "Gold Coins", "Dagger", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
@@ -180,14 +194,17 @@ void Client_LocationCompleted(object sender, LocationCompletedEventArgs e)
     CheckGoalCondition();
 }
 
+
 void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCollection<long> newCheckedLocations)
 {
     CheckGoalCondition();
 }
 
+
+
 void CheckGoalCondition()
 {
-    //var currentEggs = CalculateCurrentEggs();
+
     if (GameLocations == null || archipelagoClient.CurrentSession?.Locations?.AllLocationsChecked == null)
         return;
 
@@ -284,6 +301,13 @@ try
     archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
 
     GameLocations = Helpers.BuildLocationList();
+
+    foreach (Location location in GameLocations)
+    {
+        Console.WriteLine($"Name: {location.Name} Address: {location.Address} Id: {location.Id} CheckValue: {location.CheckValue}");
+    }
+
+
     Console.WriteLine("Built Locations list. Launching Monitor");
     await archipelagoClient.MonitorLocations(GameLocations);
     Console.WriteLine("Watching Locations...");

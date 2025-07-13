@@ -23,7 +23,7 @@ var archipelagoClient = new ArchipelagoClient(gameClient);
 
 
 // set values
-const byte US_OFFSET = 0x38;
+const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
 const int percentageMax = 100;
 const int countMax = 32767;
 
@@ -42,6 +42,11 @@ void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
     Log.Logger.Information("Connected to Archipelago");
     Log.Logger.Information($"Playing {Client.CurrentSession.ConnectionInfo.Game} as {Client.CurrentSession.Players.GetPlayerName(Client.CurrentSession.ConnectionInfo.Slot)}");
     Console.WriteLine("Connected to Archipelago!");
+
+    foreach (KeyValuePair<string, object> val in Client.GameState.CustomValues)
+    {
+        Console.WriteLine(val.Key, val.Value);
+    }
 }
 
 async void OnDisconnected(object sender, EventArgs args, ArchipelagoClient Client)
@@ -58,7 +63,6 @@ async void OnDisconnected(object sender, EventArgs args, ArchipelagoClient Clien
         Console.WriteLine($"Failed to reconnect: {ex.Message}");
     }
 }
-
 
 int SetItemMemoryValue(uint itemMemoryAddress, int itemUpdateValue, int maxCount)
 {
@@ -85,7 +89,7 @@ void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAd
     }
 
     // leaving for the sake of debugging
-    Console.WriteLine($"{ itemName} current amount: {currentNumberAmount}, update amount: {numberUpdate}");
+    //Console.WriteLine($"{ itemName} current amount: {currentNumberAmount}, update amount: {numberUpdate}");
 
     // there needs to be some logic here. It has to go something like:
     // if ammo and you don't have the equipment, then don't trigger, but save the ammo for when you have it.
@@ -188,7 +192,7 @@ void ItemReceived(object sender, ItemReceivedEventArgs args)
         default: Console.WriteLine("Item not recognised. Skipping"); break;
     };
 
-    archipelagoClient.AddOverlayMessage($"Item Received: {args.Item.Name} x{args.Item.Quantity}", TimeSpan.FromSeconds(10));
+
 }
 
 
@@ -197,10 +201,9 @@ void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceiv
 {
     var message = string.Join("", e.Message.Parts.Select(p => p.Text));
 
-    archipelagoClient.AddOverlayMessage(e.Message.ToString(), TimeSpan.FromSeconds(10));
+    //archipelagoClient.AddOverlayMessage(e.Message.ToString(), TimeSpan.FromSeconds(10)); // kinda works? Removing for now till we can test more.
 
     Log.Logger.Information(JsonConvert.SerializeObject(e.Message));
-    archipelagoClient.AddOverlayMessage(e.Message.ToString(), TimeSpan.FromSeconds(10));
     Console.WriteLine($"Message: {message}");
 }
 
@@ -308,22 +311,17 @@ try
     Console.WriteLine("Connected. Attempting to Log in...");
     await archipelagoClient.Login(slot, password);
     Console.WriteLine("Logged in!");
-    archipelagoClient.IntializeOverlayService(new WindowsOverlayService());
+
+    //archipelagoClient.IntializeOverlayService(new WindowsOverlayService()); // kinda works ? Commenting out for now.
 
     // Now CurrentSession is initialized, so it's safe to subscribe
     archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
 
     GameLocations = Helpers.BuildLocationList();
 
-    foreach (Location location in GameLocations)
-    {
-        Console.WriteLine($"Name: {location.Name} Address: {location.Address} Id: {location.Id} CheckValue: {location.CheckValue}");
-    }
-
 
     Console.WriteLine("Built Locations list. Launching Monitor");
     await archipelagoClient.MonitorLocations(GameLocations);
-    Console.WriteLine("Watching Locations...");
 }
 catch (Exception ex)
 {
@@ -364,3 +362,4 @@ finally
     Console.WriteLine("Shutting down...");
 
 }
+    

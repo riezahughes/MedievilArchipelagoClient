@@ -68,11 +68,47 @@ namespace MedievilArchipelago
                {"The Time Device: Chalice", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheTimeDeviceLevelStatus), Addresses.TheTimeDeviceLevelStatus)},
             };
         }
+        public static Dictionary<string, Tuple<int, uint>> GetSkillStatuses()
+        {
+            return new Dictionary<string, Tuple<int, uint>>
+            {
+                {"Daring Dash: Skill",new Tuple<int, uint>(Memory.ReadInt(Addresses.DaringDashSkill), Addresses.DaringDashSkill)},
+            };
+        }
+
+        public static Dictionary<string, Tuple<int, uint>> GetWeaponLocationStatuses()
+        {
+            return new Dictionary<string, Tuple<int, uint>>
+            {
+                // uses fake locations at the moment
+                {"Small Sword: Dans Crypt",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Broadsword: Hall of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Magic Sword: Hall of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Club: Cemetery Hill",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Hammer: Hall Of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Daggers: Dan's Crypt",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Axe: Hall Of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Chicken Drumsticks: The Enchanted Earth",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Crossbow: Hall Of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Longbow: Hall Of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Fire Longbow: Hall Of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Magic Longbow: Hall Of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Spear: Hall Of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Lightning: Hall Of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Good Lightning: Zarok's Lair",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Copper Shield: Dan's Crypt",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Silver Shield: Return to the Graveyard",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Gold Shield: Hall Of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Dragon Armour: The Crystal Caves",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+            };
+        }
 
         public static Dictionary<string, Tuple<int, uint>> GetHallOfHeroesStatuses()
         {
             return new Dictionary<string, Tuple<int, uint>>
             {
+                // these locations need updated.
+
                 {"Canny Tim 1: Hall Of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.CannyTim1), Addresses.CannyTim1)},
                 {"Canny Tim 2: Hall Of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.CannyTim2), Addresses.CannyTim2)},
                 {"Stanyer Iron Hewer 1: Hall Of Heroes",new Tuple<int, uint>(Memory.ReadInt(Addresses.StanyerIronHewer1), Addresses.StanyerIronHewer1)},
@@ -96,16 +132,99 @@ namespace MedievilArchipelago
             };
         }
 
+        public static Dictionary<string, Tuple<int, uint>> GetLifeBottleLocationStatuses()
+        {
+            return new Dictionary<string, Tuple<int, uint>>
+            {
+                // uses fake locations at the moment
+                {"Life Bottle: Dan's Crypt", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Life Bottle: The Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Life Bottle: Hall of Heroes (Canny Tim)", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Life Bottle: Dan's Crypt - Behind Wall", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Life Bottle: Scarecrow Fields", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Life Bottle: Pools of the Ancient Dead", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Life Bottle: Hall of Heroes (Ravenhooves The Archer)", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Life Bottle: Hall of Heroes (Dirk Steadfast)", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Life Bottle: The Time Device", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)}
+            };
+        }
+
+        public static Dictionary<string, Tuple<int, uint>> GetRuneLocationStatuses()
+        {
+            return new Dictionary<string, Tuple<int, uint>>
+            {
+                // uses fake locations at the moment
+
+                // Chaos Runes
+                {"Chaos Rune: The Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Chaos Rune: The Hilltop Mausoleum", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Chaos Rune: Scarecrow Fields", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Chaos Rune: The Lake", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Chaos Rune: Pumpkin Gorge", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Chaos Rune: Sleeping Village", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Chaos Rune: Pools of the Ancient Dead", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Chaos Rune: Asylum Grounds", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Chaos Rune: The Haunted Ruins", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Chaos Rune: Ghost Ship", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Chaos Rune: The Time Device", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+
+                // Earth Runes
+                {"Earth Rune: The Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Earth Rune: The Hilltop Mausoleum", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Earth Rune: Scarecrow Fields", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Earth Rune: The Crystal Caves", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Earth Rune: The Lake", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Earth Rune: Pumpkin Gorge", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Earth Rune: Sleeping Village", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Earth Rune: Inside the Asylum", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Earth Rune: Enchanted Earth", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Earth Rune: The Haunted Ruins", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Earth Rune: The Entrance Hall", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Earth Rune: The Time Device", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+
+                // Moon Runes
+                {"Moon Rune: The Hilltop Mausoleum", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Moon Rune: Scarecrow Fields", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Moon Rune: Pumpkin Gorge", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Moon Rune: Ghost Ship", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Moon Rune: The Time Device", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+
+                // Star Runes
+                {"Star Rune: Return to the Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Star Rune: Dan's Crypt", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Star Rune: The Crystal Caves", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Star Rune: The Lake", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Star Rune: Enchanted Earth", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Star Rune: The Gallows Gauntlet", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Star Rune: Ghost Ship", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+
+                // Time Runes
+                {"Time Rune: The Lake", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Time Rune: Pumpkin Gorge", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Time Rune: The Time Device", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)}
+            };
+        }
+
+
+
         public static List<Location> BuildLocationList()
         {
             int baseId = 99251000;
+            List<Location> locations = new List<Location>();
+
             List<LevelData> levels = GetLevelData();
             List<HallOfHeroesData> hallOfHeroesVisits = GetHallOfHeroesData();
-            List<Location> locations = new List<Location>();
-            var levelDict = GetLevelCompleteStatuses();
-            var hallOfHeroesDict = GetHallOfHeroesStatuses();
+            List<SkillData> skills = GetSkillData();
+            List<WeaponLocationsData> weapons = GetWeaponLocationsData();
+            List<LifeBottlesData> bottles = GetLifeBottleLocationsData();
+            List<RuneData> runes = GetRuneLocationsData();
 
-            // in order to do chalices, this needs to be able to put in more than one address to check to update th elocatoin
+            var levelDict = GetLevelCompleteStatuses();
+            var skillDict = GetSkillStatuses();
+            var hallOfHeroesDict = GetHallOfHeroesStatuses();
+            var weaponLocationDict = GetWeaponLocationStatuses();
+            var bottleLocationDict = GetLifeBottleLocationStatuses();
+            var runeLocationDict = GetRuneLocationStatuses();
 
 
             // level and Chalice locations
@@ -143,6 +262,23 @@ namespace MedievilArchipelago
                     };
                 }
             }
+            foreach (var skill in skills)
+            {
+                {
+                    Location location = new Location()
+                    {
+                        Name = skill.Name,
+                        Address = skillDict[skill.Name].Item2,
+                        Id = baseId + skill.LevelId,
+                        CheckType = LocationCheckType.Byte,
+                        CompareType = LocationCheckCompareType.Match,
+                        CheckValue = skill.Name = "1"
+                    };
+
+                    locations.Add(location);
+
+                };
+            }
             foreach (var hallOfHeroesVisit in hallOfHeroesVisits)
             {
                 {
@@ -154,6 +290,57 @@ namespace MedievilArchipelago
                         CheckType = LocationCheckType.Byte,
                         CompareType = LocationCheckCompareType.GreaterThan,
                         CheckValue = hallOfHeroesVisit.Name = "0"
+                    };
+
+                    locations.Add(location);
+
+                };
+            }
+            foreach (var weaponLocation in weapons)
+            {
+                {
+                    Location location = new Location()
+                    {
+                        Name = weaponLocation.Name,
+                        Address = weaponLocationDict[weaponLocation.Name].Item2,
+                        Id = baseId + weaponLocation.LevelId,
+                        CheckType = LocationCheckType.Byte,
+                        CompareType = LocationCheckCompareType.GreaterThan,
+                        CheckValue = weaponLocation.Name = "999" // fake number as this is just a dummy location for now
+                    };
+
+                    locations.Add(location);
+
+                };
+            }
+            foreach (var bottleLocation in bottles)
+            {
+                {
+                    Location location = new Location()
+                    {
+                        Name = bottleLocation.Name,
+                        Address = bottleLocationDict[bottleLocation.Name].Item2,
+                        Id = baseId + bottleLocation.LevelId,
+                        CheckType = LocationCheckType.Byte,
+                        CompareType = LocationCheckCompareType.GreaterThan,
+                        CheckValue = bottleLocation.Name = "999" // fake number as this is just a dummy location for now
+                    };
+
+                    locations.Add(location);
+
+                };
+            }
+            foreach (var runeLocation in runes)
+            {
+                {
+                    Location location = new Location()
+                    {
+                        Name = runeLocation.Name,
+                        Address = runeLocationDict[runeLocation.Name].Item2,
+                        Id = baseId + runeLocation.LevelId,
+                        CheckType = LocationCheckType.Byte,
+                        CompareType = LocationCheckCompareType.GreaterThan,
+                        CheckValue = runeLocation.Name = "999" // fake number as this is just a dummy location for now
                     };
 
                     locations.Add(location);
@@ -209,33 +396,6 @@ namespace MedievilArchipelago
         };
 
 
-        private static List<HallOfHeroesData> GetHallOfHeroesData()
-        {
-            List<HallOfHeroesData> hallOfHeroeVisits = new List<HallOfHeroesData>()
-            {
-                new HallOfHeroesData("Canny Tim 1: Hall Of Heroes",44),
-                new HallOfHeroesData("Canny Tim 2: Hall Of Heroes",45),
-                new HallOfHeroesData("Stanyer Iron Hewer 1: Hall Of Heroes",46),
-                new HallOfHeroesData("Stanyer Iron Hewer 2: Hall Of Heroes",47),
-                new HallOfHeroesData("Woden The Mighty 1: Hall Of Heroes",48),
-                new HallOfHeroesData("Woden The Mighty 2: Hall Of Heroes",49),
-                new HallOfHeroesData("RavenHooves The Archer 1: Hall Of Heroes",50),
-                new HallOfHeroesData("RavenHooves The Archer 2: Hall Of Heroes",51),
-                new HallOfHeroesData("RavenHooves The Archer 3: Hall Of Heroes",52),
-                new HallOfHeroesData("RavenHooves The Archer 4: Hall Of Heroes",53),
-                new HallOfHeroesData("Imanzi 1: Hall Of Heroes",54),
-                new HallOfHeroesData("Imanzi 2: Hall Of Heroes",55),
-                new HallOfHeroesData("Dark Steadfast 1: Hall Of Heroes",56),
-                new HallOfHeroesData("Dark Steadfast 2: Hall Of Heroes",57),
-                new HallOfHeroesData("Karl Stungard 1: Hall Of Heroes",58),
-                new HallOfHeroesData("Karl Stungard 2: Hall Of Heroes",59),
-                new HallOfHeroesData("Bloodmonath Skill Cleaver 1: Hall Of Heroes",60),
-                new HallOfHeroesData("Bloodmonath Skill Cleaver 2: Hall Of Heroes",61),
-                new HallOfHeroesData("Megwynne Stormbinder 1: Hall Of Heroes",62),
-                new HallOfHeroesData("Megwynne Stormbinder 2: Hall Of Heroes",63),
-            };
-            return hallOfHeroeVisits;
-        }
         private static List<LevelData> GetLevelData()
         {
             List<LevelData> levels = new List<LevelData>()
@@ -285,5 +445,132 @@ namespace MedievilArchipelago
             };
             return levels;
         }
+
+        private static List<SkillData> GetSkillData()
+        {
+            List<SkillData> skills = new List<SkillData>()
+            {
+                new SkillData("Daring Dash: Skill", 43)
+            };
+            return skills;
+        }
+
+        private static List<HallOfHeroesData> GetHallOfHeroesData()
+        {
+            List<HallOfHeroesData> hallOfHeroeVisits = new List<HallOfHeroesData>()
+            {
+                new HallOfHeroesData("Canny Tim 1: Hall Of Heroes",44),
+                new HallOfHeroesData("Canny Tim 2: Hall Of Heroes",45),
+                new HallOfHeroesData("Stanyer Iron Hewer 1: Hall Of Heroes",46),
+                new HallOfHeroesData("Stanyer Iron Hewer 2: Hall Of Heroes",47),
+                new HallOfHeroesData("Woden The Mighty 1: Hall Of Heroes",48),
+                new HallOfHeroesData("Woden The Mighty 2: Hall Of Heroes",49),
+                new HallOfHeroesData("RavenHooves The Archer 1: Hall Of Heroes",50),
+                new HallOfHeroesData("RavenHooves The Archer 2: Hall Of Heroes",51),
+                new HallOfHeroesData("RavenHooves The Archer 3: Hall Of Heroes",52),
+                new HallOfHeroesData("RavenHooves The Archer 4: Hall Of Heroes",53),
+                new HallOfHeroesData("Imanzi 1: Hall Of Heroes",54),
+                new HallOfHeroesData("Imanzi 2: Hall Of Heroes",55),
+                new HallOfHeroesData("Dark Steadfast 1: Hall Of Heroes",56),
+                new HallOfHeroesData("Dark Steadfast 2: Hall Of Heroes",57),
+                new HallOfHeroesData("Karl Stungard 1: Hall Of Heroes",58),
+                new HallOfHeroesData("Karl Stungard 2: Hall Of Heroes",59),
+                new HallOfHeroesData("Bloodmonath Skill Cleaver 1: Hall Of Heroes",60),
+                new HallOfHeroesData("Bloodmonath Skill Cleaver 2: Hall Of Heroes",61),
+                new HallOfHeroesData("Megwynne Stormbinder 1: Hall Of Heroes",62),
+                new HallOfHeroesData("Megwynne Stormbinder 2: Hall Of Heroes",63),
+            };
+            return hallOfHeroeVisits;
+        }
+        private static List<WeaponLocationsData> GetWeaponLocationsData()
+        {
+            List<WeaponLocationsData> weaponLocations = new List<WeaponLocationsData>()
+            {
+                new WeaponLocationsData("Small Sword: Dans Crypt",64),
+                new WeaponLocationsData("Broadsword: Hall of Heroes",65),
+                new WeaponLocationsData("Magic Sword: Hall of Heroes",66),
+                new WeaponLocationsData("Club: Cemetery Hill",67),
+                new WeaponLocationsData("Hammer: Hall Of Heroes",68),
+                new WeaponLocationsData("Daggers: Dan's Crypt",69),
+                new WeaponLocationsData("Axe: Hall Of Heroes",70),
+                new WeaponLocationsData("Chicken Drumsticks: The Enchanted Earth",71),
+                new WeaponLocationsData("Crossbow: Hall Of Heroes",72),
+                new WeaponLocationsData("Longbow: Hall Of Heroes",73),
+                new WeaponLocationsData("Fire Longbow: Hall Of Heroes",74),
+                new WeaponLocationsData("Magic Longbow: Hall Of Heroes",75),
+                new WeaponLocationsData("Spear: Hall Of Heroes",76),
+                new WeaponLocationsData("Lightning: Hall Of Heroes",77),
+                new WeaponLocationsData("Good Lightning: Zarok's Lair",78),
+                new WeaponLocationsData("Copper Shield: Dan's Crypt",79),
+                new WeaponLocationsData("Silver Shield: Return to the Graveyard",80),
+                new WeaponLocationsData("Gold Shield: Hall Of Heroes",81),
+                new WeaponLocationsData("Dragon Armour: The Crystal Caves",82),
+            };
+            return weaponLocations;
+        }
+
+        private static List<LifeBottlesData> GetLifeBottleLocationsData()
+        {
+            List<LifeBottlesData> bottleLocations = new List<LifeBottlesData>()
+            {
+                new LifeBottlesData("Life Bottle: Dan's Crypt",83),
+                new LifeBottlesData("Life Bottle: The Graveyard",84),
+                new LifeBottlesData("Life Bottle: Hall of Heroes (Canny Tim)",85),
+                new LifeBottlesData("Life Bottle: Dan's Crypt - Behind Wall",86),
+                new LifeBottlesData("Life Bottle: Scarecrow Fields",87),
+                new LifeBottlesData("Life Bottle: Pools of the Ancient Dead",88),
+                new LifeBottlesData("Life Bottle: Hall of Heroes (Ravenhooves The Archer)",89),
+                new LifeBottlesData("Life Bottle: Hall of Heroes (Dirk Steadfast)",90),
+                new LifeBottlesData("Life Bottle: The Time Device",91),
+            };
+            return bottleLocations;
+        }
+
+        private static List<RuneData> GetRuneLocationsData()
+        {
+            List<RuneData> runeLocations = new List<RuneData>()
+            {
+                new RuneData("Chaos Rune: The Graveyard",92),
+                new RuneData("Chaos Rune: The Hilltop Mausoleum",93),
+                new RuneData("Chaos Rune: Scarecrow Fields",94),
+                new RuneData("Chaos Rune: The Lake",95),
+                new RuneData("Chaos Rune: Pumpkin Gorge",96),
+                new RuneData("Chaos Rune: Sleeping Village",97),
+                new RuneData("Chaos Rune: Pools of the Ancient Dead",98),
+                new RuneData("Chaos Rune: Asylum Grounds",99),
+                new RuneData("Chaos Rune: The Haunted Ruins",100),
+                new RuneData("Chaos Rune: Ghost Ship",101),
+                new RuneData("Chaos Rune: The Time Device",102),
+                new RuneData("Earth Rune: The Graveyard",103),
+                new RuneData("Earth Rune: The Hilltop Mausoleum",104),
+                new RuneData("Earth Rune: Scarecrow Fields",105),
+                new RuneData("Earth Rune: The Crystal Caves",106),
+                new RuneData("Earth Rune: The Lake",107),
+                new RuneData("Earth Rune: Pumpkin Gorge",108),
+                new RuneData("Earth Rune: Sleeping Village",109),
+                new RuneData("Earth Rune: Inside the Asylum",110),
+                new RuneData("Earth Rune: Enchanted Earth",111),
+                new RuneData("Earth Rune: The Haunted Ruins",112),
+                new RuneData("Earth Rune: The Entrance Hall",113),
+                new RuneData("Earth Rune: The Time Device",114),
+                new RuneData("Moon Rune: The Hilltop Mausoleum",115),
+                new RuneData("Moon Rune: Scarecrow Fields",116),
+                new RuneData("Moon Rune: Pumpkin Gorge",117),
+                new RuneData("Moon Rune: Ghost Ship",118),
+                new RuneData("Moon Rune: The Time Device",119),
+                new RuneData("Star Rune: Return to the Graveyard",120),
+                new RuneData("Star Rune: Dan's Crypt",121),
+                new RuneData("Star Rune: The Crystal Caves",122),
+                new RuneData("Star Rune: The Lake",123),
+                new RuneData("Star Rune: Enchanted Earth",124),
+                new RuneData("Star Rune: The Gallows Gauntlet",125),
+                new RuneData("Star Rune: Ghost Ship",126),
+                new RuneData("Time Rune: The Lake",127),
+                new RuneData("Time Rune: Pumpkin Gorge",128),
+                new RuneData("Time Rune: The Time Device",129),
+            };
+            return runeLocations;
+        }
+
     }
 }

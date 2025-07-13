@@ -14,6 +14,8 @@ using MedievilArchipelago;
 using Serilog;
 using Helpers = MedievilArchipelago.Helpers;
 using System.Threading;
+using Archipelago.Core.Util.Overlay;
+using Newtonsoft.Json;
 
 var gameClient = new DuckstationClient();
 bool connected = gameClient.Connect();
@@ -64,8 +66,6 @@ int SetItemMemoryValue(uint itemMemoryAddress, int itemUpdateValue, int maxCount
 
     byte[] byteArray = BitConverter.GetBytes(addition);
 
-    Console.WriteLine($"ITEM NUMBER UPDATED TO {addition} on {itemMemoryAddress:X}");
-
     Memory.WriteByteArray(itemMemoryAddress, byteArray);
 
     // Add more types as needed
@@ -98,8 +98,15 @@ void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAd
 
     var newNumberAmount = isEquipmentType ? 0 : Math.Min(currentNumberAmount + numberUpdate, maxValue); // Max count limit
 
-    // leaving for the sake of debugging
+
     SetItemMemoryValue(itemMemoryAddress, newNumberAmount, countMax);
+
+    // if you're getting a piece of equipment like the longbow/crossbow/spear/etc give it some ammo.
+    if (isEquipmentType && isCountType)
+    {
+        SetItemMemoryValue(itemMemoryAddress, 100, countMax);
+    }
+
 }
 
 int ExtractBracketAmount(string itemName)
@@ -142,9 +149,9 @@ void ReceiveEquipment(Item item)
 {
     var addressDict = Helpers.AmmoAddressDictionary;
     var name = ExtractDictName(item.Name);
-    Console.WriteLine($"{name} is whats been extracted");
-    // sets 1, as doing so gives you the item in your inventory.
+
     UpdateCurrentItemValue(item.Name, 0, addressDict[name], true, true);
+
 }
 
 void ReceiveLifeBottle(Item item)
@@ -180,12 +187,20 @@ void ItemReceived(object sender, ItemReceivedEventArgs args)
         case null: Console.WriteLine("Received an item with null data. Skipping."); break;
         default: Console.WriteLine("Item not recognised. Skipping"); break;
     };
+
+    archipelagoClient.AddOverlayMessage($"Item Received: {args.Item.Name} x{args.Item.Quantity}", TimeSpan.FromSeconds(10));
 }
+
 
 
 void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceivedEventArgs e)
 {
     var message = string.Join("", e.Message.Parts.Select(p => p.Text));
+
+    archipelagoClient.AddOverlayMessage(e.Message.ToString(), TimeSpan.FromSeconds(10));
+
+    Log.Logger.Information(JsonConvert.SerializeObject(e.Message));
+    archipelagoClient.AddOverlayMessage(e.Message.ToString(), TimeSpan.FromSeconds(10));
     Console.WriteLine($"Message: {message}");
 }
 
@@ -244,10 +259,7 @@ if (!connected)
 Console.WriteLine("Successfully connected to Duckstation.");
 try
 {
-    uint cheatChoice = 0x000EEE68;
     Memory.GlobalOffset = Memory.GetDuckstationOffset();
-    Console.WriteLine($"Memory Location: {cheatChoice} ");
-    Memory.WriteByte(cheatChoice, 0x09); // Adjust offset as needed
 }
 catch (Exception ex)
 {
@@ -296,6 +308,7 @@ try
     Console.WriteLine("Connected. Attempting to Log in...");
     await archipelagoClient.Login(slot, password);
     Console.WriteLine("Logged in!");
+    archipelagoClient.IntializeOverlayService(new WindowsOverlayService());
 
     // Now CurrentSession is initialized, so it's safe to subscribe
     archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;

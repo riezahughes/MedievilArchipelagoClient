@@ -55,6 +55,8 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
 
             switch (loc)
             {
+                // this needs adjusted to go through every weapon and skill in order to ignore any pickups people have made
+                // this is just a proof of concept right now to see it working.
                 case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
                 case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
                 case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(x); break;

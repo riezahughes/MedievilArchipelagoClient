@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Archipelago.Core" Version="0.3.24" />
+    <PackageReference Include="Archipelago.Core" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

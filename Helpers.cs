@@ -20,32 +20,38 @@ namespace MedievilArchipelago
 {
     public class Helpers
     {
-        public static Dictionary<string, Tuple<int, uint>> GetLevelCompleteStatuses ()
+        public static Dictionary<string, Tuple<int, uint>> GetLevelCompleteStatuses()
         {
             return new Dictionary<string, Tuple<int, uint>>
             {
-               {"Dan's Crypt: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.DansCryptLevelStatus), Addresses.DansCryptLevelStatus)},
-               {"The Graveyard: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheGraveyardLevelStatus), Addresses.TheGraveyardLevelStatus)},
-               {"Return to the Graveyard: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.ReturnToTheGraveyardLevelStatus), Addresses.ReturnToTheGraveyardLevelStatus)},
-               {"Cemetery Hill: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.CemeteryHillLevelStatus), Addresses.CemeteryHillLevelStatus)},
-               {"The Hilltop Mausoleum: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheHilltopMausoleumLevelStatus), Addresses.TheHilltopMausoleumLevelStatus)},
-               {"Scarecrow Fields: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.ScarecrowFieldsLevelStatus), Addresses.ScarecrowFieldsLevelStatus)},
-               {"Ant Hill: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.AntHillLevelStatus), Addresses.AntHillLevelStatus)},
-               {"The Crystal Caves: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheCrystalCavesLevelStatus), Addresses.TheCrystalCavesLevelStatus)},
-               {"The Lake: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheLakeLevelStatus), Addresses.TheLakeLevelStatus)},
-               {"Pumpkin Gorge: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.PumpkinGorgeLevelStatus), Addresses.PumpkinGorgeLevelStatus)},
-               {"Pumpkin Serpent: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.PumpkinSerpentLevelStatus), Addresses.PumpkinSerpentLevelStatus)},
-               {"Sleeping Village: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.SleepingVillageLevelStatus), Addresses.SleepingVillageLevelStatus)},
-               {"Pools of the Ancient Dead: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.PoolsOfTheAncientDeadLevelStatus), Addresses.PoolsOfTheAncientDeadLevelStatus)},
-               {"Asylum Grounds: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.AsylumGroundsLevelStatus), Addresses.AsylumGroundsLevelStatus)},
-               {"Inside the Asylum: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.InsideTheAsylumLevelStatus), Addresses.InsideTheAsylumLevelStatus)},
-               {"Enchanted Earth: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.EnchantedEarthLevelStatus), Addresses.EnchantedEarthLevelStatus)},
-               {"The Gallows Gauntlet: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheGallowsGauntletLevelStatus), Addresses.TheGallowsGauntletLevelStatus)},
-               {"The Haunted Ruins: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheHauntedRuinsLevelStatus), Addresses.TheHauntedRuinsLevelStatus)},
-               {"Ghost Ship: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.GhostShipLevelStatus), Addresses.GhostShipLevelStatus)},
-               {"The Entrance Hall: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheEntranceHallLevelStatus), Addresses.TheEntranceHallLevelStatus)},
-               {"The Time Device: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheTimeDeviceLevelStatus), Addresses.TheTimeDeviceLevelStatus)},
-               {"Zaroks Lair: Cleared", new Tuple<int, uint>(Memory.ReadInt(Addresses.ZaroksLairLevelStatus), Addresses.ZaroksLairLevelStatus)},
+               {"Dan's Crypt", new Tuple<int, uint>(Memory.ReadInt(Addresses.DansCryptLevelStatus), Addresses.DansCryptLevelStatus)},
+               {"The Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheGraveyardLevelStatus), Addresses.TheGraveyardLevelStatus)},
+               {"Return to the Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.ReturnToTheGraveyardLevelStatus), Addresses.ReturnToTheGraveyardLevelStatus)},
+               {"Cemetery Hill", new Tuple<int, uint>(Memory.ReadInt(Addresses.CemeteryHillLevelStatus), Addresses.CemeteryHillLevelStatus)},
+               {"The Hilltop Mausoleum", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheHilltopMausoleumLevelStatus), Addresses.TheHilltopMausoleumLevelStatus)},
+               {"Scarecrow Fields", new Tuple<int, uint>(Memory.ReadInt(Addresses.ScarecrowFieldsLevelStatus), Addresses.ScarecrowFieldsLevelStatus)},
+               {"Ant Hill", new Tuple<int, uint>(Memory.ReadInt(Addresses.AntHillLevelStatus), Addresses.AntHillLevelStatus)},
+               {"The Crystal Caves", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheCrystalCavesLevelStatus), Addresses.TheCrystalCavesLevelStatus)},
+               {"The Lake", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheLakeLevelStatus), Addresses.TheLakeLevelStatus)},
+               {"Pumpkin Gorge", new Tuple<int, uint>(Memory.ReadInt(Addresses.PumpkinGorgeLevelStatus), Addresses.PumpkinGorgeLevelStatus)},
+               {"Pumpkin Serpent", new Tuple<int, uint>(Memory.ReadInt(Addresses.PumpkinSerpentLevelStatus), Addresses.PumpkinSerpentLevelStatus)},
+               {"Sleeping Village", new Tuple<int, uint>(Memory.ReadInt(Addresses.SleepingVillageLevelStatus), Addresses.SleepingVillageLevelStatus)},
+               {"Pools of the Ancient Dead", new Tuple<int, uint>(Memory.ReadInt(Addresses.PoolsOfTheAncientDeadLevelStatus), Addresses.PoolsOfTheAncientDeadLevelStatus)},
+               {"Asylum Grounds", new Tuple<int, uint>(Memory.ReadInt(Addresses.AsylumGroundsLevelStatus), Addresses.AsylumGroundsLevelStatus)},
+               {"Inside the Asylum", new Tuple<int, uint>(Memory.ReadInt(Addresses.InsideTheAsylumLevelStatus), Addresses.InsideTheAsylumLevelStatus)},
+               {"Enchanted Earth", new Tuple<int, uint>(Memory.ReadInt(Addresses.EnchantedEarthLevelStatus), Addresses.EnchantedEarthLevelStatus)},
+               {"The Gallows Gauntlet", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheGallowsGauntletLevelStatus), Addresses.TheGallowsGauntletLevelStatus)},
+               {"The Haunted Ruins", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheHauntedRuinsLevelStatus), Addresses.TheHauntedRuinsLevelStatus)},
+               {"Ghost Ship", new Tuple<int, uint>(Memory.ReadInt(Addresses.GhostShipLevelStatus), Addresses.GhostShipLevelStatus)},
+               {"The Entrance Hall", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheEntranceHallLevelStatus), Addresses.TheEntranceHallLevelStatus)},
+               {"The Time Device", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheTimeDeviceLevelStatus), Addresses.TheTimeDeviceLevelStatus)},
+               {"Zaroks Lair", new Tuple<int, uint>(Memory.ReadInt(Addresses.ZaroksLairLevelStatus), Addresses.ZaroksLairLevelStatus)},
+            };
+        }
+        public static Dictionary<string, Tuple<int, uint>> GetChaliceLocationStatuses()
+        {
+            return new Dictionary<string, Tuple<int, uint>>
+            {
                {"The Graveyard: Chalice", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheGraveyardLevelStatus), Addresses.TheGraveyardLevelStatus)},
                {"Return to the Graveyard: Chalice", new Tuple<int, uint>(Memory.ReadInt(Addresses.ReturnToTheGraveyardLevelStatus), Addresses.ReturnToTheGraveyardLevelStatus)},
                {"Cemetery Hill: Chalice", new Tuple<int, uint>(Memory.ReadInt(Addresses.CemeteryHillLevelStatus), Addresses.CemeteryHillLevelStatus)},
@@ -72,7 +78,7 @@ namespace MedievilArchipelago
         {
             return new Dictionary<string, Tuple<int, uint>>
             {
-                {"Daring Dash: Skill",new Tuple<int, uint>(Memory.ReadInt(Addresses.DaringDashSkill), Addresses.DaringDashSkill)},
+                {"Skill: Daring Dash",new Tuple<int, uint>(Memory.ReadInt(Addresses.DaringDashSkill), Addresses.DaringDashSkill)},
             };
         }
 
@@ -213,6 +219,7 @@ namespace MedievilArchipelago
             List<Location> locations = new List<Location>();
 
             List<LevelData> levels = GetLevelData();
+            List<ChaliceData> chalices = GetChaliceData();
             List<HallOfHeroesData> hallOfHeroesVisits = GetHallOfHeroesData();
             List<SkillData> skills = GetSkillData();
             List<WeaponLocationsData> weapons = GetWeaponLocationsData();
@@ -220,6 +227,7 @@ namespace MedievilArchipelago
             List<RuneData> runes = GetRuneLocationsData();
 
             var levelDict = GetLevelCompleteStatuses();
+            var chaliceDict = GetChaliceLocationStatuses();
             var skillDict = GetSkillStatuses();
             var hallOfHeroesDict = GetHallOfHeroesStatuses();
             var weaponLocationDict = GetWeaponLocationStatuses();
@@ -245,14 +253,17 @@ namespace MedievilArchipelago
 
                     };
                 }
-                if (level.Name.Contains("Chalice"))
+            }
+            foreach (var chalice in chalices)
+            {
+                if (chalice.Name.Contains("Chalice"))
                 {
                     {
                         Location location = new Location()
                         {
-                            Name = level.Name,
-                            Address = levelDict[level.Name].Item2,
-                            Id = baseId + level.LevelId,
+                            Name = chalice.Name,
+                            Address = chaliceDict[chalice.Name].Item2,
+                            Id = baseId + chalice.LevelId,
                             CheckType = LocationCheckType.Byte,
                             CheckValue = "19"
                         };
@@ -400,50 +411,58 @@ namespace MedievilArchipelago
         {
             List<LevelData> levels = new List<LevelData>()
             {
-                new LevelData("Dan's Crypt: Cleared", 1, [], []),
-                new LevelData("The Graveyard: Cleared", 2, [], []),
-                new LevelData("Return to the Graveyard: Cleared",3, [], []),
-                new LevelData("Cemetery Hill: Cleared",4, [], []),
-                new LevelData("The Hilltop Mausoleum: Cleared",5, [], []),
-                new LevelData("Scarecrow Fields: Cleared",6, [], []),
-                new LevelData("Ant Hill: Cleared",7, [], []),
-                new LevelData("The Crystal Caves: Cleared",6, [], []),
-                new LevelData("The Lake: Cleared",9, [], []),
-                new LevelData("Pumpkin Gorge: Cleared",10, [], []),
-                new LevelData("Pumpkin Serpent: Cleared",11, [], []),
-                new LevelData("Sleeping Village: Cleared",12, [], []),
-                new LevelData("Pools of the Ancient Dead: Cleared",13, [], []),
-                new LevelData("Asylum Grounds: Cleared",14, [], []),
-                new LevelData("Inside the Asylum: Cleared",15, [], []),
-                new LevelData("Enchanted Earth: Cleared",16, [], []),
-                new LevelData("The Gallows Gauntlet: Cleared" ,17, [], []),
-                new LevelData("The Haunted Ruins: Cleared",18, [], []),
-                new LevelData("Ghost Ship: Cleared",19, [], []),
-                new LevelData("The Entrance Hall: Cleared",20, [], []),
-                new LevelData("The Time Device: Cleared",21, [], []),
-                new LevelData("Zaroks Lair: Cleared",22, [], []), // not sure if this is considered a level as it's the clear condition. Putting it here for now
-                new LevelData("The Graveyard: Chalice", 23, [], []),
-                new LevelData("Return to the Graveyard: Chalice", 24, [], []),
-                new LevelData("Cemetery Hill: Chalice", 25, [], []),
-                new LevelData("The Hilltop Mausoleum: Chalice", 26, [], []),
-                new LevelData("Scarecrow Fields: Chalice", 27, [], []),
-                new LevelData("Ant Hill: Chalice", 28, [], []),
-                new LevelData("The Crystal Caves: Chalice", 29, [], []),
-                new LevelData("The Lake: Chalice", 30, [], []),
-                new LevelData("Pumpkin Gorge: Chalice", 31, [], []),
-                new LevelData("Pumpkin Serpent: Chalice", 32, [], []),
-                new LevelData("Sleeping Village: Chalice", 33, [], []),
-                new LevelData("Pools of the Ancient Dead: Chalice", 34, [], []),
-                new LevelData("Asylum Grounds: Chalice", 35, [], []),
-                new LevelData("Inside the Asylum: Chalice", 36, [], []),
-                new LevelData("Enchanted Earth: Chalice", 37, [], []),
-                new LevelData("The Gallows Gauntlet: Chalice", 38, [], []),
-                new LevelData("The Haunted Ruins: Chalice", 39, [], []),
-                new LevelData("Ghost Ship: Chalice", 40, [], []),
-                new LevelData("The Entrance Hall: Chalice", 41, [], []),
-                new LevelData("The Time Device: Chalice", 42, [], [])
+                new LevelData("Cleared: Dan's Crypt", 1, [], []),
+                new LevelData("Cleared: The Graveyard", 2, [], []),
+                new LevelData("Cleared: Return to the Graveyard",3, [], []),
+                new LevelData("Cleared: Cemetery Hill",4, [], []),
+                new LevelData("Cleared: The Hilltop Mausoleum",5, [], []),
+                new LevelData("Cleared: Scarecrow Fields",6, [], []),
+                new LevelData("Cleared: Ant Hill",7, [], []),
+                new LevelData("Cleared: The Crystal Caves",6, [], []),
+                new LevelData("Cleared: The Lake",9, [], []),
+                new LevelData("Cleared: Pumpkin Gorge",10, [], []),
+                new LevelData("Cleared: Pumpkin Serpent",11, [], []),
+                new LevelData("Cleared: Sleeping Village",12, [], []),
+                new LevelData("Cleared: Pools of the Ancient Dead",13, [], []),
+                new LevelData("Cleared: Asylum Grounds",14, [], []),
+                new LevelData("Cleared: Inside the Asylum",15, [], []),
+                new LevelData("Cleared: Enchanted Earth",16, [], []),
+                new LevelData("Cleared: The Gallows Gauntlet" ,17, [], []),
+                new LevelData("Cleared: The Haunted Ruins",18, [], []),
+                new LevelData("Cleared: Ghost Ship",19, [], []),
+                new LevelData("Cleared: The Entrance Hall",20, [], []),
+                new LevelData("Cleared: The Time Device",21, [], []),
+                new LevelData("Cleared: Zaroks Lair",22, [], []), // not sure if this is considered a level as it's the clear condition. Putting it here for now
+
             };
             return levels;
+        }
+        private static List<ChaliceData> GetChaliceData()
+        {
+            List<ChaliceData> chalices = new List<ChaliceData>()
+            {
+                new ChaliceData("Chalice: The Graveyard", 23),
+                new ChaliceData("Chalice: Return to the Graveyard", 24),
+                new ChaliceData("Chalice: Cemetery Hill", 25),
+                new ChaliceData("Chalice: The Hilltop Mausoleum", 26),
+                new ChaliceData("Chalice: Scarecrow Fields", 27),
+                new ChaliceData("Chalice: Ant Hill", 28),
+                new ChaliceData("Chalice: The Crystal Caves", 29),
+                new ChaliceData("Chalice: The Lake", 30),
+                new ChaliceData("Chalice: Pumpkin Gorge", 31),
+                new ChaliceData("Chalice: Pumpkin Serpent", 32),
+                new ChaliceData("Chalice: Sleeping Village", 33),
+                new ChaliceData("Chalice: Pools of the Ancient Dead", 34),
+                new ChaliceData("Chalice: Asylum Grounds", 35),
+                new ChaliceData("Chalice: Inside the Asylum", 36),
+                new ChaliceData("Chalice: Enchanted Earth", 37),
+                new ChaliceData("Chalice: The Gallows Gauntlet", 38),
+                new ChaliceData("Chalice: The Haunted Ruins", 39),
+                new ChaliceData("Chalice: Ghost Ship", 40),
+                new ChaliceData("Chalice: The Entrance Hall", 41),
+                new ChaliceData("Chalice: The Time Device", 42)
+            };
+            return chalices;
         }
 
         private static List<SkillData> GetSkillData()
@@ -459,26 +478,26 @@ namespace MedievilArchipelago
         {
             List<HallOfHeroesData> hallOfHeroeVisits = new List<HallOfHeroesData>()
             {
-                new HallOfHeroesData("Canny Tim 1: Hall Of Heroes",44),
-                new HallOfHeroesData("Canny Tim 2: Hall Of Heroes",45),
-                new HallOfHeroesData("Stanyer Iron Hewer 1: Hall Of Heroes",46),
-                new HallOfHeroesData("Stanyer Iron Hewer 2: Hall Of Heroes",47),
-                new HallOfHeroesData("Woden The Mighty 1: Hall Of Heroes",48),
-                new HallOfHeroesData("Woden The Mighty 2: Hall Of Heroes",49),
-                new HallOfHeroesData("RavenHooves The Archer 1: Hall Of Heroes",50),
-                new HallOfHeroesData("RavenHooves The Archer 2: Hall Of Heroes",51),
-                new HallOfHeroesData("RavenHooves The Archer 3: Hall Of Heroes",52),
-                new HallOfHeroesData("RavenHooves The Archer 4: Hall Of Heroes",53),
-                new HallOfHeroesData("Imanzi 1: Hall Of Heroes",54),
-                new HallOfHeroesData("Imanzi 2: Hall Of Heroes",55),
-                new HallOfHeroesData("Dark Steadfast 1: Hall Of Heroes",56),
-                new HallOfHeroesData("Dark Steadfast 2: Hall Of Heroes",57),
-                new HallOfHeroesData("Karl Stungard 1: Hall Of Heroes",58),
-                new HallOfHeroesData("Karl Stungard 2: Hall Of Heroes",59),
-                new HallOfHeroesData("Bloodmonath Skill Cleaver 1: Hall Of Heroes",60),
-                new HallOfHeroesData("Bloodmonath Skill Cleaver 2: Hall Of Heroes",61),
-                new HallOfHeroesData("Megwynne Stormbinder 1: Hall Of Heroes",62),
-                new HallOfHeroesData("Megwynne Stormbinder 2: Hall Of Heroes",63),
+                new HallOfHeroesData("Hall of Heroes: Canny Tim 1",44),
+                new HallOfHeroesData("Hall of Heroes: Canny Tim 2",45),
+                new HallOfHeroesData("Hall of Heroes: Stanyer Iron Hewer 1",46),
+                new HallOfHeroesData("Hall of Heroes: Stanyer Iron Hewer 2",47),
+                new HallOfHeroesData("Hall of Heroes: Woden The Mighty 1",48),
+                new HallOfHeroesData("Hall of Heroes: Woden The Mighty 2",49),
+                new HallOfHeroesData("Hall of Heroes: RavenHooves The Archer 1",50),
+                new HallOfHeroesData("Hall of Heroes: RavenHooves The Archer 2",51),
+                new HallOfHeroesData("Hall of Heroes: RavenHooves The Archer 3",52),
+                new HallOfHeroesData("Hall of Heroes: RavenHooves The Archer 4",53),
+                new HallOfHeroesData("Hall of Heroes: Imanzi 1",54),
+                new HallOfHeroesData("Hall of Heroes: Imanzi 2",55),
+                new HallOfHeroesData("Hall of Heroes: Dark Steadfast 1",56),
+                new HallOfHeroesData("Hall of Heroes: Dark Steadfast 2",57),
+                new HallOfHeroesData("Hall of Heroes: Karl Stungard 1",58),
+                new HallOfHeroesData("Hall of Heroes: Karl Stungard 2",59),
+                new HallOfHeroesData("Hall of Heroes: Bloodmonath Skill Cleaver 1",60),
+                new HallOfHeroesData("Hall of Heroes: Bloodmonath Skill Cleaver 2",61),
+                new HallOfHeroesData("Hall of Heroes: Megwynne Stormbinder 1",62),
+                new HallOfHeroesData("Hall of Heroes: Megwynne Stormbinder 2",63),
             };
             return hallOfHeroeVisits;
         }
@@ -486,25 +505,25 @@ namespace MedievilArchipelago
         {
             List<WeaponLocationsData> weaponLocations = new List<WeaponLocationsData>()
             {
-                new WeaponLocationsData("Small Sword: Dans Crypt",64),
-                new WeaponLocationsData("Broadsword: Hall of Heroes",65),
-                new WeaponLocationsData("Magic Sword: Hall of Heroes",66),
-                new WeaponLocationsData("Club: Cemetery Hill",67),
-                new WeaponLocationsData("Hammer: Hall Of Heroes",68),
-                new WeaponLocationsData("Daggers: Dan's Crypt",69),
-                new WeaponLocationsData("Axe: Hall Of Heroes",70),
-                new WeaponLocationsData("Chicken Drumsticks: The Enchanted Earth",71),
-                new WeaponLocationsData("Crossbow: Hall Of Heroes",72),
-                new WeaponLocationsData("Longbow: Hall Of Heroes",73),
-                new WeaponLocationsData("Fire Longbow: Hall Of Heroes",74),
-                new WeaponLocationsData("Magic Longbow: Hall Of Heroes",75),
-                new WeaponLocationsData("Spear: Hall Of Heroes",76),
-                new WeaponLocationsData("Lightning: Hall Of Heroes",77),
-                new WeaponLocationsData("Good Lightning: Zarok's Lair",78),
-                new WeaponLocationsData("Copper Shield: Dan's Crypt",79),
-                new WeaponLocationsData("Silver Shield: Return to the Graveyard",80),
-                new WeaponLocationsData("Gold Shield: Hall Of Heroes",81),
-                new WeaponLocationsData("Dragon Armour: The Crystal Caves",82),
+                new WeaponLocationsData("Equipment: Small Sword",64), // crypt
+                new WeaponLocationsData("Equipment: Broadsword",65), // hall of heroes
+                new WeaponLocationsData("Equipment: Magic Sword",66),// hall of heroes
+                new WeaponLocationsData("Equipment: Club",67), // cemetery hill
+                new WeaponLocationsData("Equipment: Hammer",68),// hall of heroes
+                new WeaponLocationsData("Equipment: Daggers",69), // dan's crypt
+                new WeaponLocationsData("Equipment: Axe",70),// hall of heroes
+                new WeaponLocationsData("Equipment: Chicken Drumsticks",71), // enchanted earth
+                new WeaponLocationsData("Equipment: Crossbow",72),// hall of heroes
+                new WeaponLocationsData("Equipment: Longbow",73),// hall of heroes
+                new WeaponLocationsData("Equipment: Fire Longbow",74),// hall of heroes
+                new WeaponLocationsData("Equipment: Magic Longbow",75),// hall of heroes
+                new WeaponLocationsData("Equipment: Spear",76),// hall of heroes
+                new WeaponLocationsData("Equipment: Lightning",77),// hall of heroes
+                new WeaponLocationsData("Equipment: Good Lightning",78), // zarok's lair
+                new WeaponLocationsData("Equipment: Copper Shield",79), // dan's crypt  (Way more than just this)
+                new WeaponLocationsData("Equipment: Silver Shield",80), // return to the graveyard  (Way more than just this)
+                new WeaponLocationsData("Equipment: Gold Shield",81),// hall of heroes
+                new WeaponLocationsData("Equipment: Dragon Armour",82), // crystal caves
             };
             return weaponLocations;
         }

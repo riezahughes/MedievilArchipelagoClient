@@ -14,6 +14,8 @@ namespace MedievilArchipelago
     public static class Addresses
     {
         public const uint FakeAddress = 0x00000000; // This is a placeholder for an address that doesn't exist in the game. Used for testing.
+
+        public const uint InGameCheck = 0x000f88a0;
         // Current Level
         public const uint CurrentLevel = 0x000eee68;
         /*

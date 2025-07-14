@@ -37,15 +37,37 @@ List<Location> GameLocations = null;
 
 // Event Handlers
 
-void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
+
+async void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
 {
     Log.Logger.Information("Connected to Archipelago");
     Log.Logger.Information($"Playing {Client.CurrentSession.ConnectionInfo.Game} as {Client.CurrentSession.Players.GetPlayerName(Client.CurrentSession.ConnectionInfo.Slot)}");
     Console.WriteLine("Connected to Archipelago!");
 
-    foreach (KeyValuePair<string, object> val in Client.GameState.CustomValues)
+    Console.WriteLine("Setting up player state..");
+
+    // put here for debugging
+    foreach (Location val in Client.GameState.CompletedLocations)
     {
-        Console.WriteLine(val.Key, val.Value);
+        if (val.Name.Contains("Equipment")) {
+            Console.WriteLine(val.Id.ToString(), val.Name);
+        }
+
+        if (val.Name.Contains("Skill"))
+        {
+
+        }
+
+        if (val.Name.Contains("Life Bottle"))
+        {
+
+        }
+
+        if (val.Name.Contains("Skill"))
+        {
+
+        }
+
     }
 }
 
@@ -179,7 +201,7 @@ void ReceiveSkill(Item item)
 void ItemReceived(object sender, ItemReceivedEventArgs args)
 {
     Console.WriteLine(args.Item.Id);
-    Console.WriteLine($"Item Received: {args.Item.Name} x{args.Item.Quantity}");
+    Console.WriteLine($"Item Received: {args.Item.Name}");
 
     switch (args.Item)
     {
@@ -251,6 +273,7 @@ async void RunLagTrap()
 //
 ////////////////////////////
 
+// Make sure the connect is initialised
 if (!connected)
 {
     Console.WriteLine("Failed to connect to Duckstation. Is it running and loaded with a game?");
@@ -260,6 +283,8 @@ if (!connected)
 }
 
 Console.WriteLine("Successfully connected to Duckstation.");
+
+// get the duckstation offset
 try
 {
     Memory.GlobalOffset = Memory.GetDuckstationOffset();
@@ -269,6 +294,18 @@ catch (Exception ex)
     Console.WriteLine($"An unexpected error occurred while getting Duckstation memory offset: {ex.Message}");
     Console.WriteLine(ex); // Print full exception for debugging
 }
+
+// wait till you're in-game
+uint currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
+
+while (currentGameStatus != 0x800f8198) // 0x00 means not in a level
+{
+    currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
+    Console.WriteLine($"Waiting to be in-game...");
+    await Task.Delay(5000);
+}
+
+// start AP Login
 
 Console.WriteLine("Enter AP url: eg,archipelago.gg");
 string lineUrl = Console.ReadLine();

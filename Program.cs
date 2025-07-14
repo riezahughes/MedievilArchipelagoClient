@@ -47,27 +47,21 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
     Console.WriteLine("Setting up player state..");
 
     // put here for debugging
-    foreach (Location val in Client.GameState.CompletedLocations)
-    {
-        if (val.Name.Contains("Equipment")) {
-            Console.WriteLine(val.Id.ToString(), val.Name);
-        }
-
-        if (val.Name.Contains("Skill"))
+    if (Client?.GameState?.CompletedLocations?.Count > 0) { 
+        foreach (Location val in Client.GameState.CompletedLocations)
         {
+            var loc = new Item();
+            loc.Name = val.Name;
+
+            switch (loc)
+            {
+                case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
+                case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
+                case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(x); break;
+                    //case var x when x.Name.ContainsAny("Rune"): ReceiveRune(x); break; // needs implimented
+            }
 
         }
-
-        if (val.Name.Contains("Life Bottle"))
-        {
-
-        }
-
-        if (val.Name.Contains("Skill"))
-        {
-
-        }
-
     }
 }
 
@@ -147,12 +141,22 @@ int ExtractBracketAmount(string itemName)
 
 string ExtractDictName(string itemName)
 {
-    var match = Regex.Match(itemName, @"^(.*?)(?:\s*\(.*?\))?$");
-    if (match.Success)
+    var colonMatch = Regex.Match(itemName, @"^[^:]*:\s*(.*)$");
+    if (colonMatch.Success)
     {
-        return match.Groups[1].Value.Trim();
+        return colonMatch.Groups[1].Value.Trim();
     }
-    return "N/A"; // Return the original string if no match is found  
+
+    // 2. If no colon match, try the "parentheses" pattern
+    var parenthesesMatch = Regex.Match(itemName, @"^(.*?)(?:\s*\(.*?\))?$");
+    if (parenthesesMatch.Success)
+    {
+        return parenthesesMatch.Groups[1].Value.Trim();
+    }
+
+    // 3. If neither pattern matches, return the original string or "N/A"
+    // (Your original function returned "N/A" if no match, let's stick to that)
+    return "N/A";
 }
 
 void ReceiveCountType(Item item)

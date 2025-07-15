@@ -1,5 +1,6 @@
 ﻿using Archipelago.Core.Models;
 using Archipelago.Core.Util;
+using Archipelago.MultiClient.Net.Models;
 using MedievilArchipelago;
 using MedievilArchipelago.Models;
 using Newtonsoft.Json;
@@ -20,195 +21,230 @@ namespace MedievilArchipelago
 {
     public class Helpers
     {
-        public static Dictionary<string, Tuple<int, uint>> GetLevelCompleteStatuses()
+        public static Dictionary<string, Tuple<int, uint, uint>> GetLevelCompleteStatuses()
         {
-            return new Dictionary<string, Tuple<int, uint>>
+            return new Dictionary<string, Tuple<int, uint, uint>>
             {
-               {"Cleared: Dan's Crypt", new Tuple<int, uint>(Memory.ReadInt(Addresses.DansCryptLevelStatus), Addresses.DansCryptLevelStatus)},
-               {"Cleared: The Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheGraveyardLevelStatus), Addresses.TheGraveyardLevelStatus)},
-               {"Cleared: Return to the Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.ReturnToTheGraveyardLevelStatus), Addresses.ReturnToTheGraveyardLevelStatus)},
-               {"Cleared: Cemetery Hill", new Tuple<int, uint>(Memory.ReadInt(Addresses.CemeteryHillLevelStatus), Addresses.CemeteryHillLevelStatus)},
-               {"Cleared: The Hilltop Mausoleum", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheHilltopMausoleumLevelStatus), Addresses.TheHilltopMausoleumLevelStatus)},
-               {"Cleared: Scarecrow Fields", new Tuple<int, uint>(Memory.ReadInt(Addresses.ScarecrowFieldsLevelStatus), Addresses.ScarecrowFieldsLevelStatus)},
-               {"Cleared: Ant Hill", new Tuple<int, uint>(Memory.ReadInt(Addresses.AntHillLevelStatus), Addresses.AntHillLevelStatus)},
-               {"Cleared: The Crystal Caves", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheCrystalCavesLevelStatus), Addresses.TheCrystalCavesLevelStatus)},
-               {"Cleared: The Lake", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheLakeLevelStatus), Addresses.TheLakeLevelStatus)},
-               {"Cleared: Pumpkin Gorge", new Tuple<int, uint>(Memory.ReadInt(Addresses.PumpkinGorgeLevelStatus), Addresses.PumpkinGorgeLevelStatus)},
-               {"Cleared: Pumpkin Serpent", new Tuple<int, uint>(Memory.ReadInt(Addresses.PumpkinSerpentLevelStatus), Addresses.PumpkinSerpentLevelStatus)},
-               {"Cleared: Sleeping Village", new Tuple<int, uint>(Memory.ReadInt(Addresses.SleepingVillageLevelStatus), Addresses.SleepingVillageLevelStatus)},
-               {"Cleared: Pools of the Ancient Dead", new Tuple<int, uint>(Memory.ReadInt(Addresses.PoolsOfTheAncientDeadLevelStatus), Addresses.PoolsOfTheAncientDeadLevelStatus)},
-               {"Cleared: Asylum Grounds", new Tuple<int, uint>(Memory.ReadInt(Addresses.AsylumGroundsLevelStatus), Addresses.AsylumGroundsLevelStatus)},
-               {"Cleared: Inside the Asylum", new Tuple<int, uint>(Memory.ReadInt(Addresses.InsideTheAsylumLevelStatus), Addresses.InsideTheAsylumLevelStatus)},
-               {"Cleared: Enchanted Earth", new Tuple<int, uint>(Memory.ReadInt(Addresses.EnchantedEarthLevelStatus), Addresses.EnchantedEarthLevelStatus)},
-               {"Cleared: The Gallows Gauntlet", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheGallowsGauntletLevelStatus), Addresses.TheGallowsGauntletLevelStatus)},
-               {"Cleared: The Haunted Ruins", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheHauntedRuinsLevelStatus), Addresses.TheHauntedRuinsLevelStatus)},
-               {"Cleared: Ghost Ship", new Tuple<int, uint>(Memory.ReadInt(Addresses.GhostShipLevelStatus), Addresses.GhostShipLevelStatus)},
-               {"Cleared: The Entrance Hall", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheEntranceHallLevelStatus), Addresses.TheEntranceHallLevelStatus)},
-               {"Cleared: The Time Device", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheTimeDeviceLevelStatus), Addresses.TheTimeDeviceLevelStatus)},
-               {"Cleared: Zaroks Lair", new Tuple<int, uint>(Memory.ReadInt(Addresses.ZaroksLairLevelStatus), Addresses.ZaroksLairLevelStatus)},
+               {"Cleared: Dan's Crypt", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.DansCryptLevelStatus), Addresses.DansCryptLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: The Graveyard", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheGraveyardLevelStatus), Addresses.TheGraveyardLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: Return to the Graveyard", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.ReturnToTheGraveyardLevelStatus), Addresses.ReturnToTheGraveyardLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: Cemetery Hill", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.CemeteryHillLevelStatus), Addresses.CemeteryHillLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: The Hilltop Mausoleum", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheHilltopMausoleumLevelStatus), Addresses.TheHilltopMausoleumLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: Scarecrow Fields", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.ScarecrowFieldsLevelStatus), Addresses.ScarecrowFieldsLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: Ant Hill", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AntHillLevelStatus), Addresses.AntHillLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: The Crystal Caves", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheCrystalCavesLevelStatus), Addresses.TheCrystalCavesLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: The Lake", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheLakeLevelStatus), Addresses.TheLakeLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: Pumpkin Gorge", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.PumpkinGorgeLevelStatus), Addresses.PumpkinGorgeLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: Pumpkin Serpent", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.PumpkinSerpentLevelStatus), Addresses.PumpkinSerpentLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: Sleeping Village", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SleepingVillageLevelStatus), Addresses.SleepingVillageLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: Pools of the Ancient Dead", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.PoolsOfTheAncientDeadLevelStatus), Addresses.PoolsOfTheAncientDeadLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: Asylum Grounds", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AsylumGroundsLevelStatus), Addresses.AsylumGroundsLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: Inside the Asylum", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.InsideTheAsylumLevelStatus), Addresses.InsideTheAsylumLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: Enchanted Earth", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.EnchantedEarthLevelStatus), Addresses.EnchantedEarthLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: The Gallows Gauntlet", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheGallowsGauntletLevelStatus), Addresses.TheGallowsGauntletLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: The Haunted Ruins", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheHauntedRuinsLevelStatus), Addresses.TheHauntedRuinsLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: Ghost Ship", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.GhostShipLevelStatus), Addresses.GhostShipLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: The Entrance Hall", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheEntranceHallLevelStatus), Addresses.TheEntranceHallLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: The Time Device", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheTimeDeviceLevelStatus), Addresses.TheTimeDeviceLevelStatus, Addresses.FakeAddress)},
+               {"Cleared: Zaroks Lair", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.ZaroksLairLevelStatus), Addresses.ZaroksLairLevelStatus, Addresses.FakeAddress)},
             };
         }
-        public static Dictionary<string, Tuple<int, uint>> GetChaliceLocationStatuses()
+        public static Dictionary<string, Tuple<int, uint, uint>> GetChaliceLocationStatuses()
         {
-            return new Dictionary<string, Tuple<int, uint>>
+            return new Dictionary<string, Tuple<int, uint, uint>>
             {
-               {"Chalice: The Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheGraveyardLevelStatus), Addresses.TheGraveyardLevelStatus)},
-               {"Chalice: Return to the Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.ReturnToTheGraveyardLevelStatus), Addresses.ReturnToTheGraveyardLevelStatus)},
-               {"Chalice: Cemetery Hill", new Tuple<int, uint>(Memory.ReadInt(Addresses.CemeteryHillLevelStatus), Addresses.CemeteryHillLevelStatus)},
-               {"Chalice: The Hilltop Mausoleum", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheHilltopMausoleumLevelStatus), Addresses.TheHilltopMausoleumLevelStatus)},
-               {"Chalice: Scarecrow Fields", new Tuple<int, uint>(Memory.ReadInt(Addresses.ScarecrowFieldsLevelStatus), Addresses.ScarecrowFieldsLevelStatus)},
-               {"Chalice: Ant Hill", new Tuple<int, uint>(Memory.ReadInt(Addresses.AntHillLevelStatus), Addresses.AntHillLevelStatus)},
-               {"Chalice: The Crystal Caves", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheCrystalCavesLevelStatus), Addresses.TheCrystalCavesLevelStatus)},
-               {"Chalice: The Lake", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheLakeLevelStatus), Addresses.TheLakeLevelStatus)},
-               {"Chalice: Pumpkin Gorge", new Tuple<int, uint>(Memory.ReadInt(Addresses.PumpkinGorgeLevelStatus), Addresses.PumpkinGorgeLevelStatus)},
-               {"Chalice: Pumpkin Serpent", new Tuple<int, uint>(Memory.ReadInt(Addresses.PumpkinSerpentLevelStatus), Addresses.PumpkinSerpentLevelStatus)},
-               {"Chalice: Sleeping Village", new Tuple<int, uint>(Memory.ReadInt(Addresses.SleepingVillageLevelStatus), Addresses.SleepingVillageLevelStatus)},
-               {"Chalice: Pools of the Ancient Dead", new Tuple<int, uint>(Memory.ReadInt(Addresses.PoolsOfTheAncientDeadLevelStatus), Addresses.PoolsOfTheAncientDeadLevelStatus)},
-               {"Chalice: Asylum Grounds", new Tuple<int, uint>(Memory.ReadInt(Addresses.AsylumGroundsLevelStatus), Addresses.AsylumGroundsLevelStatus)},
-               {"Chalice: Inside the Asylum", new Tuple<int, uint>(Memory.ReadInt(Addresses.InsideTheAsylumLevelStatus), Addresses.InsideTheAsylumLevelStatus)},
-               {"Chalice: Enchanted Earth", new Tuple<int, uint>(Memory.ReadInt(Addresses.EnchantedEarthLevelStatus), Addresses.EnchantedEarthLevelStatus)},
-               {"Chalice: The Gallows Gauntlet", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheGallowsGauntletLevelStatus), Addresses.TheGallowsGauntletLevelStatus)},
-               {"Chalice: The Haunted Ruins", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheHauntedRuinsLevelStatus), Addresses.TheHauntedRuinsLevelStatus)},
-               {"Chalice: Ghost Ship", new Tuple<int, uint>(Memory.ReadInt(Addresses.GhostShipLevelStatus), Addresses.GhostShipLevelStatus)},
-               {"Chalice: The Entrance Hall", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheEntranceHallLevelStatus), Addresses.TheEntranceHallLevelStatus)},
-               {"Chalice: The Time Device", new Tuple<int, uint>(Memory.ReadInt(Addresses.TheTimeDeviceLevelStatus), Addresses.TheTimeDeviceLevelStatus)},
+               {"Chalice: The Graveyard", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheGraveyardLevelStatus), Addresses.TheGraveyardLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: Return to the Graveyard", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.ReturnToTheGraveyardLevelStatus), Addresses.ReturnToTheGraveyardLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: Cemetery Hill", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.CemeteryHillLevelStatus), Addresses.CemeteryHillLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: The Hilltop Mausoleum", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheHilltopMausoleumLevelStatus), Addresses.TheHilltopMausoleumLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: Scarecrow Fields", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.ScarecrowFieldsLevelStatus), Addresses.ScarecrowFieldsLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: Ant Hill", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AntHillLevelStatus), Addresses.AntHillLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: The Crystal Caves", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheCrystalCavesLevelStatus), Addresses.TheCrystalCavesLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: The Lake", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheLakeLevelStatus), Addresses.TheLakeLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: Pumpkin Gorge", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.PumpkinGorgeLevelStatus), Addresses.PumpkinGorgeLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: Pumpkin Serpent", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.PumpkinSerpentLevelStatus), Addresses.PumpkinSerpentLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: Sleeping Village", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SleepingVillageLevelStatus), Addresses.SleepingVillageLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: Pools of the Ancient Dead", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.PoolsOfTheAncientDeadLevelStatus), Addresses.PoolsOfTheAncientDeadLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: Asylum Grounds", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AsylumGroundsLevelStatus), Addresses.AsylumGroundsLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: Inside the Asylum", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.InsideTheAsylumLevelStatus), Addresses.InsideTheAsylumLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: Enchanted Earth", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.EnchantedEarthLevelStatus), Addresses.EnchantedEarthLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: The Gallows Gauntlet", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheGallowsGauntletLevelStatus), Addresses.TheGallowsGauntletLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: The Haunted Ruins", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheHauntedRuinsLevelStatus), Addresses.TheHauntedRuinsLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: Ghost Ship", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.GhostShipLevelStatus), Addresses.GhostShipLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: The Entrance Hall", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheEntranceHallLevelStatus), Addresses.TheEntranceHallLevelStatus, Addresses.FakeAddress)},
+               {"Chalice: The Time Device", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheTimeDeviceLevelStatus), Addresses.TheTimeDeviceLevelStatus, Addresses.FakeAddress)},
             };
         }
-        public static Dictionary<string, Tuple<int, uint>> GetSkillStatuses()
+        public static Dictionary<string, Tuple<int, uint, uint>> GetSkillStatuses()
         {
-            return new Dictionary<string, Tuple<int, uint>>
+            return new Dictionary<string, Tuple<int, uint, uint>>
             {
-                {"Skill: Daring Dash",new Tuple<int, uint>(Memory.ReadInt(Addresses.DaringDashSkill), Addresses.DaringDashSkill)},
+                {"Skill: Daring Dash",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.DaringDashSkill), Addresses.DaringDashSkill, Addresses.FakeAddress)},
             };
         }
 
-        public static Dictionary<string, Tuple<int, uint>> GetWeaponLocationStatuses()
+        public static Dictionary<string, Tuple<int, uint, uint>> GetWeaponLocationStatuses()
         {
-            return new Dictionary<string, Tuple<int, uint>>
+            return new Dictionary<string, Tuple<int, uint, uint>>
             {
                 // uses fake locations at the moment
-                {"Equipment: Small Sword",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Broadsword",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Magic Sword",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Club",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Hammer",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Daggers",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Axe",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Chicken Drumsticks",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Crossbow",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Longbow",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Fire Longbow",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Magic Longbow",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Spear",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Lightning",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Good Lightning",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Copper Shield",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Silver Shield",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Gold Shield",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Equipment: Dragon Armour",new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Equipment: Small Sword",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.SmallSword)},
+                {"Equipment: Broadsword",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.BroadswordCharge)},
+                {"Equipment: Magic Sword",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.MagicSword)},
+                {"Equipment: Club",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.ClubCharge)},
+                {"Equipment: Hammer",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.Hammer)},
+                {"Equipment: Daggers",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.DaggerAmmo)},
+                {"Equipment: Axe",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.Axe)},
+                {"Equipment: Chicken Drumsticks",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.ChickenDrumsticksAmmo)},
+                {"Equipment: Crossbow",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.CrossbowAmmo)},
+                {"Equipment: Longbow",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.LongbowAmmo)},
+                {"Equipment: Fire Longbow",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.FireLongbowAmmo)},
+                {"Equipment: Magic Longbow",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.MagicLongbowAmmo)},
+                {"Equipment: Spear",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.SpearAmmo)},
+                {"Equipment: Lightning",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.LightningCharge)},
+                {"Equipment: Good Lightning",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.GoodLightning)},
+                {"Equipment: Copper Shield",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.CopperShieldAmmo)},
+                {"Equipment: Silver Shield",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.SilverShieldAmmo)},
+                {"Equipment: Gold Shield",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.GoldShieldAmmo)},
+                {"Equipment: Dragon Armour",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress,  Addresses.DragonArmour)},
             };
         }
 
-        public static Dictionary<string, Tuple<int, uint>> GetHallOfHeroesStatuses()
+        public static Dictionary<string, Tuple<int, uint, uint>> GetHallOfHeroesStatuses()
         {
-            return new Dictionary<string, Tuple<int, uint>>
+            return new Dictionary<string, Tuple<int, uint, uint>>
             {
                 // these locations need updated.
 
-                {"Hall of Heroes: Canny Tim 1",new Tuple<int, uint>(Memory.ReadInt(Addresses.CannyTim1), Addresses.CannyTim1)},
-                {"Hall of Heroes: Canny Tim 2",new Tuple<int, uint>(Memory.ReadInt(Addresses.CannyTim2), Addresses.CannyTim2)},
-                {"Hall of Heroes: Stanyer Iron Hewer 1",new Tuple<int, uint>(Memory.ReadInt(Addresses.StanyerIronHewer1), Addresses.StanyerIronHewer1)},
-                {"Hall of Heroes: Stanyer Iron Hewer 2",new Tuple<int, uint>(Memory.ReadInt(Addresses.StanyerIronHewer2), Addresses.StanyerIronHewer2)},
-                {"Hall of Heroes: Woden The Mighty 1",new Tuple<int, uint>(Memory.ReadInt(Addresses.WodenTheMighty1), Addresses.WodenTheMighty1)},
-                {"Hall of Heroes: Woden The Mighty 2",new Tuple<int, uint>(Memory.ReadInt(Addresses.WodenTheMighty2), Addresses.WodenTheMighty2)},
-                {"Hall of Heroes: RavenHooves The Archer 1",new Tuple<int, uint>(Memory.ReadInt(Addresses.RavenHoovesTheArcher1), Addresses.RavenHoovesTheArcher1)},
-                {"Hall of Heroes: RavenHooves The Archer 2",new Tuple<int, uint>(Memory.ReadInt(Addresses.RavenHoovesTheArcher2), Addresses.RavenHoovesTheArcher2)},
-                {"Hall of Heroes: RavenHooves The Archer 3",new Tuple<int, uint>(Memory.ReadInt(Addresses.RavenHoovesTheArcher3), Addresses.RavenHoovesTheArcher3)},
-                {"Hall of Heroes: RavenHooves The Archer 4",new Tuple<int, uint>(Memory.ReadInt(Addresses.RavenHoovesTheArcher4), Addresses.RavenHoovesTheArcher4)},
-                {"Hall of Heroes: Imanzi 1",new Tuple<int, uint>(Memory.ReadInt(Addresses.Imanzi1), Addresses.Imanzi1)},
-                {"Hall of Heroes: Imanzi 2",new Tuple<int, uint>(Memory.ReadInt(Addresses.Imanzi2), Addresses.Imanzi2)},
-                {"Hall of Heroes: Dark Steadfast 1",new Tuple<int, uint>(Memory.ReadInt(Addresses.DarkSteadfast1), Addresses.DarkSteadfast1)},
-                {"Hall of Heroes: Dark Steadfast 2",new Tuple<int, uint>(Memory.ReadInt(Addresses.DarkSteadfast2), Addresses.DarkSteadfast2)},
-                {"Hall of Heroes: Karl Stungard 1",new Tuple<int, uint>(Memory.ReadInt(Addresses.KarlStungard1), Addresses.KarlStungard1)},
-                {"Hall of Heroes: Karl Stungard 2",new Tuple<int, uint>(Memory.ReadInt(Addresses.KarlStungard2), Addresses.KarlStungard2)},
-                {"Hall of Heroes: Bloodmonath Skill Cleaver 1",new Tuple<int, uint>(Memory.ReadInt(Addresses.BloodmonathSkillCleaver1), Addresses.BloodmonathSkillCleaver1)},
-                {"Hall of Heroes: Bloodmonath Skill Cleaver 2",new Tuple<int, uint>(Memory.ReadInt(Addresses.BloodmonathSkillCleaver2), Addresses.BloodmonathSkillCleaver2)},
-                {"Hall of Heroes: Megwynne Stormbinder 1",new Tuple<int, uint>(Memory.ReadInt(Addresses.MegwynneStormbinder1), Addresses.MegwynneStormbinder1)},
-                {"Hall of Heroes: Megwynne Stormbinder 2",new Tuple<int, uint>(Memory.ReadInt(Addresses.MegwynneStormbinder2), Addresses.MegwynneStormbinder2)},
+                {"Hall of Heroes: Canny Tim 1",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.CannyTim1), Addresses.CannyTim1, Addresses.FakeAddress)},
+                {"Hall of Heroes: Canny Tim 2",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.CannyTim2), Addresses.CannyTim2, Addresses.FakeAddress)},
+                {"Hall of Heroes: Stanyer Iron Hewer 1",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.StanyerIronHewer1), Addresses.StanyerIronHewer1, Addresses.FakeAddress)},
+                {"Hall of Heroes: Stanyer Iron Hewer 2",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.StanyerIronHewer2), Addresses.StanyerIronHewer2, Addresses.FakeAddress)},
+                {"Hall of Heroes: Woden The Mighty 1",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.WodenTheMighty1), Addresses.WodenTheMighty1, Addresses.FakeAddress)},
+                {"Hall of Heroes: Woden The Mighty 2",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.WodenTheMighty2), Addresses.WodenTheMighty2, Addresses.FakeAddress)},
+                {"Hall of Heroes: RavenHooves The Archer 1",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.RavenHoovesTheArcher1), Addresses.RavenHoovesTheArcher1, Addresses.FakeAddress)},
+                {"Hall of Heroes: RavenHooves The Archer 2",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.RavenHoovesTheArcher2), Addresses.RavenHoovesTheArcher2, Addresses.FakeAddress)},
+                {"Hall of Heroes: RavenHooves The Archer 3",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.RavenHoovesTheArcher3), Addresses.RavenHoovesTheArcher3, Addresses.FakeAddress)},
+                {"Hall of Heroes: RavenHooves The Archer 4",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.RavenHoovesTheArcher4), Addresses.RavenHoovesTheArcher4, Addresses.FakeAddress)},
+                {"Hall of Heroes: Imanzi 1",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.Imanzi1), Addresses.Imanzi1, Addresses.FakeAddress)},
+                {"Hall of Heroes: Imanzi 2",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.Imanzi2), Addresses.Imanzi2, Addresses.FakeAddress)},
+                {"Hall of Heroes: Dark Steadfast 1",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.DarkSteadfast1), Addresses.DarkSteadfast1, Addresses.FakeAddress)},
+                {"Hall of Heroes: Dark Steadfast 2",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.DarkSteadfast2), Addresses.DarkSteadfast2, Addresses.FakeAddress)},
+                {"Hall of Heroes: Karl Stungard 1",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.KarlStungard1), Addresses.KarlStungard1, Addresses.FakeAddress)},
+                {"Hall of Heroes: Karl Stungard 2",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.KarlStungard2), Addresses.KarlStungard2, Addresses.FakeAddress)},
+                {"Hall of Heroes: Bloodmonath Skill Cleaver 1",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.BloodmonathSkillCleaver1), Addresses.BloodmonathSkillCleaver1, Addresses.FakeAddress)},
+                {"Hall of Heroes: Bloodmonath Skill Cleaver 2",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.BloodmonathSkillCleaver2), Addresses.BloodmonathSkillCleaver2, Addresses.FakeAddress)},
+                {"Hall of Heroes: Megwynne Stormbinder 1",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.MegwynneStormbinder1), Addresses.MegwynneStormbinder1, Addresses.FakeAddress)},
+                {"Hall of Heroes: Megwynne Stormbinder 2",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.MegwynneStormbinder2), Addresses.MegwynneStormbinder2, Addresses.FakeAddress)},
             };
         }
 
-        public static Dictionary<string, Tuple<int, uint>> GetLifeBottleLocationStatuses()
+        public static Dictionary<string, Tuple<int, uint, uint>> GetLifeBottleLocationStatuses()
         {
-            return new Dictionary<string, Tuple<int, uint>>
+            return new Dictionary<string, Tuple<int, uint, uint>>
             {
                 // uses fake locations at the moment
-                {"Life Bottle: Dan's Crypt", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Life Bottle: The Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Life Bottle: Hall of Heroes (Canny Tim)", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Life Bottle: Dan's Crypt - Behind Wall", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Life Bottle: Scarecrow Fields", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Life Bottle: Pools of the Ancient Dead", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Life Bottle: Hall of Heroes (Ravenhooves The Archer)", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Life Bottle: Hall of Heroes (Dirk Steadfast)", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Life Bottle: The Time Device", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)}
+                {"Life Bottle: Dan's Crypt", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Life Bottle: The Graveyard", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Life Bottle: Hall of Heroes (Canny Tim)", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Life Bottle: Dan's Crypt - Behind Wall", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Life Bottle: Scarecrow Fields", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Life Bottle: Pools of the Ancient Dead", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Life Bottle: Hall of Heroes (Ravenhooves The Archer)", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Life Bottle: Hall of Heroes (Dirk Steadfast)", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Life Bottle: The Time Device", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)}
             };
         }
 
-        public static Dictionary<string, Tuple<int, uint>> GetRuneLocationStatuses()
+        public static Dictionary<string, Tuple<int, uint, uint>> GetRuneLocationStatuses()
         {
-            return new Dictionary<string, Tuple<int, uint>>
+            return new Dictionary<string, Tuple<int, uint, uint>>
             {
                 // uses fake locations at the moment
 
                 // Chaos Runes
-                {"Chaos Rune: The Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Chaos Rune: The Hilltop Mausoleum", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Chaos Rune: Scarecrow Fields", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Chaos Rune: The Lake", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Chaos Rune: Pumpkin Gorge", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Chaos Rune: Sleeping Village", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Chaos Rune: Pools of the Ancient Dead", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Chaos Rune: Asylum Grounds", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Chaos Rune: The Haunted Ruins", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Chaos Rune: Ghost Ship", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Chaos Rune: The Time Device", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Chaos Rune: The Graveyard", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Chaos Rune: The Hilltop Mausoleum", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Chaos Rune: Scarecrow Fields", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Chaos Rune: The Lake", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Chaos Rune: Pumpkin Gorge", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Chaos Rune: Sleeping Village", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Chaos Rune: Pools of the Ancient Dead", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Chaos Rune: Asylum Grounds", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Chaos Rune: The Haunted Ruins", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Chaos Rune: Ghost Ship", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Chaos Rune: The Time Device", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
 
                 // Earth Runes
-                {"Earth Rune: The Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Earth Rune: The Hilltop Mausoleum", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Earth Rune: Scarecrow Fields", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Earth Rune: The Crystal Caves", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Earth Rune: The Lake", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Earth Rune: Pumpkin Gorge", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Earth Rune: Sleeping Village", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Earth Rune: Inside the Asylum", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Earth Rune: Enchanted Earth", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Earth Rune: The Haunted Ruins", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Earth Rune: The Entrance Hall", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Earth Rune: The Time Device", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Earth Rune: The Graveyard", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Earth Rune: The Hilltop Mausoleum", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Earth Rune: Scarecrow Fields", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Earth Rune: The Crystal Caves", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Earth Rune: The Lake", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Earth Rune: Pumpkin Gorge", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Earth Rune: Sleeping Village", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Earth Rune: Inside the Asylum", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Earth Rune: Enchanted Earth", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Earth Rune: The Haunted Ruins", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Earth Rune: The Entrance Hall", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Earth Rune: The Time Device", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
 
                 // Moon Runes
-                {"Moon Rune: The Hilltop Mausoleum", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Moon Rune: Scarecrow Fields", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Moon Rune: Pumpkin Gorge", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Moon Rune: Ghost Ship", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Moon Rune: The Time Device", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Moon Rune: The Hilltop Mausoleum", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Moon Rune: Scarecrow Fields", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Moon Rune: Pumpkin Gorge", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Moon Rune: Ghost Ship", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Moon Rune: The Time Device", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
 
                 // Star Runes
-                {"Star Rune: Return to the Graveyard", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Star Rune: Dan's Crypt", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Star Rune: The Crystal Caves", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Star Rune: The Lake", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Star Rune: Enchanted Earth", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Star Rune: The Gallows Gauntlet", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Star Rune: Ghost Ship", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
+                {"Star Rune: Return to the Graveyard", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Star Rune: Dan's Crypt", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Star Rune: The Crystal Caves", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Star Rune: The Lake", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Star Rune: Enchanted Earth", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Star Rune: The Gallows Gauntlet", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Star Rune: Ghost Ship", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
 
                 // Time Runes
-                {"Time Rune: The Lake", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Time Rune: Pumpkin Gorge", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)},
-                {"Time Rune: The Time Device", new Tuple<int, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress)}
+                {"Time Rune: The Lake", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Time Rune: Pumpkin Gorge", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
+                {"Time Rune: The Time Device", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)}
             };
+        }
+
+
+        public static Dictionary<string, Tuple<int, uint, uint>> GetAllLocationsAndAddresses()
+        {
+            Dictionary<string, Tuple<int, uint, uint>> allStatuses = new Dictionary<string, Tuple<int, uint, uint>>();
+
+            // Helper function to safely add dictionary entries
+            Action<Dictionary<string, Tuple<int, uint, uint>>> addDictionary = (dict) =>
+            {
+                foreach (var entry in dict)
+                {
+                    if (!allStatuses.ContainsKey(entry.Key)) // Avoid adding duplicate keys if any exist
+                    {
+                        allStatuses.Add(entry.Key, entry.Value);
+                    }
+                    else
+                    {
+                        // Handle duplicate keys, e.g., log a warning or overwrite
+                        // For now, we'll just ignore if a key already exists.
+                        // If you want to overwrite, you can do: allStatuses[entry.Key] = entry.Value;
+                        Console.WriteLine($"Warning: Duplicate key '{entry.Key}' found. Skipping addition.");
+                    }
+                }
+            };
+
+            addDictionary(GetLevelCompleteStatuses());
+            addDictionary(GetChaliceLocationStatuses());
+            addDictionary(GetSkillStatuses());
+            addDictionary(GetWeaponLocationStatuses());
+            addDictionary(GetHallOfHeroesStatuses());
+            addDictionary(GetLifeBottleLocationStatuses());
+            addDictionary(GetRuneLocationStatuses());
+
+            return allStatuses;
         }
 
 

@@ -16,6 +16,7 @@ using Helpers = MedievilArchipelago.Helpers;
 using System.Threading;
 using Archipelago.Core.Util.Overlay;
 using Newtonsoft.Json;
+using MedievilArchipelago.Models;
 
 var gameClient = new DuckstationClient();
 bool connected = gameClient.Connect();
@@ -47,24 +48,66 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
     Console.WriteLine("Setting up player state..");
 
     // put here for debugging
-    if (Client?.GameState?.CompletedLocations?.Count > 0) { 
-        foreach (Location val in Client.GameState.CompletedLocations)
+    if (Client?.GameState?.CompletedLocations?.Count > 0) {
+        UpdatePlayerState(Client.GameState.ReceivedItems);
+    }
+}
+
+void UpdatePlayerState(List<Item> completedLocations )
+{
+    Console.WriteLine("Updating player state...");
+    // get a list of all locatoins
+    var all_locations = Helpers.GetAllLocationsAndAddresses();
+
+    // get a list of used locations
+    var usedLocations = new List<string>();
+
+    int totalBottlesCollected = 0;
+
+    // set a basic player state that needs to be saved
+    // get a list of completed locations
+    // run through player state updating memory to match the state
+
+    // filter a list of all locations which removes all entries coming in.
+    // for each location thats been cleared
+    //      a location runs an update on the memory based on it
+    // for each location that HASNT been cleared
+    //      set to zero
+
+
+    // for each location that's coming in
+    foreach (Item val in completedLocations)
+    {
+        var loc = new Item();
+        loc.Name = val.Name;
+
+        switch (loc)
         {
-            var loc = new Item();
-            loc.Name = val.Name;
+            // Update memory
+            case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
+            case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
+            case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(x); totalBottlesCollected++; break;
+        }
 
-            switch (loc)
-            {
-                // this needs adjusted to go through every weapon and skill in order to ignore any pickups people have made
-                // this is just a proof of concept right now to see it working.
-                case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
-                case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
-                case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(x); break;
-                    //case var x when x.Name.ContainsAny("Rune"): ReceiveRune(x); break; // needs implimented
-            }
+        usedLocations.Add(val.Name);
 
+    }
+
+    Dictionary<string, Tuple<int, uint, uint>> remainingLocationsDict = all_locations
+        .Where(kvp => !usedLocations.Contains(kvp.Key))
+        .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+
+    foreach (KeyValuePair<string, Tuple<int, uint, uint>> location in remainingLocationsDict)
+    {
+        Console.WriteLine(location.Key);
+        switch (location.Key)
+        {
+            case var x when x.ContainsAny("Skills"): SetItemMemoryValue(location.Value.Item3, 0, 0); break;
+            case var x when x.ContainsAny("Equipment"): SetItemMemoryValue(location.Value.Item3, 65535, 65535); break;
         }
     }
+    archipelagoClient.AddOverlayMessage("Player State Updated");
 }
 
 async void OnDisconnected(object sender, EventArgs args, ArchipelagoClient Client)
@@ -229,7 +272,7 @@ void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceiv
 {
     var message = string.Join("", e.Message.Parts.Select(p => p.Text));
 
-    //archipelagoClient.AddOverlayMessage(e.Message.ToString(), TimeSpan.FromSeconds(10)); // kinda works? Removing for now till we can test more.
+    archipelagoClient.AddOverlayMessage(e.Message.ToString()); 
 
     Log.Logger.Information(JsonConvert.SerializeObject(e.Message));
     Console.WriteLine($"Message: {message}");
@@ -304,6 +347,7 @@ catch (Exception ex)
 // wait till you're in-game
 uint currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
 
+
 while (currentGameStatus != 0x800f8198) // 0x00 means not in a level
 {
     currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
@@ -347,7 +391,7 @@ archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args,
 archipelagoClient.ItemReceived += ItemReceived;
 archipelagoClient.MessageReceived += Client_MessageReceived;
 archipelagoClient.LocationCompleted += Client_LocationCompleted;
-
+var cts = new CancellationTokenSource();
 try
 {
     await archipelagoClient.Connect(url + ":" + port, "Medievil");
@@ -355,7 +399,15 @@ try
     await archipelagoClient.Login(slot, password);
     Console.WriteLine("Logged in!");
 
-    //archipelagoClient.IntializeOverlayService(new WindowsOverlayService()); // kinda works ? Commenting out for now.
+    var overlayOptions = new OverlayOptions();
+    overlayOptions.XOffset = 50;
+    overlayOptions.YOffset = 500;
+    overlayOptions.FontSize = 12;
+    overlayOptions.TextColor = Color.Yellow;
+
+    var gameOverlay = new WindowsOverlayService(overlayOptions);
+
+    archipelagoClient.IntializeOverlayService(gameOverlay); // kinda works ? Commenting out for now.
 
     // Now CurrentSession is initialized, so it's safe to subscribe
     archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
@@ -364,40 +416,44 @@ try
 
 
     Console.WriteLine("Built Locations list. Launching Monitor");
-    await archipelagoClient.MonitorLocations(GameLocations);
+    _ = archipelagoClient.MonitorLocations(GameLocations); // Use _ = to suppress warning about unawaited task
+
+    // The main thread now dedicates itself to reading console input.
+    Console.WriteLine("Type 'exit' to quit the program.");
+    while (!cts.Token.IsCancellationRequested)
+    {
+        var input = Console.ReadLine();
+        if (input?.Trim().ToLower() == "exit")
+        {
+            cts.Cancel(); // Signal background tasks to stop
+            break; // Exit the input loop
+        }
+        else if (input?.Trim().ToLower() == "hint")
+        {
+            Console.WriteLine("Hints aren't supported yet. Sorry!");
+        }
+        else if (input?.Trim().ToLower() == "update")
+        {
+            if (archipelagoClient.GameState.CompletedLocations != null)
+            {
+                UpdatePlayerState(archipelagoClient.GameState.ReceivedItems);
+                Console.WriteLine($"Player state updated. Total Count: {archipelagoClient.GameState.ReceivedItems.Count}");
+            }
+            else
+            {
+                Console.WriteLine("Cannot update player state: GameState or CompletedLocations is null.");
+            }
+        }
+        else if (!string.IsNullOrWhiteSpace(input))
+        {
+            Console.WriteLine($"Unknown command: '{input}'");
+        }
+    }
 }
 catch (Exception ex)
 {
     Console.WriteLine($"An error occurred while connecting to Archipelago: {ex.Message}");
     Console.WriteLine(ex); // Print full exception for debugging
-}
-
-var cts = new CancellationTokenSource();
-
-Task inputTask = Task.Run(() =>
-{
-    // listening to background commands.
-    while (!cts.Token.IsCancellationRequested)
-    {
-
-        var input = Console.ReadLine();
-        //if (input?.Trim().ToLower() == "exit")
-        //{
-        //    cts.Cancel();
-        //    break;
-        //}
-        if (input?.Trim().ToLower() == "/hint")
-        {
-            Console.WriteLine("Hints aren't supported yet. Sorry!");
-            break;
-        }
-    }
-});
-
-try
-{
-    // Keep the application running until cancellation is requested
-    await inputTask;
 }
 finally
 {

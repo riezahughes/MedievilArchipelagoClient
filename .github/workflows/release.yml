@@ -14,15 +14,12 @@ jobs:
         
       - name: Restore dependencies
         run: dotnet restore
-        working-directory: ./MedievilArchipelago
 
       - name: Build
         run: dotnet build --no-restore
-        working-directory: ./MedievilArchipelago
 
       - name: Publish
         run: dotnet publish -c Release -o ./publish
-        working-directory: ./MedievilArchipelago
 
       - name: Publish
         uses: softprops/action-gh-release@v1

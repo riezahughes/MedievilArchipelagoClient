@@ -33,6 +33,6 @@ jobs:
       - name: Publish an artifact
         uses: softprops/action-gh-release@v2
         with:
-          files: "./publish/MedievilArchipelago.exe"
+          files: "./MedievilArchipelago.exe"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

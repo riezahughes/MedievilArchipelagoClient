@@ -12,4 +12,8 @@
     <PackageReference Include="Archipelago.Core" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include=".github\workflows\release.yml" />
+  </ItemGroup>
+
 </Project>

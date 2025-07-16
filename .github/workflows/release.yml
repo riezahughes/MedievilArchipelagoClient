@@ -21,7 +21,7 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Publish a release (Windows)
-        run: dotnet publish -f net8.0 -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:EnableCompressionInSingleFile=true
+        run: dotnet publish -f net8.0 -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:EnableCompressionInSingleFile=true -o ./publish
 
       # try these later
       # - name: Publish a release (Linux)
@@ -33,6 +33,6 @@ jobs:
       - name: Publish an artifact
         uses: softprops/action-gh-release@v2
         with:
-          files: "./MedievilArchipelago.exe"
+          files: "./publish/MedievilArchipelago.exe"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

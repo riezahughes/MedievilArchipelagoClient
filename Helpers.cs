@@ -75,6 +75,40 @@ namespace MedievilArchipelago
                {"Chalice: The Time Device", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheTimeDeviceLevelStatus), Addresses.TheTimeDeviceLevelStatus, Addresses.FakeAddress)},
             };
         }
+
+        public static Dictionary<string, Tuple<int, uint, uint>> GetKeyItemStatuses()
+        {
+            return new Dictionary<string, Tuple<int, uint, uint>>
+            {
+                {"Key Item: Dragon Gem: Pumpkin Gorge",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.DragonGem), Addresses.DragonGem, Addresses.FakeAddress)},
+                {"Key Item: Dragon Gem: Inside the Asylum",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.DragonGem), Addresses.DragonGem, Addresses.FakeAddress)},
+                {"Key Item: King Peregrine's Crown",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.KingPeregrinesCrown), Addresses.KingPeregrinesCrown, Addresses.FakeAddress)}, // not sure about this
+                {"Key Item: Soul Helmet 1",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SoulHelmet), Addresses.SoulHelmet, Addresses.FakeAddress)},
+                {"Key Item: Soul Helmet 2",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SoulHelmet), Addresses.SoulHelmet, Addresses.FakeAddress)},
+                {"Key Item: Soul Helmet 3",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SoulHelmet), Addresses.SoulHelmet, Addresses.FakeAddress)},
+                {"Key Item: Soul Helmet 4",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SoulHelmet), Addresses.SoulHelmet, Addresses.FakeAddress)},
+                {"Key Item: Soul Helmet 5",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SoulHelmet), Addresses.SoulHelmet, Addresses.FakeAddress)},
+                {"Key Item: Soul Helmet 6",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SoulHelmet), Addresses.SoulHelmet, Addresses.FakeAddress)},
+                {"Key Item: Soul Helmet 7",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SoulHelmet), Addresses.SoulHelmet, Addresses.FakeAddress)},
+                {"Key Item: Soul Helmet 8",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SoulHelmet), Addresses.SoulHelmet, Addresses.FakeAddress)},
+                {"Key Item: Witches Talisman",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.WitchesTalisman), Addresses.WitchesTalisman, Addresses.FakeAddress)},
+                {"Key Item: Safe Key",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SafeKey), Addresses.SafeKey, Addresses.FakeAddress)},
+                {"Key Item: Shadow Artefact",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.ShadowArtefact), Addresses.ShadowArtefact, Addresses.FakeAddress)},
+                {"Key Item: Crucifix",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.Crucifix), Addresses.Crucifix, Addresses.FakeAddress)},
+                {"Key Item: Landlords Bust",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.LandlordsBust), Addresses.LandlordsBust, Addresses.FakeAddress)},
+                {"Key Item: Crucifix Cast",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.CrucifixCast), Addresses.CrucifixCast, Addresses.FakeAddress)},
+                {"Key Item: Amber Piece 1",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AmberPiece), Addresses.AmberPiece, Addresses.FakeAddress)},
+                {"Key Item: Amber Piece 2",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AmberPiece), Addresses.AmberPiece, Addresses.FakeAddress)},
+                {"Key Item: Amber Piece 3",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AmberPiece), Addresses.AmberPiece, Addresses.FakeAddress)},
+                {"Key Item: Amber Piece 4",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AmberPiece), Addresses.AmberPiece, Addresses.FakeAddress)},
+                {"Key Item: Amber Piece 5",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AmberPiece), Addresses.AmberPiece, Addresses.FakeAddress)},
+                {"Key Item: Amber Piece 6",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AmberPiece), Addresses.AmberPiece, Addresses.FakeAddress)},
+                {"Key Item: Amber Piece 7",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AmberPiece), Addresses.AmberPiece, Addresses.FakeAddress)},
+                {"Key Item: Harvester Parts",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.HarvesterParts), Addresses.HarvesterParts, Addresses.FakeAddress)},
+                {"Key Item: Skull Key",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SkullKey), Addresses.SkullKey, Addresses.FakeAddress)},
+                {"Key Item: Sheet Music",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SheetMusic), Addresses.SheetMusic, Addresses.FakeAddress)},
+            };
+        }
         public static Dictionary<string, Tuple<int, uint, uint>> GetSkillStatuses()
         {
             return new Dictionary<string, Tuple<int, uint, uint>>
@@ -242,6 +276,7 @@ namespace MedievilArchipelago
             addDictionary(GetWeaponLocationStatuses());
             addDictionary(GetHallOfHeroesStatuses());
             addDictionary(GetLifeBottleLocationStatuses());
+            addDictionary(GetKeyItemStatuses());
             addDictionary(GetRuneLocationStatuses());
 
             return allStatuses;
@@ -260,6 +295,7 @@ namespace MedievilArchipelago
             List<SkillData> skills = GetSkillData();
             List<WeaponLocationsData> weapons = GetWeaponLocationsData();
             List<LifeBottlesData> bottles = GetLifeBottleLocationsData();
+            List<KeyItemsData> keys = GetKeyItemsData();
             List<RuneData> runes = GetRuneLocationsData();
 
             var levelDict = GetLevelCompleteStatuses();
@@ -268,6 +304,7 @@ namespace MedievilArchipelago
             var hallOfHeroesDict = GetHallOfHeroesStatuses();
             var weaponLocationDict = GetWeaponLocationStatuses();
             var bottleLocationDict = GetLifeBottleLocationStatuses();
+            var keyItemDict = GetKeyItemStatuses();
             var runeLocationDict = GetRuneLocationStatuses();
 
 
@@ -377,6 +414,23 @@ namespace MedievilArchipelago
 
                 };
             }
+            foreach (var keyItem in keys)
+            {
+                {
+                    Location location = new Location()
+                    {
+                        Name = keyItem.Name,
+                        Address = keyItemDict[keyItem.Name].Item2,
+                        Id = baseId + keyItem.LevelId,
+                        CheckType = LocationCheckType.Byte,
+                        CompareType = LocationCheckCompareType.GreaterThan,
+                        CheckValue = keyItem.Name = "999" // fake number as this is just a dummy location for now
+                    };
+
+                    locations.Add(location);
+
+                };
+            }
             foreach (var runeLocation in runes)
             {
                 {
@@ -438,6 +492,11 @@ namespace MedievilArchipelago
         };
 
         internal static readonly Dictionary<string, uint> SkillDictionary = new()
+        {
+            ["Daring Dash"] = Addresses.DaringDashSkill,
+        };
+
+        internal static readonly Dictionary<string, uint> KeyItemDictionary = new()
         {
             ["Daring Dash"] = Addresses.DaringDashSkill,
         };
@@ -581,48 +640,84 @@ namespace MedievilArchipelago
             return bottleLocations;
         }
 
+
+        private static List<KeyItemsData> GetKeyItemsData()
+        {
+            List<KeyItemsData> bottleLocations = new List<KeyItemsData>()
+            {
+                new KeyItemsData("Key Item: Dragon Gem: Pumpkin Gorge",92),
+                new KeyItemsData("Key Item: Dragon Gem: Inside the Asylum",93),
+                new KeyItemsData("Key Item: King Peregrine's Crown",94),
+                new KeyItemsData("Key Item: Soul Helmet 1",95),
+                new KeyItemsData("Key Item: Soul Helmet 2",96),
+                new KeyItemsData("Key Item: Soul Helmet 3",97),
+                new KeyItemsData("Key Item: Soul Helmet 4",98),
+                new KeyItemsData("Key Item: Soul Helmet 5",99),
+                new KeyItemsData("Key Item: Soul Helmet 6",100),
+                new KeyItemsData("Key Item: Soul Helmet 7",101),
+                new KeyItemsData("Key Item: Soul Helmet 8",102),
+                new KeyItemsData("Key Item: Witches Talisman",103),
+                new KeyItemsData("Key Item: Safe Key",104),
+                new KeyItemsData("Key Item: Shadow Artefact",105),
+                new KeyItemsData("Key Item: Crucifix",106),
+                new KeyItemsData("Key Item: Landlords Bust",107),
+                new KeyItemsData("Key Item: Crucifix Cast",108),
+                new KeyItemsData("Key Item: Amber Piece 1",109),
+                new KeyItemsData("Key Item: Amber Piece 2",110),
+                new KeyItemsData("Key Item: Amber Piece 3",111),
+                new KeyItemsData("Key Item: Amber Piece 4",112),
+                new KeyItemsData("Key Item: Amber Piece 5",113),
+                new KeyItemsData("Key Item: Amber Piece 6",114),
+                new KeyItemsData("Key Item: Amber Piece 7",115),
+                new KeyItemsData("Key Item: Harvester Parts",116),
+                new KeyItemsData("Key Item: Skull Key",117),
+                new KeyItemsData("Key Item: Sheet Music",118),
+            };
+            return bottleLocations;
+        }
+
         private static List<RuneData> GetRuneLocationsData()
         {
             List<RuneData> runeLocations = new List<RuneData>()
             {
-                new RuneData("Chaos Rune: The Graveyard",92),
-                new RuneData("Chaos Rune: The Hilltop Mausoleum",93),
-                new RuneData("Chaos Rune: Scarecrow Fields",94),
-                new RuneData("Chaos Rune: The Lake",95),
-                new RuneData("Chaos Rune: Pumpkin Gorge",96),
-                new RuneData("Chaos Rune: Sleeping Village",97),
-                new RuneData("Chaos Rune: Pools of the Ancient Dead",98),
-                new RuneData("Chaos Rune: Asylum Grounds",99),
-                new RuneData("Chaos Rune: The Haunted Ruins",100),
-                new RuneData("Chaos Rune: Ghost Ship",101),
-                new RuneData("Chaos Rune: The Time Device",102),
-                new RuneData("Earth Rune: The Graveyard",103),
-                new RuneData("Earth Rune: The Hilltop Mausoleum",104),
-                new RuneData("Earth Rune: Scarecrow Fields",105),
-                new RuneData("Earth Rune: The Crystal Caves",106),
-                new RuneData("Earth Rune: The Lake",107),
-                new RuneData("Earth Rune: Pumpkin Gorge",108),
-                new RuneData("Earth Rune: Sleeping Village",109),
-                new RuneData("Earth Rune: Inside the Asylum",110),
-                new RuneData("Earth Rune: Enchanted Earth",111),
-                new RuneData("Earth Rune: The Haunted Ruins",112),
-                new RuneData("Earth Rune: The Entrance Hall",113),
-                new RuneData("Earth Rune: The Time Device",114),
-                new RuneData("Moon Rune: The Hilltop Mausoleum",115),
-                new RuneData("Moon Rune: Scarecrow Fields",116),
-                new RuneData("Moon Rune: Pumpkin Gorge",117),
-                new RuneData("Moon Rune: Ghost Ship",118),
-                new RuneData("Moon Rune: The Time Device",119),
-                new RuneData("Star Rune: Return to the Graveyard",120),
-                new RuneData("Star Rune: Dan's Crypt",121),
-                new RuneData("Star Rune: The Crystal Caves",122),
-                new RuneData("Star Rune: The Lake",123),
-                new RuneData("Star Rune: Enchanted Earth",124),
-                new RuneData("Star Rune: The Gallows Gauntlet",125),
-                new RuneData("Star Rune: Ghost Ship",126),
-                new RuneData("Time Rune: The Lake",127),
-                new RuneData("Time Rune: Pumpkin Gorge",128),
-                new RuneData("Time Rune: The Time Device",129),
+                new RuneData("Chaos Rune: The Graveyard",119),
+                new RuneData("Chaos Rune: The Hilltop Mausoleum",120),
+                new RuneData("Chaos Rune: Scarecrow Fields",121),
+                new RuneData("Chaos Rune: The Lake",122),
+                new RuneData("Chaos Rune: Pumpkin Gorge",123),
+                new RuneData("Chaos Rune: Sleeping Village",124),
+                new RuneData("Chaos Rune: Pools of the Ancient Dead",125),
+                new RuneData("Chaos Rune: Asylum Grounds",126),
+                new RuneData("Chaos Rune: The Haunted Ruins",127),
+                new RuneData("Chaos Rune: Ghost Ship",128),
+                new RuneData("Chaos Rune: The Time Device",129),
+                new RuneData("Earth Rune: The Graveyard",130),
+                new RuneData("Earth Rune: The Hilltop Mausoleum",131),
+                new RuneData("Earth Rune: Scarecrow Fields",132),
+                new RuneData("Earth Rune: The Crystal Caves",133),
+                new RuneData("Earth Rune: The Lake",134),
+                new RuneData("Earth Rune: Pumpkin Gorge",135),
+                new RuneData("Earth Rune: Sleeping Village",136),
+                new RuneData("Earth Rune: Inside the Asylum",137),
+                new RuneData("Earth Rune: Enchanted Earth",138),
+                new RuneData("Earth Rune: The Haunted Ruins",139),
+                new RuneData("Earth Rune: The Entrance Hall",140),
+                new RuneData("Earth Rune: The Time Device",141),
+                new RuneData("Moon Rune: The Hilltop Mausoleum",142),
+                new RuneData("Moon Rune: Scarecrow Fields",143),
+                new RuneData("Moon Rune: Pumpkin Gorge",144),
+                new RuneData("Moon Rune: Ghost Ship",145),
+                new RuneData("Moon Rune: The Time Device",146),
+                new RuneData("Star Rune: Return to the Graveyard",147),
+                new RuneData("Star Rune: Dan's Crypt",148),
+                new RuneData("Star Rune: The Crystal Caves",149),
+                new RuneData("Star Rune: The Lake",150),
+                new RuneData("Star Rune: Enchanted Earth",151),
+                new RuneData("Star Rune: The Gallows Gauntlet",152),
+                new RuneData("Star Rune: Ghost Ship",153),
+                new RuneData("Time Rune: The Lake",154),
+                new RuneData("Time Rune: Pumpkin Gorge",155),
+                new RuneData("Time Rune: The Time Device",156),
             };
             return runeLocations;
         }

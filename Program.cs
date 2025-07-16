@@ -62,18 +62,7 @@ void UpdatePlayerState(List<Item> completedLocations )
     // get a list of used locations
     var usedLocations = new List<string>();
 
-    int totalBottlesCollected = 0;
-
-    // set a basic player state that needs to be saved
-    // get a list of completed locations
-    // run through player state updating memory to match the state
-
-    // filter a list of all locations which removes all entries coming in.
-    // for each location thats been cleared
-    //      a location runs an update on the memory based on it
-    // for each location that HASNT been cleared
-    //      set to zero
-
+    SetItemMemoryValue(Addresses.CurrentLifePotions, 0, 0);
 
     // for each location that's coming in
     foreach (Item val in completedLocations)
@@ -86,7 +75,8 @@ void UpdatePlayerState(List<Item> completedLocations )
             // Update memory
             case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
             case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
-            case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(x); totalBottlesCollected++; break;
+            case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(x); break;
+            case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
         }
 
         usedLocations.Add(val.Name);
@@ -186,6 +176,7 @@ int ExtractBracketAmount(string itemName)
 
 string ExtractDictName(string itemName)
 {
+
     var colonMatch = Regex.Match(itemName, @"^[^:]*:\s*(.*)$");
     if (colonMatch.Success)
     {
@@ -198,7 +189,6 @@ string ExtractDictName(string itemName)
     {
         return parenthesesMatch.Groups[1].Value.Trim();
     }
-
     // 3. If neither pattern matches, return the original string or "N/A"
     // (Your original function returned "N/A" if no match, let's stick to that)
     return "N/A";
@@ -226,6 +216,14 @@ void ReceiveEquipment(Item item)
     var name = ExtractDictName(item.Name);
 
     UpdateCurrentItemValue(item.Name, 0, addressDict[name], true, true);
+
+}
+
+void ReceiveKeyItem(Item item)
+{
+    var addressDict = Helpers.GetKeyItemStatuses();
+
+    UpdateCurrentItemValue(item.Name, 1, addressDict[item.Name].Item2, true, true);
 
 }
 
@@ -257,6 +255,7 @@ void ItemReceived(object sender, ItemReceivedEventArgs args)
         case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
         case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
         case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle (x); break;
+        case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
         case var x when x.Name.ContainsAny("Health", "Gold Coins", "Dagger", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
         case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x); break;
         case null: Console.WriteLine("Received an item with null data. Skipping."); break;
@@ -265,8 +264,6 @@ void ItemReceived(object sender, ItemReceivedEventArgs args)
 
 
 }
-
-
 
 void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceivedEventArgs e)
 {
@@ -297,8 +294,9 @@ void CheckGoalCondition()
     if (GameLocations == null || archipelagoClient.CurrentSession?.Locations?.AllLocationsChecked == null)
         return;
 
-    if (archipelagoClient.CurrentSession.Locations.AllLocationsChecked.Any(x =>
-        GameLocations.FirstOrDefault(y => y.Id == x)?.Name == "Zarok Defeated"))
+    // if you get all 20 chalices, you win. (until i can find the zarok pointer)
+    if (archipelagoClient.CurrentSession.Locations.AllLocationsChecked.Count(x =>
+        GameLocations.FirstOrDefault(y => y.Id == x)?.Name?.Contains("Chalice", StringComparison.OrdinalIgnoreCase) == true) >= 20)
     {
         archipelagoClient.SendGoalCompletion();
         Console.WriteLine("Goal completed! Sent goal completion to Archipelago.");

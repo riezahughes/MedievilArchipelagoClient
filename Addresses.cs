@@ -97,6 +97,29 @@ namespace MedievilArchipelago
         public const uint MegwynneStormbinder1 = 0x000197DA;
         public const uint MegwynneStormbinder2 = 0x000197E2;
 
+        // key items
+
+        public const uint DragonGem = 0x000f82c8;
+        public const uint KingPeregrinesCrown = 0x00000000; // not sure about this one yet. Will probably need to check.
+        public const uint SoulHelmet = 0x000F8290;
+        public const uint WitchesTalisman = 0x000f829c;
+        public const uint SafeKey = 0x000F82A8;
+        public const uint ShadowArtefact = 0x000f8294;
+        public const uint Crucifix = 0x00000000;
+        public const uint LandlordsBust = 0x000F82AC;
+        public const uint CrucifixCast = 0x000F82A4;
+        public const uint AmberPiece = 0x000F828C;
+        public const uint HarvesterParts = 0x000F8288;
+        public const uint SkullKey = 0x000f8280;
+        public const uint SheetMusic = 0x000F827C;
+
+        // runes
+
+        public const uint ChaosRune = 0x000f8268;
+        public const uint EarthRune = 0x000f826c;
+        public const uint MoonRune = 0x000f8270;
+        public const uint StarRune = 0x000f8274;
+        public const uint TimeRune = 0x000f8278;
 
         // Killing Zarok Win Condition
         public const uint ZaroksLairLevelStatus = 0x000FF0FF; // not correct. needs actually set to a "finish"

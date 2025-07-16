@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace MedievilArchipelago.Models
 {
-    public class KeyItemsData
+    public class ChaliceData
     {
         public string Name { get; set; }
         public int LevelId { get; set; }
 
-        public KeyItemsData(string name, int levelId)
+        public ChaliceData(string name, int levelId)
         {
             Name = name;
             LevelId = levelId;

@@ -77,6 +77,9 @@ void UpdatePlayerState(List<Item> completedLocations )
             case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
             case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(x); break;
             case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
+            // Set Level Complete Statuses
+            // Set Chalice Statuses
+            // 
         }
 
         usedLocations.Add(val.Name);
@@ -95,6 +98,9 @@ void UpdatePlayerState(List<Item> completedLocations )
         {
             case var x when x.ContainsAny("Skills"): SetItemMemoryValue(location.Value.Item3, 0, 0); break;
             case var x when x.ContainsAny("Equipment"): SetItemMemoryValue(location.Value.Item3, 65535, 65535); break;
+            // set level complete statuses
+            // set chalice statuses
+
         }
     }
     archipelagoClient.AddOverlayMessage("Player State Updated");

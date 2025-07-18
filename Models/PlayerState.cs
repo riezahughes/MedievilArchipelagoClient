@@ -47,7 +47,6 @@ namespace MedievilArchipelago.Models
                 {"Cleared: Ghost Ship", 0},
                 {"Cleared: The Entrance Hall", 0},
                 {"Cleared: The Time Device", 0},
-                {"Cleared: Zaroks Lair", 0 },
                 {"Chalice: The Graveyard", 0},
                 {"Chalice: Return to the Graveyard", 0},
                 {"Chalice: Cemetery Hill",0},

@@ -93,7 +93,6 @@ void UpdatePlayerState(List<Item> completedLocations )
 
     foreach (KeyValuePair<string, Tuple<int, uint, uint>> location in remainingLocationsDict)
     {
-        Console.WriteLine(location.Key);
         switch (location.Key)
         {
             case var x when x.ContainsAny("Skills"): SetItemMemoryValue(location.Value.Item3, 0, 0); break;
@@ -227,7 +226,7 @@ void ReceiveEquipment(Item item)
 
 void ReceiveKeyItem(Item item)
 {
-    var addressDict = Helpers.GetKeyItemStatuses();
+    var addressDict = Helpers.GetKeyItemInventoryStatuses();
 
     UpdateCurrentItemValue(item.Name, 1, addressDict[item.Name].Item2, true, true);
 
@@ -308,6 +307,8 @@ void CheckGoalCondition()
         Console.WriteLine("Goal completed! Sent goal completion to Archipelago.");
     }
 }
+
+// traps need added here and logic added into what i have already
 
 async void RunLagTrap()
 {
@@ -395,6 +396,7 @@ archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args,
 archipelagoClient.ItemReceived += ItemReceived;
 archipelagoClient.MessageReceived += Client_MessageReceived;
 archipelagoClient.LocationCompleted += Client_LocationCompleted;
+
 var cts = new CancellationTokenSource();
 try
 {
@@ -421,6 +423,7 @@ try
 
     Console.WriteLine("Built Locations list. Launching Monitor");
     _ = archipelagoClient.MonitorLocations(GameLocations); // Use _ = to suppress warning about unawaited task
+
 
     // The main thread now dedicates itself to reading console input.
     Console.WriteLine("Type 'exit' to quit the program.");

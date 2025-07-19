@@ -306,7 +306,7 @@ namespace MedievilArchipelago
         public const uint TA_Pickup_GoldCoinsMaggotNearAmber9 = 0x001e0a20;
         public const uint TA_Pickup_GoldCoinsMaggotNearShop = 0x001e3afc;
 
-        // Enchanted Eart
+        // Enchanted Earth
         public const uint EE_Pickup_GoldCoinsBagNearTreeHollow = 0x001cf9f0;
         public const uint EE_Pickup_GoldCoinsBagBehindBigTree = 0x001ce358;
         public const uint EE_Pickup_EarthRune = 0x001d807c;

@@ -55,27 +55,27 @@ namespace MedievilArchipelago
         public const uint DaringDashSkill = 0x000F81C4;
 
         // Completed levels
-        public const uint TheGraveyardLevelStatus = 0x000f81e1;
-        public const uint ReturnToTheGraveyardLevelStatus = 0x000F81E2;
-        public const uint CemeteryHillLevelStatus = 0x000F81E3;
-        public const uint TheHilltopMausoleumLevelStatus = 0x000F81E4;
-        public const uint ScarecrowFieldsLevelStatus = 0x000F81E5;
-        public const uint DansCryptLevelStatus = 0x000F81E6;
-        public const uint AntHillLevelStatus = 0x000F81E7;
-        public const uint TheCrystalCavesLevelStatus = 0x000F81E8;
-        public const uint PumpkinGorgeLevelStatus = 0x000F81E9;
-        public const uint PumpkinSerpentLevelStatus = 0x000F81EA;
-        public const uint SleepingVillageLevelStatus = 0x000F81EB;
-        public const uint PoolsOfTheAncientDeadLevelStatus = 0x000F81EC;
-        public const uint AsylumGroundsLevelStatus = 0x000F81ED;
-        public const uint InsideTheAsylumLevelStatus = 0x000F81EE;
-        public const uint EnchantedEarthLevelStatus = 0x000F81EF;
-        public const uint TheGallowsGauntletLevelStatus = 0x000F81F0;
-        public const uint TheHauntedRuinsLevelStatus = 0x000F81F1;
-        public const uint GhostShipLevelStatus = 0x000F81F3;
-        public const uint TheEntranceHallLevelStatus = 0x000F81F4;
-        public const uint TheTimeDeviceLevelStatus = 0x000F81F5;
-        public const uint TheLakeLevelStatus = 0x000F81F6;
+        public const uint TG_LevelStatus = 0x000f81e1;
+        public const uint RTG_LevelStatus = 0x000F81E2;
+        public const uint CH_LevelStatus = 0x000F81E3;
+        public const uint HM_LevelStatus = 0x000F81E4;
+        public const uint SF_LevelStatus = 0x000F81E5;
+        public const uint DC_LevelStatus = 0x000F81E6;
+        public const uint TA_LevelStatus = 0x000F81E7;
+        public const uint TL_LevelStatus = 0x000F81F6;
+        public const uint CC_LevelStatus = 0x000F81E8;
+        public const uint PG_LevelStatus = 0x000F81E9;
+        public const uint PS_LevelStatus = 0x000F81EA;
+        public const uint TSV_LevelStatus = 0x000F81EB;
+        public const uint PAD_LevelStatus = 0x000F81EC;
+        public const uint AG_LevelStatus = 0x000F81ED;
+        public const uint IA_LevelStatus = 0x000F81EE;
+        public const uint EE_LevelStatus = 0x000F81EF;
+        public const uint GG_LevelStatus = 0x000F81F0;
+        public const uint HR_LevelStatus = 0x000F81F1;
+        public const uint GS_LevelStatus = 0x000F81F3;
+        public const uint EH_LevelStatus = 0x000F81F4;
+        public const uint TD_LevelStatus = 0x000F81F5;
 
         // List of Hall of Heroes encounters
 
@@ -396,6 +396,7 @@ namespace MedievilArchipelago
         public const uint TL_Pickup_Chalice = 0x00131218;
 
         // The Crystal Caves
+        public const uint CC_Pickup_GoldCoinsBagAtWindingStaircase = 0x00000000;
         public const uint CC_Pickup_GoldCoinsBagInCrystalAtStart = 0x001e0478;
         public const uint CC_Pickup_GoldCoinsBagInSpinner = 0x0012e870;
         public const uint CC_Pickup_EarthRune = 0x0012e8b0;
@@ -463,7 +464,7 @@ namespace MedievilArchipelago
         // Pumpkin Gorge
         public const uint PG_Pickup_MoonRune = 0x0012de48;
         public const uint PG_Pickup_ClubInChestInTunnel = 0x001ed0e8;
-        public const uint PG_Pickup_GoldCoinsBagBetweenHiddenPumpkins = 0x00132b88;
+        public const uint PG_Pickup_GoldCoinsBagBehindRocksAtStart = 0x00132b88;
         public const uint PG_Pickup_GoldCoinsChestInCoop1 = 0x00131088;
         public const uint PG_Pickup_EnergyVialInCoop = 0x00132b48;
         public const uint PG_Pickup_GoldCoinsChestInCoop2 = 0x001326c8;

@@ -47,10 +47,10 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
 
     Console.WriteLine("Setting up player state..");
 
-    // put here for debugging
-    if (Client?.GameState?.CompletedLocations?.Count > 0) {
-        UpdatePlayerState(Client.GameState.ReceivedItems);
-    }
+
+    //if (Client?.GameState?.CompletedLocations?.Count > 0) {
+    //    UpdatePlayerState(Client.GameState.ReceivedItems);
+    //}
 }
 
 void UpdatePlayerState(List<Item> completedLocations )
@@ -201,7 +201,7 @@ string ExtractDictName(string itemName)
 
 void ReceiveCountType(Item item)
 {
-    var addressDict = Helpers.AmmoAddressDictionary;
+    var addressDict = Helpers.InventoryAddressDictionary;
     var amount = ExtractBracketAmount(item.Name);
     var name = ExtractDictName(item.Name);
 
@@ -209,7 +209,7 @@ void ReceiveCountType(Item item)
 }
 void ReceiveChargeType(Item item)
 {
-    var addressDict = Helpers.AmmoAddressDictionary;
+    var addressDict = Helpers.InventoryAddressDictionary;
     var amount = ExtractBracketAmount(item.Name);
     var name = ExtractDictName(item.Name);
     UpdateCurrentItemValue(item.Name, amount, addressDict[name], false, false);
@@ -217,7 +217,7 @@ void ReceiveChargeType(Item item)
 
 void ReceiveEquipment(Item item)
 {
-    var addressDict = Helpers.AmmoAddressDictionary;
+    var addressDict = Helpers.InventoryAddressDictionary;
     var name = ExtractDictName(item.Name);
 
     UpdateCurrentItemValue(item.Name, 0, addressDict[name], true, true);
@@ -226,15 +226,16 @@ void ReceiveEquipment(Item item)
 
 void ReceiveKeyItem(Item item)
 {
-    var addressDict = Helpers.GetKeyItemInventoryStatuses();
+    // commented out because i need to make a list of player data addresses to deal with this.
+    //var addressDict = Helpers.GetKeyItemInventoryStatuses();
 
-    UpdateCurrentItemValue(item.Name, 1, addressDict[item.Name].Item2, true, true);
+    //UpdateCurrentItemValue(item.Name, 1, addressDict[item.Name].Item2, true, true);
 
 }
 
 void ReceiveLifeBottle(Item item)
 {
-    var addressDict = Helpers.AmmoAddressDictionary;
+    var addressDict = Helpers.InventoryAddressDictionary;
     
     UpdateCurrentItemValue("Life Bottle", 1, addressDict["Life Bottle"], false, false);
 }
@@ -244,16 +245,12 @@ void ReceiveSkill(Item item)
     // there's literally only one skill in this game but i made a skill dict anyway for future projects
     // and to keep things in line
 
-    var skillDict = Helpers.SkillDictionary;
-
-    UpdateCurrentItemValue("Daring Dash", 1, skillDict["Daring Dash"], false, false);
+    UpdateCurrentItemValue("Daring Dash", 1, Addresses.DaringDashSkill, false, false);
 }
 
 // logic for item receiving goes here (gold, health, ammo, etc)
 void ItemReceived(object sender, ItemReceivedEventArgs args)
 {
-    Console.WriteLine(args.Item.Id);
-    Console.WriteLine($"Item Received: {args.Item.Name}");
 
     switch (args.Item)
     {
@@ -435,7 +432,6 @@ try
 
 
     // The main thread now dedicates itself to reading console input.
-    Console.WriteLine("Type 'exit' to quit the program.");
     while (!cts.Token.IsCancellationRequested)
     {
         var input = Console.ReadLine();

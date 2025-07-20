@@ -15,7 +15,7 @@ namespace MedievilArchipelago.Models
 
         public string Check {  get; set; }
 
-        public GenericItemsData(string name, int id, uint locationAddress, string check)
+        public GenericItemsData(string name, uint locationAddress, string check, int id = 0)
         {
             Name = name;
             Id = id;

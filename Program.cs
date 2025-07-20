@@ -254,6 +254,7 @@ void ItemReceived(object sender, ItemReceivedEventArgs args)
 
     switch (args.Item)
     {
+        // incoming runes need added here
         case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
         case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
         case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle (x); break;
@@ -297,7 +298,7 @@ void CheckGoalCondition()
         return;
 
 
-    if (archipelagoClient?.GameState.ReceivedItems.Any(x => x.Id == 99251999) == true)
+    if (archipelagoClient?.GameState.ReceivedItems.Any(x => x.Id == 99251402) == true)
     {
         archipelagoClient.SendGoalCompletion();
         Console.WriteLine("Defeated Zarok");

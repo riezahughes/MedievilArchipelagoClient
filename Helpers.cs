@@ -130,9 +130,9 @@ namespace MedievilArchipelago
                             Name = location_entry.Name,
                             Address = location_entry.Address,
                             Id = baseId + locationId,
-                            CheckType = LocationCheckType.Byte,
-                            CompareType = LocationCheckCompareType.GreaterThan,
-                            CheckValue = "16"
+                            CheckType = locationId == 402 ? LocationCheckType.Int : LocationCheckType.Byte,
+                            CompareType = locationId == 402 ? LocationCheckCompareType.Match : LocationCheckCompareType.GreaterThan,
+                            CheckValue = locationId == 402 ? "101" : "16" // if zarok clear
                         };
 
                         locations.Add(location);
@@ -140,24 +140,26 @@ namespace MedievilArchipelago
                     };
                 }
 
-                if (location_entry.Name.Contains("Chalice:"))
-                {
-                    {
-                        Location location = new Location()
-                        {
-                            Name = location_entry.Name,
-                            Address = location_entry.Address,
-                            Id = baseId + locationId,
-                            CheckType = LocationCheckType.Byte,
-                            CompareType = LocationCheckCompareType.Match,
-                            CheckValue = "19"
-                        };
+                // get the chalice at the levels end vs the pickup
+                //if (location_entry.Name.Contains("Chalice:"))
+                //{
+                //    {
+                //        Location location = new Location()
+                //        {
+                //            Name = location_entry.Name,
+                //            Address = location_entry.Address,
+                //            Id = baseId + locationId,
+                //            CheckType = LocationCheckType.Byte,
+                //            CompareType = LocationCheckCompareType.Match,
+                //            CheckValue = "19"
+                //        };
 
-                        locations.Add(location);
-                        continue;
-                    };
-                }
-                if (location_entry.Name.Contains("Key Item:") || location_entry.Name.Contains("Rune:") || location_entry.Name.Contains("Equipment:") || location_entry.Name.Contains("Gold Coins:") || location_entry.Name.Contains("Skill:") || location_entry.Name.Contains("Life Bottle:") || location_entry.Name.Contains("Energy Vial:"))
+                //        locations.Add(location);
+                //        continue;
+                //    };
+                //}
+
+                if (location_entry.Name.Contains("Key Item:") || location_entry.Name.Contains("Chalice:") || location_entry.Name.Contains("Rune:") || location_entry.Name.Contains("Equipment:") || location_entry.Name.Contains("Gold Coins:") || location_entry.Name.Contains("Skill:") || location_entry.Name.Contains("Life Bottle:") || location_entry.Name.Contains("Energy Vial:"))
                 {
                     {
                         Location location = new Location()
@@ -181,10 +183,10 @@ namespace MedievilArchipelago
 
             }
 
-            //foreach (var location in locations)
-            //{
-            //    Console.WriteLine($"ID: {location.Id} | name: \"{location.Name}\"");
-            //}
+            foreach (var location in locations)
+            {
+                Console.WriteLine($"ID: {location.Id} | name: \"{location.Name}\"");
+            }
 
             return locations;
         }
@@ -295,14 +297,14 @@ namespace MedievilArchipelago
                 new GenericItemsData("Earth Rune: The Graveyard", Addresses.TG_Pickup_EarthRune, "32896"),
                 new GenericItemsData("Chaos Rune: The Graveyard", Addresses.TG_Pickup_ChaosRune, "32896"),
                 new GenericItemsData("Equipment: Copper Shield - TG", Addresses.TG_Pickup_CopperShield, "32896"),
-                new GenericItemsData("Gold Coins: Bag at Start - TG", Addresses.TG_Pickup_GoldCoinsNearChaosRune, "32896"),
+                new GenericItemsData("Gold Coins: Bag at Start - TG", Addresses.TG_Pickup_GoldCoinsBagAtStart, "32896"),
                 new GenericItemsData("Gold Coins: Near Chaos Rune - TG", Addresses.TG_Pickup_GoldCoinsNearChaosRune, "32896"),
                 new GenericItemsData("Gold Coins: Life Bottle Left Chest - TG", Addresses.TG_Pickup_GoldCoinsLifePotionLeftChest, "32896"),
                 new GenericItemsData("Gold Coins: Life Bottle Right Chest - TG", Addresses.TG_Pickup_GoldCoinsLifePotionRightChest, "32896"),
                 new GenericItemsData("Gold Coins: Shop Chest - TG", Addresses.TG_Pickup_GoldCoinsShopChest, "32896"),
                 new GenericItemsData("Gold Coins: Bag Near Hill Fountain - TG", Addresses.TG_Pickup_GoldCoinsBagNearHillFountain, "32896"),
                 new GenericItemsData("Cleared: The Graveyard", Addresses.TG_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Graveyard", Addresses.TG_LevelStatus, "19"),
+                new GenericItemsData("Chalice: The Graveyard", Addresses.TG_Pickup_Chalice, "32896"),
 
             };
             return tgLocations;
@@ -326,7 +328,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Chest at Exit - CH", Addresses.CH_Pickup_GoldCoinsChestAtExit, "32896"),
                 new GenericItemsData("Gold Coins: Chest in Arena - CH", Addresses.CH_Pickup_GoldCoinsChestInArena, "32896"),
                 new GenericItemsData("Cleared: Cemetery Hill", Addresses.CH_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Cemetery Hill", Addresses.CH_LevelStatus, "19"),
+                new GenericItemsData("Chalice: Cemetery Hill", Addresses.CH_Pickup_Chalice, "32896"),
             };
             return chLocations;
         }
@@ -354,7 +356,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 2 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera2, "32896"),
                 new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 3 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera3, "32896"),
                 new GenericItemsData("Cleared: The Hilltop Mausoleum", Addresses.HM_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Hilltop Mausoleum", Addresses.HM_LevelStatus, "19"),
+                new GenericItemsData("Chalice: The Hilltop Mausoleum", Addresses.HM_Pickup_Chalice, "32896"),
             };
             return hmLocations;
         }
@@ -384,7 +386,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Undertakers Entrance - RTG", Addresses.RTG_Pickup_GoldCoinsUndertakersEntrance, "32896"),
                 new GenericItemsData("Gold Coins: Cliffs Left - RTG", Addresses.RTG_Pickup_GoldCoinsCliffsLeft, "32896"),
                 new GenericItemsData("Cleared: Return to the Graveyard", Addresses.RTG_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Return to the Graveyard", Addresses.RTG_LevelStatus, "19"),
+                new GenericItemsData("Chalice: Return to the Graveyard", Addresses.RTG_Pickup_Chalice, "32896"),
             };
             return rtgLocations;
         }
@@ -415,7 +417,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Chest next to Harvester Part - SF", Addresses.SF_Pickup_GoldCoinsChestNextToHarvesterPart, "32896"),
                 new GenericItemsData("Gold Coins: Chest Next to Chalice - SF", Addresses.SF_Pickup_GoldCoinsChestNextToChalice, "32896"),
                 new GenericItemsData("Cleared: Scarecrow Fields", Addresses.SF_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Scarecrow Fields", Addresses.SF_LevelStatus, "19"),
+                new GenericItemsData("Chalice: Scarecrow Fields", Addresses.SF_Pickup_Chalice, "32896"),
             };
             return sfLocations;
         }
@@ -481,7 +483,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Chest Top of Fountain - EE", Addresses.EE_Pickup_GoldCoinsChestTopOfFountain, "32896"),
                 new GenericItemsData("Gold Coins: Chest Right of Fountain - EE", Addresses.EE_Pickup_GoldCoinsChestRightOfFountain, "32896"),
                 new GenericItemsData("Cleared: Enchanted Earth", Addresses.EE_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Enchanted Earth", Addresses.EE_LevelStatus, "19"),
+                new GenericItemsData("Chalice: Enchanted Earth", Addresses.EE_Pickup_Chalice, "32896"),
             };
             return eeLocations;
         }
@@ -515,7 +517,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Bag at Bottom of table - SV", Addresses.TSV_Pickup_GoldCoinsBagAtBottomOfTable, "32896"),
                 new GenericItemsData("Gold Coins: Chest next to Chalice - SV", Addresses.TSV_Pickup_GoldCoinsChestNextToChalice, "32896"),
                 new GenericItemsData("Cleared: Sleeping Village", Addresses.TSV_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Sleeping Village", Addresses.TSV_LevelStatus, "19"),
+                new GenericItemsData("Chalice: Sleeping Village", Addresses.TSV_Pickup_Chalice, "32896"),
             };
             return tsvLocations;
         }
@@ -546,7 +548,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Jump Spot 1 - PAD", Addresses.PAD_Pickup_GoldCoinsJumpSpot1, "32896"),
                 new GenericItemsData("Gold Coins: Jump Spot 2 - PAD", Addresses.PAD_Pickup_GoldCoinsJumpSpot2, "32896"),
                 new GenericItemsData("Cleared: Pools of the Ancient Dead", Addresses.PAD_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Pools of the Ancient Dead", Addresses.PAD_LevelStatus, "19"),
+                new GenericItemsData("Chalice: Pools of the Ancient Dead", Addresses.PAD_Pickup_Chalice, "32896"),
             };
             return padLocations;
         }
@@ -569,7 +571,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Whirlpool Wind 2 - TL", Addresses.TL_Pickup_GoldCoinsWhirlpoolWind2, "32896"),
                 new GenericItemsData("Gold Coins: Outside Whirlpool Exit - TL", Addresses.TL_Pickup_GoldCoinsOutsideWhirlpoolExit, "32896"),
                 new GenericItemsData("Cleared: The Lake", Addresses.TL_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Lake", Addresses.TL_LevelStatus, "19"),
+                new GenericItemsData("Chalice: The Lake", Addresses.TL_Pickup_Chalice, "32896"),
             };
             return tlLocations;
         }
@@ -603,7 +605,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Bag on Left of Pool - CC", Addresses.CC_Pickup_GoldCoinsBagOnLeftOfPool, "32896"),
                 new GenericItemsData("Gold Coins: Bag on Right of Pool - CC", Addresses.CC_Pickup_GoldCoinsBagOnRightOfPool, "32896"),
                 new GenericItemsData("Cleared: The Crystal Caves", Addresses.CC_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Crystal Caves", Addresses.CC_LevelStatus, "19"),
+                new GenericItemsData("Chalice: The Crystal Caves", Addresses.CC_Pickup_Chalice, "32896"),
             };
             return ccLocations;
         }
@@ -618,7 +620,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Chest at Serpent - GG", Addresses.GG_Pickup_GoldCoinsChestAtSerpent, "32896"),
                 new GenericItemsData("Gold Coins: Chest Near Star Entrance - GG", Addresses.GG_Pickup_GoldCoinsChestNearStarEntrance, "32896"),
                 new GenericItemsData("Cleared: The Gallows Gauntlet", Addresses.GG_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Gallows Gauntlet", Addresses.GG_LevelStatus, "19"),
+                new GenericItemsData("Chalice: The Gallows Gauntlet", Addresses.GG_Pickup_Chalice, "32896"),
             };
             return ggLocations;
         }
@@ -636,7 +638,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Behind Chaos Gate - AG", Addresses.AG_Pickup_GoldCoinsBehindChaosGate, "32896"),
                 new GenericItemsData("Gold Coins: Behind Elephant in Grave - AG", Addresses.AG_Pickup_GoldCoinsBehindElephantInGrave, "32896"),
                 new GenericItemsData("Cleared: Asylum Grounds", Addresses.AG_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Asylum Grounds", Addresses.AG_LevelStatus, "19"),
+                new GenericItemsData("Chalice: Asylum Grounds", Addresses.AG_Pickup_Chalice, "32896"),
             };
             return agLocations;
         }
@@ -658,7 +660,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Bag in Sewer Prison Entrance - IA", Addresses.IA_Pickup_GoldCoinsBagInSewerPrisonEntrance, "32896"),
                 new GenericItemsData("Gold Coins: Bag on Sewer Prison Bench - IA", Addresses.IA_Pickup_GoldCoinsBagOnSewerPrisonBench, "32896"),
                 new GenericItemsData("Cleared: Inside the Asylum", Addresses.IA_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Inside the Asylum", Addresses.IA_LevelStatus, "19"),
+                new GenericItemsData("Chalice: Inside the Asylum", Addresses.IA_Pickup_Chalice, "32896"),
             };
             return iaLocations;
         }
@@ -689,7 +691,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Chest at Boulders after Star Rune - PG", Addresses.PG_Pickup_GoldCoinsChestAtBouldersAfterStarRune, "32896"),
                 new GenericItemsData("Gold Coins: Chest Near Chalice - PG", Addresses.PG_Pickup_GoldCoinsChestNearChalice, "32896"),
                 new GenericItemsData("Cleared: Pumpkin Gorge", Addresses.PG_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Pumpkin Gorge", Addresses.PG_LevelStatus, "19"),
+                new GenericItemsData("Chalice: Pumpkin Gorge", Addresses.PG_Pickup_Chalice, "32896"),
             };
             return pgLocations;
         }
@@ -705,7 +707,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Bag Behind Vines and Pod - PS", Addresses.PS_Pickup_GoldCoinsBagBehindVinesAndPod, "32896"),
                 new GenericItemsData("Gold Coins: Chest at Merchant Gargoyle - PS", Addresses.PS_Pickup_GoldCoinsChestAtMerchantGargoyle, "32896"),
                 new GenericItemsData("Cleared: Pumpkin Serpent", Addresses.PS_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Pumpkin Serpent", Addresses.PS_LevelStatus, "19"),
+                new GenericItemsData("Chalice: Pumpkin Serpent", Addresses.PS_Pickup_Chalice, "32896"),
             };
             return psLocations;
         }
@@ -730,7 +732,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Chest at Catapult 2 - HR", Addresses.HR_Pickup_GoldCoinsChestAtCatapult2, "32896"),
                 new GenericItemsData("Gold Coins: Chest at Catapult 3 - HR", Addresses.HR_Pickup_GoldCoinsChestAtCatapult3, "32896"),
                 new GenericItemsData("Cleared: The Haunted Ruins", Addresses.HR_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Haunted Ruins", Addresses.HR_LevelStatus, "19"),
+                new GenericItemsData("Chalice: The Haunted Ruins", Addresses.HR_Pickup_Chalice, "32896"),
             };
             return hrLocations;
         }
@@ -754,7 +756,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Chest in Cannon Room - GS", Addresses.GS_Pickup_GoldCoinsChestInCannonRoom, "32896"),
                 new GenericItemsData("Gold Coins: Rope Bridge - GS", Addresses.GS_Pickup_GoldCoinsRopeBridge, "32896"),
                 new GenericItemsData("Cleared: Ghost Ship", Addresses.HR_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Ghost Ship", Addresses.HR_LevelStatus, "19"),
+                new GenericItemsData("Chalice: Ghost Ship", Addresses.HR_Pickup_Chalice, "32896"),
             };
             return gsLocations;
         }
@@ -763,7 +765,7 @@ namespace MedievilArchipelago
         {
             List<GenericItemsData> ehLocations = new List<GenericItemsData>() {
                 new GenericItemsData("Cleared: The Entrance Hall", Addresses.EH_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Entrance Hall", Addresses.EH_LevelStatus, "19"),
+                new GenericItemsData("Chalice: The Entrance Hall", Addresses.EH_Pickup_Chalice, "32896"),
             };
             return ehLocations;
         }
@@ -786,7 +788,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Bag at Earth Station 2 - TD", Addresses.TD_Pickup_GoldCoinsBagAtEarthStation2, "32896"),
                 new GenericItemsData("Gold Coins: Bag at Earth Station 3 - TD", Addresses.TD_Pickup_GoldCoinsBagAtEarthStation3, "32896"),
                 new GenericItemsData("Cleared: The Time Device", Addresses.TD_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Time Device", Addresses.TD_LevelStatus, "19"),
+                new GenericItemsData("Chalice: The Time Device", Addresses.TD_Pickup_Chalice, "32896"),
             };
             return tdLocations;
         }
@@ -796,7 +798,7 @@ namespace MedievilArchipelago
             List<GenericItemsData> zlLocations = new List<GenericItemsData>() {
                 new GenericItemsData("Equipment: Good Lightning - ZL", Addresses.ZL_Pickup_GoodLightning, "32896"),
                 new GenericItemsData("Equipment: Silver Shield Arena - ZL", Addresses.ZL_Pickup_SilverShield, "32896"),
-                new GenericItemsData("Cleared: Zaroks Lair", Addresses.WinConditionCredits, "19"),
+                new GenericItemsData("Cleared: Zaroks Lair", Addresses.WinConditionCredits, "101"),
             };
             return zlLocations;
         }

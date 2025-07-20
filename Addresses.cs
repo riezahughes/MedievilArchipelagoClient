@@ -178,6 +178,7 @@ namespace MedievilArchipelago
         public const uint TG_Pickup_ChaosRune = 0x0012eda4;
         public const uint TG_Pickup_GoldCoinsNearChaosRune = 0x001300a4;
         public const uint TG_Pickup_LifePotion = 0x001301e4;
+        public const uint TG_Pickup_GoldCoinsBagAtStart = 0x00130264;
         public const uint TG_Pickup_GoldCoinsLifePotionLeftChest = 0x001301a4;
         public const uint TG_Pickup_GoldCoinsLifePotionRightChest = 0x0012f3a4;
         public const uint TG_Pickup_GoldCoinsShopChest = 0x0012f2a4;
@@ -202,7 +203,7 @@ namespace MedievilArchipelago
         public const uint CH_Pickup_Chalice = 0x0012f79c;
 
         // Hilltop Mosoleum
-        public const uint HM_Pickup_EnergyVialRightCoffin = 0x001c64a0;
+        public const uint HM_Pickup_EnergyVialRightCoffin = 0x0012e758;
         public const uint HM_Pickup_GoldCoinsLeftCoffin = 0x0012e718;
         public const uint HM_Pickup_ClubBrokenBenches = 0x001c3484;
         public const uint HM_Pickup_EnergyVialNearRuneLeftRamp = 0x0012f458;
@@ -216,12 +217,12 @@ namespace MedievilArchipelago
         public const uint HM_Pickup_EnergyVialMoonRoom = 0x001302d8;
         public const uint HM_Pickup_SheetMusic = 0x0012f418;
         public const uint HM_Pickup_DaggersBlockPuzzle = 0x001c0c74;
-        public const uint HM_Pickup_CopperShieldBlockPuzzle = 0x001c3e70;
-        public const uint HM_Pickup_GlassDemonSkullKey = 0x001cb768; // Changed from "Boss" to "Pickup" for consistency
-        public const uint HM_Pickup_GoldChestPhantomOfTheOpera1 = 0x001cc128;
-        public const uint HM_Pickup_GoldChestPhantomOfTheOpera2 = 0x001c9e54;
-        public const uint HM_Pickup_GoldChestPhantomOfTheOpera3 = 0x001c9ae0;
-        public const uint HM_Pickup_Chalice = 0x001cc49c;
+        public const uint HM_Pickup_CopperShieldBlockPuzzle = 0x0012ed58;
+        public const uint HM_Pickup_GlassDemonSkullKey = 0x0012f658; // Changed from "Boss" to "Pickup" for consistency
+        public const uint HM_Pickup_GoldChestPhantomOfTheOpera1 = 0x0012f258;
+        public const uint HM_Pickup_GoldChestPhantomOfTheOpera2 = 0x0012f218;
+        public const uint HM_Pickup_GoldChestPhantomOfTheOpera3 = 0x0012f298;
+        public const uint HM_Pickup_Chalice = 0x0012f1d8;
 
         // Return to the Graveyard
         public const uint RTG_Pickup_GoldCoinsChestInCoffinArea1 = 0x0012ee38;

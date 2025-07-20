@@ -47,10 +47,10 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
 
     Console.WriteLine("Setting up player state..");
 
-    // put here for debugging
-    if (Client?.GameState?.CompletedLocations?.Count > 0) {
-        UpdatePlayerState(Client.GameState.ReceivedItems);
-    }
+
+    //if (Client?.GameState?.CompletedLocations?.Count > 0) {
+    //    UpdatePlayerState(Client.GameState.ReceivedItems);
+    //}
 }
 
 void UpdatePlayerState(List<Item> completedLocations )
@@ -77,6 +77,9 @@ void UpdatePlayerState(List<Item> completedLocations )
             case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
             case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(x); break;
             case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
+            // Set Level Complete Statuses
+            // Set Chalice Statuses
+            // 
         }
 
         usedLocations.Add(val.Name);
@@ -90,11 +93,13 @@ void UpdatePlayerState(List<Item> completedLocations )
 
     foreach (KeyValuePair<string, Tuple<int, uint, uint>> location in remainingLocationsDict)
     {
-        Console.WriteLine(location.Key);
         switch (location.Key)
         {
             case var x when x.ContainsAny("Skills"): SetItemMemoryValue(location.Value.Item3, 0, 0); break;
             case var x when x.ContainsAny("Equipment"): SetItemMemoryValue(location.Value.Item3, 65535, 65535); break;
+            // set level complete statuses
+            // set chalice statuses
+
         }
     }
     archipelagoClient.AddOverlayMessage("Player State Updated");
@@ -196,7 +201,7 @@ string ExtractDictName(string itemName)
 
 void ReceiveCountType(Item item)
 {
-    var addressDict = Helpers.AmmoAddressDictionary;
+    var addressDict = Helpers.InventoryAddressDictionary;
     var amount = ExtractBracketAmount(item.Name);
     var name = ExtractDictName(item.Name);
 
@@ -204,7 +209,7 @@ void ReceiveCountType(Item item)
 }
 void ReceiveChargeType(Item item)
 {
-    var addressDict = Helpers.AmmoAddressDictionary;
+    var addressDict = Helpers.InventoryAddressDictionary;
     var amount = ExtractBracketAmount(item.Name);
     var name = ExtractDictName(item.Name);
     UpdateCurrentItemValue(item.Name, amount, addressDict[name], false, false);
@@ -212,7 +217,7 @@ void ReceiveChargeType(Item item)
 
 void ReceiveEquipment(Item item)
 {
-    var addressDict = Helpers.AmmoAddressDictionary;
+    var addressDict = Helpers.InventoryAddressDictionary;
     var name = ExtractDictName(item.Name);
 
     UpdateCurrentItemValue(item.Name, 0, addressDict[name], true, true);
@@ -221,15 +226,16 @@ void ReceiveEquipment(Item item)
 
 void ReceiveKeyItem(Item item)
 {
-    var addressDict = Helpers.GetKeyItemStatuses();
+    // commented out because i need to make a list of player data addresses to deal with this.
+    //var addressDict = Helpers.GetKeyItemInventoryStatuses();
 
-    UpdateCurrentItemValue(item.Name, 1, addressDict[item.Name].Item2, true, true);
+    //UpdateCurrentItemValue(item.Name, 1, addressDict[item.Name].Item2, true, true);
 
 }
 
 void ReceiveLifeBottle(Item item)
 {
-    var addressDict = Helpers.AmmoAddressDictionary;
+    var addressDict = Helpers.InventoryAddressDictionary;
     
     UpdateCurrentItemValue("Life Bottle", 1, addressDict["Life Bottle"], false, false);
 }
@@ -239,19 +245,16 @@ void ReceiveSkill(Item item)
     // there's literally only one skill in this game but i made a skill dict anyway for future projects
     // and to keep things in line
 
-    var skillDict = Helpers.SkillDictionary;
-
-    UpdateCurrentItemValue("Daring Dash", 1, skillDict["Daring Dash"], false, false);
+    UpdateCurrentItemValue("Daring Dash", 1, Addresses.DaringDashSkill, false, false);
 }
 
 // logic for item receiving goes here (gold, health, ammo, etc)
 void ItemReceived(object sender, ItemReceivedEventArgs args)
 {
-    Console.WriteLine(args.Item.Id);
-    Console.WriteLine($"Item Received: {args.Item.Name}");
 
     switch (args.Item)
     {
+        // incoming runes need added here
         case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
         case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
         case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle (x); break;
@@ -294,14 +297,25 @@ void CheckGoalCondition()
     if (GameLocations == null || archipelagoClient.CurrentSession?.Locations?.AllLocationsChecked == null)
         return;
 
+
+    if (archipelagoClient?.GameState.ReceivedItems.Any(x => x.Id == 99251402) == true)
+    {
+        archipelagoClient.SendGoalCompletion();
+        Console.WriteLine("Defeated Zarok");
+        return;
+    }
+
     // if you get all 20 chalices, you win. (until i can find the zarok pointer)
     if (archipelagoClient.CurrentSession.Locations.AllLocationsChecked.Count(x =>
         GameLocations.FirstOrDefault(y => y.Id == x)?.Name?.Contains("Chalice", StringComparison.OrdinalIgnoreCase) == true) >= 20)
     {
         archipelagoClient.SendGoalCompletion();
         Console.WriteLine("Goal completed! Sent goal completion to Archipelago.");
+        return;
     }
 }
+
+// traps need added here and logic added into what i have already
 
 async void RunLagTrap()
 {
@@ -389,6 +403,7 @@ archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args,
 archipelagoClient.ItemReceived += ItemReceived;
 archipelagoClient.MessageReceived += Client_MessageReceived;
 archipelagoClient.LocationCompleted += Client_LocationCompleted;
+
 var cts = new CancellationTokenSource();
 try
 {
@@ -416,8 +431,8 @@ try
     Console.WriteLine("Built Locations list. Launching Monitor");
     _ = archipelagoClient.MonitorLocations(GameLocations); // Use _ = to suppress warning about unawaited task
 
+
     // The main thread now dedicates itself to reading console input.
-    Console.WriteLine("Type 'exit' to quit the program.");
     while (!cts.Token.IsCancellationRequested)
     {
         var input = Console.ReadLine();

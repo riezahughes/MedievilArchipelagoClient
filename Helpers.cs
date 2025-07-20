@@ -21,65 +21,11 @@ namespace MedievilArchipelago
 {
     public class Helpers
     {
-        public static Dictionary<string, Tuple<int, uint, uint>> GetLevelCompleteStatuses()
-        {
-            return new Dictionary<string, Tuple<int, uint, uint>>
-            {
-               {"Cleared: Dan's Crypt", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.DansCryptLevelStatus), Addresses.DansCryptLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: The Graveyard", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheGraveyardLevelStatus), Addresses.TheGraveyardLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: Return to the Graveyard", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.ReturnToTheGraveyardLevelStatus), Addresses.ReturnToTheGraveyardLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: Cemetery Hill", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.CemeteryHillLevelStatus), Addresses.CemeteryHillLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: The Hilltop Mausoleum", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheHilltopMausoleumLevelStatus), Addresses.TheHilltopMausoleumLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: Scarecrow Fields", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.ScarecrowFieldsLevelStatus), Addresses.ScarecrowFieldsLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: Ant Hill", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AntHillLevelStatus), Addresses.AntHillLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: The Crystal Caves", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheCrystalCavesLevelStatus), Addresses.TheCrystalCavesLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: The Lake", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheLakeLevelStatus), Addresses.TheLakeLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: Pumpkin Gorge", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.PumpkinGorgeLevelStatus), Addresses.PumpkinGorgeLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: Pumpkin Serpent", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.PumpkinSerpentLevelStatus), Addresses.PumpkinSerpentLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: Sleeping Village", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SleepingVillageLevelStatus), Addresses.SleepingVillageLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: Pools of the Ancient Dead", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.PoolsOfTheAncientDeadLevelStatus), Addresses.PoolsOfTheAncientDeadLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: Asylum Grounds", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AsylumGroundsLevelStatus), Addresses.AsylumGroundsLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: Inside the Asylum", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.InsideTheAsylumLevelStatus), Addresses.InsideTheAsylumLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: Enchanted Earth", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.EnchantedEarthLevelStatus), Addresses.EnchantedEarthLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: The Gallows Gauntlet", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheGallowsGauntletLevelStatus), Addresses.TheGallowsGauntletLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: The Haunted Ruins", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheHauntedRuinsLevelStatus), Addresses.TheHauntedRuinsLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: Ghost Ship", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.GhostShipLevelStatus), Addresses.GhostShipLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: The Entrance Hall", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheEntranceHallLevelStatus), Addresses.TheEntranceHallLevelStatus, Addresses.FakeAddress)},
-               {"Cleared: The Time Device", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheTimeDeviceLevelStatus), Addresses.TheTimeDeviceLevelStatus, Addresses.FakeAddress)},
-            };
-        }
-        public static Dictionary<string, Tuple<int, uint, uint>> GetChaliceLocationStatuses()
-        {
-            return new Dictionary<string, Tuple<int, uint, uint>>
-            {
-               {"Chalice: The Graveyard", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheGraveyardLevelStatus), Addresses.TheGraveyardLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: Return to the Graveyard", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.ReturnToTheGraveyardLevelStatus), Addresses.ReturnToTheGraveyardLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: Cemetery Hill", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.CemeteryHillLevelStatus), Addresses.CemeteryHillLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: The Hilltop Mausoleum", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheHilltopMausoleumLevelStatus), Addresses.TheHilltopMausoleumLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: Scarecrow Fields", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.ScarecrowFieldsLevelStatus), Addresses.ScarecrowFieldsLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: Ant Hill", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AntHillLevelStatus), Addresses.AntHillLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: The Crystal Caves", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheCrystalCavesLevelStatus), Addresses.TheCrystalCavesLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: The Lake", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheLakeLevelStatus), Addresses.TheLakeLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: Pumpkin Gorge", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.PumpkinGorgeLevelStatus), Addresses.PumpkinGorgeLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: Pumpkin Serpent", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.PumpkinSerpentLevelStatus), Addresses.PumpkinSerpentLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: Sleeping Village", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SleepingVillageLevelStatus), Addresses.SleepingVillageLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: Pools of the Ancient Dead", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.PoolsOfTheAncientDeadLevelStatus), Addresses.PoolsOfTheAncientDeadLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: Asylum Grounds", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.AsylumGroundsLevelStatus), Addresses.AsylumGroundsLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: Inside the Asylum", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.InsideTheAsylumLevelStatus), Addresses.InsideTheAsylumLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: Enchanted Earth", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.EnchantedEarthLevelStatus), Addresses.EnchantedEarthLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: The Gallows Gauntlet", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheGallowsGauntletLevelStatus), Addresses.TheGallowsGauntletLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: The Haunted Ruins", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheHauntedRuinsLevelStatus), Addresses.TheHauntedRuinsLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: Ghost Ship", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.GhostShipLevelStatus), Addresses.GhostShipLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: The Entrance Hall", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheEntranceHallLevelStatus), Addresses.TheEntranceHallLevelStatus, Addresses.FakeAddress)},
-               {"Chalice: The Time Device", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.TheTimeDeviceLevelStatus), Addresses.TheTimeDeviceLevelStatus, Addresses.FakeAddress)},
-            };
-        }
-
         public static Dictionary<string, Tuple<int, uint, uint>> GetKeyItemInventoryStatuses()
         {
             return new Dictionary<string, Tuple<int, uint, uint>>
             {
-                {"Key Item: Dragon Gem: Pumpkin Gorge",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.DragonGem), Addresses.DragonGem, Addresses.FakeAddress)},
+                
                 {"Key Item: Dragon Gem: Inside the Asylum",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.DragonGem), Addresses.DragonGem, Addresses.FakeAddress)},
                 {"Key Item: King Peregrine's Crown",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.KingPeregrinesCrown), Addresses.KingPeregrinesCrown, Addresses.FakeAddress)}, // not sure about this
                 {"Key Item: Soul Helmet 1",new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.SoulHelmet), Addresses.SoulHelmet, Addresses.FakeAddress)},
@@ -171,23 +117,6 @@ namespace MedievilArchipelago
             };
         }
 
-        public static Dictionary<string, Tuple<int, uint, uint>> GetLifeBottleLocationStatuses()
-        {
-            return new Dictionary<string, Tuple<int, uint, uint>>
-            {
-                // uses fake locations at the moment
-                {"Life Bottle: Dan's Crypt", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.DC_Pickup_LifeBottle), Addresses.DC_Pickup_LifeBottle, Addresses.FakeAddress)},
-                {"Life Bottle: The Graveyard", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
-                {"Life Bottle: Hall of Heroes (Canny Tim)", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
-                {"Life Bottle: Dan's Crypt - Behind Wall", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.DC_Pickup_LifeBottleWall), Addresses.DC_Pickup_LifeBottleWall, Addresses.FakeAddress)},
-                {"Life Bottle: Scarecrow Fields", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
-                {"Life Bottle: Pools of the Ancient Dead", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
-                {"Life Bottle: Hall of Heroes (Ravenhooves The Archer)", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
-                {"Life Bottle: Hall of Heroes (Dirk Steadfast)", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)},
-                {"Life Bottle: The Time Device", new Tuple<int, uint, uint>(Memory.ReadInt(Addresses.FakeAddress), Addresses.FakeAddress, Addresses.FakeAddress)}
-            };
-        }
-
         public static Dictionary<string, Tuple<int, uint, uint>> GetRuneLocationStatuses()
         {
             return new Dictionary<string, Tuple<int, uint, uint>>
@@ -270,12 +199,10 @@ namespace MedievilArchipelago
                 }
             };
 
-            addDictionary(GetLevelCompleteStatuses());
-            addDictionary(GetChaliceLocationStatuses());
             addDictionary(GetSkillStatuses());
             addDictionary(GetWeaponInventoryLocationStatuses());
             addDictionary(GetHallOfHeroesStatuses());
-            addDictionary(GetLifeBottleLocationStatuses());
+            //addDictionary(GetLifeBottleLocationStatuses());
             addDictionary(GetKeyItemInventoryStatuses());
             addDictionary(GetRuneLocationStatuses());
 
@@ -289,7 +216,7 @@ namespace MedievilArchipelago
             int baseId = 99251000;
             List<Location> locations = new List<Location>();
 
-            List<LevelData> levels = GetLevelData();
+            List<GenericItemsData> levels = GetLevelData();
             List<GenericItemsData> chalices = GetChaliceData();
             //List<GenericItemsData> hallOfHeroesVisits = GetHallOfHeroesData();
             List<GenericItemsData> skills = GetSkillData();
@@ -347,14 +274,10 @@ namespace MedievilArchipelago
             allLevelLocations.AddRange(tdLocations);
             allLevelLocations.AddRange(zlLocations);
 
-
-
-            var levelDict = GetLevelCompleteStatuses();
-            var chaliceDict = GetChaliceLocationStatuses();
             var skillDict = GetSkillStatuses();
             var hallOfHeroesDict = GetHallOfHeroesStatuses();
             var weaponLocationDict = GetWeaponInventoryLocationStatuses();
-            var bottleLocationDict = GetLifeBottleLocationStatuses();
+            //var bottleLocationDict = GetLifeBottleLocationStatuses();
             var keyItemDict = GetKeyItemInventoryStatuses();
             var runeLocationDict = GetRuneLocationStatuses();
 
@@ -370,8 +293,8 @@ namespace MedievilArchipelago
                         Location location = new Location()
                         {
                             Name = level.Name,
-                            Address = levelDict[level.Name].Item2,
-                            Id = baseId + level.LevelId,
+                            Address = level.Address,
+                            Id = baseId + level.Id,
                             CheckType = LocationCheckType.Byte,
                             CompareType = LocationCheckCompareType.GreaterThan,
                             CheckValue = "16"
@@ -390,7 +313,7 @@ namespace MedievilArchipelago
                         Location location = new Location()
                         {
                             Name = chalice.Name,
-                            Address = chaliceDict[chalice.Name].Item2,
+                            Address = chalice.Address,
                             Id = baseId + chalice.Id,
                             CheckType = LocationCheckType.Byte,
                             CompareType = LocationCheckCompareType.Match,
@@ -870,6 +793,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Bag in Asylumn Room", 329, Addresses.IA_Pickup_GoldCoinsBagInAsylumRoom, "32896"),
                 new GenericItemsData("Gold Coins: Bag in Sewer Prison Entrance", 3230, Addresses.IA_Pickup_GoldCoinsBagInSewerPrisonEntrance, "32896"),
                 new GenericItemsData("Gold Coins: Bag on Sewer Prison Bench", 331, Addresses.IA_Pickup_GoldCoinsBagOnSewerPrisonBench, "32896"),
+                new GenericItemsData("Key Item: Dragon Gem: Inside the Asylum", 331, Addresses.IA_Pickup_DragonGem, "32896"),
             };
             return iaLocations;
         }
@@ -909,6 +833,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Energy Vial: Vine Patch Right", 345, Addresses.PG_Pickup_EnergyVialVinePatchRight, "32896"),
                 new GenericItemsData("Gold Coins: Chest Near Chalice", 346, Addresses.PG_Pickup_GoldCoinsChestNearChalice, "32896"),
                 new GenericItemsData("Energy Vial: Chalice Path", 347, Addresses.PG_Pickup_EnergyVialChalicePath, "32896"),
+                //new GenericItemsData("Key Item: Dragon Gem: Pumpkin Gorge", 347, Addresses.pg_, "32896"),
             };
             return pgLocations;
         }
@@ -993,31 +918,32 @@ namespace MedievilArchipelago
 
 
 
-        private static List<LevelData> GetLevelData()
+        private static List<GenericItemsData> GetLevelData()
         {
-            List<LevelData> levels = new List<LevelData>()
+            List<GenericItemsData> levels = new List<GenericItemsData>()
             {
-                new LevelData("Cleared: Dan's Crypt", 1, [], []),
-                new LevelData("Cleared: The Graveyard", 2, [], []),
-                new LevelData("Cleared: Return to the Graveyard",3, [], []),
-                new LevelData("Cleared: Cemetery Hill",4, [], []),
-                new LevelData("Cleared: The Hilltop Mausoleum",5, [], []),
-                new LevelData("Cleared: Scarecrow Fields",6, [], []),
-                new LevelData("Cleared: Ant Hill",7, [], []),
-                new LevelData("Cleared: The Crystal Caves",6, [], []),
-                new LevelData("Cleared: The Lake",9, [], []),
-                new LevelData("Cleared: Pumpkin Gorge",10, [], []),
-                new LevelData("Cleared: Pumpkin Serpent",11, [], []),
-                new LevelData("Cleared: Sleeping Village",12, [], []),
-                new LevelData("Cleared: Pools of the Ancient Dead",13, [], []),
-                new LevelData("Cleared: Asylum Grounds",14, [], []),
-                new LevelData("Cleared: Inside the Asylum",15, [], []),
-                new LevelData("Cleared: Enchanted Earth",16, [], []),
-                new LevelData("Cleared: The Gallows Gauntlet" ,17, [], []),
-                new LevelData("Cleared: The Haunted Ruins",18, [], []),
-                new LevelData("Cleared: Ghost Ship",19, [], []),
-                new LevelData("Cleared: The Entrance Hall",20, [], []),
-                new LevelData("Cleared: The Time Device",21, [], [])
+                new GenericItemsData("Cleared: Dan's Crypt", 1, Addresses.DansCryptLevelStatus, "16"),
+                new GenericItemsData("Cleared: The Graveyard", 2, Addresses.TheGraveyardLevelStatus, "16"),
+                new GenericItemsData("Cleared: Return to the Graveyard",3, Addresses.ReturnToTheGraveyardLevelStatus, "16"),
+                new GenericItemsData("Cleared: Cemetery Hill",4, Addresses.CemeteryHillLevelStatus, "16"),
+                new GenericItemsData("Cleared: The Hilltop Mausoleum",5, Addresses.TheHilltopMausoleumLevelStatus, "16"),
+                new GenericItemsData("Cleared: Scarecrow Fields",6, Addresses.ScarecrowFieldsLevelStatus, "16"),
+                new GenericItemsData("Cleared: Ant Hill",7, Addresses.AntHillLevelStatus, "16"),
+                new GenericItemsData("Cleared: The Crystal Caves",6, Addresses.TheCrystalCavesLevelStatus, "16"),
+                new GenericItemsData("Cleared: The Lake",9, Addresses.TheLakeLevelStatus, "16"),
+                new GenericItemsData("Cleared: Pumpkin Gorge",10, Addresses.PumpkinGorgeLevelStatus, "16"),
+                new GenericItemsData("Cleared: Pumpkin Serpent",11, Addresses.PumpkinSerpentLevelStatus, "16"),
+                new GenericItemsData("Cleared: Sleeping Village",12, Addresses.SleepingVillageLevelStatus, "16"),
+                new GenericItemsData("Cleared: Pools of the Ancient Dead",13, Addresses.PoolsOfTheAncientDeadLevelStatus, "16"),
+                new GenericItemsData("Cleared: Asylum Grounds",14, Addresses.AsylumGroundsLevelStatus, "16"),
+                new GenericItemsData("Cleared: Inside the Asylum",15, Addresses.InsideTheAsylumLevelStatus, "16"),
+                new GenericItemsData("Cleared: Enchanted Earth",16, Addresses.EnchantedEarthLevelStatus, "16"),
+                new GenericItemsData("Cleared: The Gallows Gauntlet" ,17, Addresses.TheGallowsGauntletLevelStatus, "16"),
+                new GenericItemsData("Cleared: The Haunted Ruins",18, Addresses.TheHauntedRuinsLevelStatus, "16"),
+                new GenericItemsData("Cleared: Ghost Ship",19, Addresses.GhostShipLevelStatus, "16"),
+                new GenericItemsData("Cleared: The Entrance Hall",20, Addresses.TheEntranceHallLevelStatus, "16"),
+                new GenericItemsData("Cleared: The Time Device",21, Addresses.TheTimeDeviceLevelStatus, "16"),
+                new GenericItemsData("Cleared: Zaroks Lair",999, Addresses.WinConditionCredits, "16")
 
             };
             return levels;

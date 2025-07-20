@@ -299,12 +299,21 @@ void CheckGoalCondition()
     if (GameLocations == null || archipelagoClient.CurrentSession?.Locations?.AllLocationsChecked == null)
         return;
 
+
+    if (archipelagoClient?.GameState.ReceivedItems.Any(x => x.Id == 99251999) == true)
+    {
+        archipelagoClient.SendGoalCompletion();
+        Console.WriteLine("Defeated Zarok");
+        return;
+    }
+
     // if you get all 20 chalices, you win. (until i can find the zarok pointer)
     if (archipelagoClient.CurrentSession.Locations.AllLocationsChecked.Count(x =>
         GameLocations.FirstOrDefault(y => y.Id == x)?.Name?.Contains("Chalice", StringComparison.OrdinalIgnoreCase) == true) >= 20)
     {
         archipelagoClient.SendGoalCompletion();
         Console.WriteLine("Goal completed! Sent goal completion to Archipelago.");
+        return;
     }
 }
 

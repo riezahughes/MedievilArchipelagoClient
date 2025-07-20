@@ -165,7 +165,7 @@ namespace MedievilArchipelago
                             Name = location_entry.Name,
                             Address = location_entry.Address,
                             Id = baseId + locationId,
-                            CheckType = LocationCheckType.Byte,
+                            CheckType = LocationCheckType.Int,
                             CompareType = LocationCheckCompareType.Match,
                             CheckValue = location_entry.Check
                         };
@@ -181,10 +181,10 @@ namespace MedievilArchipelago
 
             }
 
-            foreach (var location in locations)
-            {
-                Console.WriteLine($"ID: {location.Id} | name: \"{location.Name}\"");
-            }
+            //foreach (var location in locations)
+            //{
+            //    Console.WriteLine($"ID: {location.Id} | name: \"{location.Name}\"");
+            //}
 
             return locations;
         }

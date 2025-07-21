@@ -45,7 +45,12 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
     Log.Logger.Information($"Playing {Client.CurrentSession.ConnectionInfo.Game} as {Client.CurrentSession.Players.GetPlayerName(Client.CurrentSession.ConnectionInfo.Slot)}");
     Console.WriteLine("Connected to Archipelago!");
 
+    Console.WriteLine("Checking if the game is over");
+
+    CheckGoalCondition();
+
     Console.WriteLine("Setting up player state..");
+
 
 
     //if (Client?.GameState?.CompletedLocations?.Count > 0) {
@@ -240,6 +245,18 @@ void ReceiveLifeBottle(Item item)
     UpdateCurrentItemValue("Life Bottle", 1, addressDict["Life Bottle"], false, false);
 }
 
+void ReceiveRune(Item item)
+{
+    // need to do the logic for this
+    return;
+    // get the type of rune
+
+    //var runeName = GetRuneName(item.Name);
+    //var addressDict = Helpers.InventoryAddressDictionary;
+
+    //UpdateCurrentItemValue(item.Name, 1, addressDict[runeName], false, false);
+}
+
 void ReceiveSkill(Item item)
 {   
     // there's literally only one skill in this game but i made a skill dict anyway for future projects
@@ -255,14 +272,15 @@ void ItemReceived(object sender, ItemReceivedEventArgs args)
     switch (args.Item)
     {
         // incoming runes need added here
+        case var x when x.Name.ContainsAny("Rune"): ReceiveRune(x); break;
         case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
         case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
         case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle (x); break;
         case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
-        case var x when x.Name.ContainsAny("Health", "Gold Coins", "Dagger", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
+        case var x when x.Name.ContainsAny("Health", "Gold Coins", "Daggers", "Ammo", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
         case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x); break;
         case null: Console.WriteLine("Received an item with null data. Skipping."); break;
-        default: Console.WriteLine("Item not recognised. Skipping"); break;
+        default: Console.WriteLine($"Item not recognised. ({args.Item.Name}) Skipping"); break;
     };
 
 
@@ -294,11 +312,13 @@ void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCo
 void CheckGoalCondition()
 {
 
+    // If you 
+
     if (GameLocations == null || archipelagoClient.CurrentSession?.Locations?.AllLocationsChecked == null)
         return;
 
 
-    if (archipelagoClient?.GameState.ReceivedItems.Any(x => x.Id == 99251402) == true)
+    if (archipelagoClient?.GameState.CompletedLocations.Any(x => x.Id == 99251404) == true)
     {
         archipelagoClient.SendGoalCompletion();
         Console.WriteLine("Defeated Zarok");
@@ -306,7 +326,7 @@ void CheckGoalCondition()
     }
 
     // if you get all 20 chalices, you win. (until i can find the zarok pointer)
-    if (archipelagoClient.CurrentSession.Locations.AllLocationsChecked.Count(x =>
+    if (archipelagoClient?.CurrentSession.Locations.AllLocationsChecked.Count(x =>
         GameLocations.FirstOrDefault(y => y.Id == x)?.Name?.Contains("Chalice", StringComparison.OrdinalIgnoreCase) == true) >= 20)
     {
         archipelagoClient.SendGoalCompletion();

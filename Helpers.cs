@@ -130,10 +130,15 @@ namespace MedievilArchipelago
                             Name = location_entry.Name,
                             Address = location_entry.Address,
                             Id = baseId + locationId,
-                            CheckType = locationId == 402 ? LocationCheckType.Int : LocationCheckType.Byte,
-                            CompareType = locationId == 402 ? LocationCheckCompareType.Match : LocationCheckCompareType.GreaterThan,
-                            CheckValue = locationId == 402 ? "101" : "16" // if zarok clear
+                            CheckType = LocationCheckType.Byte,
+                            CompareType = locationId == 404 ? LocationCheckCompareType.Match : LocationCheckCompareType.GreaterThan,
+                            CheckValue = locationId == 404 ? "101" : "16" // if zarok clear
                         };
+
+                        if(locationId == 404)
+                        {
+                            Console.WriteLine($"{location.Name}, {location.Address:X}, {location.Id}, {location.CheckType}, {location.CompareType}, {location.CheckValue}");
+                        }
 
                         locations.Add(location);
                         continue;
@@ -203,7 +208,7 @@ namespace MedievilArchipelago
             ["Dragon Armour"] = Addresses.DragonArmour,
             ["Life Bottle"] = Addresses.CurrentLifePotions,
             ["Energy"] = Addresses.CurrentEnergy,
-            ["Dagger"] = Addresses.DaggerAmmo,
+            ["Daggers"] = Addresses.DaggerAmmo,
             ["Dagger Ammo"] = Addresses.DaggerAmmo,
             ["Broadsword"] = Addresses.BroadswordCharge,
             ["Broadsword Charge"] = Addresses.BroadswordCharge,
@@ -478,6 +483,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Bag Behind Big Tree - EE", Addresses.EE_Pickup_GoldCoinsBagBehindBigTree, "32896"),
                 new GenericItemsData("Gold Coins: Chest In Egg - EE", Addresses.EE_Pickup_GoldCoinsChestInEgg, "32896"),
                 new GenericItemsData("Gold Coins: Bag at Cave Entrance - EE", Addresses.EE_Pickup_GoldCoinsBagAtCaveEntrance, "32896"),
+                new GenericItemsData("Gold Coins: Bag in Talisman Cave - EE", Addresses.EE_Pickup_GoldCoinsBagInShadowTalismanCave, "32896"),
                 new GenericItemsData("Gold Coins:Chest Near Barrier - EE", Addresses.EE_Pickup_GoldCoinsChestNearBarrier, "32896"),
                 new GenericItemsData("Gold Coins: Chest Left of Fountain - EE", Addresses.EE_Pickup_GoldCoinsChestLeftOfFountain, "32896"),
                 new GenericItemsData("Gold Coins: Chest Top of Fountain - EE", Addresses.EE_Pickup_GoldCoinsChestTopOfFountain, "32896"),
@@ -493,6 +499,7 @@ namespace MedievilArchipelago
             List<GenericItemsData> tsvLocations = new List<GenericItemsData>() {
                 new GenericItemsData("Earth Rune: Sleeping Village", Addresses.TSV_Pickup_EarthRune, "32896"),
                 new GenericItemsData("Chaos Rune: Sleeping Village", Addresses.TSV_Pickup_ChaosRune, "32896"),
+                new GenericItemsData("Moon Rune: Sleeping Village", Addresses.TSV_Pickup_MoonRune, "32896"),
                 new GenericItemsData("Key Item: Safe Key - SV", Addresses.TSV_Pickup_SafeKey, "32896"),
                 new GenericItemsData("Key Item: Shadow Artefact - SV", Addresses.TSV_Pickup_ShadowArtefact, "32896"),
                 new GenericItemsData("Key Item: Crucifix - SV", Addresses.TSV_Pickup_Crucifix, "32896"),

@@ -318,7 +318,7 @@ void CheckGoalCondition()
         return;
 
 
-    if (archipelagoClient?.GameState.CompletedLocations.Any(x => x.Id == 99251404) == true)
+    if (archipelagoClient?.GameState.CompletedLocations.Any(x => x.Name == "Cleared: Zaroks Lair") == true)
     {
         archipelagoClient.SendGoalCompletion();
         Console.WriteLine("Defeated Zarok");
@@ -445,7 +445,7 @@ try
     // Now CurrentSession is initialized, so it's safe to subscribe
     archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
 
-    GameLocations = Helpers.BuildLocationList();
+    GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
 
 
     Console.WriteLine("Built Locations list. Launching Monitor");

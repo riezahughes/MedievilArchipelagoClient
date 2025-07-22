@@ -15,12 +15,15 @@ namespace MedievilArchipelago.Models
 
         public string Check {  get; set; }
 
-        public GenericItemsData(string name, uint locationAddress, string check, int id = 0)
+        public bool DynamicItem { get; set; }
+
+        public GenericItemsData(string name, uint locationAddress, string check, bool isDynamicItem = false, int id = 0)
         {
             Name = name;
             Id = id;
             Address = locationAddress;
             Check = check;
+            DynamicItem = isDynamicItem;
         }
     }
 }

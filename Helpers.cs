@@ -12,6 +12,7 @@ using System.Buffers.Text;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices.JavaScript;
@@ -24,42 +25,6 @@ namespace MedievilArchipelago
 {
     public class Helpers
     {
-       // needs renamed. This will basically pull out everything related to player state and give a way to read it for player status updates
-        public static Dictionary<string, Tuple<int, uint, uint>> GetAllLocationsAndAddresses()
-        {
-
-            Dictionary<string, Tuple<int, uint, uint>> allStatuses = new Dictionary<string, Tuple<int, uint, uint>>();
-
-            // Helper function to safely add dictionary entries
-            Action<Dictionary<string, Tuple<int, uint, uint>>> addDictionary = (dict) =>
-            {
-                foreach (var entry in dict)
-                {
-                    if (!allStatuses.ContainsKey(entry.Key)) // Avoid adding duplicate keys if any exist
-                    {
-                        allStatuses.Add(entry.Key, entry.Value);
-                    }
-                    else
-                    {
-                        // Handle duplicate keys, e.g., log a warning or overwrite
-                        // For now, we'll just ignore if a key already exists.
-                        // If you want to overwrite, you can do: allStatuses[entry.Key] = entry.Value;
-                        Console.WriteLine($"Warning: Duplicate key '{entry.Key}' found. Skipping addition.");
-                    }
-                }
-            };
-
-            //addDictionary(GetSkillStatuses());
-            //addDictionary(GetWeaponInventoryLocationStatuses());
-            //addDictionary(GetHallOfHeroesStatuses());
-            //addDictionary(GetLifeBottleLocationStatuses());
-            //addDictionary(GetKeyItemInventoryStatuses());
-            //addDictionary(GetRuneLocationStatuses());
-
-            return allStatuses;
-        }
-
-
 
         public static List<Location> BuildLocationList(Dictionary<string, object> options)
         {
@@ -91,7 +56,7 @@ namespace MedievilArchipelago
                 "The Entrance Hall",
                 "The Time Device",
                 "Zaroks Lair"
-            ];
+];
 
             List<Location> locations = new List<Location>();
 
@@ -124,35 +89,35 @@ namespace MedievilArchipelago
             allLevelLocations.Add("The Time Device", GetTheTimeDeviceData());
             allLevelLocations.Add("Zaroks Lair", GetZaroksLairData());
 
-            //            output = { }
-            //            for i, region_name in enumerate(table_order):
-
-            //                current_region_base_id = base_id + (i * region_offset)
-            //                # Ensure the region exists in location_tables
-            //            if region_name in location_tables:
-            //# Enumerate the items within the current region, starting from current_region_base_id
-            //            for j, location_data in enumerate(location_tables[region_name]):
-            //                    # Assign an ID to each location within the region
-            //                    # The ID for each location in a region will be current_region_base_id + j
-            //                    print(f"{current_region_base_id + j}: {location_data.name}")
-
-            //                output[location_data.name] = current_region_base_id + j
-            int regional_index = 0;
+            var regional_index = 0;
             foreach (var region_name in table_order.ToList())
             {
 
                 long currentRegionBaseId = base_id + (regional_index * region_offset);
+
+                Console.WriteLine($"Base: {currentRegionBaseId}");
+
                 if (allLevelLocations.ContainsKey(region_name))
                 {
                     // Retrieve the list of locations for the current region
                     List<GenericItemsData> regionLocations = allLevelLocations[region_name];
-                    int location_index = 0;
+
+                    var location_index = 0;
+
                     foreach (var loc in regionLocations)
+
                     {
+                        Console.WriteLine(location_index);
+                        Console.WriteLine((int)currentRegionBaseId + location_index);
+
                         int locationId = (int)currentRegionBaseId + location_index;
+
+                        // option_excludesDynamicLocations
+
 
                         if (loc.DynamicItem == true)
                         {
+                            location_index++;
                             continue;
                         }
 
@@ -201,64 +166,12 @@ namespace MedievilArchipelago
                         {
                             Console.WriteLine($"Could not add {loc.Name}, id: {loc.Id}");
                         }
-                        
                     }
                 }
                 regional_index++;
             }
 
-
-            //foreach(var loc in location_entry)
-            //{
-
-            //}
-
-            //if (location_entry.Name.Contains("Cleared:"))
-            //{
-            //    {
-            //        Location location = new Location()
-            //        {
-            //            Name = location_entry.Name,
-            //            Address = location_entry.Address,
-            //            Id = baseId + (region_offset * locationId),
-            //            CheckType = LocationCheckType.Byte,
-            //            CompareType = locationId == 404 ? LocationCheckCompareType.Match : LocationCheckCompareType.GreaterThan,
-            //            CheckValue = locationId == 404 ? "101" : "16" // if zarok clear
-            //        };
-
-            //        if(locationId == 404)
-            //        {
-            //            Console.WriteLine($"{location.Name}, {location.Address:X}, {location.Id}, {location.CheckType}, {location.CompareType}, {location.CheckValue}");
-            //        }
-
-            //        locations.Add(location);
-            //        continue;
-            //    };
-            //}
-
-            // get the chalice at the levels end vs the pickup
-            //if (location_entry.Name.Contains("Chalice:"))
-            //{
-            //    {
-            //        Location location = new Location()
-            //        {
-            //            Name = location_entry.Name,
-            //            Address = location_entry.Address,
-            //            Id = baseId + locationId,
-            //            CheckType = LocationCheckType.Byte,
-            //            CompareType = LocationCheckCompareType.Match,
-            //            CheckValue = "19"
-            //        };
-
-            //        locations.Add(location);
-            //        continue;
-            //    };
-            //}
-
-
-
-            //}
-
+            // debugging line
             foreach (var location in locations)
             {
                 Console.WriteLine($"ID: {location.Id} | name: \"{location.Name}\"");
@@ -266,46 +179,153 @@ namespace MedievilArchipelago
 
             return locations;
         }
-        internal static readonly Dictionary<string, uint> InventoryAddressDictionary = new()
+
+        public static Dictionary<string, uint> FlattenedInventoryStrings()
         {
-            ["Gold Coins"] = Addresses.CurrentGold,
-            ["Health"] = Addresses.CurrentEnergy,
-            ["Health Vial"] = Addresses.CurrentEnergy,
-            ["Small Sword"] = Addresses.SmallSword,
-            ["Magic Sword"] = Addresses.MagicSword,
-            ["Hammer"] = Addresses.Hammer,
-            ["Axe"] = Addresses.Axe,
-            ["Good Lightning"] = Addresses.GoodLightning,
-            ["Dragon Armour"] = Addresses.DragonArmour,
-            ["Life Bottle"] = Addresses.CurrentLifePotions,
-            ["Energy"] = Addresses.CurrentEnergy,
-            ["Daggers"] = Addresses.DaggerAmmo,
-            ["Dagger Ammo"] = Addresses.DaggerAmmo,
-            ["Broadsword"] = Addresses.BroadswordCharge,
-            ["Broadsword Charge"] = Addresses.BroadswordCharge,
-            ["Club"] = Addresses.ClubCharge,
-            ["Club Charge"] = Addresses.ClubCharge,
-            ["Chicken Drumsticks"] = Addresses.ChickenDrumsticksAmmo,
-            ["Chicken Drumsticks Ammo"] = Addresses.ChickenDrumsticksAmmo,
-            ["Crossbow"] = Addresses.CrossbowAmmo,
-            ["Crossbow Ammo"] = Addresses.CrossbowAmmo,
-            ["Longbow"] = Addresses.LongbowAmmo,
-            ["Longbow Ammo"] = Addresses.LongbowAmmo,
-            ["Fire Longbow"] = Addresses.FireLongbowAmmo,
-            ["Fire Longbow Ammo"] = Addresses.FireLongbowAmmo,
-            ["Magic Longbow"] = Addresses.MagicLongbowAmmo,
-            ["Magic Longbow Ammo"] = Addresses.MagicLongbowAmmo,
-            ["Spear"] = Addresses.SpearAmmo,
-            ["Spear Ammo"] = Addresses.SpearAmmo,
-            ["Copper Shield"] = Addresses.CopperShieldAmmo,
-            ["Copper Shield Ammo"] = Addresses.CopperShieldAmmo,
-            ["Silver Shield"] = Addresses.SilverShieldAmmo,
-            ["Silver Shield Ammo"] = Addresses.SilverShieldAmmo,
-            ["Gold Shield"] = Addresses.GoldShieldAmmo,
-            ["Gold Shield Ammo"] = Addresses.GoldShieldAmmo,
-            ["Lightning"] = Addresses.LightningCharge,
-            ["Lightning Charge"] = Addresses.LightningCharge
-        };
+            Dictionary<string, Dictionary<string, uint>> currentDict = StatusAndInventoryAddressDictionary();
+            Dictionary<string, uint> newDict = new Dictionary<string, uint>();
+
+            List<string> validList = new List<string>
+            {
+                "Equipment",
+                "Player Stats",
+                "Key Items"
+            };
+
+
+            foreach (KeyValuePair<string, Dictionary<string, uint>> location in currentDict)
+            {
+                string categoryName = location.Key;
+
+                if (!validList.Contains(categoryName)){
+                    continue;
+                }
+                Dictionary<string, uint> categoryItems = location.Value;
+
+
+                foreach (KeyValuePair<string, uint> item in categoryItems)
+                {
+                    string prefix = location.Key == "Equipment" ? "Equipment: " : location.Key == "Key Items" ? "Key Item: " : "";
+                    string itemName = prefix + item.Key;
+                    uint itemAddress = item.Value;
+                    newDict.Add(itemName, itemAddress);
+                }
+
+            }
+
+            return newDict;
+
+
+        }
+        public static Dictionary<string, Dictionary<string, uint>> StatusAndInventoryAddressDictionary() {
+            return new Dictionary<string, Dictionary<string, uint>>
+            {
+                ["Equipment"] = new Dictionary<string, uint>
+                {
+                    ["Small Sword"] = Addresses.SmallSword,
+                    ["Magic Sword"] = Addresses.MagicSword,
+                    ["Hammer"] = Addresses.Hammer,
+                    ["Axe"] = Addresses.Axe,
+                    ["Good Lightning"] = Addresses.GoodLightning,
+                    ["Dragon Armour"] = Addresses.DragonArmour,
+                    ["Daggers"] = Addresses.DaggerAmmo,
+                    ["Broadsword"] = Addresses.BroadswordCharge,
+                    ["Club"] = Addresses.ClubCharge,
+                    ["Chicken Drumsticks"] = Addresses.ChickenDrumsticksAmmo,
+                    ["Crossbow"] = Addresses.CrossbowAmmo,
+                    ["Longbow"] = Addresses.LongbowAmmo,
+                    ["Fire Longbow"] = Addresses.FireLongbowAmmo,
+                    ["Magic Longbow"] = Addresses.MagicLongbowAmmo,
+                    ["Spear"] = Addresses.SpearAmmo,
+                    ["Copper Shield"] = Addresses.CopperShieldAmmo,
+                    ["Silver Shield"] = Addresses.SilverShieldAmmo,
+                    ["Gold Shield"] = Addresses.GoldShieldAmmo,
+                    ["Lightning"] = Addresses.LightningCharge,
+                },
+
+                ["Ammo"] = new Dictionary<string, uint>
+                {
+                    ["Dagger Ammo"] = Addresses.DaggerAmmo,
+                    ["Broadsword Charge"] = Addresses.BroadswordCharge,
+                    ["Club Charge"] = Addresses.ClubCharge,
+                    ["Chicken Drumsticks Ammo"] = Addresses.ChickenDrumsticksAmmo,
+                    ["Crossbow Ammo"] = Addresses.CrossbowAmmo,
+                    ["Longbow Ammo"] = Addresses.LongbowAmmo,
+                    ["Fire Longbow Ammo"] = Addresses.FireLongbowAmmo,
+                    ["Magic Longbow Ammo"] = Addresses.MagicLongbowAmmo,
+                    ["Spear Ammo"] = Addresses.SpearAmmo,
+                    ["Copper Shield Ammo"] = Addresses.CopperShieldAmmo,
+                    ["Silver Shield Ammo"] = Addresses.SilverShieldAmmo,
+                    ["Gold Shield Ammo"] = Addresses.GoldShieldAmmo,
+                    ["Lightning Charge"] = Addresses.LightningCharge,
+                },
+
+                ["Player Stats"] = new Dictionary<string, uint>
+                {
+                    ["Gold Coins"] = Addresses.CurrentGold,
+                    ["Health"] = Addresses.CurrentEnergy,
+                    ["Health Vial"] = Addresses.CurrentEnergy,
+                    ["Life Bottle"] = Addresses.CurrentLifePotions,
+                    ["Energy"] = Addresses.CurrentEnergy,
+                },
+                ["Key Items"] = new Dictionary<string, uint>
+                {
+                    ["Dragon Gem"] = Addresses.DragonGem,
+                    ["King Peregrine's Crown"] = Addresses.KingPeregrinesCrown,
+                    ["Soul Helmet"] = Addresses.SoulHelmet,
+                    ["Witches Talisman"] = Addresses.WitchesTalisman,
+                    ["Safe Key"] = Addresses.SafeKey,
+                    ["Shadow Artefact"] = Addresses.ShadowArtefact,
+                    ["Shadow Talisman"] = Addresses.FakeAddress, //// neeed the talisman address!
+                    ["Crucifix"] = Addresses.Crucifix,
+                    ["Landlords Bust"] = Addresses.LandlordsBust,
+                    ["Crucifix Cast"] = Addresses.CrucifixCast,
+                    ["Amber Piece"] = Addresses.AmberPiece,
+                    ["Harvester Parts"] = Addresses.HarvesterParts,
+                    ["Skull Key"] = Addresses.SkullKey,
+                    ["Sheet Music"] = Addresses.SheetMusic
+                },
+                ["Level Status"] = new Dictionary<string, uint>
+                {
+
+                    ["Dan's Crypt"] = Addresses.DC_LevelStatus,
+                    ["The Graveyard"] = Addresses.TG_LevelStatus,
+                    ["Cemetery Hill"] = Addresses.CH_LevelStatus,
+                    ["The Hilltop Mausoleum"] = Addresses.HM_LevelStatus,
+                    ["Return to the Graveyard"] = Addresses.RTG_LevelStatus,
+                    ["Scarecrow Fields"] = Addresses.SF_LevelStatus,
+                    ["Ant Hill"] = Addresses.TA_LevelStatus,
+                    ["Enchanted Earth"] = Addresses.EE_LevelStatus,
+                    ["Sleeping Village"] = Addresses.TSV_LevelStatus,
+                    ["Pools of the Ancient Dead"] = Addresses.PAD_LevelStatus,
+                    ["The Lake"] = Addresses.TL_LevelStatus,
+                    ["The Crystal Caves"] = Addresses.CC_LevelStatus,
+                    ["The Gallows Gauntlet"] = Addresses.GG_LevelStatus,
+                    ["Asylum Grounds"] = Addresses.AG_LevelStatus,
+                    ["Inside the Asylum"] = Addresses.IA_LevelStatus,
+                    ["Pumpkin Gorge"] = Addresses.PG_LevelStatus,
+                    ["Pumpkin Serpent"] = Addresses.PS_LevelStatus,
+                    ["The Haunted Ruins"] = Addresses.HR_LevelStatus,
+                    ["Ghost Ship"] = Addresses.GS_LevelStatus,
+                    ["The Entrance Hall"] = Addresses.EH_LevelStatus,
+                    ["The Time Device"] = Addresses.TD_LevelStatus
+                },
+
+                ["Runes"] = new Dictionary<string, uint>
+                {
+                    ["Chaos Rune"] = Addresses.ChaosRune,
+                    ["Earth Rune"] = Addresses.EarthRune,
+                    ["Star Rune"] = Addresses.StarRune,
+                    ["Moon Rune"] = Addresses.MoonRune,
+                    ["Time Rune"] = Addresses.TimeRune
+                }
+
+
+            };
+       }
+        
+        
+        
 
         // Hall of Heroes needs an overhaul. Not worth dealing with right now
 

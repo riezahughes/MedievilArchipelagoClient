@@ -84,20 +84,20 @@ void UpdatePlayerState(List<Item> itemsCollected)
             case var x when x.Name.ContainsAny("Ammo"): 
 
                 break;
-            case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
-            case var x when x.Name.ContainsAny("Equipment"): 
+            case var x when x.Name.Contains("Skill"): ReceiveSkill(x); break;
+            case var x when x.Name.Contains("Equipment"): 
                 ReceiveEquipment(x);
-                if (!x.Name.ContainsAny("Shield"))
+                if (!x.Name.Contains("Shield"))
                 {   
                     equippedWeaponNumber = Helpers.WeaponEquipDictionary[x.Name];
                     hasEquipableWeapon = true;
                     
                 }
                 break;
-            case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(x); break;
-            case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
-            case var x when x.Name.ContainsAny("Cleared"): ReceiveLevelCleared(x); break;
-            case var x when x.Name.ContainsAny("Chalice"): ReceiveChaliceComplete(x); break;
+            case var x when x.Name.Contains("Life Bottle"): ReceiveLifeBottle(x); break;
+            case var x when x.Name.Contains("Key Item"): ReceiveKeyItem(x); break;
+            case var x when x.Name.Contains("Cleared"): ReceiveLevelCleared(x); break;
+            case var x when x.Name.Contains("Chalice"): ReceiveChaliceComplete(x); break;
 
         }
 
@@ -119,7 +119,6 @@ void UpdatePlayerState(List<Item> itemsCollected)
         // reset any other values
         if (itemName.ContainsAny("Skill"))
         {
-            Console.WriteLine("Daring Dash BB");
             SetItemMemoryValue(itemAddress, 0, 0);
         }
         else if (itemName.ContainsAny("Equipment"))
@@ -138,14 +137,11 @@ void UpdatePlayerState(List<Item> itemsCollected)
         }
 
     }
-    Console.WriteLine($"{equippedWeaponNumber}, {hasEquipableWeapon}");
+
 
     if (!hasEquipableWeapon)
     {
         DefaultToArm();
-    } else
-    {
-        EquipWeapon(equippedWeaponNumber);
     }
 
 

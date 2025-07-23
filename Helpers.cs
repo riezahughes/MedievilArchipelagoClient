@@ -122,8 +122,6 @@ namespace MedievilArchipelago
 
                 long currentRegionBaseId = base_id + (regional_index * region_offset);
 
-                Console.WriteLine($"Base: {currentRegionBaseId}");
-
                 if (allLevelLocations.ContainsKey(region_name))
                 {
                     // Retrieve the list of locations for the current region
@@ -134,8 +132,6 @@ namespace MedievilArchipelago
                     foreach (var loc in regionLocations)
 
                     {
-                        Console.WriteLine(location_index);
-                        Console.WriteLine((int)currentRegionBaseId + location_index);
 
                         int locationId = (int)currentRegionBaseId + location_index;
 
@@ -160,11 +156,6 @@ namespace MedievilArchipelago
                                     CompareType = loc.Name == "Cleared: Zaroks Lair" ? LocationCheckCompareType.Match : LocationCheckCompareType.GreaterThan,
                                     CheckValue = loc.Name == "Cleared: Zaroks Lair" ? "101" : "16" // if zarok clear
                                 };
-
-                                if (loc.Name == "Cleared: Zaroks Lair")
-                                {
-                                    Console.WriteLine($"{location.Name}, {location.Address:X}, {location.Id}, {location.CheckType}, {location.CompareType}, {location.CheckValue}");
-                                }
 
                                 locations.Add(location);
                                 location_index++;
@@ -199,10 +190,10 @@ namespace MedievilArchipelago
             }
 
             // debugging line
-            foreach (var location in locations)
-            {
-                Console.WriteLine($"ID: {location.Id} | name: \"{location.Name}\"");
-            }
+            //foreach (var location in locations)
+            //{
+            //    Console.WriteLine($"ID: {location.Id} | name: \"{location.Name}\"");
+            //}
 
             return locations;
         }

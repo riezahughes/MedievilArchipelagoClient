@@ -69,21 +69,21 @@ namespace MedievilArchipelago
             allLevelLocations.Add("Dan's Crypt", GetDansCryptData());
             allLevelLocations.Add("The Graveyard", GetTheGraveyardData());
             allLevelLocations.Add("Cemetery Hill", GetCemeteryHillData());
-            allLevelLocations.Add("Hilltop Mausoleum", GetHilltopMausoleumData());
+            allLevelLocations.Add("The Hilltop Mausoleum", GetHilltopMausoleumData());
             allLevelLocations.Add("Return to the Graveyard", GetReturnToTheGraveyardData());
             allLevelLocations.Add("Scarecrow Fields", GetScarecrowFieldsData());
             allLevelLocations.Add("Ant Hill", GetAnthillData());
             allLevelLocations.Add("Enchanted Earth", GetEnchantedEarthData());
             allLevelLocations.Add("The Sleeping Village", GetTheSleepingVillageData());
-            allLevelLocations.Add("Pools Of The Ancient Dead",GetPoolsOfTheAncientDeadData());
+            allLevelLocations.Add("Pools Of The Ancient Dead", GetPoolsOfTheAncientDeadData());
             allLevelLocations.Add("The Lake", GetTheLakeData());
             allLevelLocations.Add("The Crystal Caves", GetTheCrystalCavesData());
             allLevelLocations.Add("Gallows Gauntlet", GetGallowsGauntletData());
-            allLevelLocations.Add("The Asylum Grounds", GetTheAsylumGroundsData());
-            allLevelLocations.Add("InsideTheAsylum", GetInsideTheAsylumData());
+            allLevelLocations.Add("Asylum Grounds", GetTheAsylumGroundsData());
+            allLevelLocations.Add("Inside The Asylum", GetInsideTheAsylumData());
             allLevelLocations.Add("Pumpkin Gorge", GetPumpkinGorgeData());
             allLevelLocations.Add("Pumpkin Serpent", GetPumpkinSerpentData());
-            allLevelLocations.Add("Haunted Ruins", GetTheHauntedRuinsData());
+            allLevelLocations.Add("The Haunted Ruins", GetTheHauntedRuinsData());
             allLevelLocations.Add("The Ghost Ship", GetTheGhostShipData());
             allLevelLocations.Add("The Entrance Hall", GetTheEntranceHallData());
             allLevelLocations.Add("The Time Device", GetTheTimeDeviceData());
@@ -197,7 +197,8 @@ namespace MedievilArchipelago
             {
                 string categoryName = location.Key;
 
-                if (!validList.Contains(categoryName)){
+                if (!validList.Contains(categoryName))
+                {
                     continue;
                 }
                 Dictionary<string, uint> categoryItems = location.Value;
@@ -205,7 +206,7 @@ namespace MedievilArchipelago
 
                 foreach (KeyValuePair<string, uint> item in categoryItems)
                 {
-                    string prefix = location.Key == "Equipment" ? "Equipment: " : location.Key == "Key Items" ? "Key Item: " : "";
+                    string prefix = location.Key == "Equipment" ? "Equipment: " : location.Key == "Key Items" ? "Key Item: " : location.Key == "Skills" ? "Skill: " : location.Key == "Level Status" ? "Cleared: " : "";
                     string itemName = prefix + item.Key;
                     uint itemAddress = item.Value;
                     newDict.Add(itemName, itemAddress);
@@ -217,7 +218,8 @@ namespace MedievilArchipelago
 
 
         }
-        public static Dictionary<string, Dictionary<string, uint>> StatusAndInventoryAddressDictionary() {
+        public static Dictionary<string, Dictionary<string, uint>> StatusAndInventoryAddressDictionary()
+        {
             return new Dictionary<string, Dictionary<string, uint>>
             {
                 ["Equipment"] = new Dictionary<string, uint>
@@ -267,6 +269,10 @@ namespace MedievilArchipelago
                     ["Health Vial"] = Addresses.CurrentEnergy,
                     ["Life Bottle"] = Addresses.CurrentLifePotions,
                     ["Energy"] = Addresses.CurrentEnergy,
+                },
+                ["Skills"] = new Dictionary<string, uint>
+                {
+                    ["Daring Dash"] = Addresses.DaringDashSkill,
                 },
                 ["Key Items"] = new Dictionary<string, uint>
                 {
@@ -322,10 +328,10 @@ namespace MedievilArchipelago
 
 
             };
-       }
-        
-        
-        
+        }
+
+
+
 
         // Hall of Heroes needs an overhaul. Not worth dealing with right now
 
@@ -380,7 +386,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Behind Wall in Crypt - Left - DC", Addresses.DC_Pickup_GoldCoinsBehindWallLeft, "32896"),
                 new GenericItemsData("Gold Coins: Behind Wall in Crypt - Right - DC", Addresses.DC_Pickup_GoldCoinsBehindWallRight, "32896"),
                 new GenericItemsData("Cleared: Dan's Crypt", Addresses.DC_LevelStatus, "16"),
-                
+
             };
             return dcLocations;
         }

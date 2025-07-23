@@ -25,6 +25,33 @@ namespace MedievilArchipelago
 {
     public class Helpers
     {
+        public static Dictionary<string, int> WeaponEquipDictionary = new Dictionary<string, int>
+        {
+            {"Equipment: Short Sword", 0},
+            {"Equipment: Broadsword", 1},
+            {"Equipment: Magic Sword", 2},
+            {"Equipment: Club", 5},
+            {"Equipment: Hammer", 12},
+            {"Equipment: Daggers", 3},
+            {"Equipment: Axe", 4},
+            {"Equipment: Chicken Drumsticks", 7},
+            {"Equipment: Crossbow", 6},
+            {"Equipment: Longbow", 10},
+            {"Equipment: Fire Longbow",13 },
+            {"Equipment: Magic Longbow",14},
+            {"Equipment: Spear", 11},
+            {"Equipment: Lightning", 9},
+            {"Equipment: Good Lightning", 15},
+            {"Equipment: Dragon Armour", 16 },
+            {"Dans Arm", 8 }
+        };
+        public static Dictionary<string, int> ShieldEquipDictionary = new Dictionary<string, int>
+        {
+            {"Equipment: Copper Shield", 1},
+            {"Equipment: Silver Shield", 2},
+            {"Equipment: Gold Shield", 3}
+        };
+
 
         public static List<Location> BuildLocationList(Dictionary<string, object> options)
         {

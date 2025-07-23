@@ -71,6 +71,7 @@ void UpdatePlayerState(List<Item> itemsCollected)
 
     // for each location that's coming in
     bool hasEquipableWeapon = false;
+    int equippedWeaponNumber = 0;
 
     foreach (Item val in itemsCollected)
     {
@@ -86,7 +87,12 @@ void UpdatePlayerState(List<Item> itemsCollected)
             case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
             case var x when x.Name.ContainsAny("Equipment"): 
                 ReceiveEquipment(x);
-                hasEquipableWeapon = x.Name.ContainsAny("Shield") ? false : true;
+                if (!x.Name.ContainsAny("Shield"))
+                {   
+                    equippedWeaponNumber = Helpers.WeaponEquipDictionary[x.Name];
+                    hasEquipableWeapon = true;
+                    
+                }
                 break;
             case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(x); break;
             case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
@@ -132,14 +138,23 @@ void UpdatePlayerState(List<Item> itemsCollected)
         }
 
     }
+    Console.WriteLine($"{equippedWeaponNumber}, {hasEquipableWeapon}");
 
     if (!hasEquipableWeapon)
     {
         DefaultToArm();
+    } else
+    {
+        EquipWeapon(equippedWeaponNumber);
     }
 
 
     archipelagoClient.AddOverlayMessage("Player State Updated");
+}
+
+void EquipWeapon(int value)
+{
+    SetItemMemoryValue(Addresses.ItemEquipped, value, value);
 }
 
 void DefaultToArm()

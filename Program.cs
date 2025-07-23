@@ -17,6 +17,7 @@ using System.Threading;
 using Archipelago.Core.Util.Overlay;
 using Newtonsoft.Json;
 using MedievilArchipelago.Models;
+using System.Xml.Linq;
 
 var gameClient = new DuckstationClient();
 bool connected = gameClient.Connect();
@@ -45,19 +46,23 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
     Log.Logger.Information($"Playing {Client.CurrentSession.ConnectionInfo.Game} as {Client.CurrentSession.Players.GetPlayerName(Client.CurrentSession.ConnectionInfo.Slot)}");
     Console.WriteLine("Connected to Archipelago!");
 
+    Console.WriteLine("Checking if the game is over");
+
+    CheckGoalCondition();
+
     Console.WriteLine("Setting up player state..");
 
-
-    //if (Client?.GameState?.CompletedLocations?.Count > 0) {
-    //    UpdatePlayerState(Client.GameState.ReceivedItems);
-    //}
+    if (Client?.GameState?.CompletedLocations?.Count > 0)
+    {
+        UpdatePlayerState(Client.GameState.ReceivedItems);
+    }
 }
 
 void UpdatePlayerState(List<Item> completedLocations )
 {
-    Console.WriteLine("Updating player state...");
+    //Console.WriteLine("Updating player state...");
     // get a list of all locatoins
-    var all_locations = Helpers.GetAllLocationsAndAddresses();
+    Dictionary<string, uint> all_locations = Helpers.FlattenedInventoryStrings();
 
     // get a list of used locations
     var usedLocations = new List<string>();
@@ -77,31 +82,44 @@ void UpdatePlayerState(List<Item> completedLocations )
             case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
             case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(x); break;
             case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
-            // Set Level Complete Statuses
-            // Set Chalice Statuses
-            // 
+            case var x when x.Name.ContainsAny("Cleared"): ReceiveLevelCleared(x); break;
+            case var x when x.Name.ContainsAny("Chalice"): ReceiveChaliceComplete(x); break;
+
         }
 
         usedLocations.Add(val.Name);
 
     }
 
-    Dictionary<string, Tuple<int, uint, uint>> remainingLocationsDict = all_locations
+    Dictionary<string, uint> remainingLocationsDict = all_locations
         .Where(kvp => !usedLocations.Contains(kvp.Key))
         .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
 
-    foreach (KeyValuePair<string, Tuple<int, uint, uint>> location in remainingLocationsDict)
+    foreach (KeyValuePair<string, uint> location in remainingLocationsDict)
     {
-        switch (location.Key)
+
+        string itemName = location.Key;
+        uint itemAddress = location.Value;
+
+        // reset any other values
+        if (itemName.ContainsAny("Skills"))
         {
-            case var x when x.ContainsAny("Skills"): SetItemMemoryValue(location.Value.Item3, 0, 0); break;
-            case var x when x.ContainsAny("Equipment"): SetItemMemoryValue(location.Value.Item3, 65535, 65535); break;
-            // set level complete statuses
-            // set chalice statuses
+            SetItemMemoryValue(itemAddress, 0, 0);
+        }
+        else if (itemName.ContainsAny("Equipment"))
+        {
+            SetItemMemoryValue(itemAddress, 65535, 65535); // Assuming 65535 is "reset/max" for equipment
+        }
+        else if (itemName.ContainsAny("Complete"))
+        {
+
+            SetItemMemoryValue(itemAddress, 0, 0);
 
         }
     }
+
+
     archipelagoClient.AddOverlayMessage("Player State Updated");
 }
 
@@ -176,7 +194,7 @@ int ExtractBracketAmount(string itemName)
     {
         return bracketAmount;
     }
-    return 0; // Return 0 if no valid number is found
+    return 0; 
 }
 
 string ExtractDictName(string itemName)
@@ -188,56 +206,123 @@ string ExtractDictName(string itemName)
         return colonMatch.Groups[1].Value.Trim();
     }
 
-    // 2. If no colon match, try the "parentheses" pattern
     var parenthesesMatch = Regex.Match(itemName, @"^(.*?)(?:\s*\(.*?\))?$");
     if (parenthesesMatch.Success)
     {
         return parenthesesMatch.Groups[1].Value.Trim();
     }
-    // 3. If neither pattern matches, return the original string or "N/A"
-    // (Your original function returned "N/A" if no match, let's stick to that)
     return "N/A";
+}
+
+string ExtractKeyItemName(string itemName)
+{
+    var dashRemovedMatch = Regex.Match(itemName, @"^(?:Key Item:\s*)?([^-]+?)(?: - .*)?$");
+
+    string cleanedName = itemName; 
+
+    if (dashRemovedMatch.Success)
+    {
+        cleanedName = dashRemovedMatch.Groups[1].Value.Trim();
+    }
+    else
+    {
+        var keyItemPrefixMatch = Regex.Match(itemName, @"^Key Item:\s*(.*)$");
+        if (keyItemPrefixMatch.Success)
+        {
+            cleanedName = keyItemPrefixMatch.Groups[1].Value.Trim();
+        }
+        else
+        {
+
+            cleanedName = itemName.Trim();
+        }
+    }
+
+
+    cleanedName = Regex.Replace(cleanedName, @"\s*\d+$", "").Trim();
+
+    return cleanedName;
 }
 
 void ReceiveCountType(Item item)
 {
-    var addressDict = Helpers.InventoryAddressDictionary;
+    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
     var amount = ExtractBracketAmount(item.Name);
     var name = ExtractDictName(item.Name);
 
-    UpdateCurrentItemValue(item.Name, amount, addressDict[name], true, false);
+    UpdateCurrentItemValue(item.Name, amount, addressDict["Ammo"][name], true, false);
 }
+
 void ReceiveChargeType(Item item)
 {
-    var addressDict = Helpers.InventoryAddressDictionary;
+    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
     var amount = ExtractBracketAmount(item.Name);
     var name = ExtractDictName(item.Name);
-    UpdateCurrentItemValue(item.Name, amount, addressDict[name], false, false);
+    UpdateCurrentItemValue(item.Name, amount, addressDict["Ammo"][name], false, false);
 }
 
 void ReceiveEquipment(Item item)
 {
-    var addressDict = Helpers.InventoryAddressDictionary;
+    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
     var name = ExtractDictName(item.Name);
 
-    UpdateCurrentItemValue(item.Name, 0, addressDict[name], true, true);
+    UpdateCurrentItemValue(item.Name, 0, addressDict["Equipment"][name], true, true);
 
+}
+
+
+void ReceiveLevelCleared(Item level)
+{
+    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
+    var name = ExtractDictName(level.Name);
+
+    UpdateCurrentItemValue(level.Name, 16, addressDict["Level Status"][name], true, true);
+}
+
+void ReceiveChaliceComplete(Item level)
+{
+    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
+    var name = ExtractDictName(level.Name);
+
+    UpdateCurrentItemValue(level.Name, 19, addressDict["Level Status"][name], true, true);
 }
 
 void ReceiveKeyItem(Item item)
 {
     // commented out because i need to make a list of player data addresses to deal with this.
-    //var addressDict = Helpers.GetKeyItemInventoryStatuses();
+    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
+    var name = ExtractKeyItemName(item.Name);
 
-    //UpdateCurrentItemValue(item.Name, 1, addressDict[item.Name].Item2, true, true);
+    UpdateCurrentItemValue(item.Name, 0, addressDict["Key Items"][name], true, true);
 
 }
 
 void ReceiveLifeBottle(Item item)
 {
-    var addressDict = Helpers.InventoryAddressDictionary;
+    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
     
-    UpdateCurrentItemValue("Life Bottle", 1, addressDict["Life Bottle"], false, false);
+    UpdateCurrentItemValue("Life Bottle", 1, addressDict["Player Stats"]["Life Bottle"], false, false);
+}
+
+void ReceiveStatItems(Item item)
+{
+    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
+    var amount = ExtractBracketAmount(item.Name);
+    var name = ExtractDictName(item.Name);
+
+    UpdateCurrentItemValue(item.Name, amount, addressDict["Player Stats"][name], true, false);
+}
+
+void ReceiveRune(Item item)
+{
+    // need to do the logic for this
+    return;
+    // get the type of rune
+
+    //var runeName = GetRuneName(item.Name);
+    //var addressDict = Helpers.InventoryAddressDictionary;
+
+    //UpdateCurrentItemValue(item.Name, 1, addressDict[runeName], false, false);
 }
 
 void ReceiveSkill(Item item)
@@ -255,14 +340,16 @@ void ItemReceived(object sender, ItemReceivedEventArgs args)
     switch (args.Item)
     {
         // incoming runes need added here
+        case var x when x.Name.ContainsAny("Rune"): ReceiveRune(x); break;
         case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
         case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
         case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle (x); break;
         case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
-        case var x when x.Name.ContainsAny("Health", "Gold Coins", "Dagger", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
+        case var x when x.Name.ContainsAny("Health", "Gold Coins", "Energy"): ReceiveStatItems(x); break;
+        case var x when x.Name.ContainsAny("Daggers", "Ammo", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
         case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x); break;
         case null: Console.WriteLine("Received an item with null data. Skipping."); break;
-        default: Console.WriteLine("Item not recognised. Skipping"); break;
+        default: Console.WriteLine($"Item not recognised. ({args.Item.Name}) Skipping"); break;
     };
 
 
@@ -272,7 +359,9 @@ void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceiv
 {
     var message = string.Join("", e.Message.Parts.Select(p => p.Text));
 
-    archipelagoClient.AddOverlayMessage(e.Message.ToString()); 
+    archipelagoClient.AddOverlayMessage(e.Message.ToString());
+
+    UpdatePlayerState(archipelagoClient.GameState.ReceivedItems);
 
     Log.Logger.Information(JsonConvert.SerializeObject(e.Message));
     Console.WriteLine($"Message: {message}");
@@ -294,23 +383,16 @@ void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCo
 void CheckGoalCondition()
 {
 
+    // If you 
+
     if (GameLocations == null || archipelagoClient.CurrentSession?.Locations?.AllLocationsChecked == null)
         return;
 
 
-    if (archipelagoClient?.GameState.ReceivedItems.Any(x => x.Id == 99251402) == true)
+    if (archipelagoClient?.GameState.CompletedLocations.Any(x => x.Name == "Cleared: Zaroks Lair") == true)
     {
         archipelagoClient.SendGoalCompletion();
         Console.WriteLine("Defeated Zarok");
-        return;
-    }
-
-    // if you get all 20 chalices, you win. (until i can find the zarok pointer)
-    if (archipelagoClient.CurrentSession.Locations.AllLocationsChecked.Count(x =>
-        GameLocations.FirstOrDefault(y => y.Id == x)?.Name?.Contains("Chalice", StringComparison.OrdinalIgnoreCase) == true) >= 20)
-    {
-        archipelagoClient.SendGoalCompletion();
-        Console.WriteLine("Goal completed! Sent goal completion to Archipelago.");
         return;
     }
 }
@@ -425,7 +507,7 @@ try
     // Now CurrentSession is initialized, so it's safe to subscribe
     archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
 
-    GameLocations = Helpers.BuildLocationList();
+    GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
 
 
     Console.WriteLine("Built Locations list. Launching Monitor");

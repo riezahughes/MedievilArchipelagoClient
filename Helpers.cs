@@ -27,7 +27,7 @@ namespace MedievilArchipelago
     {
         public static Dictionary<string, int> WeaponEquipDictionary = new Dictionary<string, int>
         {
-            {"Equipment: Short Sword", 0},
+            {"Equipment: Small Sword", 0},
             {"Equipment: Broadsword", 1},
             {"Equipment: Magic Sword", 2},
             {"Equipment: Club", 5},

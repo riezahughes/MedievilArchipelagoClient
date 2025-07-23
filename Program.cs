@@ -143,9 +143,6 @@ void UpdatePlayerState(List<Item> itemsCollected)
     {
         DefaultToArm();
     }
-
-
-    archipelagoClient.AddOverlayMessage("Player State Updated");
 }
 
 void EquipWeapon(int value)
@@ -390,7 +387,7 @@ void ItemReceived(object sender, ItemReceivedEventArgs args)
         default: Console.WriteLine($"Item not recognised. ({args.Item.Name}) Skipping"); break;
     };
 
-
+    UpdatePlayerState(archipelagoClient.GameState.ReceivedItems);
 }
 
 void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceivedEventArgs e)
@@ -399,14 +396,13 @@ void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceiv
 
     archipelagoClient.AddOverlayMessage(e.Message.ToString());
 
-    UpdatePlayerState(archipelagoClient.GameState.ReceivedItems);
-
     Log.Logger.Information(JsonConvert.SerializeObject(e.Message));
     Console.WriteLine($"Message: {message}");
 }
 
 void Client_LocationCompleted(object sender, LocationCompletedEventArgs e)
 {
+    UpdatePlayerState(archipelagoClient.GameState.ReceivedItems);
     CheckGoalCondition();
 }
 

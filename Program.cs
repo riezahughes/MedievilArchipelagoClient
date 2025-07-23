@@ -142,6 +142,9 @@ void UpdatePlayerState(List<Item> itemsCollected)
     if (!hasEquipableWeapon)
     {
         DefaultToArm();
+    } else
+    {
+        EquipWeapon(equippedWeaponNumber);
     }
 }
 

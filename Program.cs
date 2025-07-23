@@ -58,19 +58,22 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
     }
 }
 
-void UpdatePlayerState(List<Item> completedLocations )
+void UpdatePlayerState(List<Item> itemsCollected)
 {
     //Console.WriteLine("Updating player state...");
     // get a list of all locatoins
-    Dictionary<string, uint> all_locations = Helpers.FlattenedInventoryStrings();
+    Dictionary<string, uint> all_items = Helpers.FlattenedInventoryStrings();
 
     // get a list of used locations
-    var usedLocations = new List<string>();
+    var usedItems = new List<string>();
 
     SetItemMemoryValue(Addresses.CurrentLifePotions, 0, 0);
 
     // for each location that's coming in
-    foreach (Item val in completedLocations)
+    bool hasEquipableWeapon = false;
+    int equippedWeaponNumber = 0;
+
+    foreach (Item val in itemsCollected)
     {
         var loc = new Item();
         loc.Name = val.Name;
@@ -78,8 +81,19 @@ void UpdatePlayerState(List<Item> completedLocations )
         switch (loc)
         {
             // Update memory
+            case var x when x.Name.ContainsAny("Ammo"): 
+
+                break;
             case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
-            case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
+            case var x when x.Name.ContainsAny("Equipment"): 
+                ReceiveEquipment(x);
+                if (!x.Name.ContainsAny("Shield"))
+                {   
+                    equippedWeaponNumber = Helpers.WeaponEquipDictionary[x.Name];
+                    hasEquipableWeapon = true;
+                    
+                }
+                break;
             case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(x); break;
             case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
             case var x when x.Name.ContainsAny("Cleared"): ReceiveLevelCleared(x); break;
@@ -87,24 +101,25 @@ void UpdatePlayerState(List<Item> completedLocations )
 
         }
 
-        usedLocations.Add(val.Name);
+        usedItems.Add(val.Name);
 
     }
 
-    Dictionary<string, uint> remainingLocationsDict = all_locations
-        .Where(kvp => !usedLocations.Contains(kvp.Key))
+    Dictionary<string, uint> remainingItemsDict = all_items
+        .Where(kvp => !usedItems.Contains(kvp.Key))
         .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-
-    foreach (KeyValuePair<string, uint> location in remainingLocationsDict)
+    // UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAddress, bool isCountType, bool isEquipmentType)
+    foreach (KeyValuePair<string, uint> item in remainingItemsDict)
     {
 
-        string itemName = location.Key;
-        uint itemAddress = location.Value;
+        string itemName = item.Key;
+        uint itemAddress = item.Value;
 
         // reset any other values
-        if (itemName.ContainsAny("Skills"))
+        if (itemName.ContainsAny("Skill"))
         {
+            Console.WriteLine("Daring Dash BB");
             SetItemMemoryValue(itemAddress, 0, 0);
         }
         else if (itemName.ContainsAny("Equipment"))
@@ -113,14 +128,39 @@ void UpdatePlayerState(List<Item> completedLocations )
         }
         else if (itemName.ContainsAny("Complete"))
         {
-
             SetItemMemoryValue(itemAddress, 0, 0);
 
         }
+        else if (itemName.ContainsAny("Key Item"))
+        {
+            SetItemMemoryValue(itemAddress, 65535, 65535);
+
+        }
+
+    }
+    Console.WriteLine($"{equippedWeaponNumber}, {hasEquipableWeapon}");
+
+    if (!hasEquipableWeapon)
+    {
+        DefaultToArm();
+    } else
+    {
+        EquipWeapon(equippedWeaponNumber);
     }
 
 
     archipelagoClient.AddOverlayMessage("Player State Updated");
+}
+
+void EquipWeapon(int value)
+{
+    SetItemMemoryValue(Addresses.ItemEquipped, value, value);
+}
+
+void DefaultToArm()
+{
+    SetItemMemoryValue(Addresses.ItemEquipped, 8, 8);
+    SetItemMemoryValue(Addresses.SmallSword, 65535, 65535);
 }
 
 async void OnDisconnected(object sender, EventArgs args, ArchipelagoClient Client)
@@ -155,6 +195,10 @@ int SetItemMemoryValue(uint itemMemoryAddress, int itemUpdateValue, int maxCount
 void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAddress, bool isCountType, bool isEquipmentType)
 {
     var currentNumberAmount = Memory.ReadShort(itemMemoryAddress);
+
+    if(currentNumberAmount == -1 && itemName.ContainsAny("Ammo", "Charge")){
+        return;
+    }
 
     // life bottles have 1 in the chamber before showing
     if(itemName == "Life Bottle" && currentNumberAmount == 0)
@@ -258,6 +302,7 @@ void ReceiveChargeType(Item item)
     var addressDict = Helpers.StatusAndInventoryAddressDictionary();
     var amount = ExtractBracketAmount(item.Name);
     var name = ExtractDictName(item.Name);
+
     UpdateCurrentItemValue(item.Name, amount, addressDict["Ammo"][name], false, false);
 }
 
@@ -325,12 +370,9 @@ void ReceiveRune(Item item)
     //UpdateCurrentItemValue(item.Name, 1, addressDict[runeName], false, false);
 }
 
-void ReceiveSkill(Item item)
-{   
-    // there's literally only one skill in this game but i made a skill dict anyway for future projects
-    // and to keep things in line
-
-    UpdateCurrentItemValue("Daring Dash", 1, Addresses.DaringDashSkill, false, false);
+void ReceiveSkill(Item item) { 
+    // setting it here till i fix my ridiculous update function
+    SetItemMemoryValue(Addresses.DaringDashSkill, 1, 1);
 }
 
 // logic for item receiving goes here (gold, health, ammo, etc)

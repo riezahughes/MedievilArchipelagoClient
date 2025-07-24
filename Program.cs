@@ -19,10 +19,6 @@ using Newtonsoft.Json;
 using MedievilArchipelago.Models;
 using System.Xml.Linq;
 
-var gameClient = new DuckstationClient();
-bool connected = gameClient.Connect();
-var archipelagoClient = new ArchipelagoClient(gameClient);
-
 
 // set values
 const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
@@ -38,6 +34,184 @@ string password;
 List<Location> GameLocations = null;
 
 // Event Handlers
+
+////////////////////////////
+//
+// Main Program Flow
+//
+////////////////////////////
+
+// Make sure the connect is initialised
+
+
+DuckstationClient gameClient = null;
+bool clientInitializedAndConnected = false; // Renamed for clarity
+int retryAttempt = 0;
+
+while (!clientInitializedAndConnected)
+{
+    Console.Clear();
+    retryAttempt++;
+    Console.WriteLine($"\nAttempt #{retryAttempt}:");
+
+    try
+    {
+        gameClient = new DuckstationClient();
+        clientInitializedAndConnected = true;
+    }
+    catch (Exception ex)
+    {
+        // Catch any exception thrown during the DuckstationClient constructor call
+        // or any other unexpected error during the try block.
+        Console.WriteLine($"Could not find Duckstation open.");
+
+        // Wait for 5 seconds before the next retry
+        Thread.Sleep(5000); // 5000 milliseconds = 5 seconds
+    }
+}
+
+
+Console.Clear();
+
+bool connected = gameClient.Connect();
+var archipelagoClient = new ArchipelagoClient(gameClient);
+
+Console.WriteLine("Successfully connected to Duckstation.");
+
+// get the duckstation offset
+try
+{
+    Memory.GlobalOffset = Memory.GetDuckstationOffset();
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"An unexpected error occurred while getting Duckstation memory offset: {ex.Message}");
+    Console.WriteLine(ex); // Print full exception for debugging
+}
+
+// wait till you're in-game
+uint currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
+
+
+while (currentGameStatus != 0x800f8198) // 0x00 means not in a level
+{
+    Console.Clear();
+    currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
+    Console.WriteLine($"Waiting to be in-game...");
+    await Task.Delay(5000);
+}
+
+Console.Clear();
+
+// start AP Login
+
+Console.WriteLine("Enter AP url: eg,archipelago.gg");
+string lineUrl = Console.ReadLine();
+
+url = string.IsNullOrWhiteSpace(lineUrl) ? "wss://archipelago.gg" : "wss://" + lineUrl;
+
+Console.WriteLine("Enter Port: eg, 80001");
+port = Console.ReadLine();
+
+Console.WriteLine("Enter Slot Name:");
+slot = Console.ReadLine();
+
+Console.WriteLine("Room Password:");
+string linePassword = Console.ReadLine();
+password = string.IsNullOrWhiteSpace(linePassword) ? "None" : linePassword;
+
+Console.WriteLine("Details:");
+Console.WriteLine($"URL:{url}:{port}");
+Console.WriteLine($"Slot: {slot}");
+Console.WriteLine($"Password: {password}");
+
+if (string.IsNullOrWhiteSpace(slot))
+{
+    Console.WriteLine("Slot name cannot be empty. Please provide a valid slot name.");
+    return;
+}
+
+Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
+
+// Register event handlers
+archipelagoClient.Connected += (sender, args) => OnConnected(sender, args, archipelagoClient);
+archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args, archipelagoClient); ;
+archipelagoClient.ItemReceived += ItemReceived;
+archipelagoClient.MessageReceived += Client_MessageReceived;
+archipelagoClient.LocationCompleted += Client_LocationCompleted;
+
+var cts = new CancellationTokenSource();
+try
+{
+    await archipelagoClient.Connect(url + ":" + port, "Medievil");
+    Console.WriteLine("Connected. Attempting to Log in...");
+    await archipelagoClient.Login(slot, password);
+    Console.WriteLine("Logged in!");
+
+    var overlayOptions = new OverlayOptions();
+    overlayOptions.XOffset = 50;
+    overlayOptions.YOffset = 500;
+    overlayOptions.FontSize = 12;
+    overlayOptions.TextColor = Color.Yellow;
+
+    var gameOverlay = new WindowsOverlayService(overlayOptions);
+
+    archipelagoClient.IntializeOverlayService(gameOverlay); // kinda works ? Commenting out for now.
+
+    // Now CurrentSession is initialized, so it's safe to subscribe
+    archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
+
+    GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
+
+    Console.Clear();
+    Console.WriteLine("Client is connected and watching Medievil....");
+    _ = archipelagoClient.MonitorLocations(GameLocations); // Use _ = to suppress warning about unawaited task
+
+
+    // The main thread now dedicates itself to reading console input.
+    while (!cts.Token.IsCancellationRequested)
+    {
+        var input = Console.ReadLine();
+        if (input?.Trim().ToLower() == "exit")
+        {
+            cts.Cancel(); // Signal background tasks to stop
+            break; // Exit the input loop
+        }
+        else if (input?.Trim().ToLower().Contains("hint") == true)
+        {
+
+            string hintString = input?.Trim().ToLower() == "hint" ? "!hint" : $"!hint {input.Substring(5).Trim()}";
+            archipelagoClient.SendMessage(hintString);
+        }
+        else if (input?.Trim().ToLower() == "update")
+        {
+            if (archipelagoClient.GameState.CompletedLocations != null)
+            {
+                UpdatePlayerState(archipelagoClient.GameState.ReceivedItems);
+                Console.WriteLine($"Player state updated. Total Count: {archipelagoClient.GameState.ReceivedItems.Count}");
+            }
+            else
+            {
+                Console.WriteLine("Cannot update player state: GameState or CompletedLocations is null.");
+            }
+        }
+        else if (!string.IsNullOrWhiteSpace(input))
+        {
+            Console.WriteLine($"Unknown command: '{input}'");
+        }
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"An error occurred while connecting to Archipelago: {ex.Message}");
+    Console.WriteLine(ex); // Print full exception for debugging
+}
+finally
+{
+    // Perform any necessary cleanup here
+    Console.WriteLine("Shutting down...");
+
+}
 
 
 async void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
@@ -447,150 +621,5 @@ async void RunLagTrap()
     }
 }
 
-////////////////////////////
-//
-// Main Program Flow
-//
-////////////////////////////
 
-// Make sure the connect is initialised
-if (!connected)
-{
-    Console.WriteLine("Failed to connect to Duckstation. Is it running and loaded with a game?");
-    Console.WriteLine("Press any key to exit...");
-    Console.ReadKey();
-    return; // Exit if not connected
-}
-
-Console.WriteLine("Successfully connected to Duckstation.");
-
-// get the duckstation offset
-try
-{
-    Memory.GlobalOffset = Memory.GetDuckstationOffset();
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"An unexpected error occurred while getting Duckstation memory offset: {ex.Message}");
-    Console.WriteLine(ex); // Print full exception for debugging
-}
-
-// wait till you're in-game
-uint currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
-
-
-while (currentGameStatus != 0x800f8198) // 0x00 means not in a level
-{
-    currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
-    Console.WriteLine($"Waiting to be in-game...");
-    await Task.Delay(5000);
-}
-
-// start AP Login
-
-Console.WriteLine("Enter AP url: eg,archipelago.gg");
-string lineUrl = Console.ReadLine();
-
-url = string.IsNullOrWhiteSpace(lineUrl) ? "wss://archipelago.gg" : "wss://" + lineUrl;
-
-Console.WriteLine("Enter Port: eg, 80001");
-port = Console.ReadLine();
-
-Console.WriteLine("Enter Slot Name:");
-slot = Console.ReadLine();
-
-Console.WriteLine("Room Password:");
-string linePassword = Console.ReadLine();
-password = string.IsNullOrWhiteSpace(linePassword) ? "None" : linePassword;
-
-Console.WriteLine("Details:");
-Console.WriteLine($"URL:{url}:{port}");
-Console.WriteLine($"Slot: {slot}");
-Console.WriteLine($"Password: {password}");
-
-if (string.IsNullOrWhiteSpace(slot))
-{
-    Console.WriteLine("Slot name cannot be empty. Please provide a valid slot name.");
-    return;
-}
-
-Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
-
-// Register event handlers
-archipelagoClient.Connected += (sender, args) => OnConnected(sender, args, archipelagoClient);
-archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args, archipelagoClient); ;
-archipelagoClient.ItemReceived += ItemReceived;
-archipelagoClient.MessageReceived += Client_MessageReceived;
-archipelagoClient.LocationCompleted += Client_LocationCompleted;
-
-var cts = new CancellationTokenSource();
-try
-{
-    await archipelagoClient.Connect(url + ":" + port, "Medievil");
-    Console.WriteLine("Connected. Attempting to Log in...");
-    await archipelagoClient.Login(slot, password);
-    Console.WriteLine("Logged in!");
-
-    var overlayOptions = new OverlayOptions();
-    overlayOptions.XOffset = 50;
-    overlayOptions.YOffset = 500;
-    overlayOptions.FontSize = 12;
-    overlayOptions.TextColor = Color.Yellow;
-
-    var gameOverlay = new WindowsOverlayService(overlayOptions);
-
-    archipelagoClient.IntializeOverlayService(gameOverlay); // kinda works ? Commenting out for now.
-
-    // Now CurrentSession is initialized, so it's safe to subscribe
-    archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
-
-    GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
-
-
-    Console.WriteLine("Built Locations list. Launching Monitor");
-    _ = archipelagoClient.MonitorLocations(GameLocations); // Use _ = to suppress warning about unawaited task
-
-
-    // The main thread now dedicates itself to reading console input.
-    while (!cts.Token.IsCancellationRequested)
-    {
-        var input = Console.ReadLine();
-        if (input?.Trim().ToLower() == "exit")
-        {
-            cts.Cancel(); // Signal background tasks to stop
-            break; // Exit the input loop
-        }
-        else if (input?.Trim().ToLower() == "hint")
-        {
-            Console.WriteLine("Hints aren't supported yet. Sorry!");
-        }
-        else if (input?.Trim().ToLower() == "update")
-        {
-            if (archipelagoClient.GameState.CompletedLocations != null)
-            {
-                UpdatePlayerState(archipelagoClient.GameState.ReceivedItems);
-                Console.WriteLine($"Player state updated. Total Count: {archipelagoClient.GameState.ReceivedItems.Count}");
-            }
-            else
-            {
-                Console.WriteLine("Cannot update player state: GameState or CompletedLocations is null.");
-            }
-        }
-        else if (!string.IsNullOrWhiteSpace(input))
-        {
-            Console.WriteLine($"Unknown command: '{input}'");
-        }
-    }
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"An error occurred while connecting to Archipelago: {ex.Message}");
-    Console.WriteLine(ex); // Print full exception for debugging
-}
-finally
-{
-    // Perform any necessary cleanup here
-    Console.WriteLine("Shutting down...");
-
-}
     

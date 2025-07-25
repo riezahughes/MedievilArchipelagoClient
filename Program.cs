@@ -283,6 +283,7 @@ void UpdatePlayerState(List<Item> itemsCollected)
     var usedItems = new List<string>();
 
     SetItemMemoryValue(Addresses.CurrentLifePotions, 0, 0);
+    SetItemMemoryValue(Addresses.SoulHelmet, 0, 0);
 
     // for each location that's coming in
     bool hasEquipableWeapon = false;
@@ -310,6 +311,7 @@ void UpdatePlayerState(List<Item> itemsCollected)
                 }
                 break;
             case var x when x.Name.Contains("Life Bottle"): ReceiveLifeBottle(x); break;
+            case var x when x.Name.Contains("Soul Helmet"): ReceiveSoulHelmet(x); break;
             case var x when x.Name.Contains("Key Item"): ReceiveKeyItem(x); break;
             case var x when x.Name.Contains("Cleared"): ReceiveLevelCleared(x); break;
             case var x when x.Name.Contains("Chalice"): ReceiveChaliceComplete(x); break;
@@ -438,6 +440,9 @@ void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAd
     if (isEquipmentType && isCountType)
     {
         SetItemMemoryValue(itemMemoryAddress, 100, countMax);
+    } else
+    {
+        SetItemMemoryValue(itemMemoryAddress, 4096, countMax);
     }
 
 }
@@ -558,6 +563,13 @@ void ReceiveLifeBottle(Item item)
     var addressDict = Helpers.StatusAndInventoryAddressDictionary();
     
     UpdateCurrentItemValue("Life Bottle", 1, addressDict["Player Stats"]["Life Bottle"], false, false);
+}
+
+void ReceiveSoulHelmet(Item item)
+{
+    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
+
+    UpdateCurrentItemValue("Soul Helmet", 1, addressDict["Key Items"]["Soul Helmet"], false, false);
 }
 
 void ReceiveStatItems(Item item)

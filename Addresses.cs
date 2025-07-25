@@ -79,26 +79,28 @@ namespace MedievilArchipelago
 
         // List of Hall of Heroes encounters
 
-        public const uint CannyTim1 = 0x000197BA;
-        public const uint CannyTim2 = 0x000197C2;
-        public const uint StanyerIronHewer1 = 0x000197CA;
-        public const uint StanyerIronHewer2 = 0x000197D2;
-        public const uint WodenTheMighty1 = 0x000197EA;
-        public const uint WodenTheMighty2 = 0x000197F2;
-        public const uint RavenHoovesTheArcher1 = 0x0001978A;
-        public const uint RavenHoovesTheArcher2 = 0x00019792;
-        public const uint RavenHoovesTheArcher3 = 0x0001979A;
-        public const uint RavenHoovesTheArcher4 = 0x000197A2;
-        public const uint Imanzi1 = 0x0001977A;
-        public const uint Imanzi2 = 0x00019782;
-        public const uint DarkSteadfast1 = 0x000197FA;
-        public const uint DarkSteadfast2 = 0x00019802;
-        public const uint KarlStungard1 = 0x0001980A;
-        public const uint KarlStungard2 = 0x00019812;
-        public const uint BloodmonathSkillCleaver1 = 0x000197AA;
-        public const uint BloodmonathSkillCleaver2 = 0x000197B2;
-        public const uint MegwynneStormbinder1 = 0x000197DA;
-        public const uint MegwynneStormbinder2 = 0x000197E2;
+        public const uint HOH_CannyTim1 = 0x001408b0;
+        public const uint HOH_CannyTim2 = 0x001408b4;
+        public const uint HOH_StanyerIronHewer1 = 0x001408b8;
+        public const uint HOH_StanyerIronHewer2 = 0x001408bc;
+        public const uint HOH_WodenTheMighty1 = 0x001408c0;
+        public const uint HOH_WodenTheMighty2 = 0x001408c4;
+        public const uint HOH_RavenHoovesTheArcher1 = 0x001408c8;
+        public const uint HOH_RavenHoovesTheArcher2 = 0x001408cc;
+        public const uint HOH_RavenHoovesTheArcher3 = 0x001408d0;
+        public const uint HOH_RavenHoovesTheArcher4 = 0x001408d4;
+        public const uint HOH_Imanzi1 = 0x001408d8;
+        public const uint HOH_Imanzi2 = 0x001408dc;
+        public const uint HOH_DirkSteadfast1 = 0x001408e0;
+        public const uint HOH_DirkSteadfast2 = 0x001408e4;
+        public const uint HOH_KarlStungard1 = 0x001408e8;
+        public const uint HOH_KarlStungard2 = 0x001408ec;
+        public const uint HOH_BloodmonathSkullCleaver1 = 0x001408f0;
+        public const uint HOH_BloodmonathSkullCleaver2 = 0x001408f4;
+        public const uint HOH_MegwynneStormbinder1 = 0x001408f8;
+        public const uint HOH_MegwynneStormbinder2 = 0x001408fc;
+        public const uint HOH_ItemCount = 0x000f90fa;
+        public const uint HOH_ListenedToHero = 0x000196f0;
 
         // key items
 
@@ -166,7 +168,7 @@ namespace MedievilArchipelago
         public const uint DC_Pickup_Shortsword = 0x0012dfb4;
         public const uint DC_Pickup_StarRune = 0x0012e0f4;
         public const uint DC_Pickup_GoldCoinsOverWater = 0x0012e134;
-        public const uint DC_Pickup_CopperShield = 0x00186d10;
+        public const uint DC_Pickup_CopperShield = 0x0012e5b0;
         public const uint DC_Pickup_LifeBottle = 0x0012e234;
         public const uint DC_Pickup_Daggers = 0x0012e1f4;
         public const uint DC_Pickup_LifeBottleWall = 0x0012d93c;
@@ -179,23 +181,24 @@ namespace MedievilArchipelago
         public const uint TG_Pickup_GoldCoinsNearChaosRune = 0x001300a4;
         public const uint TG_Pickup_LifePotion = 0x001301e4;
         public const uint TG_Pickup_GoldCoinsBagAtStart = 0x00130264;
+        public const uint TG_Pickup_GoldCoinsBehindFenceAtStatue = 0x0012f1a4;
         public const uint TG_Pickup_GoldCoinsLifePotionLeftChest = 0x001301a4;
         public const uint TG_Pickup_GoldCoinsLifePotionRightChest = 0x0012f3a4;
         public const uint TG_Pickup_GoldCoinsShopChest = 0x0012f2a4;
         public const uint TG_Pickup_GoldCoinsBagNearHillFountain = 0x0012f664;
-        public const uint TG_Pickup_CopperShield = 0x00000000; // Need the actual value for this. Missed it.
+        public const uint TG_Pickup_CopperShield = 0x00130220; // Need the actual value for this. Missed it.
         public const uint TG_Pickup_Chalice = 0x0012fda4;
 
         // Cemetery Hill
         public const uint CH_Pickup_GoldCoinsNearBoulderEntrance = 0x0012e85c;
         public const uint CH_Pickup_EnergyVialNearShop = 0x0012fb1c;
-        public const uint CH_Pickup_CopperShield1stOnHill = 0x001c7dd4;
+        public const uint CH_Pickup_CopperShield1stOnHill = 0x0012f998;
         public const uint CH_Pickup_GoldCoinsUpHill1 = 0x0012f9dc;
-        public const uint CH_Pickup_CopperShield2ndOnHill = 0x001c9714;
+        public const uint CH_Pickup_CopperShield2ndOnHill = 0x0012f898;
         public const uint CH_Pickup_GoldCoinsUpHill2 = 0x0012f91c;
-        public const uint CH_Pickup_CopperShield3rdOnHill = 0x001c2a1c;
+        public const uint CH_Pickup_CopperShield3rdOnHill = 0x0012f8d8;
         public const uint CH_Pickup_GoldCoinsChestAtExit = 0x0012f95c;
-        public const uint CH_Pickup_Club = 0x001c94e4;
+        public const uint CH_Pickup_Club = 0x0012f098;
         public const uint CH_Pickup_WitchTalisman = 0x0012f65c;
         public const uint CH_Pickup_CopperShieldArena = 0x0012f35c;
         public const uint CH_Pickup_EnergyVialArena = 0x0012fbdc;
@@ -205,7 +208,7 @@ namespace MedievilArchipelago
         // Hilltop Mosoleum
         public const uint HM_Pickup_EnergyVialRightCoffin = 0x0012e758;
         public const uint HM_Pickup_GoldCoinsLeftCoffin = 0x0012e718;
-        public const uint HM_Pickup_ClubBrokenBenches = 0x001c3484;
+        public const uint HM_Pickup_ClubBrokenBenches = 0x0012f754;
         public const uint HM_Pickup_EnergyVialNearRuneLeftRamp = 0x0012f458;
         public const uint HM_Pickup_EarthRune = 0x0012ed98;
         public const uint HM_Pickup_GoldCoinsAfterEarthRuneDoor = 0x0012ec98;
@@ -216,7 +219,7 @@ namespace MedievilArchipelago
         public const uint HM_Pickup_GoldCoinsChestInMoonRoom = 0x0012ec18;
         public const uint HM_Pickup_EnergyVialMoonRoom = 0x001302d8;
         public const uint HM_Pickup_SheetMusic = 0x0012f418;
-        public const uint HM_Pickup_DaggersBlockPuzzle = 0x001c0c74;
+        public const uint HM_Pickup_DaggersBlockPuzzle = 0x00130294;
         public const uint HM_Pickup_CopperShieldBlockPuzzle = 0x0012ed58;
         public const uint HM_Pickup_GlassDemonSkullKey = 0x0012f658; // Changed from "Boss" to "Pickup" for consistency
         public const uint HM_Pickup_GoldChestPhantomOfTheOpera1 = 0x0012f258;
@@ -229,14 +232,14 @@ namespace MedievilArchipelago
         public const uint RTG_Pickup_EnergyVialCoffinAreaWest = 0x00130ab8;
         public const uint RTG_Pickup_GoldCoinsChestInCoffinArea2 = 0x0012ed38;
         public const uint RTG_Pickup_GoldCoinsChestInCoffinArea3 = 0x0012ed78;
-        public const uint RTG_Pickup_GoldCoinsChestInCoffinArea4 = 0x0012ee38;
+        public const uint RTG_Pickup_GoldCoinsChestInCoffinArea4 = 0x0012edf8;
         public const uint RTG_Pickup_EnergyVialCoffinAreaEast = 0x00130af8;
         public const uint RTG_Pickup_GoldCoinsChestInCoffinArea5 = 0x0012edb8;
         public const uint RTG_Pickup_GoldCoinsBagAboveCoffinArea = 0x00130a78;
         public const uint RTG_Pickup_GoldCoinsBagAfterBridge = 0x001c5470;
         public const uint RTG_Pickup_EnergyVialBelowShop = 0x001303f8;
         public const uint RTG_Pickup_GoldCoinsBagAtShop = 0x00130b38;
-        public const uint RTG_Pickup_SilverShieldChestAtShop = 0x001cc318;
+        public const uint RTG_Pickup_SilverShieldChestAtShop = 0x0012eb74;
         public const uint RTG_Pickup_GoldCoinsBagAtClosedGate = 0x00130978;
         public const uint RTG_Pickup_StarRune = 0x0012ebb8;
         public const uint RTG_Pickup_GoldCoinsChestOnIsland = 0x00130cb8;

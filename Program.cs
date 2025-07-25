@@ -200,6 +200,7 @@ try
 
     Console.Clear();
     Console.WriteLine("Client is connected and watching Medievil....");
+    //_ = MemoryCheckThreads.UpdateChestlikeContents(archipelagoClient);
     _ = MemoryCheckThreads.CheckForHallOfHeroes(archipelagoClient);
     _ = archipelagoClient.MonitorLocations(GameLocations); // Use _ = to suppress warning about unawaited task
 

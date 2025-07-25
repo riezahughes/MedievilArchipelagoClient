@@ -21,7 +21,6 @@ using System.Xml.Linq;
 using System.Diagnostics;
 using System.Drawing;
 
-
 // set values
 const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
 const byte JP_OFFSET = 0; // could add more offsfets here
@@ -96,28 +95,30 @@ catch (Exception ex)
 
 
 // wait until you can read the euro/US
-while(!hasFoundMem)
-{
-    Console.Clear();
-    short region = Memory.ReadShort(0x001c3540);
-    
-    if (region == 817)
-    {
-        Console.WriteLine("PAL Copy of the game found");
-        hasFoundMem = true;
-    }
-    if (region == 31370)
-    {
-        //Memory.GlobalOffset. = Memory.GlobalOffset - US_OFFSET; // this line isn't working. Once i can get the offset working it should go with the US version of the game. *should*..
-        Console.WriteLine("US Copy of the game found. Please note that i've not done any tests with the US version of the game. This progam has been built to work with the PAL one. Use so at your own discretion.");
-        hasFoundMem = true;
-    } else
-    {
-        Console.WriteLine("Looking for game version...");
-        await Task.Delay(5000);
-    }
 
-};
+// doesn't work. got wrong memory address. I tried.
+//while(!hasFoundMem)
+//{
+//    Console.Clear();
+//    short region = Memory.ReadShort(0x001c3540);
+    
+//    if (region == 817)
+//    {
+//        Console.WriteLine("PAL Copy of the game found");
+//        hasFoundMem = true;
+//    }
+//    if (region == 31370)
+//    {
+//        //Memory.GlobalOffset. = Memory.GlobalOffset - US_OFFSET; // this line isn't working. Once i can get the offset working it should go with the US version of the game. *should*..
+//        Console.WriteLine("US Copy of the game found. Please note that i've not done any tests with the US version of the game. This progam has been built to work with the PAL one. Use so at your own discretion.");
+//        hasFoundMem = true;
+//    } else
+//    {
+//        Console.WriteLine("Looking for game version...");
+//        await Task.Delay(5000);
+//    }
+
+//};
 
 // wait till you're in-game
 uint currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
@@ -128,6 +129,8 @@ while (currentGameStatus != 0x800f8198) // 0x00 means not in a level
     currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
     Console.WriteLine($"Waiting to be in-game...");
     await Task.Delay(5000);
+
+
 }
 
 
@@ -197,6 +200,7 @@ try
 
     Console.Clear();
     Console.WriteLine("Client is connected and watching Medievil....");
+    _ = MemoryCheckThreads.CheckForHallOfHeroes(archipelagoClient);
     _ = archipelagoClient.MonitorLocations(GameLocations); // Use _ = to suppress warning about unawaited task
 
 

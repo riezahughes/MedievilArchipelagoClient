@@ -79,26 +79,28 @@ namespace MedievilArchipelago
 
         // List of Hall of Heroes encounters
 
-        public const uint CannyTim1 = 0x000197BA;
-        public const uint CannyTim2 = 0x000197C2;
-        public const uint StanyerIronHewer1 = 0x000197CA;
-        public const uint StanyerIronHewer2 = 0x000197D2;
-        public const uint WodenTheMighty1 = 0x000197EA;
-        public const uint WodenTheMighty2 = 0x000197F2;
-        public const uint RavenHoovesTheArcher1 = 0x0001978A;
-        public const uint RavenHoovesTheArcher2 = 0x00019792;
-        public const uint RavenHoovesTheArcher3 = 0x0001979A;
-        public const uint RavenHoovesTheArcher4 = 0x000197A2;
-        public const uint Imanzi1 = 0x0001977A;
-        public const uint Imanzi2 = 0x00019782;
-        public const uint DarkSteadfast1 = 0x000197FA;
-        public const uint DarkSteadfast2 = 0x00019802;
-        public const uint KarlStungard1 = 0x0001980A;
-        public const uint KarlStungard2 = 0x00019812;
-        public const uint BloodmonathSkillCleaver1 = 0x000197AA;
-        public const uint BloodmonathSkillCleaver2 = 0x000197B2;
-        public const uint MegwynneStormbinder1 = 0x000197DA;
-        public const uint MegwynneStormbinder2 = 0x000197E2;
+        public const uint HOH_CannyTim1 = 0x001408b0;
+        public const uint HOH_CannyTim2 = 0x001408b4;
+        public const uint HOH_StanyerIronHewer1 = 0x001408b8;
+        public const uint HOH_StanyerIronHewer2 = 0x001408bc;
+        public const uint HOH_WodenTheMighty1 = 0x001408c0;
+        public const uint HOH_WodenTheMighty2 = 0x001408c4;
+        public const uint HOH_RavenHoovesTheArcher1 = 0x001408c8;
+        public const uint HOH_RavenHoovesTheArcher2 = 0x001408cc;
+        public const uint HOH_RavenHoovesTheArcher3 = 0x001408d0;
+        public const uint HOH_RavenHoovesTheArcher4 = 0x001408d4;
+        public const uint HOH_Imanzi1 = 0x001408d8;
+        public const uint HOH_Imanzi2 = 0x001408dc;
+        public const uint HOH_DirkSteadfast1 = 0x001408e0;
+        public const uint HOH_DirkSteadfast2 = 0x001408e4;
+        public const uint HOH_KarlStungard1 = 0x001408e8;
+        public const uint HOH_KarlStungard2 = 0x001408ec;
+        public const uint HOH_BloodmonathSkullCleaver1 = 0x001408f0;
+        public const uint HOH_BloodmonathSkullCleaver2 = 0x001408f4;
+        public const uint HOH_MegwynneStormbinder1 = 0x001408f8;
+        public const uint HOH_MegwynneStormbinder2 = 0x001408fc;
+        public const uint HOH_ItemCount = 0x000f90fa;
+        public const uint HOH_ListenedToHero = 0x000196f0;
 
         // key items
 

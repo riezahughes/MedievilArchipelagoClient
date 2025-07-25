@@ -162,7 +162,7 @@ namespace MedievilArchipelago
                                 continue;
                             };
                         }
-                        if (loc.Name.Contains("Key Item:") || loc.Name.Contains("Chalice:") || loc.Name.Contains("Rune:") || loc.Name.Contains("Equipment:") || loc.Name.Contains("Gold Coins:") || loc.Name.Contains("Skill:") || loc.Name.Contains("Life Bottle:") || loc.Name.Contains("Energy Vial:"))
+                        if (loc.Name.Contains("Key Item:") || loc.Name.Contains("Chalice:") || loc.Name.Contains("Rune:") || loc.Name.Contains("Equipment:") || loc.Name.Contains("Gold Coins:") || loc.Name.Contains("Skill:") || loc.Name.Contains("Life Bottle:") || loc.Name.Contains("Energy Vial:") || loc.Name.Contains("HH") || loc.Name.Contains("Hall of Heroes"))
                         {
                             {
                                 Location location = new Location()
@@ -357,36 +357,36 @@ namespace MedievilArchipelago
         {
             List<GenericItemsData> hallOfHeroeVisits = new List<GenericItemsData>()
             {
-                new GenericItemsData("Life Bottle: Hall of Heroes (Canny Tim)", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Life Bottle: Hall of Heroes (Ravenhooves The Archer)", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Life Bottle: Hall of Heroes (Dirk Steadfast)", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Equipment: Broadsword from Woden the Mighty - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Equipment: Magic Sword from Dirk Steadfast - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Equipment: Hammer from Stanyer Iron Hewer - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Equipment: Axe from Bloodmonath- HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Equipment: Crossbow from Canny Tim - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Equipment: Longbow from Ravenhooves The Archer - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Equipment: Fire Longbow from Ravenhooves the Archer - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Equipment: Magic Longbow from Ravenhooves the Archer - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Equipment: Spear from Imanzi Shongama - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Equipment: Lightning from Megwynne Stormbinder - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Equipment: Gold Shield from Karl Sturngard - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Energy Vial: Imanzi Shongama 1 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Energy Vial: Imanzi Shongama 2 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Energy Vial: Megwynne Stormbinder 1 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Energy Vial: Megwynne Stormbinder 2 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Energy Vial: Megwynne Stormbinder 3 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Gold Coins: Stanyer Iron Hewer 1 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Gold Coins: Stanyer Iron Hewer 2 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Gold Coins: Woden the Mighty 1 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Gold Coins: Woden the Mighty 2 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Gold Coins: Bloodmonath 1 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Gold Coins: Bloodmonath 2 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Gold Coins: Bloodmonath 3 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Gold Coins: Karl Sturngard 1 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Gold Coins: Karl Sturngard 2 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Gold Coins: Karl Sturngard 3 - HH", Addresses.FakeAddress, "9999", true),
-                new GenericItemsData("Gold Coins: Karl Sturngard 4 - HH", Addresses.FakeAddress, "9999", true)
+                new GenericItemsData("Life Bottle: Hall of Heroes (Canny Tim)", Addresses.HOH_CannyTim2, "9999", true),
+                new GenericItemsData("Life Bottle: Hall of Heroes (Ravenhooves The Archer)", Addresses.HOH_RavenHoovesTheArcher4, "9999", true),
+                new GenericItemsData("Life Bottle: Hall of Heroes (Dirk Steadfast)", Addresses.HOH_DirkSteadfast2, "9999", true),
+                new GenericItemsData("Equipment: Broadsword from Woden the Mighty - HH", Addresses.HOH_WodenTheMighty1, "9999", true),
+                new GenericItemsData("Equipment: Magic Sword from Dirk Steadfast - HH", Addresses.HOH_DirkSteadfast1, "9999", true),
+                new GenericItemsData("Equipment: Hammer from Stanyer Iron Hewer - HH", Addresses.HOH_StanyerIronHewer1, "9999", true),
+                new GenericItemsData("Equipment: Axe from Bloodmonath- HH", Addresses.HOH_BloodmonathSkullCleaver1, "9999", true),
+                new GenericItemsData("Equipment: Crossbow from Canny Tim - HH", Addresses.HOH_CannyTim1, "9999"),
+                new GenericItemsData("Equipment: Longbow from Ravenhooves The Archer - HH", Addresses.HOH_RavenHoovesTheArcher1, "9999", true),
+                new GenericItemsData("Equipment: Fire Longbow from Ravenhooves the Archer - HH", Addresses.HOH_RavenHoovesTheArcher2, "9999", true),
+                new GenericItemsData("Equipment: Magic Longbow from Ravenhooves the Archer - HH", Addresses.HOH_RavenHoovesTheArcher3, "9999", true),
+                new GenericItemsData("Equipment: Spear from Imanzi Shongama - HH", Addresses.HOH_Imanzi1, "9999", true),
+                new GenericItemsData("Equipment: Lightning from Megwynne Stormbinder - HH", Addresses.HOH_MegwynneStormbinder1, "9999", true),
+                new GenericItemsData("Equipment: Gold Shield from Karl Sturngard - HH", Addresses.HOH_KarlStungard1, "9999", true),
+                new GenericItemsData("Energy Vial: Imanzi Shongama 1 - HH", Addresses.HOH_Imanzi2, "9999", true),
+                new GenericItemsData("Energy Vial: Imanzi Shongama 2 - HH", Addresses.HOH_Imanzi2, "9999", true),
+                new GenericItemsData("Energy Vial: Megwynne Stormbinder 1 - HH", Addresses.HOH_MegwynneStormbinder2, "9999", true),
+                new GenericItemsData("Energy Vial: Megwynne Stormbinder 2 - HH", Addresses.HOH_MegwynneStormbinder2, "9999", true),
+                new GenericItemsData("Energy Vial: Megwynne Stormbinder 3 - HH", Addresses.HOH_MegwynneStormbinder2, "9999", true),
+                new GenericItemsData("Gold Coins: Stanyer Iron Hewer 1 - HH", Addresses.HOH_StanyerIronHewer2, "9999", true),
+                new GenericItemsData("Gold Coins: Stanyer Iron Hewer 2 - HH", Addresses.HOH_StanyerIronHewer2, "9999", true),
+                new GenericItemsData("Gold Coins: Woden the Mighty 1 - HH", Addresses.HOH_WodenTheMighty2, "9999", true),
+                new GenericItemsData("Gold Coins: Woden the Mighty 2 - HH", Addresses.HOH_WodenTheMighty2, "9999", true),
+                new GenericItemsData("Gold Coins: Bloodmonath 1 - HH", Addresses.HOH_BloodmonathSkullCleaver2, "9999", true),
+                new GenericItemsData("Gold Coins: Bloodmonath 2 - HH", Addresses.HOH_BloodmonathSkullCleaver2, "9999", true),
+                new GenericItemsData("Gold Coins: Bloodmonath 3 - HH", Addresses.HOH_BloodmonathSkullCleaver2, "9999", true),
+                new GenericItemsData("Gold Coins: Karl Sturngard 1 - HH", Addresses.HOH_KarlStungard2, "9999", true),
+                new GenericItemsData("Gold Coins: Karl Sturngard 2 - HH", Addresses.HOH_KarlStungard2, "9999", true),
+                new GenericItemsData("Gold Coins: Karl Sturngard 3 - HH", Addresses.HOH_KarlStungard2, "9999", true),
+                new GenericItemsData("Gold Coins: Karl Sturngard 4 - HH", Addresses.HOH_KarlStungard2, "9999", true)
             };
             return hallOfHeroeVisits;
         }

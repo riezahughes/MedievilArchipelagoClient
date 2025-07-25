@@ -259,11 +259,11 @@ namespace MedievilArchipelago
         public const uint SF_Pickup_EnergyVialRightOfFireNearMoonDoor = 0x001301a4;
         public const uint SF_Pickup_MoonRune = 0x001e4e44;
         public const uint SF_Pickup_EarthRune = 0x0012ffa4;
-        public const uint SF_Pickup_ClubInsideHut = 0x001de9b4;
-        public const uint SF_Pickup_SilverShieldBehindWindmill = 0x001e2198;
+        public const uint SF_Pickup_ClubInsideHut = 0x00130d20;
+        public const uint SF_Pickup_SilverShieldBehindWindmill = 0x00130de0;
         public const uint SF_Pickup_ChaosRune = 0x001e3b7c;
         public const uint SF_Pickup_GoldCoinsBagInTheBarn = 0x0012f7a4;
-        public const uint SF_Pickup_CopperShieldChestInTheBarn = 0x001e29e0;
+        public const uint SF_Pickup_CopperShieldChestInTheBarn = 0x001308a0;
         public const uint SF_Pickup_GoldCoinsCornfieldSquareNearBarn = 0x00130da4;
         public const uint SF_Pickup_GoldCoinsCornfieldPath1 = 0x00130024;
         public const uint SF_Pickup_EnergyVialCornfieldPath = 0x0012ffe4;
@@ -468,7 +468,7 @@ namespace MedievilArchipelago
 
         // Pumpkin Gorge
         public const uint PG_Pickup_MoonRune = 0x0012de48;
-        public const uint PG_Pickup_ClubInChestInTunnel = 0x001ed0e8;
+        public const uint PG_Pickup_ClubInChestInTunnel = 0x00131a84;
         public const uint PG_Pickup_GoldCoinsBagBehindRocksAtStart = 0x00132b88;
         public const uint PG_Pickup_GoldCoinsChestInCoop1 = 0x00131088;
         public const uint PG_Pickup_EnergyVialInCoop = 0x00132b48;
@@ -480,7 +480,7 @@ namespace MedievilArchipelago
         public const uint PG_Pickup_EarthRune = 0x00130dc8;
         public const uint PG_Pickup_EnergyVialTopOfHill = 0x00132808;
         public const uint PG_Pickup_StarRune = 0x00131948;
-        public const uint PG_Pickup_SilverShieldInChestAtTopOfHill = 0x001d3fec;
+        public const uint PG_Pickup_SilverShieldInChestAtTopOfHill = 0x00132c44;
         public const uint PG_Pickup_TimeRune = 0x000f8278;
         public const uint PG_Pickup_EnergyVialBouldersAfterStarRune = 0x00132c88;
         public const uint PG_Pickup_GoldCoinsChestAtBouldersAfterStarRune = 0x00132cc8;

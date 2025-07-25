@@ -48,6 +48,7 @@ namespace MedievilArchipelago
 
                 while (true)
                 {
+                    // checks against current levels and updates chest entities
                     byte checkCurrentLevel = Memory.ReadByte(Addresses.CurrentLevel);
 
                     if (!firstLoop && checkCurrentLevel < 17 && checkCurrentLevel > 0)
@@ -77,23 +78,116 @@ namespace MedievilArchipelago
 
                     }
 
-                    // get some basic settings
+                    
+                    // updates hall of heroes item dropped
+
                     byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
                     short dropStatus = Memory.ReadShort(Addresses.HOH_ItemCount);
                     short dialogueStatus = Memory.ReadShort(Addresses.HOH_ListenedToHero);
+                    ulong offset = 0x92;
 
                     if (currentLevel == 18 && dialogueStatus == 16 && dropStatus == 0 && !processedChaliceCounts.Contains(currentChaliceCount) && client.IsConnected)
                     {
                         Console.WriteLine($"Drop Status: {dropStatus}");
-
+                            
                             // check chalice count against all HOH entries.
                             switch (currentChaliceCount)
                             {
                                 case 1:
-                                Memory.WriteByteArray(Addresses.HOH_CannyTim1, updateValue);
-                                processedChaliceCounts.Add(currentChaliceCount);
-                                break;
-                            }
+                                    Memory.WriteByteArray(Addresses.HOH_CannyTim1, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_CannyTim1 + offset , 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 2:
+                                    Memory.WriteByteArray(Addresses.HOH_CannyTim2, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_CannyTim2 + offset, 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 3:
+                                    Memory.WriteByteArray(Addresses.HOH_StanyerIronHewer1, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_StanyerIronHewer1 + offset, 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 4:
+                                    Memory.WriteByteArray(Addresses.HOH_StanyerIronHewer2, updateValue);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 5:
+                                    Memory.WriteByteArray(Addresses.HOH_WodenTheMighty1, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_WodenTheMighty1 + offset, 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 6:
+                                    Memory.WriteByteArray(Addresses.HOH_WodenTheMighty2, updateValue);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 7:
+                                    Memory.WriteByteArray(Addresses.HOH_Imanzi1, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_Imanzi1 + offset, 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 8:
+                                    Memory.WriteByteArray(Addresses.HOH_RavenHoovesTheArcher1, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher1 + offset, 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 9:
+                                    Memory.WriteByteArray(Addresses.HOH_BloodmonathSkullCleaver1, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_BloodmonathSkullCleaver1 + offset, 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 10:
+                                    Memory.WriteByteArray(Addresses.HOH_RavenHoovesTheArcher2, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher2 + offset, 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 11:
+                                    Memory.WriteByteArray(Addresses.HOH_KarlStungard1, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_KarlStungard1 + offset, 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 12:
+                                    Memory.WriteByteArray(Addresses.HOH_BloodmonathSkullCleaver2, updateValue);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 13:
+                                    Memory.WriteByteArray(Addresses.HOH_DirkSteadfast1, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_DirkSteadfast1 + offset, 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 14:
+                                    Memory.WriteByteArray(Addresses.HOH_RavenHoovesTheArcher3, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher3 + offset, 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 15:
+                                    Memory.WriteByteArray(Addresses.HOH_MegwynneStormbinder1, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_MegwynneStormbinder1 + offset, 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 16:
+                                    Memory.WriteByteArray(Addresses.HOH_RavenHoovesTheArcher4, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher4 + offset, 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 17:
+                                    Memory.WriteByteArray(Addresses.HOH_Imanzi2, updateValue);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 18:
+                                    Memory.WriteByteArray(Addresses.HOH_KarlStungard2, updateValue);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 19:
+                                    Memory.WriteByteArray(Addresses.HOH_DirkSteadfast2, updateValue);
+                                    Memory.WriteByte(Addresses.HOH_DirkSteadfast2 + offset, 0x08);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                                case 20:
+                                    Memory.WriteByteArray(Addresses.HOH_MegwynneStormbinder2, updateValue);
+                                    processedChaliceCounts.Add(currentChaliceCount);
+                                    break;
+                        }
        
                     }
                     Thread.Sleep(8000);

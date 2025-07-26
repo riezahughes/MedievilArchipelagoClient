@@ -236,7 +236,7 @@ namespace MedievilArchipelago
         public const uint RTG_Pickup_EnergyVialCoffinAreaEast = 0x00130af8;
         public const uint RTG_Pickup_GoldCoinsChestInCoffinArea5 = 0x0012edb8;
         public const uint RTG_Pickup_GoldCoinsBagAboveCoffinArea = 0x00130a78;
-        public const uint RTG_Pickup_GoldCoinsBagAfterBridge = 0x001c5470;
+        public const uint RTG_Pickup_GoldCoinsBagAfterBridge = 0x0012eff8;
         public const uint RTG_Pickup_EnergyVialBelowShop = 0x001303f8;
         public const uint RTG_Pickup_GoldCoinsBagAtShop = 0x00130b38;
         public const uint RTG_Pickup_SilverShieldChestAtShop = 0x0012eb74;

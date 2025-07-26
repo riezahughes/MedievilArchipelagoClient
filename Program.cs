@@ -282,12 +282,13 @@ void UpdatePlayerState(List<Item> itemsCollected)
     // get a list of used locations
     var usedItems = new List<string>();
 
+    short currentWeapon = Memory.ReadShort(Addresses.ItemEquipped);
+
     SetItemMemoryValue(Addresses.CurrentLifePotions, 0, 0);
     SetItemMemoryValue(Addresses.SoulHelmet, 0, 0);
 
     // for each location that's coming in
     bool hasEquipableWeapon = false;
-    int equippedWeaponNumber = 0;
 
     foreach (Item val in itemsCollected)
     {
@@ -298,16 +299,14 @@ void UpdatePlayerState(List<Item> itemsCollected)
         {
             // Update memory
             case var x when x.Name.ContainsAny("Ammo"): 
-
+                // no plans yet
                 break;
             case var x when x.Name.Contains("Skill"): ReceiveSkill(x); break;
             case var x when x.Name.Contains("Equipment"): 
                 ReceiveEquipment(x);
                 if (!x.Name.Contains("Shield"))
                 {   
-                    equippedWeaponNumber = Helpers.WeaponEquipDictionary[x.Name];
                     hasEquipableWeapon = true;
-                    
                 }
                 break;
             case var x when x.Name.Contains("Life Bottle"): ReceiveLifeBottle(x); break;
@@ -361,7 +360,7 @@ void UpdatePlayerState(List<Item> itemsCollected)
         DefaultToArm();
     } else
     {
-        EquipWeapon(equippedWeaponNumber);
+        EquipWeapon(currentWeapon);
     }
 }
 
@@ -440,7 +439,7 @@ void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAd
     if (isEquipmentType && isCountType)
     {
         SetItemMemoryValue(itemMemoryAddress, 100, countMax);
-    } else
+    } else if (isEquipmentType && !isCountType)
     {
         SetItemMemoryValue(itemMemoryAddress, 4096, countMax);
     }
@@ -562,14 +561,14 @@ void ReceiveLifeBottle(Item item)
 {
     var addressDict = Helpers.StatusAndInventoryAddressDictionary();
     
-    UpdateCurrentItemValue("Life Bottle", 1, addressDict["Player Stats"]["Life Bottle"], false, false);
+    UpdateCurrentItemValue("Life Bottle", 1, addressDict["Player Stats"]["Life Bottle"], true, false);
 }
 
 void ReceiveSoulHelmet(Item item)
 {
     var addressDict = Helpers.StatusAndInventoryAddressDictionary();
 
-    UpdateCurrentItemValue("Soul Helmet", 1, addressDict["Key Items"]["Soul Helmet"], false, false);
+    UpdateCurrentItemValue("Soul Helmet", 1, addressDict["Key Items"]["Soul Helmet"], true, false);
 }
 
 void ReceiveStatItems(Item item)

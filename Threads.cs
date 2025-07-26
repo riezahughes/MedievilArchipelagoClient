@@ -28,11 +28,39 @@ namespace MedievilArchipelago
 
         }
 
+        static internal void UpdateHallOfHeroesTable() 
+        {
+            // counting from base address to the item choice
+            ulong offset = 0x36;
+
+            Memory.WriteByte(Addresses.HOH_CannyTim1_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_CannyTim2_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_StanyerIronHewer1_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_StanyerIronHewer2_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_WodenTheMighty1_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_WodenTheMighty2_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_Imanzi1_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_Imanzi2_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher1_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher2_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher3_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher4_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_BloodmonathSkullCleaver1_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_BloodmonathSkullCleaver2_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_KarlStungard1_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_KarlStungard2_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_DirkSteadfast1_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_DirkSteadfast2_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_MegwynneStormbinder1_drop, 0x08);
+            Memory.WriteByte(Addresses.HOH_MegwynneStormbinder2_drop, 0x08);
+        }
+
 
         async public static Task CheckForHallOfHeroes(ArchipelagoClient client)
         {
             await Task.Run(() =>
             {
+                Console.WriteLine("Background task running...");
 
                 byte currentLocation = Memory.ReadByte(Addresses.CurrentLevel);
 
@@ -77,35 +105,40 @@ namespace MedievilArchipelago
                         }
 
                     }
-
-                    
                     // updates hall of heroes item dropped
 
                     byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+
+                    if (currentLevel == 18)
+                    {
+                        UpdateHallOfHeroesTable();
+                    }
+
+
+
                     short dropStatus = Memory.ReadShort(Addresses.HOH_ItemCount);
                     short dialogueStatus = Memory.ReadShort(Addresses.HOH_ListenedToHero);
-                    ulong offset = 0x92;
 
                     if (currentLevel == 18 && dialogueStatus == 16 && dropStatus == 0 && !processedChaliceCounts.Contains(currentChaliceCount) && client.IsConnected)
                     {
-                        Console.WriteLine($"Drop Status: {dropStatus}");
+                        Console.WriteLine($"Current Chalice count is: {currentChaliceCount}");
                             
                             // check chalice count against all HOH entries.
                             switch (currentChaliceCount)
                             {
                                 case 1:
+                                    Console.WriteLine($"Tim1");
                                     Memory.WriteByteArray(Addresses.HOH_CannyTim1, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_CannyTim1 + offset , 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 2:
+                                    Console.WriteLine($"Tim2");
                                     Memory.WriteByteArray(Addresses.HOH_CannyTim2, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_CannyTim2 + offset, 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 3:
+                                    Console.WriteLine($"Tim3");
                                     Memory.WriteByteArray(Addresses.HOH_StanyerIronHewer1, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_StanyerIronHewer1 + offset, 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 4:
@@ -114,7 +147,6 @@ namespace MedievilArchipelago
                                     break;
                                 case 5:
                                     Memory.WriteByteArray(Addresses.HOH_WodenTheMighty1, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_WodenTheMighty1 + offset, 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 6:
@@ -123,27 +155,22 @@ namespace MedievilArchipelago
                                     break;
                                 case 7:
                                     Memory.WriteByteArray(Addresses.HOH_Imanzi1, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_Imanzi1 + offset, 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 8:
                                     Memory.WriteByteArray(Addresses.HOH_RavenHoovesTheArcher1, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher1 + offset, 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 9:
                                     Memory.WriteByteArray(Addresses.HOH_BloodmonathSkullCleaver1, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_BloodmonathSkullCleaver1 + offset, 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 10:
                                     Memory.WriteByteArray(Addresses.HOH_RavenHoovesTheArcher2, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher2 + offset, 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 11:
                                     Memory.WriteByteArray(Addresses.HOH_KarlStungard1, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_KarlStungard1 + offset, 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 12:
@@ -152,22 +179,18 @@ namespace MedievilArchipelago
                                     break;
                                 case 13:
                                     Memory.WriteByteArray(Addresses.HOH_DirkSteadfast1, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_DirkSteadfast1 + offset, 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 14:
                                     Memory.WriteByteArray(Addresses.HOH_RavenHoovesTheArcher3, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher3 + offset, 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 15:
                                     Memory.WriteByteArray(Addresses.HOH_MegwynneStormbinder1, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_MegwynneStormbinder1 + offset, 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 16:
                                     Memory.WriteByteArray(Addresses.HOH_RavenHoovesTheArcher4, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher4 + offset, 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 17:
@@ -180,7 +203,6 @@ namespace MedievilArchipelago
                                     break;
                                 case 19:
                                     Memory.WriteByteArray(Addresses.HOH_DirkSteadfast2, updateValue);
-                                    Memory.WriteByte(Addresses.HOH_DirkSteadfast2 + offset, 0x08);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 20:
@@ -190,7 +212,7 @@ namespace MedievilArchipelago
                         }
        
                     }
-                    Thread.Sleep(8000);
+                    Thread.Sleep(5000);
                 }
             });
 

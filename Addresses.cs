@@ -99,8 +99,32 @@ namespace MedievilArchipelago
         public const uint HOH_BloodmonathSkullCleaver2 = 0x001408f4;
         public const uint HOH_MegwynneStormbinder1 = 0x001408f8;
         public const uint HOH_MegwynneStormbinder2 = 0x001408fc;
+
+        public const uint HOH_CannyTim1_drop = 0x00019782;
+        public const uint HOH_CannyTim2_drop = 0x0001978a;
+        public const uint HOH_StanyerIronHewer1_drop = 0x00019792;
+        public const uint HOH_StanyerIronHewer2_drop = 0x0001979a;
+        public const uint HOH_WodenTheMighty1_drop = 0x000197b2;
+        public const uint HOH_WodenTheMighty2_drop = 0x000197ba;
+        public const uint HOH_RavenHoovesTheArcher1_drop = 0x00019752;
+        public const uint HOH_RavenHoovesTheArcher2_drop = 0x0001975a;
+        public const uint HOH_RavenHoovesTheArcher3_drop = 0x00019762;
+        public const uint HOH_RavenHoovesTheArcher4_drop = 0x0001976A;
+        public const uint HOH_Imanzi1_drop = 0x00019742;
+        public const uint HOH_Imanzi2_drop = 0x0001974A;
+        public const uint HOH_DirkSteadfast1_drop = 0x000197c2;
+        public const uint HOH_DirkSteadfast2_drop = 0x000197cA;
+        public const uint HOH_KarlStungard1_drop = 0x000197d2;
+        public const uint HOH_KarlStungard2_drop = 0x000197dA;
+        public const uint HOH_BloodmonathSkullCleaver1_drop = 0x00019772;
+        public const uint HOH_BloodmonathSkullCleaver2_drop = 0x0001977a;
+        public const uint HOH_MegwynneStormbinder1_drop = 0x000197a2;
+        public const uint HOH_MegwynneStormbinder2_drop = 0x000197aa;
+
         public const uint HOH_ItemCount = 0x000f90fa;
         public const uint HOH_ListenedToHero = 0x000196f0;
+
+
 
         // key items
 
@@ -110,7 +134,8 @@ namespace MedievilArchipelago
         public const uint WitchesTalisman = 0x000f829c;
         public const uint SafeKey = 0x000F82A8;
         public const uint ShadowArtefact = 0x000f8294;
-        public const uint Crucifix = 0x00000000;
+        public const uint ShadowTalisman = 0x000f8298;
+        public const uint Crucifix = 0x000f82a0;
         public const uint LandlordsBust = 0x000F82AC;
         public const uint CrucifixCast = 0x000F82A4;
         public const uint AmberPiece = 0x000F828C;
@@ -278,7 +303,7 @@ namespace MedievilArchipelago
         public const uint SF_Pickup_Chalice = 0x0012f3e4;
 
         // The Anthill
-        public const uint TA_Pickup_ClubChestAtBarrier = 0x001dd562;
+        public const uint TA_Pickup_ClubChestAtBarrier = 0x001309e8;
         public const uint TA_Pickup_GoldCoinsChestAtBarrierFairy = 0x0012f5ac;
         public const uint TA_Pickup_Amber1 = 0x001304ac;
         public const uint TA_Pickup_Amber2 = 0x001dc03c;
@@ -312,7 +337,8 @@ namespace MedievilArchipelago
 
         // Enchanted Earth
         public const uint EE_Pickup_GoldCoinsBagNearTreeHollow = 0x00130638;
-        public const uint EE_Pickup_GoldCoinsBagBehindBigTree = 0x001304b8;
+        public const uint EE_Pickup_GoldCoinsBagBehindBigTree1 = 0x001304b8;
+        public const uint EE_Pickup_GoldCoinsBagBehindBigTree2 = 0x001304f8;
         public const uint EE_Pickup_EarthRune = 0x001d807c;
         public const uint EE_Pickup_GoldCoinsChestInEgg = 0x001cf00c;
         public const uint EE_Pickup_CopperShieldInEgg = 0x001d4630;
@@ -332,14 +358,14 @@ namespace MedievilArchipelago
         // The Sleeping Village
         public const uint TSV_Pickup_GoldCoinsBagInLeftBarrelAtBlacksmith = 0x001ceafc;
         public const uint TSV_Pickup_GoldCoinsBagInRightBarrelAtBlacksmith = 0x001cba90;
-        public const uint TSV_Pickup_SilverShieldInBlacksmiths = 0x001cfd68;
+        public const uint TSV_Pickup_SilverShieldInBlacksmiths = 0x00131e2c;
         public const uint TSV_Pickup_GoldCoinsBagAtPond = 0x00131cb0;
         public const uint TSV_Pickup_EnergyVialAtPond = 0x00131530;
         public const uint TSV_Pickup_MoonRune = 0x0012f970;
         public const uint TSV_Pickup_GoldCoinsBagInBarrelAtInn = 0x001cf57c;
         public const uint TSV_Pickup_GoldCoinsBagInBarrelAtBottomOfInnStairs = 0x001d6dfc;
         public const uint TSV_Pickup_GoldCoinsBagInBarrelBehindInnStairs = 0x001d6dfc;
-        public const uint TSV_Pickup_ClubInChestUnderInnStairs = 0x001cfa28;
+        public const uint TSV_Pickup_ClubInChestUnderInnStairs = 0x001314ac;
         public const uint TSV_Pickup_EarthRune = 0x00131c30;
         public const uint TSV_Pickup_EnergyVialBustSwitch = 0x001315f0;
         public const uint TSV_Pickup_GoldCoinsBagInTopBustBarrel = 0x001c7e58;
@@ -373,7 +399,7 @@ namespace MedievilArchipelago
         public const uint PAD_Pickup_ChaosRune = 0x0012ea84;
         public const uint PAD_Pickup_EnergyVialNextToLostSoul3 = 0x0012fa04;
         public const uint PAD_Pickup_EnergyVialNearGate = 0x0012fb44;
-        public const uint PAD_Pickup_SilverShieldInChestNearSoul5 = 0x001d2ce8;
+        public const uint PAD_Pickup_SilverShieldInChestNearSoul5 = 0x0012f8c0;
         public const uint PAD_Pickup_EnergyVialChariotRight = 0x0012fa84;
         public const uint PAD_Pickup_EnergyVialChariotLeft = 0x0012fac4;
         public const uint PAD_Pickup_EnergyVialJumpSpot1 = 0x0012fd84;
@@ -390,7 +416,7 @@ namespace MedievilArchipelago
         public const uint TL_Pickup_EarthRune = 0x0012f618;
         public const uint TL_Pickup_GoldCoinsBagNearClosedGate = 0x00131a58;
         public const uint TL_Pickup_TimeRune = 0x0012f7d8;
-        public const uint TL_Pickup_SilverShieldInWhirlpool = 0x001a33e0;
+        public const uint TL_Pickup_SilverShieldInWhirlpool = 0x00131c14;
         public const uint TL_Pickup_GoldCoinsBagAtTheWhirlpoolEntrance = 0x00131ad8;
         public const uint TL_Pickup_EnergyVialWhirlpoolWind1 = 0x00131b98;
         public const uint TL_Pickup_EnergyVialWhirlpoolWind2 = 0x00131bd8;
@@ -492,7 +518,8 @@ namespace MedievilArchipelago
 
 
         // Pumpkin Servent
-        public const uint PS_Pickup_GoldCoinsBagBehindHouse = 0x001303b4;
+        public const uint PS_Pickup_GoldCoinsBagBehindHouse1 = 0x001303b4;
+        public const uint PS_Pickup_GoldCoinsBagBehindHouse2 = 0x001303b4;
         public const uint PS_Pickup_SilverShieldInChestNearLeeches = 0x001c298c;
         public const uint PS_Pickup_GoldCoinsBagBehindVinesAndPod = 0x001303f4;
         public const uint PS_Pickup_DragonsGem = 0x0012fd34;

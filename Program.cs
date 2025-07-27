@@ -294,6 +294,8 @@ void UpdatePlayerState(List<Item> itemsCollected)
 
     SetItemMemoryValue(Addresses.CurrentLifePotions, 0, 0);
     SetItemMemoryValue(Addresses.SoulHelmet, 0, 0);
+    SetItemMemoryValue(Addresses.AmberPiece, 0, 0);
+    SetItemMemoryValue(Addresses.DragonGem, 0, 0);
 
     // for each location that's coming in
     bool hasEquipableWeapon = false;
@@ -319,6 +321,8 @@ void UpdatePlayerState(List<Item> itemsCollected)
                 break;
             case var x when x.Name.Contains("Life Bottle"): ReceiveLifeBottle(); break;
             case var x when x.Name.Contains("Soul Helmet"): ReceiveSoulHelmet(); break;
+            case var x when x.Name.Contains("Dragon Gem"): ReceiveDragonGem(); break;
+            case var x when x.Name.Contains("Amber"): ReceiveAmber(); break;
             case var x when x.Name.Contains("Key Item"): ReceiveKeyItem(x); break;
             case var x when x.Name.Contains("Cleared"): ReceiveLevelCleared(x); break;
             case var x when x.Name.Contains("Chalice"): ReceiveChaliceComplete(x); break;
@@ -340,23 +344,32 @@ void UpdatePlayerState(List<Item> itemsCollected)
         string itemName = item.Key;
         uint itemAddress = item.Value;
 
+        if(itemName.ContainsAny("Soul Helmet", "Dragon Gem", "Amber"))
+        {
+            continue;
+        }
+
         // reset any other values
         if (itemName.ContainsAny("Skill"))
         {
             SetItemMemoryValue(itemAddress, 0, 0);
+            continue;
         }
         else if (itemName.ContainsAny("Equipment"))
         {
             SetItemMemoryValue(itemAddress, 65535, 65535); // Assuming 65535 is "reset/max" for equipment
+            continue;
         }
         else if (itemName.ContainsAny("Complete"))
         {
             SetItemMemoryValue(itemAddress, 0, 0);
+            continue;
 
         }
         else if (itemName.ContainsAny("Key Item"))
         {
             SetItemMemoryValue(itemAddress, 65535, 65535);
+            continue;
 
         }
 
@@ -439,6 +452,11 @@ void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAd
     int maxValue = isCountType ? countMax : percentageMax; // Max count limit for gold, percentage for energy
 
     var newNumberAmount = isEquipmentType ? 0 : Math.Min(currentNumberAmount + numberUpdate, maxValue); // Max count limit
+    
+    if(itemName.ContainsAny("Amber", "Dragon"))
+    {
+        Console.WriteLine($"Break time {newNumberAmount} {isCountType}");
+    }
 
     SetItemMemoryValue(itemMemoryAddress, newNumberAmount, countMax);
 
@@ -576,9 +594,21 @@ void ReceiveLifeBottle()
 void ReceiveSoulHelmet()
 {
     var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-    Memory.WriteByte(Addresses.SoulHelmet, 0);
     UpdateCurrentItemValue("Soul Helmet", 1, addressDict["Key Items"]["Soul Helmet"], true, false);
 }
+
+void ReceiveDragonGem()
+{
+    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
+    UpdateCurrentItemValue("Dragon Gem", 1, addressDict["Key Items"]["Dragon Gem"], true, false);
+}
+
+void ReceiveAmber()
+{
+    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
+    UpdateCurrentItemValue("Amber Piece", 1, addressDict["Key Items"]["Amber Piece"], true, false);
+}
+
 
 void ReceiveStatItems(Item item)
 {
@@ -618,6 +648,8 @@ void ItemReceived(object sender, ItemReceivedEventArgs args)
         case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
         case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(); break;
         case var x when x.Name.ContainsAny("Soul Helmet"): ReceiveSoulHelmet(); break;
+        case var x when x.Name.ContainsAny("Dragon Gem"): ReceiveDragonGem(); break;
+        case var x when x.Name.ContainsAny("Amber"): ReceiveAmber(); break;
         case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
         case var x when x.Name.ContainsAny("Health", "Gold Coins", "Energy"): ReceiveStatItems(x); break;
         case var x when x.Name.ContainsAny("Daggers", "Ammo", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;

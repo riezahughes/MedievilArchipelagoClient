@@ -141,7 +141,7 @@ namespace MedievilArchipelago
             allLevelLocations.Add("Ant Hill", GetAnthillData());
             allLevelLocations.Add("Enchanted Earth", GetEnchantedEarthData());
             allLevelLocations.Add("The Sleeping Village", GetTheSleepingVillageData());
-            allLevelLocations.Add("Pools Of the Ancient Dead", GetPoolsOfTheAncientDeadData());
+            allLevelLocations.Add("Pools of the Ancient Dead", GetPoolsOfTheAncientDeadData());
             allLevelLocations.Add("The Lake", GetTheLakeData());
             allLevelLocations.Add("The Crystal Caves", GetTheCrystalCavesData());
             allLevelLocations.Add("The Gallows Gauntlet", GetGallowsGauntletData());

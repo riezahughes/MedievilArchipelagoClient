@@ -576,6 +576,7 @@ void ReceiveLifeBottle()
 void ReceiveSoulHelmet()
 {
     var addressDict = Helpers.StatusAndInventoryAddressDictionary();
+    Memory.WriteByte(Addresses.SoulHelmet, 0);
     UpdateCurrentItemValue("Soul Helmet", 1, addressDict["Key Items"]["Soul Helmet"], true, false);
 }
 

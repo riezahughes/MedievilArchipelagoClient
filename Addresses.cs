@@ -520,7 +520,7 @@ namespace MedievilArchipelago
         // Pumpkin Servent
         public const uint PS_Pickup_GoldCoinsBagBehindHouse1 = 0x001303b4;
         public const uint PS_Pickup_GoldCoinsBagBehindHouse2 = 0x001304f4;
-        public const uint PS_Pickup_SilverShieldInChestNearLeeches = 0x001c298c;
+        public const uint PS_Pickup_SilverShieldInChestNearLeeches = 0x00130570;
         public const uint PS_Pickup_GoldCoinsBagBehindVinesAndPod = 0x001303f4;
         public const uint PS_Pickup_DragonsGem = 0x0012fd34;
         public const uint PS_Pickup_EnergyVialLeftAtMerchantGargoyle = 0x00130474;

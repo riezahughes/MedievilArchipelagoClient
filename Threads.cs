@@ -116,10 +116,12 @@ namespace MedievilArchipelago
 
 
 
-                    short dropStatus = Memory.ReadShort(Addresses.HOH_ItemCount);
                     short dialogueStatus = Memory.ReadShort(Addresses.HOH_ListenedToHero);
 
-                    if (currentLevel == 18 && dialogueStatus == 16 && dropStatus == 0 && !processedChaliceCounts.Contains(currentChaliceCount) && client.IsConnected)
+                    // for debugging
+                    //Console.WriteLine($"{currentLevel} - {dialogueStatus} - {!processedChaliceCounts.Contains(currentChaliceCount)} - {client.IsConnected}");
+
+                    if (currentLevel == 18 && dialogueStatus == 16 && !processedChaliceCounts.Contains(currentChaliceCount) && client.IsConnected)
                     {
                         Console.WriteLine($"Current Chalice count is: {currentChaliceCount}");
                             

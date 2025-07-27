@@ -452,11 +452,6 @@ void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAd
     int maxValue = isCountType ? countMax : percentageMax; // Max count limit for gold, percentage for energy
 
     var newNumberAmount = isEquipmentType ? 0 : Math.Min(currentNumberAmount + numberUpdate, maxValue); // Max count limit
-    
-    if(itemName.ContainsAny("Amber", "Dragon"))
-    {
-        Console.WriteLine($"Break time {newNumberAmount} {isCountType}");
-    }
 
     SetItemMemoryValue(itemMemoryAddress, newNumberAmount, countMax);
 

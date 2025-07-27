@@ -20,6 +20,7 @@ using MedievilArchipelago.Models;
 using System.Xml.Linq;
 using System.Diagnostics;
 using System.Drawing;
+using System.Collections;
 
 // set values
 const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
@@ -37,7 +38,7 @@ string password;
 bool hasFoundMem = false;
 ulong offsetChoice = 0x00;
 
-List<Location> GameLocations = null;
+List<ILocation> GameLocations = null;
 
 ////////////////////////////
 //
@@ -198,9 +199,10 @@ try
 
     GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
 
-    Console.Clear();
+    //Console.Clear();
     Console.WriteLine("Client is connected and watching Medievil....");
-    //_ = MemoryCheckThreads.UpdateChestlikeContents(archipelagoClient);
+    
+    ;
     _ = MemoryCheckThreads.CheckForHallOfHeroes(archipelagoClient);
     _ = archipelagoClient.MonitorLocations(GameLocations); // Use _ = to suppress warning about unawaited task
 
@@ -262,15 +264,7 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
     CheckGoalCondition();
 
     Console.WriteLine("Setting up player state..");
-
-    if (Client?.GameState?.CompletedLocations?.Count > 0)
-    {
-        UpdatePlayerState(Client.GameState.ReceivedItems);
-    }
-}
-
-ulong OffsetAddress(ulong value) {
-    return value - offsetChoice;
+    UpdatePlayerState(Client.GameState.ReceivedItems);
 }
 
 void UpdatePlayerState(List<Item> itemsCollected)
@@ -309,8 +303,8 @@ void UpdatePlayerState(List<Item> itemsCollected)
                     hasEquipableWeapon = true;
                 }
                 break;
-            case var x when x.Name.Contains("Life Bottle"): ReceiveLifeBottle(x); break;
-            case var x when x.Name.Contains("Soul Helmet"): ReceiveSoulHelmet(x); break;
+            case var x when x.Name.Contains("Life Bottle"): ReceiveLifeBottle(); break;
+            case var x when x.Name.Contains("Soul Helmet"): ReceiveSoulHelmet(); break;
             case var x when x.Name.Contains("Key Item"): ReceiveKeyItem(x); break;
             case var x when x.Name.Contains("Cleared"): ReceiveLevelCleared(x); break;
             case var x when x.Name.Contains("Chalice"): ReceiveChaliceComplete(x); break;
@@ -432,7 +426,6 @@ void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAd
 
     var newNumberAmount = isEquipmentType ? 0 : Math.Min(currentNumberAmount + numberUpdate, maxValue); // Max count limit
 
-
     SetItemMemoryValue(itemMemoryAddress, newNumberAmount, countMax);
 
     // if you're getting a piece of equipment like the longbow/crossbow/spear/etc give it some ammo.
@@ -526,7 +519,9 @@ void ReceiveEquipment(Item item)
     var addressDict = Helpers.StatusAndInventoryAddressDictionary();
     var name = ExtractDictName(item.Name);
 
-    UpdateCurrentItemValue(item.Name, 0, addressDict["Equipment"][name], true, true);
+    var isChargeType = item.Name.ContainsAny("Broadsword", "Club", "Lightning");
+
+    UpdateCurrentItemValue(item.Name, 0, addressDict["Equipment"][name], !isChargeType, true);
 
 }
 
@@ -557,17 +552,16 @@ void ReceiveKeyItem(Item item)
 
 }
 
-void ReceiveLifeBottle(Item item)
+void ReceiveLifeBottle()
 {
     var addressDict = Helpers.StatusAndInventoryAddressDictionary();
     
     UpdateCurrentItemValue("Life Bottle", 1, addressDict["Player Stats"]["Life Bottle"], true, false);
 }
 
-void ReceiveSoulHelmet(Item item)
+void ReceiveSoulHelmet()
 {
     var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-
     UpdateCurrentItemValue("Soul Helmet", 1, addressDict["Key Items"]["Soul Helmet"], true, false);
 }
 
@@ -607,7 +601,8 @@ void ItemReceived(object sender, ItemReceivedEventArgs args)
         case var x when x.Name.ContainsAny("Rune"): ReceiveRune(x); break;
         case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
         case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
-        case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle (x); break;
+        case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(); break;
+        case var x when x.Name.ContainsAny("Soul Helmet"): ReceiveSoulHelmet(); break;
         case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
         case var x when x.Name.ContainsAny("Health", "Gold Coins", "Energy"): ReceiveStatItems(x); break;
         case var x when x.Name.ContainsAny("Daggers", "Ammo", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;

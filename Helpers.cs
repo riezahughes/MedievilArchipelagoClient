@@ -64,6 +64,7 @@ namespace MedievilArchipelago
             ulong contents_offset = 0xc;
             return new Dictionary<int, List<ulong>>
             {
+                [0] = [], // main menu
                 [1] = [Addresses.TG_Pickup_CopperShield + contents_offset],
                 [2] = [Addresses.RTG_Pickup_SilverShieldChestAtShop + contents_offset],
                 [3] = [Addresses.CH_Pickup_Club + contents_offset, Addresses.CH_Pickup_CopperShield1stOnHill + contents_offset, Addresses.CH_Pickup_CopperShield2ndOnHill + contents_offset, Addresses.CH_Pickup_CopperShield3rdOnHill + contents_offset],
@@ -77,20 +78,21 @@ namespace MedievilArchipelago
                 [11] = [Addresses.TSV_Pickup_SilverShieldInBlacksmiths + contents_offset, Addresses.TSV_Pickup_ClubInChestUnderInnStairs + contents_offset],
                 [12] = [Addresses.PAD_Pickup_SilverShieldInChestNearSoul5 + contents_offset],
                 [13] = [Addresses.AG_Pickup_SilverShieldInChestBehindDoor + contents_offset],
-                [14] = [0x0808],
-                [15] = [0x0808],
+                [14] = [], // Inside the Asylum
+                [15] = [], // enchanted earth
                 [16] = [Addresses.GG_Pickup_SilverShieldInChestNearExit + contents_offset],
                 [17] = [Addresses.HR_Pickup_SilverShieldInChestNearRuneDoor + contents_offset],
                 [18] = [], // hall of heroes
                 [19] = [Addresses.GS_Pickup_SilverShieldInChestInBarrelRoom + contents_offset, Addresses.GS_Pickup_ClubInChestAtCaptain + contents_offset],
                 [20] = [], //entrance hall
-                [21] = [Addresses.TL_Pickup_SilverShieldInWhirlpool + contents_offset],
-                [22] = [Addresses.ZL_Pickup_GoodLightning + contents_offset, Addresses.ZL_Pickup_SilverShield + contents_offset],
+                [21] = [Addresses.TD_Pickup_SilverShieldOnClock + contents_offset],
+                [22] = [Addresses.TL_Pickup_SilverShieldInWhirlpool + contents_offset],
+                [23] = [Addresses.ZL_Pickup_GoodLightning + contents_offset, Addresses.ZL_Pickup_SilverShield + contents_offset],
             };
-        } 
+        }
 
 
-        public static List<Location> BuildLocationList(Dictionary<string, object> options)
+        public static List<ILocation> BuildLocationList(Dictionary<string, object> options)
         {
             int base_id = 99250000;
             int region_offset = 1000;
@@ -122,7 +124,7 @@ namespace MedievilArchipelago
                 "Zaroks Lair"
 ];
 
-            List<Location> locations = new List<Location>();
+            List<ILocation> locations = new List<ILocation>();
 
             Dictionary<string, List<GenericItemsData>> allLevelLocations = new Dictionary<string, List<GenericItemsData>>();
 
@@ -139,12 +141,12 @@ namespace MedievilArchipelago
             allLevelLocations.Add("Ant Hill", GetAnthillData());
             allLevelLocations.Add("Enchanted Earth", GetEnchantedEarthData());
             allLevelLocations.Add("The Sleeping Village", GetTheSleepingVillageData());
-            allLevelLocations.Add("Pools Of The Ancient Dead", GetPoolsOfTheAncientDeadData());
+            allLevelLocations.Add("Pools Of the Ancient Dead", GetPoolsOfTheAncientDeadData());
             allLevelLocations.Add("The Lake", GetTheLakeData());
             allLevelLocations.Add("The Crystal Caves", GetTheCrystalCavesData());
-            allLevelLocations.Add("Gallows Gauntlet", GetGallowsGauntletData());
+            allLevelLocations.Add("The Gallows Gauntlet", GetGallowsGauntletData());
             allLevelLocations.Add("Asylum Grounds", GetTheAsylumGroundsData());
-            allLevelLocations.Add("Inside The Asylum", GetInsideTheAsylumData());
+            allLevelLocations.Add("Inside the Asylum", GetInsideTheAsylumData());
             allLevelLocations.Add("Pumpkin Gorge", GetPumpkinGorgeData());
             allLevelLocations.Add("Pumpkin Serpent", GetPumpkinSerpentData());
             allLevelLocations.Add("The Haunted Ruins", GetTheHauntedRuinsData());
@@ -184,14 +186,34 @@ namespace MedievilArchipelago
                         if (loc.IsInChest) // if it's cleared and we don't have an option set 
                         {
                             {
-                                Location location = new Location()
+                                List<ILocation> conditionalChoice = new List<ILocation>();
+
+                                conditionalChoice.Add(new Location()
                                 {
-                                    Name = loc.Name,
+                                    Id = -1,
+                                    Name = "Level Check",
+                                    Address = Addresses.CurrentLevel,
+                                    CheckType = LocationCheckType.Byte,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = loc.LevelId
+                                });
+
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Chest Check",
                                     Address = loc.Address,
-                                    Id = locationId,
                                     CheckType = LocationCheckType.Short,
                                     CompareType = LocationCheckCompareType.Match,
                                     CheckValue = "801"
+                                });
+
+                                CompositeLocation location = new CompositeLocation()
+                                {
+                                    Name = loc.Name,
+                                    Id = locationId,
+                                    CheckType = LocationCheckType.AND,
+                                    Conditions = conditionalChoice,
                                 };
 
                                 locations.Add(location);
@@ -203,16 +225,36 @@ namespace MedievilArchipelago
                         if (loc.Name.Contains("Cleared:")) // if it's cleared and we don't have an option set 
                         {
                             {
-                                Location location = new Location()
+                                List<ILocation> conditionalChoice = new List<ILocation>();
+
+                                conditionalChoice.Add(new Location()
                                 {
-                                    Name = loc.Name,
+                                    Id = -1,
+                                    Name = "Level Check",
+                                    Address = Addresses.CurrentLevel,
+                                    CheckType = LocationCheckType.Byte,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = "0",
+                                });
+
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Clear Check",
                                     Address = loc.Address,
-                                    Id = locationId,
                                     CheckType = LocationCheckType.Byte,
                                     CompareType = loc.Name == "Cleared: Zaroks Lair" ? LocationCheckCompareType.Match : LocationCheckCompareType.GreaterThan,
                                     CheckValue = loc.Name == "Cleared: Zaroks Lair" ? "101" : "16" // if zarok clear
-                                };
+                                });
 
+                                CompositeLocation location = new CompositeLocation()
+                                {
+                                    Name = loc.Name,
+                                    Id = locationId,
+                                    CheckType = LocationCheckType.AND,
+                                    Conditions = conditionalChoice,
+                                };
+                                    
                                 locations.Add(location);
                                 location_index++;
                                 continue;
@@ -221,14 +263,33 @@ namespace MedievilArchipelago
                         if (loc.Name.Contains("Key Item:") || loc.Name.Contains("Chalice:") || loc.Name.Contains("Rune:") || loc.Name.Contains("Equipment:") || loc.Name.Contains("Gold Coins:") || loc.Name.Contains("Skill:") || loc.Name.Contains("Life Bottle:") || loc.Name.Contains("Energy Vial:") || loc.Name.Contains("HH") || loc.Name.Contains("Hall of Heroes"))
                         {
                             {
-                                Location location = new Location()
+                                List<ILocation> conditionalChoice = new List<ILocation>();
+                                conditionalChoice.Add(new Location()
                                 {
-                                    Name = loc.Name,
+                                    Id = -1,
+                                    Name = "Level Check",
+                                    Address = Addresses.CurrentLevel,
+                                    CheckType = LocationCheckType.Byte,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = loc.LevelId
+                                });
+
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Pickup Check",
                                     Address = loc.Address,
-                                    Id = locationId,
                                     CheckType = LocationCheckType.Int,
                                     CompareType = LocationCheckCompareType.Match,
                                     CheckValue = loc.Check
+                                });
+
+                                CompositeLocation location = new CompositeLocation()
+                                {
+                                    Name = loc.Name,
+                                    Id = locationId,
+                                    CheckType = LocationCheckType.AND,
+                                    Conditions = conditionalChoice
                                 };
 
                                 locations.Add(location);
@@ -263,7 +324,9 @@ namespace MedievilArchipelago
             {
                 "Equipment",
                 "Player Stats",
-                "Key Items"
+                "Key Items",
+                "Skills",
+                "Level Status"
             };
 
 
@@ -275,6 +338,7 @@ namespace MedievilArchipelago
                 {
                     continue;
                 }
+
                 Dictionary<string, uint> categoryItems = location.Value;
 
 
@@ -356,7 +420,7 @@ namespace MedievilArchipelago
                     ["Witches Talisman"] = Addresses.WitchesTalisman,
                     ["Safe Key"] = Addresses.SafeKey,
                     ["Shadow Artefact"] = Addresses.ShadowArtefact,
-                    ["Shadow Talisman"] = Addresses.ShadowTalisman, //// neeed the talisman address!
+                    ["Shadow Talisman"] = Addresses.ShadowTalisman, 
                     ["Crucifix"] = Addresses.Crucifix,
                     ["Landlords Bust"] = Addresses.LandlordsBust,
                     ["Crucifix Cast"] = Addresses.CrucifixCast,
@@ -413,36 +477,36 @@ namespace MedievilArchipelago
         {
             List<GenericItemsData> hallOfHeroeVisits = new List<GenericItemsData>()
             {
-                new GenericItemsData("Life Bottle: Hall of Heroes (Canny Tim)", Addresses.HOH_CannyTim2, "9999"),
-                new GenericItemsData("Life Bottle: Hall of Heroes (Ravenhooves The Archer)", Addresses.HOH_RavenHoovesTheArcher4, "9999"),
-                new GenericItemsData("Life Bottle: Hall of Heroes (Dirk Steadfast)", Addresses.HOH_DirkSteadfast2, "9999"),
-                new GenericItemsData("Equipment: Broadsword from Woden the Mighty - HH", Addresses.HOH_WodenTheMighty1, "9999"),
-                new GenericItemsData("Equipment: Magic Sword from Dirk Steadfast - HH", Addresses.HOH_DirkSteadfast1, "9999"),
-                new GenericItemsData("Equipment: Hammer from Stanyer Iron Hewer - HH", Addresses.HOH_StanyerIronHewer1, "9999"),
-                new GenericItemsData("Equipment: Axe from Bloodmonath- HH", Addresses.HOH_BloodmonathSkullCleaver1, "9999"),
-                new GenericItemsData("Equipment: Crossbow from Canny Tim - HH", Addresses.HOH_CannyTim1, "9999"),
-                new GenericItemsData("Equipment: Longbow from Ravenhooves The Archer - HH", Addresses.HOH_RavenHoovesTheArcher1, "9999"),
-                new GenericItemsData("Equipment: Fire Longbow from Ravenhooves the Archer - HH", Addresses.HOH_RavenHoovesTheArcher2, "9999"),
-                new GenericItemsData("Equipment: Magic Longbow from Ravenhooves the Archer - HH", Addresses.HOH_RavenHoovesTheArcher3, "9999"),
-                new GenericItemsData("Equipment: Spear from Imanzi Shongama - HH", Addresses.HOH_Imanzi1, "9999"),
-                new GenericItemsData("Equipment: Lightning from Megwynne Stormbinder - HH", Addresses.HOH_MegwynneStormbinder1, "9999"),
-                new GenericItemsData("Equipment: Gold Shield from Karl Sturngard - HH", Addresses.HOH_KarlStungard1, "9999"),
-                new GenericItemsData("Energy Vial: Imanzi Shongama 1 - HH", Addresses.HOH_Imanzi2, "9999"),
-                new GenericItemsData("Energy Vial: Imanzi Shongama 2 - HH", Addresses.HOH_Imanzi2, "9999"),
-                new GenericItemsData("Energy Vial: Megwynne Stormbinder 1 - HH", Addresses.HOH_MegwynneStormbinder2, "9999"),
-                new GenericItemsData("Energy Vial: Megwynne Stormbinder 2 - HH", Addresses.HOH_MegwynneStormbinder2, "9999"),
-                new GenericItemsData("Energy Vial: Megwynne Stormbinder 3 - HH", Addresses.HOH_MegwynneStormbinder2, "9999"),
-                new GenericItemsData("Gold Coins: Stanyer Iron Hewer 1 - HH", Addresses.HOH_StanyerIronHewer2, "9999"),
-                new GenericItemsData("Gold Coins: Stanyer Iron Hewer 2 - HH", Addresses.HOH_StanyerIronHewer2, "9999"),
-                new GenericItemsData("Gold Coins: Woden the Mighty 1 - HH", Addresses.HOH_WodenTheMighty2, "9999"),
-                new GenericItemsData("Gold Coins: Woden the Mighty 2 - HH", Addresses.HOH_WodenTheMighty2, "9999"),
-                new GenericItemsData("Gold Coins: Bloodmonath 1 - HH", Addresses.HOH_BloodmonathSkullCleaver2, "9999"),
-                new GenericItemsData("Gold Coins: Bloodmonath 2 - HH", Addresses.HOH_BloodmonathSkullCleaver2, "9999"),
-                new GenericItemsData("Gold Coins: Bloodmonath 3 - HH", Addresses.HOH_BloodmonathSkullCleaver2, "9999"),
-                new GenericItemsData("Gold Coins: Karl Sturngard 1 - HH", Addresses.HOH_KarlStungard2, "9999"),
-                new GenericItemsData("Gold Coins: Karl Sturngard 2 - HH", Addresses.HOH_KarlStungard2, "9999"),
-                new GenericItemsData("Gold Coins: Karl Sturngard 3 - HH", Addresses.HOH_KarlStungard2, "9999"),
-                new GenericItemsData("Gold Coins: Karl Sturngard 4 - HH", Addresses.HOH_KarlStungard2, "9999"),
+                new GenericItemsData("Life Bottle: Hall of Heroes (Canny Tim)", Addresses.HOH_CannyTim2, "18", "9999"),
+                new GenericItemsData("Life Bottle: Hall of Heroes (Ravenhooves The Archer)", Addresses.HOH_RavenHoovesTheArcher4, "18", "9999"),
+                new GenericItemsData("Life Bottle: Hall of Heroes (Dirk Steadfast)", Addresses.HOH_DirkSteadfast2, "18", "9999"),
+                new GenericItemsData("Equipment: Broadsword from Woden the Mighty - HH", Addresses.HOH_WodenTheMighty1, "18", "9999"),
+                new GenericItemsData("Equipment: Magic Sword from Dirk Steadfast - HH", Addresses.HOH_DirkSteadfast1, "18", "9999"),
+                new GenericItemsData("Equipment: Hammer from Stanyer Iron Hewer - HH", Addresses.HOH_StanyerIronHewer1, "18", "9999"),
+                new GenericItemsData("Equipment: Axe from Bloodmonath- HH", Addresses.HOH_BloodmonathSkullCleaver1, "18", "9999"),
+                new GenericItemsData("Equipment: Crossbow from Canny Tim - HH", Addresses.HOH_CannyTim1, "18", "9999"),
+                new GenericItemsData("Equipment: Longbow from Ravenhooves The Archer - HH", Addresses.HOH_RavenHoovesTheArcher1, "18", "9999"),
+                new GenericItemsData("Equipment: Fire Longbow from Ravenhooves the Archer - HH", Addresses.HOH_RavenHoovesTheArcher2, "18", "9999"),
+                new GenericItemsData("Equipment: Magic Longbow from Ravenhooves the Archer - HH", Addresses.HOH_RavenHoovesTheArcher3, "18", "9999"),
+                new GenericItemsData("Equipment: Spear from Imanzi Shongama - HH", Addresses.HOH_Imanzi1, "18", "9999"),
+                new GenericItemsData("Equipment: Lightning from Megwynne Stormbinder - HH", Addresses.HOH_MegwynneStormbinder1, "18", "9999"),
+                new GenericItemsData("Equipment: Gold Shield from Karl Sturngard - HH", Addresses.HOH_KarlStungard1, "18", "9999"),
+                new GenericItemsData("Energy Vial: Imanzi Shongama 1 - HH", Addresses.HOH_Imanzi2, "18", "9999"),
+                new GenericItemsData("Energy Vial: Imanzi Shongama 2 - HH", Addresses.HOH_Imanzi2, "18", "9999"),
+                new GenericItemsData("Energy Vial: Megwynne Stormbinder 1 - HH", Addresses.HOH_MegwynneStormbinder2, "18", "9999"),
+                new GenericItemsData("Energy Vial: Megwynne Stormbinder 2 - HH", Addresses.HOH_MegwynneStormbinder2, "18", "9999"),
+                new GenericItemsData("Energy Vial: Megwynne Stormbinder 3 - HH", Addresses.HOH_MegwynneStormbinder2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Stanyer Iron Hewer 1 - HH", Addresses.HOH_StanyerIronHewer2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Stanyer Iron Hewer 2 - HH", Addresses.HOH_StanyerIronHewer2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Woden the Mighty 1 - HH", Addresses.HOH_WodenTheMighty2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Woden the Mighty 2 - HH", Addresses.HOH_WodenTheMighty2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Bloodmonath 1 - HH", Addresses.HOH_BloodmonathSkullCleaver2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Bloodmonath 2 - HH", Addresses.HOH_BloodmonathSkullCleaver2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Bloodmonath 3 - HH", Addresses.HOH_BloodmonathSkullCleaver2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Karl Sturngard 1 - HH", Addresses.HOH_KarlStungard2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Karl Sturngard 2 - HH", Addresses.HOH_KarlStungard2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Karl Sturngard 3 - HH", Addresses.HOH_KarlStungard2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Karl Sturngard 4 - HH", Addresses.HOH_KarlStungard2, "18", "9999"),
             };
             return hallOfHeroeVisits;
         }
@@ -450,16 +514,16 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetDansCryptData()
         {
             List<GenericItemsData> dcLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Star Rune: Dan's Crypt", Addresses.DC_Pickup_StarRune, "32896"),
-                new GenericItemsData("Life Bottle: Dan's Crypt", Addresses.DC_Pickup_LifeBottle, "32896"),
-                new GenericItemsData("Life Bottle: Dan's Crypt - Behind Wall",Addresses.DC_Pickup_LifeBottleWall, "32896"),
-                new GenericItemsData("Equipment: Small Sword - DC", Addresses.DC_Pickup_Shortsword, "32896"),
-                new GenericItemsData("Equipment: Copper Shield in Chest - DC", Addresses.DC_Pickup_CopperShield, "32896", true), 
-                new GenericItemsData("Equipment: Daggers - DC", Addresses.DC_Pickup_Daggers, "32896"),
-                new GenericItemsData("Gold Coins: Over the water - DC",Addresses.DC_Pickup_GoldCoinsOverWater, "32896"),
-                new GenericItemsData("Gold Coins: Behind Wall in Crypt - Left - DC", Addresses.DC_Pickup_GoldCoinsBehindWallLeft, "32896"),
-                new GenericItemsData("Gold Coins: Behind Wall in Crypt - Right - DC", Addresses.DC_Pickup_GoldCoinsBehindWallRight, "32896"),
-                new GenericItemsData("Cleared: Dan's Crypt", Addresses.DC_LevelStatus, "16"),
+                new GenericItemsData("Star Rune: Dan's Crypt", Addresses.DC_Pickup_StarRune, "6", "32896"),
+                new GenericItemsData("Life Bottle: Dan's Crypt", Addresses.DC_Pickup_LifeBottle,  "6", "32896"),
+                new GenericItemsData("Life Bottle: Dan's Crypt - Behind Wall",Addresses.DC_Pickup_LifeBottleWall,  "6", "32896"),
+                new GenericItemsData("Equipment: Small Sword - DC", Addresses.DC_Pickup_Shortsword,  "6", "32896"),
+                new GenericItemsData("Equipment: Copper Shield in Chest - DC", Addresses.DC_Pickup_CopperShield,  "6", "32896", true),
+                new GenericItemsData("Equipment: Daggers - DC", Addresses.DC_Pickup_Daggers,  "6", "32896"),
+                new GenericItemsData("Gold Coins: Over the water - DC",Addresses.DC_Pickup_GoldCoinsOverWater,  "6", "32896"),
+                new GenericItemsData("Gold Coins: Behind Wall in Crypt - Left - DC", Addresses.DC_Pickup_GoldCoinsBehindWallLeft,  "6", "32896"),
+                new GenericItemsData("Gold Coins: Behind Wall in Crypt - Right - DC", Addresses.DC_Pickup_GoldCoinsBehindWallRight,  "6", "32896"),
+                new GenericItemsData("Cleared: Dan's Crypt", Addresses.DC_LevelStatus,  "6", "16"),
 
             };
             return dcLocations;
@@ -469,19 +533,19 @@ namespace MedievilArchipelago
         {
             List<GenericItemsData> tgLocations = new List<GenericItemsData>() {
 
-                new GenericItemsData("Life Bottle: The Graveyard", Addresses.TG_Pickup_LifePotion, "32896"),
-                new GenericItemsData("Earth Rune: The Graveyard", Addresses.TG_Pickup_EarthRune, "32896"),
-                new GenericItemsData("Chaos Rune: The Graveyard", Addresses.TG_Pickup_ChaosRune, "32896"),
-                new GenericItemsData("Equipment: Copper Shield - TG", Addresses.TG_Pickup_CopperShield, "32896", true),
-                new GenericItemsData("Gold Coins: Bag at Start - TG", Addresses.TG_Pickup_GoldCoinsBagAtStart, "32896"),
-                new GenericItemsData("Gold Coins: Near Chaos Rune - TG", Addresses.TG_Pickup_GoldCoinsNearChaosRune, "32896"),
-                new GenericItemsData("Gold Coins: Gold Coins: Behind Fence at Statue - TG", Addresses.TG_Pickup_GoldCoinsBehindFenceAtStatue, "32896"),
-                new GenericItemsData("Gold Coins: Life Bottle Left Chest - TG", Addresses.TG_Pickup_GoldCoinsLifePotionLeftChest, "32896"),
-                new GenericItemsData("Gold Coins: Life Bottle Right Chest - TG", Addresses.TG_Pickup_GoldCoinsLifePotionRightChest, "32896"),
-                new GenericItemsData("Gold Coins: Shop Chest - TG", Addresses.TG_Pickup_GoldCoinsShopChest, "32896"),
-                new GenericItemsData("Gold Coins: Bag Near Hill Fountain - TG", Addresses.TG_Pickup_GoldCoinsBagNearHillFountain, "32896"),
-                new GenericItemsData("Cleared: The Graveyard", Addresses.TG_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Graveyard", Addresses.TG_Pickup_Chalice, "32896"),
+                new GenericItemsData("Life Bottle: The Graveyard", Addresses.TG_Pickup_LifePotion, "1", "32896"),
+                new GenericItemsData("Earth Rune: The Graveyard", Addresses.TG_Pickup_EarthRune, "1", "32896"),
+                new GenericItemsData("Chaos Rune: The Graveyard", Addresses.TG_Pickup_ChaosRune, "1", "32896"),
+                new GenericItemsData("Equipment: Copper Shield - TG", Addresses.TG_Pickup_CopperShield, "1", "32896", true),
+                new GenericItemsData("Gold Coins: Bag at Start - TG", Addresses.TG_Pickup_GoldCoinsBagAtStart, "1", "32896"),
+                new GenericItemsData("Gold Coins: Near Chaos Rune - TG", Addresses.TG_Pickup_GoldCoinsNearChaosRune, "1", "32896"),
+                new GenericItemsData("Gold Coins: Gold Coins: Behind Fence at Statue - TG", Addresses.TG_Pickup_GoldCoinsBehindFenceAtStatue, "1", "32896"),
+                new GenericItemsData("Gold Coins: Life Bottle Left Chest - TG", Addresses.TG_Pickup_GoldCoinsLifePotionLeftChest, "1", "32896"),
+                new GenericItemsData("Gold Coins: Life Bottle Right Chest - TG", Addresses.TG_Pickup_GoldCoinsLifePotionRightChest, "1", "32896"),
+                new GenericItemsData("Gold Coins: Shop Chest - TG", Addresses.TG_Pickup_GoldCoinsShopChest, "1", "32896"),
+                new GenericItemsData("Gold Coins: Bag Near Hill Fountain - TG", Addresses.TG_Pickup_GoldCoinsBagNearHillFountain, "1", "32896"),
+                new GenericItemsData("Cleared: The Graveyard", Addresses.TG_LevelStatus, "1", "16"),
+                new GenericItemsData("Chalice: The Graveyard", Addresses.TG_Pickup_Chalice, "1", "32896"),
 
             };
             return tgLocations;
@@ -491,21 +555,21 @@ namespace MedievilArchipelago
         {
             List<GenericItemsData> chLocations = new List<GenericItemsData>() {
 
-                new GenericItemsData("Key Item: Witches Talisman - CH", Addresses.CH_Pickup_WitchTalisman, "32896"),
-                new GenericItemsData("Equipment: Copper Shield 1 - CH", Addresses.CH_Pickup_CopperShield1stOnHill, "32896", true),
-                new GenericItemsData("Equipment: Copper Shield 2 - CH", Addresses.CH_Pickup_CopperShield2ndOnHill, "32896", true),
-                new GenericItemsData("Equipment: Copper Shield 3 - CH", Addresses.CH_Pickup_CopperShield3rdOnHill, "32896", true),
-                new GenericItemsData("Equipment: Club - CH", Addresses.CH_Pickup_Club, "32896", true),
-                new GenericItemsData("Equipment: Copper Shield in Arena - CH", Addresses.CH_Pickup_CopperShieldArena, "32896"),
-                new GenericItemsData("Energy Vial: Near Shop - CH", Addresses.CH_Pickup_EnergyVialNearShop, "32896"),
-                new GenericItemsData("Energy Vial: Arena - CH", Addresses.CH_Pickup_EnergyVialArena, "32896"),
-                new GenericItemsData("Gold Coins: Near Boulder Entrance - CH", Addresses.CH_Pickup_GoldCoinsNearBoulderEntrance, "32896"),
-                new GenericItemsData("Gold Coins: Up Hill 1 - CH", Addresses.CH_Pickup_GoldCoinsUpHill1, "32896"),
-                new GenericItemsData("Gold Coins: Up Hill 2 - CH", Addresses.CH_Pickup_GoldCoinsUpHill2, "32896"),
-                new GenericItemsData("Gold Coins: Chest at Exit - CH", Addresses.CH_Pickup_GoldCoinsChestAtExit, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Arena - CH", Addresses.CH_Pickup_GoldCoinsChestInArena, "32896"),
-                new GenericItemsData("Cleared: Cemetery Hill", Addresses.CH_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Cemetery Hill", Addresses.CH_Pickup_Chalice, "32896"),
+                new GenericItemsData("Key Item: Witches Talisman - CH", Addresses.CH_Pickup_WitchTalisman, "3", "32896"),
+                new GenericItemsData("Equipment: Copper Shield 1 - CH", Addresses.CH_Pickup_CopperShield1stOnHill, "3", "32896", true),
+                new GenericItemsData("Equipment: Copper Shield 2 - CH", Addresses.CH_Pickup_CopperShield2ndOnHill, "3", "32896", true),
+                new GenericItemsData("Equipment: Copper Shield 3 - CH", Addresses.CH_Pickup_CopperShield3rdOnHill, "3", "32896", true),
+                new GenericItemsData("Equipment: Club - CH", Addresses.CH_Pickup_Club, "3", "32896", true),
+                new GenericItemsData("Equipment: Copper Shield in Arena - CH", Addresses.CH_Pickup_CopperShieldArena, "3", "32896"),
+                new GenericItemsData("Energy Vial: Near Shop - CH", Addresses.CH_Pickup_EnergyVialNearShop, "3", "32896"),
+                new GenericItemsData("Energy Vial: Arena - CH", Addresses.CH_Pickup_EnergyVialArena, "3", "32896"),
+                new GenericItemsData("Gold Coins: Near Boulder Entrance - CH", Addresses.CH_Pickup_GoldCoinsNearBoulderEntrance, "3", "32896"),
+                new GenericItemsData("Gold Coins: Up Hill 1 - CH", Addresses.CH_Pickup_GoldCoinsUpHill1, "3", "32896"),
+                new GenericItemsData("Gold Coins: Up Hill 2 - CH", Addresses.CH_Pickup_GoldCoinsUpHill2, "3", "32896"),
+                new GenericItemsData("Gold Coins: Chest at Exit - CH", Addresses.CH_Pickup_GoldCoinsChestAtExit, "3", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Arena - CH", Addresses.CH_Pickup_GoldCoinsChestInArena,"3",  "32896"),
+                new GenericItemsData("Cleared: Cemetery Hill", Addresses.CH_LevelStatus, "3", "16"),
+                new GenericItemsData("Chalice: Cemetery Hill", Addresses.CH_Pickup_Chalice, "3", "32896"),
             };
             return chLocations;
         }
@@ -513,27 +577,27 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetHilltopMausoleumData()
         {
             List<GenericItemsData> hmLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Key Item: Sheet Music - HM", Addresses.HM_Pickup_SheetMusic, "32896"),
-                new GenericItemsData("Key Item: Skull Key - HM", Addresses.HM_Pickup_GlassDemonSkullKey, "32896"),
-                new GenericItemsData("Chaos Rune: The Hilltop Mausoleum", Addresses.HM_Pickup_ChaosRune, "32896"),
-                new GenericItemsData("Earth Rune: The Hilltop Mausoleum", Addresses.HM_Pickup_EarthRune, "32896"),
-                new GenericItemsData("Moon Rune: The Hilltop Mausoleum", Addresses.HM_Pickup_MoonRune, "32896"),
-                new GenericItemsData("Equipment: Club near Broken Benches - HM", Addresses.HM_Pickup_ClubBrokenBenches, "32896", true),
-                new GenericItemsData("Equipment: Daggers near Block Puzzle - HM", Addresses.HM_Pickup_DaggersBlockPuzzle, "32896", true),
-                new GenericItemsData("Equipment: Copper Shield near Block Puzzle - HM", Addresses.HM_Pickup_CopperShieldBlockPuzzle, "32896"),
-                new GenericItemsData("Energy Vial: Right Coffin - HM", Addresses.HM_Pickup_EnergyVialRightCoffin, "32896"),
-                new GenericItemsData("Energy Vial: Near Rune on Left Ramp - HM", Addresses.HM_Pickup_EnergyVialNearRuneLeftRamp, "32896"),
-                new GenericItemsData("Energy Vial: Phantom of the Opera on Left - HM", Addresses.HM_Pickup_EnergyVialPhantomOfTheOperaLeft, "32896"),
-                new GenericItemsData("Energy Vial: Phantom of the Opera on Right - HM", Addresses.HM_Pickup_EnergyVialPhantomOfTheOperaRight, "32896"),
-                new GenericItemsData("Energy Vial: Moon Room - HM", Addresses.HM_Pickup_EnergyVialMoonRoom, "32896"),
-                new GenericItemsData("Gold Coins: Left Coffin - HM", Addresses.HM_Pickup_GoldCoinsLeftCoffin, "32896"),
-                new GenericItemsData("Gold Coins: After Earth Rune Door - HM", Addresses.HM_Pickup_GoldCoinsAfterEarthRuneDoor, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Moon Room - HM", Addresses.HM_Pickup_GoldCoinsChestInMoonRoom, "32896"),
-                new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 1 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera1, "32896"),
-                new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 2 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera2, "32896"),
-                new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 3 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera3, "32896"),
-                new GenericItemsData("Cleared: The Hilltop Mausoleum", Addresses.HM_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Hilltop Mausoleum", Addresses.HM_Pickup_Chalice, "32896"),
+                new GenericItemsData("Key Item: Sheet Music - HM", Addresses.HM_Pickup_SheetMusic, "4", "32896"),
+                new GenericItemsData("Key Item: Skull Key - HM", Addresses.HM_Pickup_GlassDemonSkullKey, "4", "32896"),
+                new GenericItemsData("Chaos Rune: The Hilltop Mausoleum", Addresses.HM_Pickup_ChaosRune, "4", "32896"),
+                new GenericItemsData("Earth Rune: The Hilltop Mausoleum", Addresses.HM_Pickup_EarthRune, "4", "32896"),
+                new GenericItemsData("Moon Rune: The Hilltop Mausoleum", Addresses.HM_Pickup_MoonRune, "4", "32896"),
+                new GenericItemsData("Equipment: Club near Broken Benches - HM", Addresses.HM_Pickup_ClubBrokenBenches, "4", "32896", true),
+                new GenericItemsData("Equipment: Daggers near Block Puzzle - HM", Addresses.HM_Pickup_DaggersBlockPuzzle, "4", "32896", true),
+                new GenericItemsData("Equipment: Copper Shield near Block Puzzle - HM", Addresses.HM_Pickup_CopperShieldBlockPuzzle, "4", "32896"),
+                new GenericItemsData("Energy Vial: Right Coffin - HM", Addresses.HM_Pickup_EnergyVialRightCoffin, "4", "32896"),
+                new GenericItemsData("Energy Vial: Near Rune on Left Ramp - HM", Addresses.HM_Pickup_EnergyVialNearRuneLeftRamp, "4", "32896"),
+                new GenericItemsData("Energy Vial: Phantom of the Opera on Left - HM", Addresses.HM_Pickup_EnergyVialPhantomOfTheOperaLeft, "4", "32896"),
+                new GenericItemsData("Energy Vial: Phantom of the Opera on Right - HM", Addresses.HM_Pickup_EnergyVialPhantomOfTheOperaRight, "4", "32896"),
+                new GenericItemsData("Energy Vial: Moon Room - HM", Addresses.HM_Pickup_EnergyVialMoonRoom, "4", "32896"),
+                new GenericItemsData("Gold Coins: Left Coffin - HM", Addresses.HM_Pickup_GoldCoinsLeftCoffin, "4", "32896"),
+                new GenericItemsData("Gold Coins: After Earth Rune Door - HM", Addresses.HM_Pickup_GoldCoinsAfterEarthRuneDoor, "4", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Moon Room - HM", Addresses.HM_Pickup_GoldCoinsChestInMoonRoom, "4", "32896"),
+                new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 1 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera1, "4", "32896"),
+                new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 2 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera2, "4", "32896"),
+                new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 3 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera3, "4", "32896"),
+                new GenericItemsData("Cleared: The Hilltop Mausoleum", Addresses.HM_LevelStatus, "4", "16"),
+                new GenericItemsData("Chalice: The Hilltop Mausoleum", Addresses.HM_Pickup_Chalice, "4", "32896"),
             };
             return hmLocations;
         }
@@ -541,29 +605,29 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetReturnToTheGraveyardData()
         {
             List<GenericItemsData> rtgLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Star Rune: Return to the Graveyard", Addresses.RTG_Pickup_StarRune, "32896"),
-                new GenericItemsData("Equipment: Silver Shield in Chest at Shop", Addresses.RTG_Pickup_SilverShieldChestAtShop, "32896", true),
-                new GenericItemsData("Skill: Daring Dash", Addresses.DaringDashSkill, "32896"),
-                new GenericItemsData("Energy Vial: Coffin Area West - RTG", Addresses.RTG_Pickup_EnergyVialCoffinAreaWest, "32896"),
-                new GenericItemsData("Energy Vial: Coffin Area East - RTG", Addresses.RTG_Pickup_EnergyVialCoffinAreaEast, "32896"),
-                new GenericItemsData("Energy Vial: Below Shop - RTG", Addresses.RTG_Pickup_EnergyVialBelowShop, "32896"),
-                new GenericItemsData("Energy Vial: Undertakers Entrance - RTG", Addresses.RTG_Pickup_EnergyVialUndertakersEntrance, "32896"),
-                new GenericItemsData("Energy Vial: Cliffs Right - RTG", Addresses.RTG_Pickup_EnergyVialCliffsRight, "32896"),
-                new GenericItemsData("Energy Vial: Cliffs Left - RTG", Addresses.RTG_Pickup_EnergyVialCliffsLeft, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Coffin Area 1 - RTG", Addresses.RTG_Pickup_GoldCoinsChestInCoffinArea1, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Coffin Area 2 - RTG", Addresses.RTG_Pickup_GoldCoinsChestInCoffinArea2, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Coffin Area 3 - RTG", Addresses.RTG_Pickup_GoldCoinsChestInCoffinArea3, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Coffin Area 4 - RTG", Addresses.RTG_Pickup_GoldCoinsChestInCoffinArea4, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Coffin Area 5 - RTG", Addresses.RTG_Pickup_GoldCoinsChestInCoffinArea5, "32896"),
-                new GenericItemsData("Gold Coins: Bag above Coffin Area - RTG", Addresses.RTG_Pickup_GoldCoinsBagAboveCoffinArea, "32896"),
-                new GenericItemsData("Gold Coins: Bag after Bridge - RTG", Addresses.RTG_Pickup_GoldCoinsBagAfterBridge, "32896"),
-                new GenericItemsData("Gold Coins: Bag at Shop - RTG", Addresses.RTG_Pickup_GoldCoinsBagAtShop, "32896"),
-                new GenericItemsData("Gold Coins: Bag at Closed Gate - RTG", Addresses.RTG_Pickup_GoldCoinsBagAtClosedGate, "32896"),
-                new GenericItemsData("Gold Coins: Chest on Island - RTG", Addresses.RTG_Pickup_GoldCoinsChestOnIsland, "32896"),
-                new GenericItemsData("Gold Coins: Undertakers Entrance - RTG", Addresses.RTG_Pickup_GoldCoinsUndertakersEntrance, "32896"),
-                new GenericItemsData("Gold Coins: Cliffs Left - RTG", Addresses.RTG_Pickup_GoldCoinsCliffsLeft, "32896"),
-                new GenericItemsData("Cleared: Return to the Graveyard", Addresses.RTG_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Return to the Graveyard", Addresses.RTG_Pickup_Chalice, "32896"),
+                new GenericItemsData("Star Rune: Return to the Graveyard", Addresses.RTG_Pickup_StarRune, "2", "32896"),
+                new GenericItemsData("Equipment: Silver Shield in Chest at Shop", Addresses.RTG_Pickup_SilverShieldChestAtShop, "2", "32896", true),
+                new GenericItemsData("Skill: Daring Dash", Addresses.DaringDashSkill, "2", "32896"),
+                new GenericItemsData("Energy Vial: Coffin Area West - RTG", Addresses.RTG_Pickup_EnergyVialCoffinAreaWest, "2", "32896"),
+                new GenericItemsData("Energy Vial: Coffin Area East - RTG", Addresses.RTG_Pickup_EnergyVialCoffinAreaEast, "2", "32896"),
+                new GenericItemsData("Energy Vial: Below Shop - RTG", Addresses.RTG_Pickup_EnergyVialBelowShop, "2", "32896"),
+                new GenericItemsData("Energy Vial: Undertakers Entrance - RTG", Addresses.RTG_Pickup_EnergyVialUndertakersEntrance, "2", "32896"),
+                new GenericItemsData("Energy Vial: Cliffs Right - RTG", Addresses.RTG_Pickup_EnergyVialCliffsRight, "2", "32896"),
+                new GenericItemsData("Energy Vial: Cliffs Left - RTG", Addresses.RTG_Pickup_EnergyVialCliffsLeft, "2", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Coffin Area 1 - RTG", Addresses.RTG_Pickup_GoldCoinsChestInCoffinArea1, "2", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Coffin Area 2 - RTG", Addresses.RTG_Pickup_GoldCoinsChestInCoffinArea2, "2", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Coffin Area 3 - RTG", Addresses.RTG_Pickup_GoldCoinsChestInCoffinArea3, "2", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Coffin Area 4 - RTG", Addresses.RTG_Pickup_GoldCoinsChestInCoffinArea4, "2", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Coffin Area 5 - RTG", Addresses.RTG_Pickup_GoldCoinsChestInCoffinArea5, "2", "32896"),
+                new GenericItemsData("Gold Coins: Bag above Coffin Area - RTG", Addresses.RTG_Pickup_GoldCoinsBagAboveCoffinArea, "2", "32896"),
+                new GenericItemsData("Gold Coins: Bag after Bridge - RTG", Addresses.RTG_Pickup_GoldCoinsBagAfterBridge, "2", "32896"),
+                new GenericItemsData("Gold Coins: Bag at Shop - RTG", Addresses.RTG_Pickup_GoldCoinsBagAtShop, "2", "32896"),
+                new GenericItemsData("Gold Coins: Bag at Closed Gate - RTG", Addresses.RTG_Pickup_GoldCoinsBagAtClosedGate, "2", "32896"),
+                new GenericItemsData("Gold Coins: Chest on Island - RTG", Addresses.RTG_Pickup_GoldCoinsChestOnIsland, "2", "32896"),
+                new GenericItemsData("Gold Coins: Undertakers Entrance - RTG", Addresses.RTG_Pickup_GoldCoinsUndertakersEntrance, "2", "32896"),
+                new GenericItemsData("Gold Coins: Cliffs Left - RTG", Addresses.RTG_Pickup_GoldCoinsCliffsLeft, "2", "32896"),
+                new GenericItemsData("Cleared: Return to the Graveyard", Addresses.RTG_LevelStatus, "2", "16"),
+                new GenericItemsData("Chalice: Return to the Graveyard", Addresses.RTG_Pickup_Chalice, "2", "32896"),
             };
             return rtgLocations;
         }
@@ -571,30 +635,30 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetScarecrowFieldsData()
         {
             List<GenericItemsData> sfLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Life Bottle: Scarecrow Fields", Addresses.SF_Pickup_LifePotion, "32896"),
-                new GenericItemsData("Key Item: Harvester Parts - SF", Addresses.SF_Pickup_HarvesterPart, "32896"),
-                new GenericItemsData("Chaos Rune: Scarecrow Fields", Addresses.SF_Pickup_ChaosRune, "32896",false, true),
-                new GenericItemsData("Earth Rune: Scarecrow Fields", Addresses.SF_Pickup_EarthRune, "32896"),
-                new GenericItemsData("Moon Rune: Scarecrow Fields", Addresses.SF_Pickup_MoonRune, "32896", false, true),
-                new GenericItemsData("Equipment: Club Inside Hut - SF", Addresses.SF_Pickup_ClubInsideHut, "32896", true),
-                new GenericItemsData("Equipment: Silver Shield Behind Windmill - SF", Addresses.SF_Pickup_SilverShieldBehindWindmill, "32896", true),
-                new GenericItemsData("Equipment: Copper Shield in Chest In the Barn - SF", Addresses.SF_Pickup_CopperShieldChestInTheBarn, "32896", true),
-                new GenericItemsData("Energy Vial: Right of fire near Moon Door - SF", Addresses.SF_Pickup_EnergyVialRightOfFireNearMoonDoor, "32896"),
-                new GenericItemsData("Energy Vial: Cornfield Path - SF", Addresses.SF_Pickup_EnergyVialCornfieldPath, "32896"),
-                new GenericItemsData("Gold Coins: Haystack at Beginning - SF", Addresses.SF_Pickup_GoldCoinsHaystackAtBeginning, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Haystack near Moon Door - SF", Addresses.SF_Pickup_GoldCoinsChestInHaystackNearMoonDoor, "32896"),
-                new GenericItemsData("Gold Coins: Left of fire near Moon Door - SF", Addresses.SF_Pickup_GoldCoinsLeftOfFireNearMoonDoor, "32896"),
-                new GenericItemsData("Gold Coins: Bag in the Barn - SF", Addresses.SF_Pickup_GoldCoinsBagInTheBarn, "32896"),
-                new GenericItemsData("Gold Coins: Cornfield Square near Barn - SF", Addresses.SF_Pickup_GoldCoinsCornfieldSquareNearBarn, "32896"),
-                new GenericItemsData("Gold Coins: Cornfield Path 1 - SF", Addresses.SF_Pickup_GoldCoinsCornfieldPath1, "32896"),
-                new GenericItemsData("Gold Coins: Chest Under Haybail - SF", Addresses.SF_Pickup_GoldCoinsChestUnderHaybail, "32896",false,  true),
-                new GenericItemsData("Gold Coins: Bag under Barn Haybail - SF", Addresses.SF_Pickup_GoldCoinsBagUnderBarnHaybail, "32896",false,  true),
-                new GenericItemsData("Gold Coins: Bag in the Press - SF", Addresses.SF_Pickup_GoldCoinsBagInThePress, "32896"),
-                new GenericItemsData("Gold Coins: Bag in the Spinner - SF", Addresses.SF_Pickup_GoldCoinsBagInTheSpinner, "32896"),
-                new GenericItemsData("Gold Coins: Chest next to Harvester Part - SF", Addresses.SF_Pickup_GoldCoinsChestNextToHarvesterPart, "32896"),
-                new GenericItemsData("Gold Coins: Chest Next to Chalice - SF", Addresses.SF_Pickup_GoldCoinsChestNextToChalice, "32896"),
-                new GenericItemsData("Cleared: Scarecrow Fields", Addresses.SF_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Scarecrow Fields", Addresses.SF_Pickup_Chalice, "32896"),
+                new GenericItemsData("Life Bottle: Scarecrow Fields", Addresses.SF_Pickup_LifePotion, "5", "32896"),
+                new GenericItemsData("Key Item: Harvester Parts - SF", Addresses.SF_Pickup_HarvesterPart, "5", "32896"),
+                new GenericItemsData("Chaos Rune: Scarecrow Fields", Addresses.SF_Pickup_ChaosRune, "5", "32896",false, true),
+                new GenericItemsData("Earth Rune: Scarecrow Fields", Addresses.SF_Pickup_EarthRune, "5", "32896"),
+                new GenericItemsData("Moon Rune: Scarecrow Fields", Addresses.SF_Pickup_MoonRune, "5", "32896", false, true),
+                new GenericItemsData("Equipment: Club Inside Hut - SF", Addresses.SF_Pickup_ClubInsideHut, "5", "32896", true),
+                new GenericItemsData("Equipment: Silver Shield Behind Windmill - SF", Addresses.SF_Pickup_SilverShieldBehindWindmill, "5", "32896", true),
+                new GenericItemsData("Equipment: Copper Shield in Chest In the Barn - SF", Addresses.SF_Pickup_CopperShieldChestInTheBarn, "5", "32896", true),
+                new GenericItemsData("Energy Vial: Right of fire near Moon Door - SF", Addresses.SF_Pickup_EnergyVialRightOfFireNearMoonDoor, "5", "32896"),
+                new GenericItemsData("Energy Vial: Cornfield Path - SF", Addresses.SF_Pickup_EnergyVialCornfieldPath, "5", "32896"),
+                new GenericItemsData("Gold Coins: Haystack at Beginning - SF", Addresses.SF_Pickup_GoldCoinsHaystackAtBeginning, "5", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Haystack near Moon Door - SF", Addresses.SF_Pickup_GoldCoinsChestInHaystackNearMoonDoor, "5", "32896"),
+                new GenericItemsData("Gold Coins: Left of fire near Moon Door - SF", Addresses.SF_Pickup_GoldCoinsLeftOfFireNearMoonDoor, "5", "32896"),
+                new GenericItemsData("Gold Coins: Bag in the Barn - SF", Addresses.SF_Pickup_GoldCoinsBagInTheBarn, "5", "32896"),
+                new GenericItemsData("Gold Coins: Cornfield Square near Barn - SF", Addresses.SF_Pickup_GoldCoinsCornfieldSquareNearBarn, "5", "32896"),
+                new GenericItemsData("Gold Coins: Cornfield Path 1 - SF", Addresses.SF_Pickup_GoldCoinsCornfieldPath1, "5", "32896"),
+                new GenericItemsData("Gold Coins: Chest Under Haybail - SF", Addresses.SF_Pickup_GoldCoinsChestUnderHaybail, "5", "32896",false,  true),
+                new GenericItemsData("Gold Coins: Bag under Barn Haybail - SF", Addresses.SF_Pickup_GoldCoinsBagUnderBarnHaybail, "5", "32896",false,  true),
+                new GenericItemsData("Gold Coins: Bag in the Press - SF", Addresses.SF_Pickup_GoldCoinsBagInThePress, "5", "32896"),
+                new GenericItemsData("Gold Coins: Bag in the Spinner - SF", Addresses.SF_Pickup_GoldCoinsBagInTheSpinner, "5", "32896"),
+                new GenericItemsData("Gold Coins: Chest next to Harvester Part - SF", Addresses.SF_Pickup_GoldCoinsChestNextToHarvesterPart, "5", "32896"),
+                new GenericItemsData("Gold Coins: Chest Next to Chalice - SF", Addresses.SF_Pickup_GoldCoinsChestNextToChalice, "5", "32896"),
+                new GenericItemsData("Cleared: Scarecrow Fields", Addresses.SF_LevelStatus, "5", "16"),
+                new GenericItemsData("Chalice: Scarecrow Fields", Addresses.SF_Pickup_Chalice, "5", "32896"),
             };
             return sfLocations;
         }
@@ -602,40 +666,40 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetAnthillData()
         {
             List<GenericItemsData> ahLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Key Item: Amber Piece 1 - TA", Addresses.TA_Pickup_Amber1, "32896"),
-                new GenericItemsData("Key Item: Amber Piece 2 - TA", Addresses.TA_Pickup_Amber2, "32896"),
-                new GenericItemsData("Key Item: Amber Piece 3 - TA", Addresses.TA_Pickup_Amber3, "32896"),
-                new GenericItemsData("Key Item: Amber Piece 4 - TA", Addresses.TA_Pickup_Amber4, "32896"),
-                new GenericItemsData("Key Item: Amber Piece 5 - TA", Addresses.TA_Pickup_Amber5, "32896"),
-                new GenericItemsData("Key Item: Amber Piece 6 - TA", Addresses.TA_Pickup_Amber6, "32896"),
-                new GenericItemsData("Key Item: Amber Piece 7 - TA", Addresses.TA_Pickup_Amber7, "32896"),
-                new GenericItemsData("Key Item: Amber Piece 8 - TA", Addresses.TA_Pickup_Amber8, "32896"),
-                new GenericItemsData("Key Item: Amber Piece 9 - TA", Addresses.TA_Pickup_Amber9, "32896"),
-                new GenericItemsData("Key Item: Amber Piece 10 - TA", Addresses.TA_Pickup_Amber10, "32896"),
-                new GenericItemsData("Equipment: Club in Chest at Barrier - TA", Addresses.TA_Pickup_ClubChestAtBarrier, "32896", true),
-                new GenericItemsData("Equipment: Chicken Drumsticks - TA", Addresses.TA_LevelStatus, "16"),
-                new GenericItemsData("Energy Vial: Before Fairy 1 - TA", Addresses.TA_Pickup_EnergyVialBeforeFairy1, "32896"),
-                new GenericItemsData("Energy Vial: After Amber 2 - TA", Addresses.TA_Pickup_EnergyVialAfterAmber2, "32896"),
-                new GenericItemsData("Energy Vial: Fairy 2 Room Center - TA", Addresses.TA_Pickup_EnergyVialFairy2RoomCenter, "32896"),
-                new GenericItemsData("Energy Vial: Fairy 3 - TA", Addresses.TA_Pickup_EnergyVialFairy3, "32896"),
-                new GenericItemsData("Energy Vial: Birthing room exit - TA", Addresses.TA_Pickup_EnergyVialBirthingRoomExit, "32896"),
-                new GenericItemsData("Gold Coins: Chest at Barrier Fairy - TA", Addresses.TA_Pickup_GoldCoinsChestAtBarrierFairy, "32896"),
-                new GenericItemsData("Gold Coins: Maggot at Amber 2 - TA", Addresses.TA_Pickup_GoldCoinsMaggotAtAmber2, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot after Amber 2 - TA", Addresses.TA_Pickup_GoldCoinsMaggotAfterAmber2, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Fairy 2 Room Center - TA",Addresses.TA_Pickup_GoldCoinsFairy2RoomCenter, "32896"),
-                new GenericItemsData("Gold Coins: Fairy 2 Room Maggot - TA", Addresses.TA_Pickup_GoldCoinsFairy2RoomMaggot, "32896"),
-                new GenericItemsData("Gold Coins: Maggots before Amber 4 - TA", Addresses.TA_Pickup_GoldCoinsMaggotsBeforeAmber4, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggots at Amber 5 - TA", Addresses.TA_Pickup_GoldCoinsMaggotsAtAmber5, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggots at Amber 7 - TA", Addresses.TA_Pickup_GoldCoinsMaggotsAtAmber7_1, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot in nest at Amber 7 - TA", Addresses.TA_Pickup_GoldCoinsMaggotInNestAtAmber7, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot in Nest - TA", Addresses.TA_Pickup_GoldCoinsMaggotInNest, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot after Fairy 4 - TA", Addresses.TA_Pickup_GoldCoinsMaggotAfterFairy4, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot after Fairy 4 in Nest - TA", Addresses.TA_Pickup_GoldCoinsMaggotAfterFairy4InNest, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot at Fairy 5 - TA", Addresses.TA_Pickup_GoldCoinsMaggotAtFairy5, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot near Amber 9 - TA", Addresses.TA_Pickup_GoldCoinsMaggotNearAmber9, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot near Shop - TA", Addresses.TA_Pickup_GoldCoinsMaggotNearShop, "32896", false,  true),
-                new GenericItemsData("Cleared: Ant Hill", Addresses.TA_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Ant Hill", Addresses.TA_LevelStatus, "19"),
+                new GenericItemsData("Key Item: Amber Piece 1 - TA", Addresses.TA_Pickup_Amber1, "7", "32896"),
+                new GenericItemsData("Key Item: Amber Piece 2 - TA", Addresses.TA_Pickup_Amber2, "7", "32896"),
+                new GenericItemsData("Key Item: Amber Piece 3 - TA", Addresses.TA_Pickup_Amber3, "7", "32896"),
+                new GenericItemsData("Key Item: Amber Piece 4 - TA", Addresses.TA_Pickup_Amber4, "7", "32896"),
+                new GenericItemsData("Key Item: Amber Piece 5 - TA", Addresses.TA_Pickup_Amber5, "7", "32896"),
+                new GenericItemsData("Key Item: Amber Piece 6 - TA", Addresses.TA_Pickup_Amber6, "7", "32896"),
+                new GenericItemsData("Key Item: Amber Piece 7 - TA", Addresses.TA_Pickup_Amber7, "7", "32896"),
+                new GenericItemsData("Key Item: Amber Piece 8 - TA", Addresses.TA_Pickup_Amber8, "7", "32896"),
+                new GenericItemsData("Key Item: Amber Piece 9 - TA", Addresses.TA_Pickup_Amber9, "7", "32896"),
+                new GenericItemsData("Key Item: Amber Piece 10 - TA", Addresses.TA_Pickup_Amber10, "7", "32896"),
+                new GenericItemsData("Equipment: Club in Chest at Barrier - TA", Addresses.TA_Pickup_ClubChestAtBarrier, "7", "32896", true),
+                new GenericItemsData("Equipment: Chicken Drumsticks - TA", Addresses.TA_LevelStatus, "7", "16"),
+                new GenericItemsData("Energy Vial: Before Fairy 1 - TA", Addresses.TA_Pickup_EnergyVialBeforeFairy1, "7", "32896"),
+                new GenericItemsData("Energy Vial: After Amber 2 - TA", Addresses.TA_Pickup_EnergyVialAfterAmber2, "7", "32896"),
+                new GenericItemsData("Energy Vial: Fairy 2 Room Center - TA", Addresses.TA_Pickup_EnergyVialFairy2RoomCenter, "7", "32896"),
+                new GenericItemsData("Energy Vial: Fairy 3 - TA", Addresses.TA_Pickup_EnergyVialFairy3, "7", "32896"),
+                new GenericItemsData("Energy Vial: Birthing room exit - TA", Addresses.TA_Pickup_EnergyVialBirthingRoomExit, "7", "32896"),
+                new GenericItemsData("Gold Coins: Chest at Barrier Fairy - TA", Addresses.TA_Pickup_GoldCoinsChestAtBarrierFairy, "7", "32896"),
+                new GenericItemsData("Gold Coins: Maggot at Amber 2 - TA", Addresses.TA_Pickup_GoldCoinsMaggotAtAmber2, "7", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Maggot after Amber 2 - TA", Addresses.TA_Pickup_GoldCoinsMaggotAfterAmber2, "7", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Fairy 2 Room Center - TA",Addresses.TA_Pickup_GoldCoinsFairy2RoomCenter,"7",  "32896"),
+                new GenericItemsData("Gold Coins: Fairy 2 Room Maggot - TA", Addresses.TA_Pickup_GoldCoinsFairy2RoomMaggot, "7", "32896"),
+                new GenericItemsData("Gold Coins: Maggots before Amber 4 - TA", Addresses.TA_Pickup_GoldCoinsMaggotsBeforeAmber4, "7", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Maggots at Amber 5 - TA", Addresses.TA_Pickup_GoldCoinsMaggotsAtAmber5, "7", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Maggots at Amber 7 - TA", Addresses.TA_Pickup_GoldCoinsMaggotsAtAmber7_1, "7", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Maggot in nest at Amber 7 - TA", Addresses.TA_Pickup_GoldCoinsMaggotInNestAtAmber7, "7", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Maggot in Nest - TA", Addresses.TA_Pickup_GoldCoinsMaggotInNest, "7", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Maggot after Fairy 4 - TA", Addresses.TA_Pickup_GoldCoinsMaggotAfterFairy4, "7", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Maggot after Fairy 4 in Nest - TA", Addresses.TA_Pickup_GoldCoinsMaggotAfterFairy4InNest, "7", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Maggot at Fairy 5 - TA", Addresses.TA_Pickup_GoldCoinsMaggotAtFairy5, "7", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Maggot near Amber 9 - TA", Addresses.TA_Pickup_GoldCoinsMaggotNearAmber9, "7", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Maggot near Shop - TA", Addresses.TA_Pickup_GoldCoinsMaggotNearShop, "7", "32896", false,  true),
+                new GenericItemsData("Cleared: Ant Hill", Addresses.TA_LevelStatus, "7", "16"),
+                new GenericItemsData("Chalice: Ant Hill", Addresses.TA_LevelStatus, "7", "19"),
             };
             return ahLocations;
         }
@@ -644,25 +708,25 @@ namespace MedievilArchipelago
         {
             List<GenericItemsData> eeLocations = new List<GenericItemsData>() {
 
-                new GenericItemsData("Key Item: Shadow Talisman - EE", Addresses.EE_Pickup_ShadowTalisman, "32896"),
-                new GenericItemsData("Star Rune: Enchanted Earth", Addresses.EE_Pickup_StarRune, "32896"),
-                new GenericItemsData("Earth Rune: Enchanted Earth", Addresses.EE_Pickup_EarthRune, "32896"),
-                new GenericItemsData("Equipment: Copper Shield in Egg - EE", Addresses.EE_Pickup_CopperShieldInEgg, "32896", false,  true),
-                new GenericItemsData("Energy Vial: Shadow Talisman Cave - EE", Addresses.EE_Pickup_EnergyVialShadowTalismanCave, "32896"),
-                new GenericItemsData("Energy Vial: Left of Tree Drop - EE", Addresses.EE_Pickup_EnergyVialLeftOfTreeDrop, "32896"),
-                new GenericItemsData("Energy Vial: Right of Tree Drop - EE", Addresses.EE_Pickup_EnergyVialRightOfTreeDrop, "32896"),
-                new GenericItemsData("Gold Coins: Bag Near Tree Hollow - EE", Addresses.EE_Pickup_GoldCoinsBagNearTreeHollow, "32896"),
-                new GenericItemsData("Gold Coins: Bag Behind Big Tree 1 - EE", Addresses.EE_Pickup_GoldCoinsBagBehindBigTree1, "32896"),
-                new GenericItemsData("Gold Coins: Bag Behind Big Tree 2 - EE", Addresses.EE_Pickup_GoldCoinsBagBehindBigTree1, "32896"),
-                new GenericItemsData("Gold Coins: Chest In Egg - EE", Addresses.EE_Pickup_GoldCoinsChestInEgg, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag at Cave Entrance - EE", Addresses.EE_Pickup_GoldCoinsBagAtCaveEntrance, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Talisman Cave - EE", Addresses.EE_Pickup_GoldCoinsBagInShadowTalismanCave, "32896"),
-                new GenericItemsData("Gold Coins:Chest Near Barrier - EE", Addresses.EE_Pickup_GoldCoinsChestNearBarrier, "32896"),
-                new GenericItemsData("Gold Coins: Chest Left of Fountain - EE", Addresses.EE_Pickup_GoldCoinsChestLeftOfFountain, "32896"),
-                new GenericItemsData("Gold Coins: Chest Top of Fountain - EE", Addresses.EE_Pickup_GoldCoinsChestTopOfFountain, "32896"),
-                new GenericItemsData("Gold Coins: Chest Right of Fountain - EE", Addresses.EE_Pickup_GoldCoinsChestRightOfFountain, "32896"),
-                new GenericItemsData("Cleared: Enchanted Earth", Addresses.EE_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Enchanted Earth", Addresses.EE_Pickup_Chalice, "32896"),
+                new GenericItemsData("Key Item: Shadow Talisman - EE", Addresses.EE_Pickup_ShadowTalisman, "15", "32896"),
+                new GenericItemsData("Star Rune: Enchanted Earth", Addresses.EE_Pickup_StarRune, "15", "32896"),
+                new GenericItemsData("Earth Rune: Enchanted Earth", Addresses.EE_Pickup_EarthRune, "15", "32896"),
+                new GenericItemsData("Equipment: Copper Shield in Egg - EE", Addresses.EE_Pickup_CopperShieldInEgg, "15", "32896", false,  true),
+                new GenericItemsData("Energy Vial: Shadow Talisman Cave - EE", Addresses.EE_Pickup_EnergyVialShadowTalismanCave, "15", "32896"),
+                new GenericItemsData("Energy Vial: Left of Tree Drop - EE", Addresses.EE_Pickup_EnergyVialLeftOfTreeDrop, "15", "32896"),
+                new GenericItemsData("Energy Vial: Right of Tree Drop - EE", Addresses.EE_Pickup_EnergyVialRightOfTreeDrop, "15", "32896"),
+                new GenericItemsData("Gold Coins: Bag Near Tree Hollow - EE", Addresses.EE_Pickup_GoldCoinsBagNearTreeHollow, "15", "32896"),
+                new GenericItemsData("Gold Coins: Bag Behind Big Tree 1 - EE", Addresses.EE_Pickup_GoldCoinsBagBehindBigTree1, "15", "32896"),
+                new GenericItemsData("Gold Coins: Bag Behind Big Tree 2 - EE", Addresses.EE_Pickup_GoldCoinsBagBehindBigTree1, "15", "32896"),
+                new GenericItemsData("Gold Coins: Chest In Egg - EE", Addresses.EE_Pickup_GoldCoinsChestInEgg, "15", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag at Cave Entrance - EE", Addresses.EE_Pickup_GoldCoinsBagAtCaveEntrance, "15", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Talisman Cave - EE", Addresses.EE_Pickup_GoldCoinsBagInShadowTalismanCave, "15", "32896"),
+                new GenericItemsData("Gold Coins:Chest Near Barrier - EE", Addresses.EE_Pickup_GoldCoinsChestNearBarrier, "15", "32896"),
+                new GenericItemsData("Gold Coins: Chest Left of Fountain - EE", Addresses.EE_Pickup_GoldCoinsChestLeftOfFountain, "15", "32896"),
+                new GenericItemsData("Gold Coins: Chest Top of Fountain - EE", Addresses.EE_Pickup_GoldCoinsChestTopOfFountain, "15", "32896"),
+                new GenericItemsData("Gold Coins: Chest Right of Fountain - EE", Addresses.EE_Pickup_GoldCoinsChestRightOfFountain, "15", "32896"),
+                new GenericItemsData("Cleared: Enchanted Earth", Addresses.EE_LevelStatus, "15", "16"),
+                new GenericItemsData("Chalice: Enchanted Earth", Addresses.EE_Pickup_Chalice, "15", "32896"),
             };
             return eeLocations;
         }
@@ -670,34 +734,34 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetTheSleepingVillageData()
         {
             List<GenericItemsData> tsvLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Earth Rune: Sleeping Village", Addresses.TSV_Pickup_EarthRune, "32896"),
-                new GenericItemsData("Chaos Rune: Sleeping Village", Addresses.TSV_Pickup_ChaosRune, "32896"),
-                new GenericItemsData("Moon Rune: Sleeping Village", Addresses.TSV_Pickup_MoonRune, "32896"),
-                new GenericItemsData("Key Item: Safe Key - SV", Addresses.TSV_Pickup_SafeKey, "32896"),
-                new GenericItemsData("Key Item: Shadow Artefact - SV", Addresses.TSV_Pickup_ShadowArtefact, "32896", false,  true),
-                new GenericItemsData("Key Item: Crucifix - SV", Addresses.TSV_Pickup_Crucifix, "32896", false,  true),
-                new GenericItemsData("Key Item: Landlords Bust - SV", Addresses.TSV_Pickup_LandlordsBust, "32896"),
-                new GenericItemsData("Key Item: Crucifix Cast - SV", Addresses.TSV_Pickup_CrucifixCast, "32896"),
-                new GenericItemsData("Equipment: Silver Shield in Blacksmiths - SV", Addresses.TSV_Pickup_SilverShieldInBlacksmiths, "32896", true),
-                new GenericItemsData("Equipment: Club Chest under Inn Stairs - SV", Addresses.TSV_Pickup_ClubInChestUnderInnStairs, "32896", true),
-                new GenericItemsData("Energy Vial: At Pond - SV", Addresses.TSV_Pickup_EnergyVialAtPond, "32896"),
-                new GenericItemsData("Energy Vial: Bust Switch - SV", Addresses.TSV_Pickup_EnergyVialBustSwitch, "32896"),
-                new GenericItemsData("Energy Vial: Near Exit - SV", Addresses.TSV_Pickup_EnergyVialNearExit, "32896"),
-                new GenericItemsData("Energy Vial: Near Chalice - SV", Addresses.TSV_Pickup_EnergyVialNearChalice, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Left Barrel at Blacksmith - SV", Addresses.TSV_Pickup_GoldCoinsBagInLeftBarrelAtBlacksmith, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag in Right Barrel at Blacksmith - SV", Addresses.TSV_Pickup_GoldCoinsBagInRightBarrelAtBlacksmith, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag at Pond - SV", Addresses.TSV_Pickup_GoldCoinsBagAtPond, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Barrel at Inn - SV", Addresses.TSV_Pickup_GoldCoinsBagInBarrelAtInn, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag in Barrel at bottom of Inn Stairs - SV", Addresses.TSV_Pickup_GoldCoinsBagInBarrelAtBottomOfInnStairs, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag in Barrel Behind Inn Stairs - SV", Addresses.TSV_Pickup_GoldCoinsBagInBarrelBehindInnStairs, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag In Top Bust Barrel - SV", Addresses.TSV_Pickup_GoldCoinsBagInTopBustBarrel, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag In Switch Bust Barrel - SV", Addresses.TSV_Pickup_GoldCoinsBagInSwitchBustBarrel, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag in Library - SV", Addresses.TSV_Pickup_GoldCoinsBagInLibrary, "32896"),
-                new GenericItemsData("Gold Coins: Bag at Top of table - SV", Addresses.TSV_Pickup_GoldCoinsBagAtTopOfTable, "32896"),
-                new GenericItemsData("Gold Coins: Bag at Bottom of table - SV", Addresses.TSV_Pickup_GoldCoinsBagAtBottomOfTable, "32896"),
-                new GenericItemsData("Gold Coins: Chest next to Chalice - SV", Addresses.TSV_Pickup_GoldCoinsChestNextToChalice, "32896"),
-                new GenericItemsData("Cleared: Sleeping Village", Addresses.TSV_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Sleeping Village", Addresses.TSV_Pickup_Chalice, "32896"),
+                new GenericItemsData("Earth Rune: Sleeping Village", Addresses.TSV_Pickup_EarthRune,"11", "32896"),
+                new GenericItemsData("Chaos Rune: Sleeping Village", Addresses.TSV_Pickup_ChaosRune, "11", "32896"),
+                new GenericItemsData("Moon Rune: Sleeping Village", Addresses.TSV_Pickup_MoonRune, "11", "32896"),
+                new GenericItemsData("Key Item: Safe Key - SV", Addresses.TSV_Pickup_SafeKey, "11", "32896"),
+                new GenericItemsData("Key Item: Shadow Artefact - SV", Addresses.TSV_Pickup_ShadowArtefact, "11", "32896", false,  true),
+                new GenericItemsData("Key Item: Crucifix - SV", Addresses.TSV_Pickup_Crucifix,"11",  "32896", false,  true),
+                new GenericItemsData("Key Item: Landlords Bust - SV", Addresses.TSV_Pickup_LandlordsBust, "11", "32896"),
+                new GenericItemsData("Key Item: Crucifix Cast - SV", Addresses.TSV_Pickup_CrucifixCast,"11",  "32896"),
+                new GenericItemsData("Equipment: Silver Shield in Blacksmiths - SV", Addresses.TSV_Pickup_SilverShieldInBlacksmiths, "11", "32896", true),
+                new GenericItemsData("Equipment: Club Chest under Inn Stairs - SV", Addresses.TSV_Pickup_ClubInChestUnderInnStairs, "11", "32896", true),
+                new GenericItemsData("Energy Vial: At Pond - SV", Addresses.TSV_Pickup_EnergyVialAtPond, "11", "32896"),
+                new GenericItemsData("Energy Vial: Bust Switch - SV", Addresses.TSV_Pickup_EnergyVialBustSwitch, "11", "32896"),
+                new GenericItemsData("Energy Vial: Near Exit - SV", Addresses.TSV_Pickup_EnergyVialNearExit, "11", "32896"),
+                new GenericItemsData("Energy Vial: Near Chalice - SV", Addresses.TSV_Pickup_EnergyVialNearChalice, "11", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Left Barrel at Blacksmith - SV", Addresses.TSV_Pickup_GoldCoinsBagInLeftBarrelAtBlacksmith, "11", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag in Right Barrel at Blacksmith - SV", Addresses.TSV_Pickup_GoldCoinsBagInRightBarrelAtBlacksmith, "11", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag at Pond - SV", Addresses.TSV_Pickup_GoldCoinsBagAtPond, "11", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Barrel at Inn - SV", Addresses.TSV_Pickup_GoldCoinsBagInBarrelAtInn, "11", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag in Barrel at bottom of Inn Stairs - SV", Addresses.TSV_Pickup_GoldCoinsBagInBarrelAtBottomOfInnStairs, "11", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag in Barrel Behind Inn Stairs - SV", Addresses.TSV_Pickup_GoldCoinsBagInBarrelBehindInnStairs, "11", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag In Top Bust Barrel - SV", Addresses.TSV_Pickup_GoldCoinsBagInTopBustBarrel, "11", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag In Switch Bust Barrel - SV", Addresses.TSV_Pickup_GoldCoinsBagInSwitchBustBarrel, "11", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag in Library - SV", Addresses.TSV_Pickup_GoldCoinsBagInLibrary, "11", "32896"),
+                new GenericItemsData("Gold Coins: Bag at Top of table - SV", Addresses.TSV_Pickup_GoldCoinsBagAtTopOfTable, "11", "32896"),
+                new GenericItemsData("Gold Coins: Bag at Bottom of table - SV", Addresses.TSV_Pickup_GoldCoinsBagAtBottomOfTable, "11", "32896"),
+                new GenericItemsData("Gold Coins: Chest next to Chalice - SV", Addresses.TSV_Pickup_GoldCoinsChestNextToChalice, "11", "32896"),
+                new GenericItemsData("Cleared: Sleeping Village", Addresses.TSV_LevelStatus, "11", "16"),
+                new GenericItemsData("Chalice: Sleeping Village", Addresses.TSV_Pickup_Chalice, "11", "32896"),
             };
             return tsvLocations;
         }
@@ -705,30 +769,30 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetPoolsOfTheAncientDeadData()
         {
             List<GenericItemsData> padLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Life Bottle: Pools of the Ancient Dead", Addresses.PAD_Pickup_LifeBottle, "32896"),
-                new GenericItemsData("Chaos Rune: Pools of the Ancient Dead", Addresses.PAD_Pickup_ChaosRune, "32896"),
-                new GenericItemsData("Key Item: Soul Helmet 1 - PAD", Addresses.PAD_Pickup_LostSoul1, "32896"),
-                new GenericItemsData("Key Item: Soul Helmet 2 - PAD", Addresses.PAD_Pickup_LostSoul2, "32896"),
-                new GenericItemsData("Key Item: Soul Helmet 3 - PAD", Addresses.PAD_Pickup_LostSoul3, "32896"),
-                new GenericItemsData("Key Item: Soul Helmet 4 - PAD", Addresses.PAD_Pickup_LostSoul4, "32896"),
-                new GenericItemsData("Key Item: Soul Helmet 5 - PAD", Addresses.PAD_Pickup_LostSoul5, "32896"),
-                new GenericItemsData("Key Item: Soul Helmet 6 - PAD", Addresses.PAD_Pickup_LostSoul6, "32896"),
-                new GenericItemsData("Key Item: Soul Helmet 7 - PAD", Addresses.PAD_Pickup_LostSoul7, "32896"),
-                new GenericItemsData("Key Item: Soul Helmet 8 - PAD", Addresses.PAD_Pickup_LostSoul8, "32896"),
-                new GenericItemsData("Equipment: Silver Shield in Chest Near Soul 5 - PAD", Addresses.PAD_Pickup_SilverShieldInChestNearSoul5, "32896", true),
-                new GenericItemsData("Energy Vial: Broken Structure near Entrance - PAD", Addresses.PAD_Pickup_EnergyVialBrokenStructureNearEntrance, "32896"),
-                new GenericItemsData("Energy Vial: Next to Lost Soul 3 - PAD", Addresses.PAD_Pickup_EnergyVialNextToLostSoul3, "32896"),
-                new GenericItemsData("Energy Vial: Near Gate - PAD", Addresses.PAD_Pickup_EnergyVialNearGate, "32896"),
-                new GenericItemsData("Energy Vial: Chariot Right - PAD", Addresses.PAD_Pickup_EnergyVialChariotRight, "32896"),
-                new GenericItemsData("Energy Vial: Chariot Left - PAD", Addresses.PAD_Pickup_EnergyVialChariotLeft, "32896"),
-                new GenericItemsData("Energy Vial: Jump Spot 1 - PAD", Addresses.PAD_Pickup_EnergyVialJumpSpot1, "32896"),
-                new GenericItemsData("Energy Vial: Jump Spot 2 - PAD", Addresses.PAD_Pickup_EnergyVialJumpSpot2, "32896"),
-                new GenericItemsData("Gold Coins: Bag at Entrance - PAD", Addresses.PAD_Pickup_GoldCoinsBagAtEntrance, "32896"),
-                new GenericItemsData("Gold Coins: Bag on Island Near Soul 2 - PAD", Addresses.PAD_Pickup_GoldCoinsBagOnIslandNearSoul2, "32896"),
-                new GenericItemsData("Gold Coins: Jump Spot 1 - PAD", Addresses.PAD_Pickup_GoldCoinsJumpSpot1, "32896"),
-                new GenericItemsData("Gold Coins: Jump Spot 2 - PAD", Addresses.PAD_Pickup_GoldCoinsJumpSpot2, "32896"),
-                new GenericItemsData("Cleared: Pools of the Ancient Dead", Addresses.PAD_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Pools of the Ancient Dead", Addresses.PAD_Pickup_Chalice, "32896"),
+                new GenericItemsData("Life Bottle: Pools of the Ancient Dead", Addresses.PAD_Pickup_LifeBottle, "12", "32896"),
+                new GenericItemsData("Chaos Rune: Pools of the Ancient Dead", Addresses.PAD_Pickup_ChaosRune, "12", "32896"),
+                new GenericItemsData("Key Item: Soul Helmet 1 - PAD", Addresses.PAD_Pickup_LostSoul1, "12", "32896"),
+                new GenericItemsData("Key Item: Soul Helmet 2 - PAD", Addresses.PAD_Pickup_LostSoul2, "12", "32896"),
+                new GenericItemsData("Key Item: Soul Helmet 3 - PAD", Addresses.PAD_Pickup_LostSoul3, "12", "32896"),
+                new GenericItemsData("Key Item: Soul Helmet 4 - PAD", Addresses.PAD_Pickup_LostSoul4, "12", "32896"),
+                new GenericItemsData("Key Item: Soul Helmet 5 - PAD", Addresses.PAD_Pickup_LostSoul5, "12", "32896"),
+                new GenericItemsData("Key Item: Soul Helmet 6 - PAD", Addresses.PAD_Pickup_LostSoul6, "12", "32896"),
+                new GenericItemsData("Key Item: Soul Helmet 7 - PAD", Addresses.PAD_Pickup_LostSoul7, "12", "32896"),
+                new GenericItemsData("Key Item: Soul Helmet 8 - PAD", Addresses.PAD_Pickup_LostSoul8, "12", "32896"),
+                new GenericItemsData("Equipment: Silver Shield in Chest Near Soul 5 - PAD", Addresses.PAD_Pickup_SilverShieldInChestNearSoul5, "12", "32896", true),
+                new GenericItemsData("Energy Vial: Broken Structure near Entrance - PAD", Addresses.PAD_Pickup_EnergyVialBrokenStructureNearEntrance, "12", "32896"),
+                new GenericItemsData("Energy Vial: Next to Lost Soul 3 - PAD", Addresses.PAD_Pickup_EnergyVialNextToLostSoul3, "12", "32896"),
+                new GenericItemsData("Energy Vial: Near Gate - PAD", Addresses.PAD_Pickup_EnergyVialNearGate, "12", "32896"),
+                new GenericItemsData("Energy Vial: Chariot Right - PAD", Addresses.PAD_Pickup_EnergyVialChariotRight, "12", "32896"),
+                new GenericItemsData("Energy Vial: Chariot Left - PAD", Addresses.PAD_Pickup_EnergyVialChariotLeft, "12", "32896"),
+                new GenericItemsData("Energy Vial: Jump Spot 1 - PAD", Addresses.PAD_Pickup_EnergyVialJumpSpot1, "12", "32896"),
+                new GenericItemsData("Energy Vial: Jump Spot 2 - PAD", Addresses.PAD_Pickup_EnergyVialJumpSpot2, "12", "32896"),
+                new GenericItemsData("Gold Coins: Bag at Entrance - PAD", Addresses.PAD_Pickup_GoldCoinsBagAtEntrance, "12", "32896"),
+                new GenericItemsData("Gold Coins: Bag on Island Near Soul 2 - PAD", Addresses.PAD_Pickup_GoldCoinsBagOnIslandNearSoul2, "12", "32896"),
+                new GenericItemsData("Gold Coins: Jump Spot 1 - PAD", Addresses.PAD_Pickup_GoldCoinsJumpSpot1, "12", "32896"),
+                new GenericItemsData("Gold Coins: Jump Spot 2 - PAD", Addresses.PAD_Pickup_GoldCoinsJumpSpot2, "12", "32896"),
+                new GenericItemsData("Cleared: Pools of the Ancient Dead", Addresses.PAD_LevelStatus, "12", "16"),
+                new GenericItemsData("Chalice: Pools of the Ancient Dead", Addresses.PAD_Pickup_Chalice, "12", "32896"),
             };
             return padLocations;
         }
@@ -736,22 +800,22 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetTheLakeData()
         {
             List<GenericItemsData> tlLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Chaos Rune: The Lake", Addresses.TL_Pickup_ChaosRune, "32896"),
-                new GenericItemsData("Earth Rune: The Lake", Addresses.TL_Pickup_EarthRune, "32896"),
-                new GenericItemsData("Star Rune: The Lake", Addresses.TL_Pickup_StarRune, "32896"),
-                new GenericItemsData("Time Rune: The Lake", Addresses.TL_Pickup_TimeRune, "32896"),
-                new GenericItemsData("Equipment: Silver Shield In Whirlpool - TL", Addresses.TL_Pickup_SilverShieldInWhirlpool, "32896", true),
-                new GenericItemsData("Energy Vial: Flooded House - TL", Addresses.TL_Pickup_EnergyVialFloodedHouse, "32896"),
-                new GenericItemsData("Energy Vial: Whirpool Wind 1 - TL", Addresses.TL_Pickup_EnergyVialWhirlpoolWind1, "32896"),
-                new GenericItemsData("Energy Vial: Whirpool Wind 2 - TL", Addresses.TL_Pickup_EnergyVialWhirlpoolWind2, "32896"),
-                new GenericItemsData("Gold Coins: Bag Outside Flooded House - TL", Addresses.TL_Pickup_GoldCoinsBagOutsideFloodedHouse, "32896"),
-                new GenericItemsData("Gold Coins: Bag Near Closed Gate - TL", Addresses.TL_Pickup_GoldCoinsBagNearClosedGate, "32896"),
-                new GenericItemsData("Gold Coins: Bag at the Whirlpool Entrance - TL", Addresses.TL_Pickup_GoldCoinsBagAtTheWhirlpoolEntrance, "32896"),
-                new GenericItemsData("Gold Coins: Whirlpool Wind 1 - TL", Addresses.TL_Pickup_GoldCoinsWhirlpoolWind1, "32896"),
-                new GenericItemsData("Gold Coins: Whirlpool Wind 2 - TL", Addresses.TL_Pickup_GoldCoinsWhirlpoolWind2, "32896"),
-                new GenericItemsData("Gold Coins: Outside Whirlpool Exit - TL", Addresses.TL_Pickup_GoldCoinsOutsideWhirlpoolExit, "32896"),
-                new GenericItemsData("Cleared: The Lake", Addresses.TL_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Lake", Addresses.TL_Pickup_Chalice, "32896"),
+                new GenericItemsData("Chaos Rune: The Lake", Addresses.TL_Pickup_ChaosRune, "22", "32896"),
+                new GenericItemsData("Earth Rune: The Lake", Addresses.TL_Pickup_EarthRune, "22", "32896"),
+                new GenericItemsData("Star Rune: The Lake", Addresses.TL_Pickup_StarRune, "22", "32896"),
+                new GenericItemsData("Time Rune: The Lake", Addresses.TL_Pickup_TimeRune, "22", "32896"),
+                new GenericItemsData("Equipment: Silver Shield In Whirlpool - TL", Addresses.TL_Pickup_SilverShieldInWhirlpool, "22", "32896", true),
+                new GenericItemsData("Energy Vial: Flooded House - TL", Addresses.TL_Pickup_EnergyVialFloodedHouse, "22", "32896"),
+                new GenericItemsData("Energy Vial: Whirpool Wind 1 - TL", Addresses.TL_Pickup_EnergyVialWhirlpoolWind1, "22", "32896"),
+                new GenericItemsData("Energy Vial: Whirpool Wind 2 - TL", Addresses.TL_Pickup_EnergyVialWhirlpoolWind2, "22", "32896"),
+                new GenericItemsData("Gold Coins: Bag Outside Flooded House - TL", Addresses.TL_Pickup_GoldCoinsBagOutsideFloodedHouse, "22", "32896"),
+                new GenericItemsData("Gold Coins: Bag Near Closed Gate - TL", Addresses.TL_Pickup_GoldCoinsBagNearClosedGate, "22", "32896"),
+                new GenericItemsData("Gold Coins: Bag at the Whirlpool Entrance - TL", Addresses.TL_Pickup_GoldCoinsBagAtTheWhirlpoolEntrance, "22", "32896"),
+                new GenericItemsData("Gold Coins: Whirlpool Wind 1 - TL", Addresses.TL_Pickup_GoldCoinsWhirlpoolWind1, "22", "32896"),
+                new GenericItemsData("Gold Coins: Whirlpool Wind 2 - TL", Addresses.TL_Pickup_GoldCoinsWhirlpoolWind2, "22", "32896"),
+                new GenericItemsData("Gold Coins: Outside Whirlpool Exit - TL", Addresses.TL_Pickup_GoldCoinsOutsideWhirlpoolExit, "22", "32896"),
+                new GenericItemsData("Cleared: The Lake", Addresses.TL_LevelStatus, "22", "16"),
+                new GenericItemsData("Chalice: The Lake", Addresses.TL_Pickup_Chalice, "22", "32896"),
             };
             return tlLocations;
         }
@@ -760,65 +824,65 @@ namespace MedievilArchipelago
         {
             List<GenericItemsData> ccLocations = new List<GenericItemsData>() {
 
-                new GenericItemsData("Earth Rune: The Crystal Caves", Addresses.CC_Pickup_EarthRune, "32896"),
-                new GenericItemsData("Star Rune: The Crystal Caves", Addresses.CC_Pickup_StarRune, "32896"),
-                new GenericItemsData("Equipment: Silver Shield in Crystal - CC", Addresses.CC_Pickup_SilverShieldInCrystal, "32896", false,  true),
-                new GenericItemsData("Equipment: Dragon Armour - CC", Addresses.CC_Pickup_DragonArmour, "32896"),
-                new GenericItemsData("Energy Vial: Dragon Room 1st Platform - CC", Addresses.CC_Pickup_EnergyVialDragonRoom1stPlatform, "32896"),
-                new GenericItemsData("Energy Vial: Dragon Room 3rd Platform - CC", Addresses.CC_Pickup_EnergyVialDragonRoom3rdPlatform, "32896"),
-                new GenericItemsData("Gold Coins: Bag at bottom of winding staircase  - CC", Addresses.CC_Pickup_GoldCoinsBagAtWindingStaircase, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Crystal after Pool - CC", Addresses.CC_Pickup_GoldCoinsChestInCrystalAfterPool, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag in Crystal at Start - CC", Addresses.CC_Pickup_GoldCoinsBagInCrystalAtStart, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag in Spinner - CC", Addresses.CC_Pickup_GoldCoinsBagInSpinner, "32896"),
-                new GenericItemsData("Gold Coins: Bag near Silver Shield - CC", Addresses.CC_Pickup_GoldCoinsBagNearSilverShield, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Crystal After Earth Door - CC", Addresses.CC_Pickup_GoldCoinsChestInCrystalAfterEarthDoor, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag in Dragon Room 1 1st Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom11stPlatform, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Dragon Room 2 1st Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom21stPlatform, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Dragon Room 1st Platform - CC", Addresses.CC_Pickup_GoldCoinsChestInDragonRoom1stPlatform, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Dragon Room 2nd Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom2ndPlatform, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Dragon Room 1 3rd Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom13rdPlatform, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Dragon Room 2 3rd Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom23rdPlatform, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Dragon Room 3rd Platform - CC", Addresses.CC_Pickup_GoldCoinsChestInDragonRoom3rdPlatform, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Dragon Room 4th Platform 1 - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom4thPlatform1, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Dragon Room 4th Platform - CC", Addresses.CC_Pickup_GoldCoinsChestInDragonRoom4thPlatform, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Dragon Room 4th Platform 2 - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom4thPlatform2, "32896"),
-                new GenericItemsData("Gold Coins: Bag on Left of Pool - CC", Addresses.CC_Pickup_GoldCoinsBagOnLeftOfPool, "32896"),
-                new GenericItemsData("Gold Coins: Bag on Right of Pool - CC", Addresses.CC_Pickup_GoldCoinsBagOnRightOfPool, "32896"),
-                new GenericItemsData("Cleared: The Crystal Caves", Addresses.CC_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Crystal Caves", Addresses.CC_Pickup_Chalice, "32896"),
+                new GenericItemsData("Earth Rune: The Crystal Caves", Addresses.CC_Pickup_EarthRune, "8", "32896"),
+                new GenericItemsData("Star Rune: The Crystal Caves", Addresses.CC_Pickup_StarRune, "8", "32896"),
+                new GenericItemsData("Equipment: Silver Shield in Crystal - CC", Addresses.CC_Pickup_SilverShieldInCrystal, "8", "32896", false,  true),
+                new GenericItemsData("Equipment: Dragon Armour - CC", Addresses.CC_Pickup_DragonArmour, "8", "32896"),
+                new GenericItemsData("Energy Vial: Dragon Room 1st Platform - CC", Addresses.CC_Pickup_EnergyVialDragonRoom1stPlatform, "8", "32896"),
+                new GenericItemsData("Energy Vial: Dragon Room 3rd Platform - CC", Addresses.CC_Pickup_EnergyVialDragonRoom3rdPlatform, "8", "32896"),
+                new GenericItemsData("Gold Coins: Bag at bottom of winding staircase  - CC", Addresses.CC_Pickup_GoldCoinsBagAtWindingStaircase, "8", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Crystal after Pool - CC", Addresses.CC_Pickup_GoldCoinsChestInCrystalAfterPool, "8", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag in Crystal at Start - CC", Addresses.CC_Pickup_GoldCoinsBagInCrystalAtStart, "8", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag in Spinner - CC", Addresses.CC_Pickup_GoldCoinsBagInSpinner, "8", "32896"),
+                new GenericItemsData("Gold Coins: Bag near Silver Shield - CC", Addresses.CC_Pickup_GoldCoinsBagNearSilverShield, "8", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Crystal After Earth Door - CC", Addresses.CC_Pickup_GoldCoinsChestInCrystalAfterEarthDoor, "8", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag in Dragon Room 1 1st Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom11stPlatform, "8", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Dragon Room 2 1st Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom21stPlatform, "8", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Dragon Room 1st Platform - CC", Addresses.CC_Pickup_GoldCoinsChestInDragonRoom1stPlatform, "8", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Dragon Room 2nd Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom2ndPlatform, "8", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Dragon Room 1 3rd Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom13rdPlatform, "8", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Dragon Room 2 3rd Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom23rdPlatform,"8",  "32896"),
+                new GenericItemsData("Gold Coins: Chest in Dragon Room 3rd Platform - CC", Addresses.CC_Pickup_GoldCoinsChestInDragonRoom3rdPlatform, "8", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Dragon Room 4th Platform 1 - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom4thPlatform1, "8", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Dragon Room 4th Platform - CC", Addresses.CC_Pickup_GoldCoinsChestInDragonRoom4thPlatform, "8", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Dragon Room 4th Platform 2 - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom4thPlatform2, "8", "32896"),
+                new GenericItemsData("Gold Coins: Bag on Left of Pool - CC", Addresses.CC_Pickup_GoldCoinsBagOnLeftOfPool, "8", "32896"),
+                new GenericItemsData("Gold Coins: Bag on Right of Pool - CC", Addresses.CC_Pickup_GoldCoinsBagOnRightOfPool, "8", "32896"),
+                new GenericItemsData("Cleared: The Crystal Caves", Addresses.CC_LevelStatus, "8", "16"),
+                new GenericItemsData("Chalice: The Crystal Caves", Addresses.CC_Pickup_Chalice, "8",  "32896"),
             };
             return ccLocations;
         }
         private static List<GenericItemsData> GetGallowsGauntletData()
         {
             List<GenericItemsData> ggLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Star Rune: The Gallows Gauntlet", Addresses.GG_Pickup_StarRune, "32896"),
-                new GenericItemsData("Equipment: Silver Shield in Chest Near Exit - GG", Addresses.GG_Pickup_SilverShieldInChestNearExit, "32896", true),
-                new GenericItemsData("Energy Vial: Near Chalice - GG", Addresses.GG_Pickup_EnergyVialNearChalice, "32896"),
-                new GenericItemsData("Gold Coins: Bag Behind Stone Dragon 1 - GG", Addresses.GG_Pickup_GoldCoinsBagBehindStoneDragon1, "32896"),
-                new GenericItemsData("Gold Coins: Bag Behind Stone Dragon 2 - GG", Addresses.GG_Pickup_GoldCoinsBagBehindStoneDragon2, "32896"),
-                new GenericItemsData("Gold Coins: Chest at Serpent - GG", Addresses.GG_Pickup_GoldCoinsChestAtSerpent, "32896"),
-                new GenericItemsData("Gold Coins: Chest Near Star Entrance - GG", Addresses.GG_Pickup_GoldCoinsChestNearStarEntrance, "32896"),
-                new GenericItemsData("Cleared: The Gallows Gauntlet", Addresses.GG_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Gallows Gauntlet", Addresses.GG_Pickup_Chalice, "32896"),
+                new GenericItemsData("Star Rune: The Gallows Gauntlet", Addresses.GG_Pickup_StarRune, "16", "32896"),
+                new GenericItemsData("Equipment: Silver Shield in Chest Near Exit - GG", Addresses.GG_Pickup_SilverShieldInChestNearExit, "16", "32896", true),
+                new GenericItemsData("Energy Vial: Near Chalice - GG", Addresses.GG_Pickup_EnergyVialNearChalice, "16", "32896"),
+                new GenericItemsData("Gold Coins: Bag Behind Stone Dragon 1 - GG", Addresses.GG_Pickup_GoldCoinsBagBehindStoneDragon1, "16", "32896"),
+                new GenericItemsData("Gold Coins: Bag Behind Stone Dragon 2 - GG", Addresses.GG_Pickup_GoldCoinsBagBehindStoneDragon2, "16", "32896"),
+                new GenericItemsData("Gold Coins: Chest at Serpent - GG", Addresses.GG_Pickup_GoldCoinsChestAtSerpent, "16", "32896"),
+                new GenericItemsData("Gold Coins: Chest Near Star Entrance - GG", Addresses.GG_Pickup_GoldCoinsChestNearStarEntrance, "16", "32896"),
+                new GenericItemsData("Cleared: The Gallows Gauntlet", Addresses.GG_LevelStatus, "16", "16"),
+                new GenericItemsData("Chalice: The Gallows Gauntlet", Addresses.GG_Pickup_Chalice, "16", "32896"),
             };
             return ggLocations;
         }
         private static List<GenericItemsData> GetTheAsylumGroundsData()
         {
             List<GenericItemsData> agLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Chaos Rune: Asylum Grounds", Addresses.AG_Pickup_ChaosRune, "32896"),
-                new GenericItemsData("Equipment: Silver Shield in Chest Behind Door - AG", Addresses.AG_Pickup_SilverShieldInChestBehindDoor, "32896", true),
-                new GenericItemsData("Energy Vial: Near Bishop - AG", Addresses.AG_Pickup_EnergyVialNearBishop, "32896"),
-                new GenericItemsData("Energy Vial: Near King - AG", Addresses.AG_Pickup_EnergyVialNearKing, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Bell Grave Near Bell - AG", Addresses.AG_Pickup_GoldCoinsBagInBellGraveNearBell, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Bell Grave Near Entrance - AG", Addresses.AG_Pickup_GoldCoinsBagInBellGraveNearEntrance, "32896"),
-                new GenericItemsData("Gold Coins: Bag Near Shooting Statue - AG", Addresses.AG_Pickup_GoldCoinsBagNearShootingStatue, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Rat Grave - AG", Addresses.AG_Pickup_GoldCoinsBagInRatGrave, "32896"),
-                new GenericItemsData("Gold Coins: Behind Chaos Gate - AG", Addresses.AG_Pickup_GoldCoinsBehindChaosGate, "32896"),
-                new GenericItemsData("Gold Coins: Behind Elephant in Grave - AG", Addresses.AG_Pickup_GoldCoinsBehindElephantInGrave, "32896"),
-                new GenericItemsData("Cleared: Asylum Grounds", Addresses.AG_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Asylum Grounds", Addresses.AG_Pickup_Chalice, "32896"),
+                new GenericItemsData("Chaos Rune: Asylum Grounds", Addresses.AG_Pickup_ChaosRune, "13", "32896"),
+                new GenericItemsData("Equipment: Silver Shield in Chest Behind Door - AG", Addresses.AG_Pickup_SilverShieldInChestBehindDoor, "13", "32896", true),
+                new GenericItemsData("Energy Vial: Near Bishop - AG", Addresses.AG_Pickup_EnergyVialNearBishop, "13", "32896"),
+                new GenericItemsData("Energy Vial: Near King - AG", Addresses.AG_Pickup_EnergyVialNearKing, "13", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Bell Grave Near Bell - AG", Addresses.AG_Pickup_GoldCoinsBagInBellGraveNearBell, "13", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Bell Grave Near Entrance - AG", Addresses.AG_Pickup_GoldCoinsBagInBellGraveNearEntrance, "13", "32896"),
+                new GenericItemsData("Gold Coins: Bag Near Shooting Statue - AG", Addresses.AG_Pickup_GoldCoinsBagNearShootingStatue, "13", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Rat Grave - AG", Addresses.AG_Pickup_GoldCoinsBagInRatGrave, "13", "32896"),
+                new GenericItemsData("Gold Coins: Behind Chaos Gate - AG", Addresses.AG_Pickup_GoldCoinsBehindChaosGate, "13", "32896"),
+                new GenericItemsData("Gold Coins: Behind Elephant in Grave - AG", Addresses.AG_Pickup_GoldCoinsBehindElephantInGrave, "13", "32896"),
+                new GenericItemsData("Cleared: Asylum Grounds", Addresses.AG_LevelStatus, "13", "16"),
+                new GenericItemsData("Chalice: Asylum Grounds", Addresses.AG_Pickup_Chalice, "13", "32896"),
             };
             return agLocations;
         }
@@ -826,21 +890,21 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetInsideTheAsylumData()
         {
             List<GenericItemsData> iaLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Earth Rune: Inside the Asylum", Addresses.IA_Pickup_EarthRune, "32896"),
-                new GenericItemsData("Key Item: Dragon Gem - IA", Addresses.IA_Pickup_DragonGem, "32896"),
-                new GenericItemsData("Equipment: Silver Shield in Bat Room - IA", Addresses.IA_Pickup_SilverShieldInBatRoom, "32896", false,  true),
-                new GenericItemsData("Energy Vial: Bat Room - IA", Addresses.IA_Pickup_EnergyVialBatRoom, "32896", false,  true),
-                new GenericItemsData("Energy Vial: Asylumn Room 1 - IA", Addresses.IA_Pickup_EnergyVialAsylumRoom1, "32896", false,  true),
-                new GenericItemsData("Energy Vial: Asylumn Room 2 - IA", Addresses.IA_Pickup_EnergyVialAsylumRoom2, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag in Bat Room Left - IA", Addresses.IA_Pickup_GoldCoinsBagInBatRoomLeft, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Chest in Bat Room - IA", Addresses.IA_Pickup_GoldCoinsChestInBatRoom, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag in Bat Room Centre - IA", Addresses.IA_Pickup_GoldCoinsBagInBatRoomCentre, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag in Bat Room Right - IA", Addresses.IA_Pickup_GoldCoinsBagInBatRoomRight, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag in Asylumn Room - IA", Addresses.IA_Pickup_GoldCoinsBagInAsylumRoom, "32896", false,  true),
-                new GenericItemsData("Gold Coins: Bag in Sewer Prison Entrance - IA", Addresses.IA_Pickup_GoldCoinsBagInSewerPrisonEntrance, "32896"),
-                new GenericItemsData("Gold Coins: Bag on Sewer Prison Bench - IA", Addresses.IA_Pickup_GoldCoinsBagOnSewerPrisonBench, "32896"),
-                new GenericItemsData("Cleared: Inside the Asylum", Addresses.IA_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Inside the Asylum", Addresses.IA_Pickup_Chalice, "32896"),
+                new GenericItemsData("Earth Rune: Inside the Asylum", Addresses.IA_Pickup_EarthRune, "14", "32896"),
+                new GenericItemsData("Key Item: Dragon Gem - IA", Addresses.IA_Pickup_DragonGem, "14", "32896"),
+                new GenericItemsData("Equipment: Silver Shield in Bat Room - IA", Addresses.IA_Pickup_SilverShieldInBatRoom, "14", "32896", false,  true),
+                new GenericItemsData("Energy Vial: Bat Room - IA", Addresses.IA_Pickup_EnergyVialBatRoom, "14", "32896", false,  true),
+                new GenericItemsData("Energy Vial: Asylumn Room 1 - IA", Addresses.IA_Pickup_EnergyVialAsylumRoom1, "14", "32896", false,  true),
+                new GenericItemsData("Energy Vial: Asylumn Room 2 - IA", Addresses.IA_Pickup_EnergyVialAsylumRoom2, "14", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag in Bat Room Left - IA", Addresses.IA_Pickup_GoldCoinsBagInBatRoomLeft, "14", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Chest in Bat Room - IA", Addresses.IA_Pickup_GoldCoinsChestInBatRoom, "14", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag in Bat Room Centre - IA", Addresses.IA_Pickup_GoldCoinsBagInBatRoomCentre, "14", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag in Bat Room Right - IA", Addresses.IA_Pickup_GoldCoinsBagInBatRoomRight, "14", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag in Asylumn Room - IA", Addresses.IA_Pickup_GoldCoinsBagInAsylumRoom, "14", "32896", false,  true),
+                new GenericItemsData("Gold Coins: Bag in Sewer Prison Entrance - IA", Addresses.IA_Pickup_GoldCoinsBagInSewerPrisonEntrance, "14", "32896"),
+                new GenericItemsData("Gold Coins: Bag on Sewer Prison Bench - IA", Addresses.IA_Pickup_GoldCoinsBagOnSewerPrisonBench, "14", "32896"),
+                new GenericItemsData("Cleared: Inside the Asylum", Addresses.IA_LevelStatus, "14", "16"),
+                new GenericItemsData("Chalice: Inside the Asylum", Addresses.IA_Pickup_Chalice, "14", "32896"),
             };
             return iaLocations;
         }
@@ -850,28 +914,28 @@ namespace MedievilArchipelago
         {
             List<GenericItemsData> pgLocations = new List<GenericItemsData>() {
 
-                new GenericItemsData("Time Rune: Pumpkin Gorge", Addresses.PG_Pickup_TimeRune, "32896"), // value of this one is very wierd.
-                new GenericItemsData("Chaos Rune: Pumpkin Gorge", Addresses.PG_Pickup_ChaosRune, "32896"),
-                new GenericItemsData("Earth Rune: Pumpkin Gorge", Addresses.PG_Pickup_EarthRune, "32896"),
-                new GenericItemsData("Moon Rune: Pumpkin Gorge", Addresses.PG_Pickup_MoonRune, "32896"),
-                new GenericItemsData("Equipment: Club in Chest in Tunnel - PG", Addresses.PG_Pickup_ClubInChestInTunnel, "32896", true),
-                new GenericItemsData("Equipment: Silver Shield in Chest at Top of Hill - PG", Addresses.PG_Pickup_SilverShieldInChestAtTopOfHill, "32896", true),
-                new GenericItemsData("Energy Vial: Vine Patch Left - PG", Addresses.PG_Pickup_EnergyVialVinePatchLeft, "32896"),
-                new GenericItemsData("Energy Vial: Vine Patch Right - PG", Addresses.PG_Pickup_EnergyVialVinePatchRight, "32896"),
-                new GenericItemsData("Energy Vial: In Coop - PG", Addresses.PG_Pickup_EnergyVialInCoop, "32896"),
-                new GenericItemsData("Energy Vial: In Moon Hut - PG", Addresses.PG_Pickup_EnergyVialInMoonHut, "32896"),
-                new GenericItemsData("Energy Vial: Top of Hill - PG", Addresses.PG_Pickup_EnergyVialTopOfHill, "32896"),
-                new GenericItemsData("Energy Vial: Boulders After Star Rune - PG",  Addresses.PG_Pickup_EnergyVialBouldersAfterStarRune, "32896"),
-                new GenericItemsData("Energy Vial: Chalice Path - PG", Addresses.PG_Pickup_EnergyVialChalicePath, "32896"),
-                new GenericItemsData("Gold Coins: Bag Behind Rocks At Start - PG", Addresses.PG_Pickup_GoldCoinsBagBehindRocksAtStart, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Coop 1 - PG", Addresses.PG_Pickup_GoldCoinsChestInCoop1, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Coop 2 - PG", Addresses.PG_Pickup_GoldCoinsChestInCoop2, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Coop 3 - PG", Addresses.PG_Pickup_GoldCoinsChestInCoop3, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Mushroom Area - PG", Addresses.PG_Pickup_GoldCoinsBagInMushroomArea, "32896"),
-                new GenericItemsData("Gold Coins: Chest at Boulders after Star Rune - PG", Addresses.PG_Pickup_GoldCoinsChestAtBouldersAfterStarRune, "32896"),
-                new GenericItemsData("Gold Coins: Chest Near Chalice - PG", Addresses.PG_Pickup_GoldCoinsChestNearChalice, "32896"),
-                new GenericItemsData("Cleared: Pumpkin Gorge", Addresses.PG_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Pumpkin Gorge", Addresses.PG_Pickup_Chalice, "32896"),
+                new GenericItemsData("Time Rune: Pumpkin Gorge", Addresses.PG_Pickup_TimeRune, "9", "32896"), // value of this one is very wierd.
+                new GenericItemsData("Chaos Rune: Pumpkin Gorge", Addresses.PG_Pickup_ChaosRune, "9", "32896"),
+                new GenericItemsData("Earth Rune: Pumpkin Gorge", Addresses.PG_Pickup_EarthRune, "9", "32896"),
+                new GenericItemsData("Moon Rune: Pumpkin Gorge", Addresses.PG_Pickup_MoonRune, "9", "32896"),
+                new GenericItemsData("Equipment: Club in Chest in Tunnel - PG", Addresses.PG_Pickup_ClubInChestInTunnel, "9", "32896", true),
+                new GenericItemsData("Equipment: Silver Shield in Chest at Top of Hill - PG", Addresses.PG_Pickup_SilverShieldInChestAtTopOfHill, "9", "32896", true),
+                new GenericItemsData("Energy Vial: Vine Patch Left - PG", Addresses.PG_Pickup_EnergyVialVinePatchLeft, "9", "32896"),
+                new GenericItemsData("Energy Vial: Vine Patch Right - PG", Addresses.PG_Pickup_EnergyVialVinePatchRight, "9", "32896"),
+                new GenericItemsData("Energy Vial: In Coop - PG", Addresses.PG_Pickup_EnergyVialInCoop, "9", "32896"),
+                new GenericItemsData("Energy Vial: In Moon Hut - PG", Addresses.PG_Pickup_EnergyVialInMoonHut, "9", "32896"),
+                new GenericItemsData("Energy Vial: Top of Hill - PG", Addresses.PG_Pickup_EnergyVialTopOfHill, "9", "32896"),
+                new GenericItemsData("Energy Vial: Boulders After Star Rune - PG",  Addresses.PG_Pickup_EnergyVialBouldersAfterStarRune, "9", "32896"),
+                new GenericItemsData("Energy Vial: Chalice Path - PG", Addresses.PG_Pickup_EnergyVialChalicePath, "9", "32896"),
+                new GenericItemsData("Gold Coins: Bag Behind Rocks At Start - PG", Addresses.PG_Pickup_GoldCoinsBagBehindRocksAtStart, "9", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Coop 1 - PG", Addresses.PG_Pickup_GoldCoinsChestInCoop1, "9", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Coop 2 - PG", Addresses.PG_Pickup_GoldCoinsChestInCoop2, "9", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Coop 3 - PG", Addresses.PG_Pickup_GoldCoinsChestInCoop3, "9", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Mushroom Area - PG", Addresses.PG_Pickup_GoldCoinsBagInMushroomArea, "9", "32896"),
+                new GenericItemsData("Gold Coins: Chest at Boulders after Star Rune - PG", Addresses.PG_Pickup_GoldCoinsChestAtBouldersAfterStarRune, "9", "32896"),
+                new GenericItemsData("Gold Coins: Chest Near Chalice - PG", Addresses.PG_Pickup_GoldCoinsChestNearChalice,"9",  "32896"),
+                new GenericItemsData("Cleared: Pumpkin Gorge", Addresses.PG_LevelStatus, "9", "16"),
+                new GenericItemsData("Chalice: Pumpkin Gorge", Addresses.PG_Pickup_Chalice, "9", "32896"),
             };
             return pgLocations;
         }
@@ -879,16 +943,16 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetPumpkinSerpentData()
         {
             List<GenericItemsData> psLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Key Item: Dragon Gem - PS", Addresses.PS_Pickup_DragonsGem, "32896", false,  true),
-                new GenericItemsData("Equipment: Silver Shield in Chest near Leeches - PS", Addresses.PS_Pickup_SilverShieldInChestNearLeeches, "32896", true),
-                new GenericItemsData("Energy Vial: Left at Merchant Gargoyle - PS", Addresses.PS_Pickup_EnergyVialLeftAtMerchantGargoyle, "32896"),
-                new GenericItemsData("Energy Vial: Right at Merchant Gargoyle - PS", Addresses.PS_Pickup_EnergyVialRightAtMerchantGargoyle, "32896"),
-                new GenericItemsData("Gold Coins: Bag Behind House 1 - PS", Addresses.PS_Pickup_GoldCoinsBagBehindHouse1, "32896"),
-                new GenericItemsData("Gold Coins: Bag Behind House 2 - PS", Addresses.PS_Pickup_GoldCoinsBagBehindHouse2, "32896"),
-                new GenericItemsData("Gold Coins: Bag Behind Vines and Pod - PS", Addresses.PS_Pickup_GoldCoinsBagBehindVinesAndPod, "32896"),
-                new GenericItemsData("Gold Coins: Chest at Merchant Gargoyle - PS", Addresses.PS_Pickup_GoldCoinsChestAtMerchantGargoyle, "32896"),
-                new GenericItemsData("Cleared: Pumpkin Serpent", Addresses.PS_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Pumpkin Serpent", Addresses.PS_Pickup_Chalice, "32896"),
+                new GenericItemsData("Key Item: Dragon Gem - PS", Addresses.PS_Pickup_DragonsGem, "10", "32896", false,  true),
+                new GenericItemsData("Equipment: Silver Shield in Chest near Leeches - PS", Addresses.PS_Pickup_SilverShieldInChestNearLeeches, "10", "32896", true),
+                new GenericItemsData("Energy Vial: Left at Merchant Gargoyle - PS", Addresses.PS_Pickup_EnergyVialLeftAtMerchantGargoyle, "10", "32896"),
+                new GenericItemsData("Energy Vial: Right at Merchant Gargoyle - PS", Addresses.PS_Pickup_EnergyVialRightAtMerchantGargoyle, "10", "32896"),
+                new GenericItemsData("Gold Coins: Bag Behind House 1 - PS", Addresses.PS_Pickup_GoldCoinsBagBehindHouse1, "10", "32896"),
+                new GenericItemsData("Gold Coins: Bag Behind House 2 - PS", Addresses.PS_Pickup_GoldCoinsBagBehindHouse2,"10",  "32896"),
+                new GenericItemsData("Gold Coins: Bag Behind Vines and Pod - PS", Addresses.PS_Pickup_GoldCoinsBagBehindVinesAndPod, "10", "32896"),
+                new GenericItemsData("Gold Coins: Chest at Merchant Gargoyle - PS", Addresses.PS_Pickup_GoldCoinsChestAtMerchantGargoyle, "10", "32896"),
+                new GenericItemsData("Cleared: Pumpkin Serpent", Addresses.PS_LevelStatus, "10", "16"),
+                new GenericItemsData("Chalice: Pumpkin Serpent", Addresses.PS_Pickup_Chalice, "10", "32896"),
             };
             return psLocations;
         }
@@ -896,24 +960,24 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetTheHauntedRuinsData()
         {
             List<GenericItemsData> hrLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Key Item: King Peregrine's Crown - HR", Addresses.HR_Pickup_KingPeregrinsCrown, "32896"),
-                new GenericItemsData("Chaos Rune: The Haunted Ruins", Addresses.HR_Pickup_ChaosRune, "32896"),
-                new GenericItemsData("Earth Rune: The Haunted Ruins", Addresses.HR_Pickup_EarthRune, "32896"),
-                new GenericItemsData("Equipment: Silver Shield in Chest Near Rune Door - HR", Addresses.HR_Pickup_SilverShieldInChestNearRuneDoor, "32896", true),
-                new GenericItemsData("Energy Vial: Above Rune - HR", Addresses.HR_Pickup_EnergyVialAboveRune, "32896"),
-                new GenericItemsData("Energy Vial: Corner of Walls 1 - HR", Addresses.HR_Pickup_EnergyVialCornerOfWalls1, "32896"),
-                new GenericItemsData("Energy Vial: Corner of Walls 2 - HR", Addresses.HR_Pickup_EnergyVialCornerOfWalls2, "32896"),
-                new GenericItemsData("Energy Vial: Corner of Walls 3 - HR", Addresses.HR_Pickup_EnergyVialCornerOfWalls3, "32896"),
-                new GenericItemsData("Energy Vial: Up from Oil - HR", Addresses.HR_Pickup_EnergyVialUpFromOil, "32896"),
-                new GenericItemsData("Gold Coins: Near First Set of farmers - HR", Addresses.HR_Pickup_GoldCoinsNearFirstSetOfFarmers, "32896"),
-                new GenericItemsData("Gold Coins: Bag Near Chalice North - HR", Addresses.HR_Pickup_GoldCoinsBagNearChaliceNorth, "32896"),
-                new GenericItemsData("Gold Coins: Bag Near Chalice South - HR", Addresses.HR_Pickup_GoldCoinsBagNearChaliceSouth, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Crown Room - HR", Addresses.HR_Pickup_GoldCoinsBagInCrownRoom, "32896"),
-                new GenericItemsData("Gold Coins: Chest at Catapult 1 - HR", Addresses.HR_Pickup_GoldCoinsChestAtCatapult1, "32896"),
-                new GenericItemsData("Gold Coins: Chest at Catapult 2 - HR", Addresses.HR_Pickup_GoldCoinsChestAtCatapult2, "32896"),
-                new GenericItemsData("Gold Coins: Chest at Catapult 3 - HR", Addresses.HR_Pickup_GoldCoinsChestAtCatapult3, "32896"),
-                new GenericItemsData("Cleared: The Haunted Ruins", Addresses.HR_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Haunted Ruins", Addresses.HR_Pickup_Chalice, "32896"),
+                new GenericItemsData("Key Item: King Peregrine's Crown - HR", Addresses.HR_Pickup_KingPeregrinsCrown, "17", "32896"),
+                new GenericItemsData("Chaos Rune: The Haunted Ruins", Addresses.HR_Pickup_ChaosRune, "17", "32896"),
+                new GenericItemsData("Earth Rune: The Haunted Ruins", Addresses.HR_Pickup_EarthRune, "17", "32896"),
+                new GenericItemsData("Equipment: Silver Shield in Chest Near Rune Door - HR", Addresses.HR_Pickup_SilverShieldInChestNearRuneDoor, "17", "32896", true),
+                new GenericItemsData("Energy Vial: Above Rune - HR", Addresses.HR_Pickup_EnergyVialAboveRune, "17", "32896"),
+                new GenericItemsData("Energy Vial: Corner of Walls 1 - HR", Addresses.HR_Pickup_EnergyVialCornerOfWalls1, "17", "32896"),
+                new GenericItemsData("Energy Vial: Corner of Walls 2 - HR", Addresses.HR_Pickup_EnergyVialCornerOfWalls2, "17", "32896"),
+                new GenericItemsData("Energy Vial: Corner of Walls 3 - HR", Addresses.HR_Pickup_EnergyVialCornerOfWalls3, "17", "32896"),
+                new GenericItemsData("Energy Vial: Up from Oil - HR", Addresses.HR_Pickup_EnergyVialUpFromOil, "17", "32896"),
+                new GenericItemsData("Gold Coins: Near First Set of farmers - HR", Addresses.HR_Pickup_GoldCoinsNearFirstSetOfFarmers, "17", "32896"),
+                new GenericItemsData("Gold Coins: Bag Near Chalice North - HR", Addresses.HR_Pickup_GoldCoinsBagNearChaliceNorth, "17", "32896"),
+                new GenericItemsData("Gold Coins: Bag Near Chalice South - HR", Addresses.HR_Pickup_GoldCoinsBagNearChaliceSouth, "17", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Crown Room - HR", Addresses.HR_Pickup_GoldCoinsBagInCrownRoom, "17", "32896"),
+                new GenericItemsData("Gold Coins: Chest at Catapult 1 - HR", Addresses.HR_Pickup_GoldCoinsChestAtCatapult1, "17", "32896"),
+                new GenericItemsData("Gold Coins: Chest at Catapult 2 - HR", Addresses.HR_Pickup_GoldCoinsChestAtCatapult2, "17", "32896"),
+                new GenericItemsData("Gold Coins: Chest at Catapult 3 - HR", Addresses.HR_Pickup_GoldCoinsChestAtCatapult3, "17", "32896"),
+                new GenericItemsData("Cleared: The Haunted Ruins", Addresses.HR_LevelStatus, "17", "16"),
+                new GenericItemsData("Chalice: The Haunted Ruins", Addresses.HR_Pickup_Chalice, "17", "32896"),
             };
             return hrLocations;
         }
@@ -921,23 +985,23 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetTheGhostShipData()
         {
             List<GenericItemsData> gsLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Moon Rune: Ghost Ship", Addresses.GS_Pickup_MoonRune, "32896"),
-                new GenericItemsData("Chaos Rune: Ghost Ship", Addresses.GS_Pickup_ChaosRune, "32896"),
-                new GenericItemsData("Star Rune: Ghost Ship", Addresses.GS_Pickup_StarRune, "32896"),
-                new GenericItemsData("Equipment: Silver Shield in Chest in Barrel Room - GS", Addresses.GS_Pickup_SilverShieldInChestInBarrelRoom, "32896", true),
-                new GenericItemsData("Equipment: Club in Chest at Captain - GS", Addresses.GS_Pickup_ClubInChestAtCaptain, "32896", true),
-                new GenericItemsData("Energy Vial: In Cabin - GS", Addresses.GS_Pickup_EnergyVialInCabin, "32896"),
-                new GenericItemsData("Energy Vial: In Cannon Room - GS",Addresses.GS_Pickup_EnergyVialInCannonRoom, "32896"),
-                new GenericItemsData("Energy Vial: Rope Bridge 1 - GS", Addresses.GS_Pickup_EnergyVialRopeBridge1, "32896"),
-                new GenericItemsData("Energy Vial: Rope Bridge 2 - GS", Addresses.GS_Pickup_EnergyVialRopeBridge2, "32896"),
-                new GenericItemsData("Energy Vial: Cage Lift 1 - GS", Addresses.GS_Pickup_EnergyVialCageLift1, "32896"),
-                new GenericItemsData("Energy Vial: Cage Lift 2 - GS", Addresses.GS_Pickup_EnergyVialCageLift2, "32896"),
-                new GenericItemsData("Gold Coins: Bag in Rolling Barrels Room - GS", Addresses.GS_Pickup_GoldCoinsBagInRollingBarrelsRoom, "32896"),
-                new GenericItemsData("Gold Coins: Bag on Deck At Barrels - GS", Addresses.GS_Pickup_GoldCoinsBagOnDeckAtBarrels, "32896"),
-                new GenericItemsData("Gold Coins: Chest in Cannon Room - GS", Addresses.GS_Pickup_GoldCoinsChestInCannonRoom, "32896"),
-                new GenericItemsData("Gold Coins: Rope Bridge - GS", Addresses.GS_Pickup_GoldCoinsRopeBridge, "32896"),
-                new GenericItemsData("Cleared: Ghost Ship", Addresses.HR_LevelStatus, "16"),
-                new GenericItemsData("Chalice: Ghost Ship", Addresses.HR_Pickup_Chalice, "32896"),
+                new GenericItemsData("Moon Rune: Ghost Ship", Addresses.GS_Pickup_MoonRune, "19", "32896"),
+                new GenericItemsData("Chaos Rune: Ghost Ship", Addresses.GS_Pickup_ChaosRune, "19", "32896"),
+                new GenericItemsData("Star Rune: Ghost Ship", Addresses.GS_Pickup_StarRune, "19", "32896"),
+                new GenericItemsData("Equipment: Silver Shield in Chest in Barrel Room - GS", Addresses.GS_Pickup_SilverShieldInChestInBarrelRoom, "19", "32896", true),
+                new GenericItemsData("Equipment: Club in Chest at Captain - GS", Addresses.GS_Pickup_ClubInChestAtCaptain, "19", "32896", true),
+                new GenericItemsData("Energy Vial: In Cabin - GS", Addresses.GS_Pickup_EnergyVialInCabin, "19", "32896"),
+                new GenericItemsData("Energy Vial: In Cannon Room - GS",Addresses.GS_Pickup_EnergyVialInCannonRoom, "19", "32896"),
+                new GenericItemsData("Energy Vial: Rope Bridge 1 - GS", Addresses.GS_Pickup_EnergyVialRopeBridge1, "19", "32896"),
+                new GenericItemsData("Energy Vial: Rope Bridge 2 - GS", Addresses.GS_Pickup_EnergyVialRopeBridge2, "19", "32896"),
+                new GenericItemsData("Energy Vial: Cage Lift 1 - GS", Addresses.GS_Pickup_EnergyVialCageLift1, "19", "32896"),
+                new GenericItemsData("Energy Vial: Cage Lift 2 - GS", Addresses.GS_Pickup_EnergyVialCageLift2, "19", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Rolling Barrels Room - GS", Addresses.GS_Pickup_GoldCoinsBagInRollingBarrelsRoom, "19", "32896"),
+                new GenericItemsData("Gold Coins: Bag on Deck At Barrels - GS", Addresses.GS_Pickup_GoldCoinsBagOnDeckAtBarrels, "19", "32896"),
+                new GenericItemsData("Gold Coins: Chest in Cannon Room - GS", Addresses.GS_Pickup_GoldCoinsChestInCannonRoom, "19", "32896"),
+                new GenericItemsData("Gold Coins: Rope Bridge - GS", Addresses.GS_Pickup_GoldCoinsRopeBridge, "19", "32896"),
+                new GenericItemsData("Cleared: Ghost Ship", Addresses.HR_LevelStatus, "19", "16"),
+                new GenericItemsData("Chalice: Ghost Ship", Addresses.HR_Pickup_Chalice, "19", "32896"),
             };
             return gsLocations;
         }
@@ -945,8 +1009,8 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetTheEntranceHallData()
         {
             List<GenericItemsData> ehLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Cleared: The Entrance Hall", Addresses.EH_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Entrance Hall", Addresses.EH_Pickup_Chalice, "32896"),
+                new GenericItemsData("Cleared: The Entrance Hall", Addresses.EH_LevelStatus, "20", "16"),
+                new GenericItemsData("Chalice: The Entrance Hall", Addresses.EH_Pickup_Chalice, "20", "32896"),
             };
             return ehLocations;
         }
@@ -954,22 +1018,22 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetTheTimeDeviceData()
         {
             List<GenericItemsData> tdLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Life Bottle: The Time Device", Addresses.TD_Pickup_LifeBottle, "32896"),
-                new GenericItemsData("Chaos Rune: The Time Device", Addresses.TD_Pickup_ChaosRune, "32896"),
-                new GenericItemsData("Earth Rune: The Time Device", Addresses.TD_Pickup_EarthRune, "32896"),
-                new GenericItemsData("Moon Rune: The Time Device", Addresses.TD_Pickup_MoonRune, "32896"),
-                new GenericItemsData("Time Rune: The Time Device", Addresses.TD_Pickup_TimeRune, "32896"),
-                new GenericItemsData("Equipment: Silver Shield on Clock - TD", Addresses.TD_Pickup_SilverShieldOnClock, "32896", true),
-                new GenericItemsData("Gold Coins: Laser Platform Right - TD", Addresses.TD_Pickup_GoldCoinsLaserPlatformRight, "32896"),
-                new GenericItemsData("Gold Coins: Laser Platform Left - TD", Addresses.TD_Pickup_GoldCoinsLaserPlatformLeft, "32896"),
-                new GenericItemsData("Gold Coins: Lone Pillar 1 - TD", Addresses.TD_Pickup_GoldCoinsLonePillar1, "32896"),
-                new GenericItemsData("Gold Coins: Lone Pillar 2 - TD", Addresses.TD_Pickup_GoldCoinsLonePillar2, "32896"),
-                new GenericItemsData("Gold Coins: Lone Pillar 3 - TD", Addresses.TD_Pickup_GoldCoinsLonePillar3, "32896"),
-                new GenericItemsData("Gold Coins: Bag at Earth Station 1 - TD", Addresses.TD_Pickup_GoldCoinsBagAtEarthStation1, "32896"),
-                new GenericItemsData("Gold Coins: Bag at Earth Station 2 - TD", Addresses.TD_Pickup_GoldCoinsBagAtEarthStation2, "32896"),
-                new GenericItemsData("Gold Coins: Bag at Earth Station 3 - TD", Addresses.TD_Pickup_GoldCoinsBagAtEarthStation3, "32896"),
-                new GenericItemsData("Cleared: The Time Device", Addresses.TD_LevelStatus, "16"),
-                new GenericItemsData("Chalice: The Time Device", Addresses.TD_Pickup_Chalice, "32896"),
+                new GenericItemsData("Life Bottle: The Time Device", Addresses.TD_Pickup_LifeBottle, "21", "32896"),
+                new GenericItemsData("Chaos Rune: The Time Device", Addresses.TD_Pickup_ChaosRune, "21", "32896"),
+                new GenericItemsData("Earth Rune: The Time Device", Addresses.TD_Pickup_EarthRune, "21", "32896"),
+                new GenericItemsData("Moon Rune: The Time Device", Addresses.TD_Pickup_MoonRune, "21", "32896"),
+                new GenericItemsData("Time Rune: The Time Device", Addresses.TD_Pickup_TimeRune, "21", "32896"),
+                new GenericItemsData("Equipment: Silver Shield on Clock - TD", Addresses.TD_Pickup_SilverShieldOnClock, "21", "32896", true),
+                new GenericItemsData("Gold Coins: Laser Platform Right - TD", Addresses.TD_Pickup_GoldCoinsLaserPlatformRight, "21", "32896"),
+                new GenericItemsData("Gold Coins: Laser Platform Left - TD", Addresses.TD_Pickup_GoldCoinsLaserPlatformLeft, "21", "32896"),
+                new GenericItemsData("Gold Coins: Lone Pillar 1 - TD", Addresses.TD_Pickup_GoldCoinsLonePillar1, "21", "32896"),
+                new GenericItemsData("Gold Coins: Lone Pillar 2 - TD", Addresses.TD_Pickup_GoldCoinsLonePillar2, "21", "32896"),
+                new GenericItemsData("Gold Coins: Lone Pillar 3 - TD", Addresses.TD_Pickup_GoldCoinsLonePillar3, "21", "32896"),
+                new GenericItemsData("Gold Coins: Bag at Earth Station 1 - TD", Addresses.TD_Pickup_GoldCoinsBagAtEarthStation1, "21", "32896"),
+                new GenericItemsData("Gold Coins: Bag at Earth Station 2 - TD", Addresses.TD_Pickup_GoldCoinsBagAtEarthStation2, "21", "32896"),
+                new GenericItemsData("Gold Coins: Bag at Earth Station 3 - TD", Addresses.TD_Pickup_GoldCoinsBagAtEarthStation3, "21", "32896"),
+                new GenericItemsData("Cleared: The Time Device", Addresses.TD_LevelStatus, "21", "16"),
+                new GenericItemsData("Chalice: The Time Device", Addresses.TD_Pickup_Chalice, "21", "32896"),
             };
             return tdLocations;
         }
@@ -977,9 +1041,9 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetZaroksLairData()
         {
             List<GenericItemsData> zlLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Equipment: Good Lightning - ZL", Addresses.ZL_Pickup_GoodLightning, "32896", true),
-                new GenericItemsData("Equipment: Silver Shield Arena - ZL", Addresses.ZL_Pickup_SilverShield, "32896", true),
-                new GenericItemsData("Cleared: Zaroks Lair", Addresses.WinConditionCredits, "101"),
+                new GenericItemsData("Equipment: Good Lightning - ZL", Addresses.ZL_Pickup_GoodLightning, "22", "32896", true),
+                new GenericItemsData("Equipment: Silver Shield Arena - ZL", Addresses.ZL_Pickup_SilverShield,"22", "32896", true),
+                new GenericItemsData("Cleared: Zaroks Lair", Addresses.WinConditionCredits, "22", "101"),
             };
             return zlLocations;
         }

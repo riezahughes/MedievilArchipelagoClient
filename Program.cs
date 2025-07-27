@@ -199,7 +199,7 @@ try
 
     GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
 
-    //Console.Clear();
+    Console.Clear();
     Console.WriteLine("Client is connected and watching Medievil....");
     
     ;

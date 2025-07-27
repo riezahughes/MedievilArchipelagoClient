@@ -121,17 +121,17 @@ catch (Exception ex)
 //};
 
 // wait till you're in-game
-uint currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
+//uint currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
 
 
-while (currentGameStatus != 0x800f8198) // 0x00 means not in a level
-{
-    currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
-    Console.WriteLine($"Waiting to be in-game...");
-    await Task.Delay(5000);
+//while (currentGameStatus != 0x800f8198) // 0x00 means not in a level
+//{
+//    currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
+//    Console.WriteLine($"Waiting to be in-game...");
+//    await Task.Delay(5000);
 
 
-}
+//}
 
 
 
@@ -174,6 +174,7 @@ archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args,
 archipelagoClient.ItemReceived += ItemReceived;
 archipelagoClient.MessageReceived += Client_MessageReceived;
 archipelagoClient.LocationCompleted += Client_LocationCompleted;
+archipelagoClient.EnableLocationsCondition = () => isInTheGame();
 
 var cts = new CancellationTokenSource();
 try
@@ -247,6 +248,19 @@ finally
 {
     // Perform any necessary cleanup here
     Console.WriteLine("Shutting down...");
+
+}
+
+bool isInTheGame(){
+    ulong currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
+    ulong currentGold = Memory.ReadUInt(Addresses.CurrentGold);
+    ulong currentLevel = Memory.ReadUInt(Addresses.CurrentLevel);
+
+    if(currentGameStatus != 0x800f8198 || currentGold == 0x82a4 || currentLevel == 0x0000)
+    {
+        return false;
+    }
+    return true;
 
 }
 

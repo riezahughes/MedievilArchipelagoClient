@@ -64,6 +64,7 @@ namespace MedievilArchipelago
             ulong contents_offset = 0xc;
             return new Dictionary<int, List<ulong>>
             {
+                [0] = [], // main menu
                 [1] = [Addresses.TG_Pickup_CopperShield + contents_offset],
                 [2] = [Addresses.RTG_Pickup_SilverShieldChestAtShop + contents_offset],
                 [3] = [Addresses.CH_Pickup_Club + contents_offset, Addresses.CH_Pickup_CopperShield1stOnHill + contents_offset, Addresses.CH_Pickup_CopperShield2ndOnHill + contents_offset, Addresses.CH_Pickup_CopperShield3rdOnHill + contents_offset],

@@ -43,6 +43,7 @@ string password;
     slot = "";
     password = "";
 #else
+#endif
 
 //
 bool hasFoundMem = false;
@@ -161,8 +162,6 @@ if (string.IsNullOrWhiteSpace(slot))
     Console.WriteLine("Slot name cannot be empty. Please provide a valid slot name.");
     return;
 }
-
-#endif
 
 Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
 

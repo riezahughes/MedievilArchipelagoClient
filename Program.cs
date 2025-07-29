@@ -21,6 +21,8 @@ using System.Xml.Linq;
 using System.Diagnostics;
 using System.Drawing;
 using System.Collections;
+using System.Reflection;
+using Archipelago.MultiClient.Net.Models;
 
 // set values
 const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
@@ -33,6 +35,14 @@ string url;
 string port;
 string slot;
 string password;
+
+#if DEBUG
+    Console.WriteLine("Instant logging in");
+    url = "wss://archipelago.gg";
+    port = "";
+    slot = "";
+    password = "";
+#else
 
 //
 bool hasFoundMem = false;
@@ -75,8 +85,10 @@ while (!clientInitializedAndConnected)
     }
 }
 
-
-Console.Clear();
+#if DEBUG
+#else
+    Console.Clear();
+#endif
 
 bool connected = gameClient.Connect();
 var archipelagoClient = new ArchipelagoClient(gameClient);
@@ -102,7 +114,7 @@ catch (Exception ex)
 //{
 //    Console.Clear();
 //    short region = Memory.ReadShort(0x001c3540);
-    
+
 //    if (region == 817)
 //    {
 //        Console.WriteLine("PAL Copy of the game found");
@@ -121,23 +133,6 @@ catch (Exception ex)
 
 //};
 
-// wait till you're in-game
-//uint currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
-
-
-//while (currentGameStatus != 0x800f8198) // 0x00 means not in a level
-//{
-//    currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
-//    Console.WriteLine($"Waiting to be in-game...");
-//    await Task.Delay(5000);
-
-
-//}
-
-
-
-
-//Console.Clear();
 
 // start AP Login
 
@@ -167,14 +162,16 @@ if (string.IsNullOrWhiteSpace(slot))
     return;
 }
 
+#endif
+
 Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
 
 // Register event handlers
 archipelagoClient.Connected += (sender, args) => OnConnected(sender, args, archipelagoClient);
-archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args, archipelagoClient); ;
-archipelagoClient.ItemReceived += ItemReceived;
-archipelagoClient.MessageReceived += Client_MessageReceived;
-archipelagoClient.LocationCompleted += Client_LocationCompleted;
+archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args, archipelagoClient);
+archipelagoClient.ItemReceived += (sender, args) => ItemReceived(sender, args, archipelagoClient);
+archipelagoClient.MessageReceived += (sender, args) => Client_MessageReceived(sender, args, archipelagoClient);
+archipelagoClient.LocationCompleted += (sender, args) => Client_LocationCompleted(sender, args, archipelagoClient); 
 archipelagoClient.EnableLocationsCondition = () => isInTheGame();
 
 var cts = new CancellationTokenSource();
@@ -200,10 +197,13 @@ try
 
     GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
 
-    Console.Clear();
+#if DEBUG
+#else
+        Console.Clear();
+#endif
     Console.WriteLine("Client is connected and watching Medievil....");
-    
-    ;
+
+
     _ = MemoryCheckThreads.CheckForHallOfHeroes(archipelagoClient);
     _ = archipelagoClient.MonitorLocations(GameLocations); // Use _ = to suppress warning about unawaited task
 
@@ -227,13 +227,32 @@ try
         {
             if (archipelagoClient.GameState.CompletedLocations != null)
             {
-                UpdatePlayerState(archipelagoClient.GameState.ReceivedItems);
-                Console.WriteLine($"Player state updated. Total Count: {archipelagoClient.GameState.ReceivedItems.Count}");
+                UpdatePlayerState(archipelagoClient.CurrentSession.Items.AllItemsReceived);
+                Console.WriteLine($"Player state updated. Total Count: {archipelagoClient.CurrentSession.Items.AllItemsReceived.Count}");
+
+                #if DEBUG
+                    foreach (ItemInfo item in archipelagoClient.CurrentSession.Items.AllItemsReceived)
+                    {
+                    Console.WriteLine($"id: {item.ItemId} - {item.ItemName}");
+                    }
+                #endif
             }
             else
             {
                 Console.WriteLine("Cannot update player state: GameState or CompletedLocations is null.");
             }
+        }
+        else if (input?.Trim().ToLower() == "items")
+        {
+            var items = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Key Item") select item;
+
+            Console.WriteLine("Current Key Items: ");
+            foreach (var item in items.OrderBy(item => item.ItemName))
+            {
+                Console.WriteLine(item.ItemName);
+            }
+
+
         }
         else if (!string.IsNullOrWhiteSpace(input))
         {
@@ -266,11 +285,17 @@ bool isInTheGame(){
 
 }
 
+////////////////////////////////////
+//
+// AP CORE HOOKS
+//
+////////////////////////////////////
 
-async void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
+
+async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
 {
     Log.Logger.Information("Connected to Archipelago");
-    Log.Logger.Information($"Playing {Client.CurrentSession.ConnectionInfo.Game} as {Client.CurrentSession.Players.GetPlayerName(Client.CurrentSession.ConnectionInfo.Slot)}");
+    Log.Logger.Information($"Playing {client.CurrentSession.ConnectionInfo.Game} as {client.CurrentSession.Players.GetPlayerName(client.CurrentSession.ConnectionInfo.Slot)}");
     Console.WriteLine("Connected to Archipelago!");
 
     Console.WriteLine("Checking if the game is over");
@@ -278,12 +303,140 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient Client)
     CheckGoalCondition();
 
     Console.WriteLine("Setting up player state..");
-    UpdatePlayerState(Client.GameState.ReceivedItems);
+
+    #if DEBUG
+        Console.WriteLine($"OnConnected Firing. Itemcount: {client.GameState.ReceivedItems.Count}");
+    #endif
+    UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
+    
+
 }
 
-void UpdatePlayerState(List<Item> itemsCollected)
+
+
+async void OnDisconnected(object sender, EventArgs args, ArchipelagoClient client)
 {
-    //Console.WriteLine("Updating player state...");
+    if (client.GameState != null)
+    {
+    #if DEBUG
+            Console.WriteLine($"Disconnect Firing. Itemcount: {client.GameState.ReceivedItems.Count}");
+    #endif
+        Console.WriteLine("Disconnected from Archipelago.");
+    }
+}
+
+
+
+// logic for item receiving goes here (gold, health, ammo, etc)
+void ItemReceived(object sender, ItemReceivedEventArgs args, ArchipelagoClient client)
+{
+
+
+    #if DEBUG
+        Console.WriteLine($"ItemReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
+    #endif
+        switch (args.Item)
+        {
+            // incoming runes need added here
+            case var x when x.Name.ContainsAny("Rune"): ReceiveRune(x); break;
+            case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
+            case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
+            case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(); break;
+            case var x when x.Name.ContainsAny("Soul Helmet"): ReceiveSoulHelmet(); break;
+            case var x when x.Name.ContainsAny("Dragon Gem"): ReceiveDragonGem(); break;
+            case var x when x.Name.ContainsAny("Amber"): ReceiveAmber(); break;
+            case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
+            case var x when x.Name.ContainsAny("Health", "Gold Coins", "Energy"): ReceiveStatItems(x); break;
+            case var x when x.Name.ContainsAny("Daggers", "Ammo", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
+            case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x); break;
+            case null: Console.WriteLine("Received an item with null data. Skipping."); break;
+            default: Console.WriteLine($"Item not recognised. ({args.Item.Name}) Skipping"); break;
+        };
+
+    UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
+
+}
+
+void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceivedEventArgs e, ArchipelagoClient client)
+{
+    #if DEBUG
+        Console.WriteLine($"MessageReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
+    #endif
+        var message = string.Join("", e.Message.Parts.Select(p => p.Text));
+
+        // this message can use emoji's through the overlay. Look into maybe making it a little more obvious 
+        // what each item is with a symbol
+        client.AddOverlayMessage(e.Message.ToString());
+
+        Log.Logger.Information(JsonConvert.SerializeObject(e.Message));
+
+        string prefix;
+
+        if (message.Contains(slot))
+        {
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.ForegroundColor = ConsoleColor.White;
+            prefix = " >> ";
+        }
+    else
+        {
+            Console.BackgroundColor = ConsoleColor.DarkGreen;
+            Console.ForegroundColor = ConsoleColor.White;
+            prefix = " << ";
+        }
+
+        Console.WriteLine($"{prefix}: {message} ");
+        Console.ResetColor();
+}
+
+void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, ArchipelagoClient client)
+{
+    if (client.GameState.ReceivedItems.Count >= client.CurrentSession.Items.AllItemsReceived.Count)
+    {
+        #if DEBUG
+                Console.WriteLine($"LocationCompleted Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
+        #endif
+        UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
+        CheckGoalCondition();
+    }
+}
+
+
+void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCollection<long> newCheckedLocations)
+{
+    CheckGoalCondition();
+}
+
+
+
+void CheckGoalCondition()
+{
+
+    // If you 
+
+    if (GameLocations == null || archipelagoClient.CurrentSession?.Locations?.AllLocationsChecked == null)
+        return;
+
+
+    if (archipelagoClient?.GameState.CompletedLocations.Any(x => x.Name == "Cleared: Zaroks Lair") == true)
+    {
+        archipelagoClient.SendGoalCompletion();
+        Console.WriteLine("Defeated Zarok");
+        return;
+    }
+}
+
+
+////////////////////////////////////
+//
+// Player Status Update
+//
+////////////////////////////////////
+
+
+
+void UpdatePlayerState(System.Collections.ObjectModel.ReadOnlyCollection<Archipelago.MultiClient.Net.Models.ItemInfo> itemsCollected)
+{
     // get a list of all locatoins
     Dictionary<string, uint> all_items = Helpers.FlattenedInventoryStrings();
 
@@ -300,22 +453,22 @@ void UpdatePlayerState(List<Item> itemsCollected)
     // for each location that's coming in
     bool hasEquipableWeapon = false;
 
-    foreach (Item val in itemsCollected)
+    foreach (ItemInfo itemInf in itemsCollected)
     {
-        var loc = new Item();
-        loc.Name = val.Name;
+        Item itm = new Item();
+        itm.Name = itemInf.ItemName;
 
-        switch (loc)
+        switch (itm)
         {
             // Update memory
-            case var x when x.Name.ContainsAny("Ammo"): 
+            case var x when x.Name.ContainsAny("Ammo"):
                 // no plans yet
                 break;
             case var x when x.Name.Contains("Skill"): ReceiveSkill(x); break;
-            case var x when x.Name.Contains("Equipment"): 
+            case var x when x.Name.Contains("Equipment"):
                 ReceiveEquipment(x);
                 if (!x.Name.Contains("Shield"))
-                {   
+                {
                     hasEquipableWeapon = true;
                 }
                 break;
@@ -329,7 +482,7 @@ void UpdatePlayerState(List<Item> itemsCollected)
 
         }
 
-        usedItems.Add(val.Name);
+        usedItems.Add(itm.Name);
 
     }
 
@@ -337,14 +490,13 @@ void UpdatePlayerState(List<Item> itemsCollected)
         .Where(kvp => !usedItems.Contains(kvp.Key))
         .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-    // UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAddress, bool isCountType, bool isEquipmentType)
     foreach (KeyValuePair<string, uint> item in remainingItemsDict)
     {
 
         string itemName = item.Key;
         uint itemAddress = item.Value;
 
-        if(itemName.ContainsAny("Soul Helmet", "Dragon Gem", "Amber"))
+        if (itemName.ContainsAny("Soul Helmet", "Dragon Gem", "Amber"))
         {
             continue;
         }
@@ -379,37 +531,13 @@ void UpdatePlayerState(List<Item> itemsCollected)
     if (!hasEquipableWeapon)
     {
         DefaultToArm();
-    } else
+    }
+    else
     {
         EquipWeapon(currentWeapon);
     }
 }
 
-void EquipWeapon(int value)
-{
-    SetItemMemoryValue(Addresses.ItemEquipped, value, value);
-}
-
-void DefaultToArm()
-{
-    SetItemMemoryValue(Addresses.ItemEquipped, 8, 8);
-    SetItemMemoryValue(Addresses.SmallSword, 65535, 65535);
-}
-
-async void OnDisconnected(object sender, EventArgs args, ArchipelagoClient Client)
-{
-
-    Console.WriteLine("Disconnected from Archipelago. Reconnecting...");
-    try
-    {
-        await Client.Login(slot, password);
-        Console.WriteLine("Reconnected to Archipelago!");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Failed to reconnect: {ex.Message}");
-    }
-}
 
 int SetItemMemoryValue(uint itemMemoryAddress, int itemUpdateValue, int maxCount)
 {
@@ -631,70 +759,15 @@ void ReceiveSkill(Item item) {
     SetItemMemoryValue(Addresses.DaringDashSkill, 1, 1);
 }
 
-// logic for item receiving goes here (gold, health, ammo, etc)
-void ItemReceived(object sender, ItemReceivedEventArgs args)
+void EquipWeapon(int value)
 {
-
-    switch (args.Item)
-    {
-        // incoming runes need added here
-        case var x when x.Name.ContainsAny("Rune"): ReceiveRune(x); break;
-        case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
-        case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
-        case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(); break;
-        case var x when x.Name.ContainsAny("Soul Helmet"): ReceiveSoulHelmet(); break;
-        case var x when x.Name.ContainsAny("Dragon Gem"): ReceiveDragonGem(); break;
-        case var x when x.Name.ContainsAny("Amber"): ReceiveAmber(); break;
-        case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
-        case var x when x.Name.ContainsAny("Health", "Gold Coins", "Energy"): ReceiveStatItems(x); break;
-        case var x when x.Name.ContainsAny("Daggers", "Ammo", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
-        case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x); break;
-        case null: Console.WriteLine("Received an item with null data. Skipping."); break;
-        default: Console.WriteLine($"Item not recognised. ({args.Item.Name}) Skipping"); break;
-    };
-
-    UpdatePlayerState(archipelagoClient.GameState.ReceivedItems);
+    SetItemMemoryValue(Addresses.ItemEquipped, value, value);
 }
 
-void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceivedEventArgs e)
+void DefaultToArm()
 {
-    var message = string.Join("", e.Message.Parts.Select(p => p.Text));
-
-    archipelagoClient.AddOverlayMessage(e.Message.ToString());
-
-    Log.Logger.Information(JsonConvert.SerializeObject(e.Message));
-    Console.WriteLine($"Message: {message}");
-}
-
-void Client_LocationCompleted(object sender, LocationCompletedEventArgs e)
-{
-    UpdatePlayerState(archipelagoClient.GameState.ReceivedItems);
-    CheckGoalCondition();
-}
-
-
-void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCollection<long> newCheckedLocations)
-{
-    CheckGoalCondition();
-}
-
-
-
-void CheckGoalCondition()
-{
-
-    // If you 
-
-    if (GameLocations == null || archipelagoClient.CurrentSession?.Locations?.AllLocationsChecked == null)
-        return;
-
-
-    if (archipelagoClient?.GameState.CompletedLocations.Any(x => x.Name == "Cleared: Zaroks Lair") == true)
-    {
-        archipelagoClient.SendGoalCompletion();
-        Console.WriteLine("Defeated Zarok");
-        return;
-    }
+    SetItemMemoryValue(Addresses.ItemEquipped, 8, 8);
+    SetItemMemoryValue(Addresses.SmallSword, 65535, 65535);
 }
 
 // traps need added here and logic added into what i have already

@@ -123,7 +123,6 @@ namespace MedievilArchipelago
 
                     if (currentLevel == 18 && dialogueStatus == 16 && !processedChaliceCounts.Contains(currentChaliceCount) && client.IsConnected)
                     {
-                        Console.WriteLine($"Current Chalice count is: {currentChaliceCount}");
                             
                             // check chalice count against all HOH entries.
                             switch (currentChaliceCount)

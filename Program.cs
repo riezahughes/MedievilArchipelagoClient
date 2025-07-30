@@ -22,7 +22,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Collections;
 using System.Reflection;
+using System.Drawing.Text;
 using Archipelago.MultiClient.Net.Models;
+
 
 // set values
 const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
@@ -36,11 +38,6 @@ string port;
 string slot;
 string password;
 
-
-
-//
-bool hasFoundMem = false;
-ulong offsetChoice = 0x00;
 
 List<ILocation> GameLocations = null;
 
@@ -181,16 +178,17 @@ try
     Console.WriteLine("Logged in!");
 
     var overlayOptions = new OverlayOptions();
+
     overlayOptions.XOffset = 50;
     overlayOptions.YOffset = 500;
     overlayOptions.FontSize = 12;
     overlayOptions.TextColor = Archipelago.Core.Util.Overlay.Color.Yellow;
 
     var gameOverlay = new WindowsOverlayService(overlayOptions);
+    //gameOverlay.CreateFont("Assets/MediEvilFont.ttf", 12); // this doesn't work as intended.
 
-    archipelagoClient.IntializeOverlayService(gameOverlay); // kinda works ? Commenting out for now.
+    archipelagoClient.IntializeOverlayService(gameOverlay);
 
-    // Now CurrentSession is initialized, so it's safe to subscribe
     archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
 
     GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
@@ -203,17 +201,17 @@ try
 
 
     _ = MemoryCheckThreads.CheckForHallOfHeroes(archipelagoClient);
-    _ = archipelagoClient.MonitorLocations(GameLocations); // Use _ = to suppress warning about unawaited task
+    _ = archipelagoClient.MonitorLocations(GameLocations);
 
 
-    // The main thread now dedicates itself to reading console input.
+
     while (!cts.Token.IsCancellationRequested)
     {
         var input = Console.ReadLine();
         if (input?.Trim().ToLower() == "exit")
         {
-            cts.Cancel(); // Signal background tasks to stop
-            break; // Exit the input loop
+            cts.Cancel(); 
+            break;
         }
         else if (input?.Trim().ToLower().Contains("hint") == true)
         {
@@ -273,9 +271,9 @@ finally
 bool isInTheGame(){
     ulong currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
     ulong currentGold = Memory.ReadUInt(Addresses.CurrentGold);
+    ulong currentMapPosition = Memory.ReadUInt(Addresses.CurrentMapPosition);
 
-
-    if(currentGameStatus != 0x800f8198 || currentGold == 0x82a4 )
+    if (currentGameStatus != 0x800f8198 || currentGold == 0x82a4 || currentMapPosition == 0x0100)
     {
         return false;
     }
@@ -370,7 +368,7 @@ void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceiv
 
         string prefix;
 
-        if (message.Contains(slot))
+        if (message.Contains($"{slot} found") || message.Contains($"{slot} sent"))
         {
             Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.ForegroundColor = ConsoleColor.White;
@@ -383,7 +381,7 @@ void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceiv
             prefix = " << ";
         }
 
-        Console.WriteLine($"{prefix}: {message} ");
+        Console.WriteLine($"{prefix} {message} ");
         Console.ResetColor();
 }
 

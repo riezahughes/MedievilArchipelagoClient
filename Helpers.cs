@@ -121,7 +121,11 @@ namespace MedievilArchipelago
                 "The Ghost Ship",
                 "The Entrance Hall",
                 "The Time Device",
-                "Zaroks Lair"
+                "Zaroks Lair",
+                "Locked Items DC",
+                "Locked Items CH",
+                "Locked Items HM",
+                "Locked Items SF"
 ];
 
             List<ILocation> locations = new List<ILocation>();
@@ -154,6 +158,10 @@ namespace MedievilArchipelago
             allLevelLocations.Add("The Entrance Hall", GetTheEntranceHallData());
             allLevelLocations.Add("The Time Device", GetTheTimeDeviceData());
             allLevelLocations.Add("Zaroks Lair", GetZaroksLairData());
+            allLevelLocations.Add("Locked Items DC", GetLockedItemsDC());
+            allLevelLocations.Add("Locked Items CH", GetLockedItemsCH());
+            allLevelLocations.Add("Locked Items HM", GetLockedItemsHM());
+            allLevelLocations.Add("Locked Items SF", GetLockedItemsSF());
 
             var regional_index = 0;
             foreach (var region_name in table_order.ToList())
@@ -234,13 +242,13 @@ namespace MedievilArchipelago
                                     Address = Addresses.CurrentLevel,
                                     CheckType = LocationCheckType.Byte,
                                     CompareType = LocationCheckCompareType.Match,
-                                    CheckValue = "0",
+                                    CheckValue = "0"
                                 });
 
                                 conditionalChoice.Add(new Location()
                                 {
                                     Id = -1,
-                                    Name = "Clear Check",
+                                    Name = "Cleared Check",
                                     Address = loc.Address,
                                     CheckType = LocationCheckType.Byte,
                                     CompareType = loc.Name == "Cleared: Zaroks Lair" ? LocationCheckCompareType.Match : LocationCheckCompareType.GreaterThan,
@@ -252,9 +260,10 @@ namespace MedievilArchipelago
                                     Name = loc.Name,
                                     Id = locationId,
                                     CheckType = LocationCheckType.AND,
-                                    Conditions = conditionalChoice,
+                                    Conditions = conditionalChoice
+
                                 };
-                                    
+
                                 locations.Add(location);
                                 location_index++;
                                 continue;
@@ -305,12 +314,6 @@ namespace MedievilArchipelago
                 }
                 regional_index++;
             }
-
-            // debugging line
-            //foreach (var location in locations)
-            //{
-            //    Console.WriteLine($"ID: {location.Id} | name: \"{location.Name}\"");
-            //}
 
             return locations;
         }
@@ -516,13 +519,10 @@ namespace MedievilArchipelago
             List<GenericItemsData> dcLocations = new List<GenericItemsData>() {
                 new GenericItemsData("Star Rune: Dan's Crypt", Addresses.DC_Pickup_StarRune, "6", "32896"),
                 new GenericItemsData("Life Bottle: Dan's Crypt", Addresses.DC_Pickup_LifeBottle,  "6", "32896"),
-                new GenericItemsData("Life Bottle: Dan's Crypt - Behind Wall",Addresses.DC_Pickup_LifeBottleWall,  "6", "32896"),
                 new GenericItemsData("Equipment: Small Sword - DC", Addresses.DC_Pickup_Shortsword,  "6", "32896"),
                 new GenericItemsData("Equipment: Copper Shield in Chest - DC", Addresses.DC_Pickup_CopperShield,  "6", "32896", true),
                 new GenericItemsData("Equipment: Daggers - DC", Addresses.DC_Pickup_Daggers,  "6", "32896"),
                 new GenericItemsData("Gold Coins: Over the water - DC",Addresses.DC_Pickup_GoldCoinsOverWater,  "6", "32896"),
-                new GenericItemsData("Gold Coins: Behind Wall in Crypt - Left - DC", Addresses.DC_Pickup_GoldCoinsBehindWallLeft,  "6", "32896"),
-                new GenericItemsData("Gold Coins: Behind Wall in Crypt - Right - DC", Addresses.DC_Pickup_GoldCoinsBehindWallRight,  "6", "32896"),
                 new GenericItemsData("Cleared: Dan's Crypt", Addresses.DC_LevelStatus,  "6", "16"),
 
             };
@@ -569,7 +569,6 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Chest at Exit - CH", Addresses.CH_Pickup_GoldCoinsChestAtExit, "3", "32896"),
                 new GenericItemsData("Gold Coins: Chest in Arena - CH", Addresses.CH_Pickup_GoldCoinsChestInArena,"3",  "32896"),
                 new GenericItemsData("Cleared: Cemetery Hill", Addresses.CH_LevelStatus, "3", "16"),
-                new GenericItemsData("Chalice: Cemetery Hill", Addresses.CH_Pickup_Chalice, "3", "32896"),
             };
             return chLocations;
         }
@@ -593,11 +592,8 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Left Coffin - HM", Addresses.HM_Pickup_GoldCoinsLeftCoffin, "4", "32896"),
                 new GenericItemsData("Gold Coins: After Earth Rune Door - HM", Addresses.HM_Pickup_GoldCoinsAfterEarthRuneDoor, "4", "32896"),
                 new GenericItemsData("Gold Coins: Chest in Moon Room - HM", Addresses.HM_Pickup_GoldCoinsChestInMoonRoom, "4", "32896"),
-                new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 1 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera1, "4", "32896"),
-                new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 2 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera2, "4", "32896"),
-                new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 3 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera3, "4", "32896"),
                 new GenericItemsData("Cleared: The Hilltop Mausoleum", Addresses.HM_LevelStatus, "4", "16"),
-                new GenericItemsData("Chalice: The Hilltop Mausoleum", Addresses.HM_Pickup_Chalice, "4", "32896"),
+
             };
             return hmLocations;
         }
@@ -635,7 +631,7 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetScarecrowFieldsData()
         {
             List<GenericItemsData> sfLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Life Bottle: Scarecrow Fields", Addresses.SF_Pickup_LifePotion, "5", "32896"),
+
                 new GenericItemsData("Key Item: Harvester Parts - SF", Addresses.SF_Pickup_HarvesterPart, "5", "32896"),
                 new GenericItemsData("Chaos Rune: Scarecrow Fields", Addresses.SF_Pickup_ChaosRune, "5", "32896",false, true),
                 new GenericItemsData("Earth Rune: Scarecrow Fields", Addresses.SF_Pickup_EarthRune, "5", "32896"),
@@ -656,9 +652,8 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Bag in the Press - SF", Addresses.SF_Pickup_GoldCoinsBagInThePress, "5", "32896"),
                 new GenericItemsData("Gold Coins: Bag in the Spinner - SF", Addresses.SF_Pickup_GoldCoinsBagInTheSpinner, "5", "32896"),
                 new GenericItemsData("Gold Coins: Chest next to Harvester Part - SF", Addresses.SF_Pickup_GoldCoinsChestNextToHarvesterPart, "5", "32896"),
-                new GenericItemsData("Gold Coins: Chest Next to Chalice - SF", Addresses.SF_Pickup_GoldCoinsChestNextToChalice, "5", "32896"),
                 new GenericItemsData("Cleared: Scarecrow Fields", Addresses.SF_LevelStatus, "5", "16"),
-                new GenericItemsData("Chalice: Scarecrow Fields", Addresses.SF_Pickup_Chalice, "5", "32896"),
+
             };
             return sfLocations;
         }
@@ -1047,6 +1042,48 @@ namespace MedievilArchipelago
             };
             return zlLocations;
         }
+
+        private static List<GenericItemsData> GetLockedItemsDC()
+        {
+            List<GenericItemsData> chLocations = new List<GenericItemsData>() {
+                new GenericItemsData("Life Bottle: Dan's Crypt - Behind Wall",Addresses.DC_Pickup_LifeBottleWall,  "6", "32896"),
+                new GenericItemsData("Gold Coins: Behind Wall in Crypt - Left - DC", Addresses.DC_Pickup_GoldCoinsBehindWallLeft,  "6", "32896"),
+                new GenericItemsData("Gold Coins: Behind Wall in Crypt - Right - DC", Addresses.DC_Pickup_GoldCoinsBehindWallRight,  "6", "32896"),
+            };
+            return chLocations;
+        }
+
+        private static List<GenericItemsData> GetLockedItemsCH()
+        {
+            List<GenericItemsData> chLocations = new List<GenericItemsData>() {
+                new GenericItemsData("Chalice: Cemetery Hill", Addresses.CH_Pickup_Chalice, "3", "32896"),
+            };
+            return chLocations;
+        }
+
+        private static List<GenericItemsData> GetLockedItemsHM()
+        {
+            List<GenericItemsData> hmLocations = new List<GenericItemsData>()
+            {
+                new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 1 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera1, "4", "32896"),
+                new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 2 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera2, "4", "32896"),
+                new GenericItemsData("Gold Coins: Gold Chest at Phantom of the Opera 3 - HM", Addresses.HM_Pickup_GoldChestPhantomOfTheOpera3, "4", "32896"),
+                new GenericItemsData("Chalice: The Hilltop Mausoleum", Addresses.HM_Pickup_Chalice, "4", "32896"),
+            };
+            return hmLocations;
+        }
+
+        private static List<GenericItemsData> GetLockedItemsSF()
+        {
+            List<GenericItemsData> sfLocations = new List<GenericItemsData>()
+            {
+                new GenericItemsData("Life Bottle: Scarecrow Fields", Addresses.SF_Pickup_LifePotion, "5", "32896"),
+                new GenericItemsData("Gold Coins: Chest Next to Chalice - SF", Addresses.SF_Pickup_GoldCoinsChestNextToChalice, "5", "32896"),
+                new GenericItemsData("Chalice: Scarecrow Fields", Addresses.SF_Pickup_Chalice, "5", "32896"),
+            };
+            return sfLocations;
+        }
+
 
 
     }

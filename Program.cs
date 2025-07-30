@@ -36,14 +36,7 @@ string port;
 string slot;
 string password;
 
-#if DEBUG
-    Console.WriteLine("Instant logging in");
-    url = "wss://archipelago.gg";
-    port = "";
-    slot = "";
-    password = "";
-#else
-#endif
+
 
 //
 bool hasFoundMem = false;
@@ -134,7 +127,13 @@ catch (Exception ex)
 
 //};
 
-
+#if DEBUG
+Console.WriteLine("Instant logging in");
+url = "wss://archipelago.gg";
+port = "";
+slot = "";
+password = "";
+#else
 // start AP Login
 
 Console.WriteLine("Enter AP url: eg,archipelago.gg");
@@ -162,7 +161,7 @@ if (string.IsNullOrWhiteSpace(slot))
     Console.WriteLine("Slot name cannot be empty. Please provide a valid slot name.");
     return;
 }
-
+#endif
 Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
 
 // Register event handlers
@@ -198,7 +197,7 @@ try
 
 #if DEBUG
 #else
-        Console.Clear();
+    Console.Clear();
 #endif
     Console.WriteLine("Client is connected and watching Medievil....");
 
@@ -229,12 +228,12 @@ try
                 UpdatePlayerState(archipelagoClient.CurrentSession.Items.AllItemsReceived);
                 Console.WriteLine($"Player state updated. Total Count: {archipelagoClient.CurrentSession.Items.AllItemsReceived.Count}");
 
-                #if DEBUG
+#if DEBUG
                     foreach (ItemInfo item in archipelagoClient.CurrentSession.Items.AllItemsReceived)
                     {
                     Console.WriteLine($"id: {item.ItemId} - {item.ItemName}");
                     }
-                #endif
+#endif
             }
             else
             {
@@ -274,9 +273,9 @@ finally
 bool isInTheGame(){
     ulong currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
     ulong currentGold = Memory.ReadUInt(Addresses.CurrentGold);
-    ulong currentLevel = Memory.ReadUInt(Addresses.CurrentLevel);
 
-    if(currentGameStatus != 0x800f8198 || currentGold == 0x82a4 || currentLevel == 0x0000)
+
+    if(currentGameStatus != 0x800f8198 || currentGold == 0x82a4 )
     {
         return false;
     }
@@ -303,9 +302,9 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
 
     Console.WriteLine("Setting up player state..");
 
-    #if DEBUG
+#if DEBUG
         Console.WriteLine($"OnConnected Firing. Itemcount: {client.GameState.ReceivedItems.Count}");
-    #endif
+#endif
     UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
     
 
@@ -317,9 +316,9 @@ async void OnDisconnected(object sender, EventArgs args, ArchipelagoClient clien
 {
     if (client.GameState != null)
     {
-    #if DEBUG
+#if DEBUG
             Console.WriteLine($"Disconnect Firing. Itemcount: {client.GameState.ReceivedItems.Count}");
-    #endif
+#endif
         Console.WriteLine("Disconnected from Archipelago.");
     }
 }
@@ -331,9 +330,9 @@ void ItemReceived(object sender, ItemReceivedEventArgs args, ArchipelagoClient c
 {
 
 
-    #if DEBUG
+#if DEBUG
         Console.WriteLine($"ItemReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
-    #endif
+#endif
         switch (args.Item)
         {
             // incoming runes need added here
@@ -358,9 +357,9 @@ void ItemReceived(object sender, ItemReceivedEventArgs args, ArchipelagoClient c
 
 void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceivedEventArgs e, ArchipelagoClient client)
 {
-    #if DEBUG
+#if DEBUG
         Console.WriteLine($"MessageReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
-    #endif
+#endif
         var message = string.Join("", e.Message.Parts.Select(p => p.Text));
 
         // this message can use emoji's through the overlay. Look into maybe making it a little more obvious 
@@ -392,9 +391,9 @@ void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, Archi
 {
     if (client.GameState.ReceivedItems.Count >= client.CurrentSession.Items.AllItemsReceived.Count)
     {
-        #if DEBUG
+#if DEBUG
                 Console.WriteLine($"LocationCompleted Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
-        #endif
+#endif
         UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
         CheckGoalCondition();
     }
@@ -402,7 +401,10 @@ void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, Archi
 
 
 void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCollection<long> newCheckedLocations)
-{
+    {
+#if DEBUG
+        Console.WriteLine($"Location CheckedLlocationsUpdated Firing.");
+#endif
     CheckGoalCondition();
 }
 

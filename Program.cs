@@ -196,10 +196,10 @@ try
 
     GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
 
-#if DEBUG
-#else
-        Console.Clear();
-#endif
+    #if DEBUG
+    #else
+            //Console.Clear();
+    #endif
     Console.WriteLine("Client is connected and watching Medievil....");
 
 
@@ -403,6 +403,9 @@ void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, Archi
 
 void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCollection<long> newCheckedLocations)
 {
+    #if DEBUG
+        Console.WriteLine($"Location CheckedLlocationsUpdated Firing.");
+    #endif
     CheckGoalCondition();
 }
 

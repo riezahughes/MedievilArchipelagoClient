@@ -233,18 +233,36 @@ namespace MedievilArchipelago
                         if (loc.Name.Contains("Cleared:")) // if it's cleared and we don't have an option set 
                         {
                             {
+                                List<ILocation> conditionalChoice = new List<ILocation>();
 
-                                Location location = new Location()
+                                conditionalChoice.Add(new Location()
                                 {
-                                    Name = loc.Name,
+                                    Id = -1,
+                                    Name = "Level Check",
+                                    Address = Addresses.CurrentLevel,
+                                    CheckType = LocationCheckType.Byte,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = "0"
+                                });
+
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Cleared Check",
                                     Address = loc.Address,
-                                    Id = locationId,
                                     CheckType = LocationCheckType.Byte,
                                     CompareType = loc.Name == "Cleared: Zaroks Lair" ? LocationCheckCompareType.Match : LocationCheckCompareType.GreaterThan,
                                     CheckValue = loc.Name == "Cleared: Zaroks Lair" ? "101" : "16" // if zarok clear
-                                };
+                                });
 
-                                Console.WriteLine($"{location.Id}: {location.Name} | {location.Address:X} | {location.CheckValue} ");
+                                CompositeLocation location = new CompositeLocation()
+                                {
+                                    Name = loc.Name,
+                                    Id = locationId,
+                                    CheckType = LocationCheckType.AND,
+                                    Conditions = conditionalChoice
+
+                                };
 
                                 locations.Add(location);
                                 location_index++;

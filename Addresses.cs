@@ -19,6 +19,8 @@ namespace MedievilArchipelago
         // Current Level
         public const uint CurrentLevel = 0x000eee68;
 
+        public const uint CurrentMapPosition = 0x000f81d8;
+
         // Game Complete
         public const uint WinConditionCredits = 0x00010038;
         /*

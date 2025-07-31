@@ -127,9 +127,9 @@ catch (Exception ex)
 #if DEBUG
 Console.WriteLine("Instant logging in");
 url = "wss://archipelago.gg";
-port = "57499";
-slot = "kass";
-password = "tiddies";
+port = "";
+slot = "";
+password = "";
 #else
 // start AP Login
 

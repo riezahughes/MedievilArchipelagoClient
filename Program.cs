@@ -242,10 +242,20 @@ try
         {
             var items = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Key Item") select item;
 
+            var bottles = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Bottle") select item;
+
+
+
             Console.WriteLine("Current Key Items: ");
             foreach (var item in items.OrderBy(item => item.ItemName))
             {
                 Console.WriteLine(item.ItemName);
+            }
+
+            Console.WriteLine("Current Bottles: ");
+            foreach (var bottle in bottles.OrderBy(item => item.ItemName))
+            {
+                Console.WriteLine(bottle.ItemName);
             }
 
 

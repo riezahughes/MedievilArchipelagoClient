@@ -128,17 +128,14 @@ namespace MedievilArchipelago
                             switch (currentChaliceCount)
                             {
                                 case 1:
-                                    Console.WriteLine($"Tim1");
                                     Memory.WriteByteArray(Addresses.HOH_CannyTim1, updateValue);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 2:
-                                    Console.WriteLine($"Tim2");
                                     Memory.WriteByteArray(Addresses.HOH_CannyTim2, updateValue);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
                                 case 3:
-                                    Console.WriteLine($"Tim3");
                                     Memory.WriteByteArray(Addresses.HOH_StanyerIronHewer1, updateValue);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;

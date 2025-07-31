@@ -242,10 +242,20 @@ try
         {
             var items = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Key Item") select item;
 
+            var bottles = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Bottle") select item;
+
+
+
             Console.WriteLine("Current Key Items: ");
             foreach (var item in items.OrderBy(item => item.ItemName))
             {
                 Console.WriteLine(item.ItemName);
+            }
+
+            Console.WriteLine("Current Bottles: ");
+            foreach (var bottle in bottles.OrderBy(item => item.ItemName))
+            {
+                Console.WriteLine(bottle.ItemName);
             }
 
 
@@ -443,6 +453,7 @@ void UpdatePlayerState(System.Collections.ObjectModel.ReadOnlyCollection<Archipe
     var usedItems = new List<string>();
 
     short currentWeapon = Memory.ReadShort(Addresses.ItemEquipped);
+    byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
 
     SetItemMemoryValue(Addresses.CurrentLifePotions, 0, 0);
     SetItemMemoryValue(Addresses.SoulHelmet, 0, 0);
@@ -451,17 +462,26 @@ void UpdatePlayerState(System.Collections.ObjectModel.ReadOnlyCollection<Archipe
 
     // for each location that's coming in
     bool hasEquipableWeapon = false;
+    int talismanCount = 0;
 
     foreach (ItemInfo itemInf in itemsCollected)
     {
         Item itm = new Item();
         itm.Name = itemInf.ItemName;
 
+        if (itm.Name.ContainsAny("Shadow"))
+        {
+            talismanCount++;
+        }
+
         switch (itm)
         {
             // Update memory
             case var x when x.Name.ContainsAny("Ammo"):
                 // no plans yet
+                break;
+            case var x when talismanCount == 2:
+                ReceiveTalismanAndArtefact();
                 break;
             case var x when x.Name.Contains("Skill"): ReceiveSkill(x); break;
             case var x when x.Name.Contains("Equipment"):
@@ -498,6 +518,12 @@ void UpdatePlayerState(System.Collections.ObjectModel.ReadOnlyCollection<Archipe
         if (itemName.ContainsAny("Soul Helmet", "Dragon Gem", "Amber"))
         {
             continue;
+        }
+
+        if (itemName.ContainsAny("Shadow Artefact", "Shadow Talisman"))
+        {
+            SetItemMemoryValue(Addresses.ShadowArtefact, 65535, 65535);
+            SetItemMemoryValue(Addresses.ShadowTalisman, 65535, 65535);
         }
 
         // reset any other values
@@ -731,6 +757,13 @@ void ReceiveAmber()
     UpdateCurrentItemValue("Amber Piece", 1, addressDict["Key Items"]["Amber Piece"], true, false);
 }
 
+void ReceiveTalismanAndArtefact()
+{
+    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
+
+    UpdateCurrentItemValue("Shadow Artefact", 0, addressDict["Key Items"]["Shadow Artefact"], true, true);
+    UpdateCurrentItemValue("Shadow Talisman", 0, addressDict["Key Items"]["Shadow Talisman"], true, true);
+}
 
 void ReceiveStatItems(Item item)
 {

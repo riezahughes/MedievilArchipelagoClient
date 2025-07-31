@@ -251,8 +251,8 @@ namespace MedievilArchipelago
                                     Name = "Cleared Check",
                                     Address = loc.Address,
                                     CheckType = LocationCheckType.Byte,
-                                    CompareType = loc.Name == "Cleared: Zaroks Lair" ? LocationCheckCompareType.Match : LocationCheckCompareType.GreaterThan,
-                                    CheckValue = loc.Name == "Cleared: Zaroks Lair" ? "101" : "16" // if zarok clear
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = loc.Name == "Cleared: Zaroks Lair" ? "101" : "17" // if zarok clear
                                 });
 
                                 CompositeLocation location = new CompositeLocation()

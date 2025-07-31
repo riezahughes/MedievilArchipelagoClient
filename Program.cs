@@ -24,6 +24,8 @@ using System.Collections;
 using System.Reflection;
 using System.Drawing.Text;
 using Archipelago.MultiClient.Net.Models;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 
 
 // set values
@@ -125,11 +127,21 @@ catch (Exception ex)
 //};
 
 #if DEBUG
-Console.WriteLine("Instant logging in");
+
+var configuration = new ConfigurationBuilder()
+    // Add the default appsettings.json file
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.Local.json", optional: false, reloadOnChange: true)
+    .Build();
+
+Console.WriteLine("Logging in using settings in appsettings.Local.json");
+Console.WriteLine(configuration["port"]);
+Console.WriteLine(configuration["slot"]);
+Console.WriteLine(configuration["pass"]);
 url = "wss://archipelago.gg";
-port = "";
-slot = "";
-password = "";
+port = configuration["port"];
+slot = configuration["slot"];
+password = configuration["pass"];
 #else
 // start AP Login
 

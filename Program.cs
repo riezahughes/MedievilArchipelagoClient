@@ -295,7 +295,8 @@ bool isInTheGame(){
     ulong currentGold = Memory.ReadUInt(Addresses.CurrentGold);
     ulong currentMapPosition = Memory.ReadUInt(Addresses.CurrentMapPosition);
 
-    if (currentGameStatus != 0x800f8198 || currentGold == 0x82a4 || currentMapPosition == 0x0100)
+
+    if (currentGameStatus != 0x800f8198 || currentGold == 0x82a4 || currentMapPosition > 0x32)
     {
         return false;
     }

@@ -212,7 +212,7 @@ try
     Console.WriteLine("Client is connected and watching Medievil....");
 
 
-    _ = MemoryCheckThreads.CheckForHallOfHeroes(archipelagoClient);
+    _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient);
     _ = archipelagoClient.MonitorLocations(GameLocations);
 
 
@@ -768,8 +768,7 @@ void ReceiveDragonGem()
 
 void ReceiveAmber()
 {
-    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-    UpdateCurrentItemValue("Amber Piece", 1, addressDict["Key Items"]["Amber Piece"], true, false);
+    UpdateCurrentItemValue("Amber Piece", 1, Addresses.APAmberPieces, true, false);
 }
 
 void ReceiveTalismanAndArtefact()

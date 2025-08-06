@@ -55,8 +55,14 @@ namespace MedievilArchipelago
             Memory.WriteByte(Addresses.HOH_MegwynneStormbinder2_drop, 0x08);
         }
 
+        static internal void UpdateInventoryWithAmber()
+        {
+            var currentCount = Memory.ReadByte(Addresses.APAmberPieces);
+            Memory.WriteByte(Addresses.AmberPiece, currentCount);
+        }
 
-        async public static Task CheckForHallOfHeroes(ArchipelagoClient client)
+
+        async public static Task PassiveLogicChecks(ArchipelagoClient client)
         {
             await Task.Run(() =>
             {
@@ -78,6 +84,12 @@ namespace MedievilArchipelago
                 {
                     // checks against current levels and updates chest entities
                     byte checkCurrentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+                    short checkQueenAntStatus = Memory.ReadShort(Addresses.TA_BossHealth);
+
+                    if (currentLocation == 7 && checkQueenAntStatus == 0x03e8) // if we're in the ant hill and the queens hp has spawned
+                    {
+                        UpdateInventoryWithAmber();
+                    }
 
                     if (!firstLoop && checkCurrentLevel < 17 && checkCurrentLevel > 0)
                     {

@@ -23,6 +23,8 @@ namespace MedievilArchipelago
 
         // Game Complete
         public const uint WinConditionCredits = 0x00010038;
+
+        public const uint FairyCount = 0x001D5680;
         /*
             0x00=None/Out of Game
             0x01=The Graveyard
@@ -78,6 +80,9 @@ namespace MedievilArchipelago
         public const uint GS_LevelStatus = 0x000F81F3;
         public const uint EH_LevelStatus = 0x000F81F4;
         public const uint TD_LevelStatus = 0x000F81F5;
+
+        // Boss Max Health
+        public const uint TA_BossHealth = 0x000F1754; // The Ant Caves
 
         // List of Hall of Heroes encounters
 
@@ -141,6 +146,7 @@ namespace MedievilArchipelago
         public const uint LandlordsBust = 0x000F82AC;
         public const uint CrucifixCast = 0x000F82A4;
         public const uint AmberPiece = 0x000F828C;
+        public const uint APAmberPieces = 0x000197e2; // used to track amber pieces seperately, so a count can be made in the anthill correctly for checks.
         public const uint HarvesterParts = 0x000F8288;
         public const uint SkullKey = 0x000f8280;
         public const uint SheetMusic = 0x000F827C;
@@ -200,7 +206,7 @@ namespace MedievilArchipelago
         public const uint DC_Pickup_Daggers = 0x0012e1f4;
         public const uint DC_Pickup_LifeBottleWall = 0x0012d93c;
         public const uint DC_Pickup_GoldCoinsBehindWallLeft = 0x0012d8fc;
-        public const uint DC_Pickup_GoldCoinsBehindWallRight = 0x0012d8fc;
+        public const uint DC_Pickup_GoldCoinsBehindWallRight = 0x0012d8bc;
 
         // The Graveyard
         public const uint TG_Pickup_EarthRune = 0x0012ede4;

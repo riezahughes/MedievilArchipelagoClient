@@ -26,7 +26,7 @@ using System.Drawing.Text;
 using Archipelago.MultiClient.Net.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-
+using Kokuban;
 
 // set values
 const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
@@ -212,7 +212,7 @@ try
     Console.WriteLine("Client is connected and watching Medievil....");
 
 
-    _ = MemoryCheckThreads.CheckForHallOfHeroes(archipelagoClient);
+    _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient);
     _ = archipelagoClient.MonitorLocations(GameLocations);
 
 
@@ -390,22 +390,24 @@ void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceiv
         Log.Logger.Information(JsonConvert.SerializeObject(e.Message));
 
         string prefix;
+        Kokuban.AnsiEscape.AnsiStyle bg;
+        Kokuban.AnsiEscape.AnsiStyle fg;
 
         if (message.Contains($"{slot} found") || message.Contains($"{slot} sent"))
         {
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.ForegroundColor = ConsoleColor.White;
+            bg = Chalk.BgBlue;
+            fg = Chalk.White;
             prefix = " >> ";
         }
-    else
+        else
         {
-            Console.BackgroundColor = ConsoleColor.DarkGreen;
-            Console.ForegroundColor = ConsoleColor.White;
+            bg = Chalk.BgGreen;
+            fg = Chalk.White;
             prefix = " << ";
         }
 
-        Console.WriteLine($"{prefix} {message} ");
-        Console.ResetColor();
+        Console.WriteLine(bg + (fg + $"{prefix} {message} "));
+
 }
 
 void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, ArchipelagoClient client)
@@ -766,8 +768,9 @@ void ReceiveDragonGem()
 
 void ReceiveAmber()
 {
-    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-    UpdateCurrentItemValue("Amber Piece", 1, addressDict["Key Items"]["Amber Piece"], true, false);
+    var currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+    if (currentLevel == 0x07) return; // ignore this logic if you're in the anthill. There's custom logic for this.
+    UpdateCurrentItemValue("Amber Piece", 1, Addresses.APAmberPieces, true, false);
 }
 
 void ReceiveTalismanAndArtefact()

@@ -269,7 +269,7 @@ namespace MedievilArchipelago
                                 continue;
                             };
                         }
-                        if (loc.Name.Contains("Key Item:") || loc.Name.Contains("Chalice:") || loc.Name.Contains("Rune:") || loc.Name.Contains("Equipment:") || loc.Name.Contains("Gold Coins:") || loc.Name.Contains("Skill:") || loc.Name.Contains("Life Bottle:") || loc.Name.Contains("Energy Vial:") || loc.Name.Contains("HH") || loc.Name.Contains("Hall of Heroes"))
+                        if (loc.Name.Contains("Key Item:") || loc.Name.Contains("Chalice:") || loc.Name.Contains("Rune:") || loc.Name.Contains("Equipment:") || loc.Name.Contains("Gold Coins:") || loc.Name.Contains("Skill:") || loc.Name.Contains("Life Bottle:") || loc.Name.Contains("Energy Vial:") || loc.Name.Contains("HH") || loc.Name.Contains("Hall of Heroes") || loc.Name.Contains("Fairy"))
                         {
                             {
                                 List<ILocation> conditionalChoice = new List<ILocation>();
@@ -314,6 +314,11 @@ namespace MedievilArchipelago
                 }
                 regional_index++;
             }
+
+            //foreach (var location in locations)
+            //{
+            //    Console.WriteLine($"{location.Id}: {location.Name}");
+            //}
 
             return locations;
         }
@@ -661,16 +666,22 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetAnthillData()
         {
             List<GenericItemsData> ahLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Key Item: Amber Piece 1 - TA", Addresses.TA_Pickup_Amber1, "7", "32896"),
-                new GenericItemsData("Key Item: Amber Piece 2 - TA", Addresses.TA_Pickup_Amber2, "7", "32896"),
-                new GenericItemsData("Key Item: Amber Piece 3 - TA", Addresses.TA_Pickup_Amber3, "7", "32896"),
-                new GenericItemsData("Key Item: Amber Piece 4 - TA", Addresses.TA_Pickup_Amber4, "7", "32896"),
-                new GenericItemsData("Key Item: Amber Piece 5 - TA", Addresses.TA_Pickup_Amber5, "7", "32896"),
-                new GenericItemsData("Key Item: Amber Piece 6 - TA", Addresses.TA_Pickup_Amber6, "7", "32896"),
-                new GenericItemsData("Key Item: Amber Piece 7 - TA", Addresses.TA_Pickup_Amber7, "7", "32896"),
-                new GenericItemsData("Key Item: Amber Piece 8 - TA", Addresses.TA_Pickup_Amber8, "7", "32896"),
-                new GenericItemsData("Key Item: Amber Piece 9 - TA", Addresses.TA_Pickup_Amber9, "7", "32896"),
-                new GenericItemsData("Key Item: Amber Piece 10 - TA", Addresses.TA_Pickup_Amber10, "7", "32896"),
+                new GenericItemsData("Key Item: Amber Piece 1 - TA", Addresses.AmberPiece, "7", "1"),
+                new GenericItemsData("Key Item: Amber Piece 2 - TA", Addresses.AmberPiece, "7", "2"),
+                new GenericItemsData("Key Item: Amber Piece 3 - TA", Addresses.AmberPiece, "7", "3"),
+                new GenericItemsData("Key Item: Amber Piece 4 - TA", Addresses.AmberPiece, "7", "4"),
+                new GenericItemsData("Key Item: Amber Piece 5 - TA", Addresses.AmberPiece, "7", "5"),
+                new GenericItemsData("Key Item: Amber Piece 6 - TA", Addresses.AmberPiece, "7", "6"),
+                new GenericItemsData("Key Item: Amber Piece 7 - TA", Addresses.AmberPiece, "7", "7"),
+                new GenericItemsData("Key Item: Amber Piece 8 - TA", Addresses.AmberPiece, "7", "8"),
+                new GenericItemsData("Key Item: Amber Piece 9 - TA", Addresses.AmberPiece, "7", "9"),
+                new GenericItemsData("Key Item: Amber Piece 10 - TA", Addresses.AmberPiece, "7", "10"),
+                new GenericItemsData("Fairy 1 - TA", Addresses.FairyCount, "7", "1"),
+                new GenericItemsData("Fairy 2 - TA", Addresses.FairyCount, "7", "2"),
+                new GenericItemsData("Fairy 3 - TA", Addresses.FairyCount, "7", "3"),
+                new GenericItemsData("Fairy 4 - TA", Addresses.FairyCount, "7", "4"),
+                new GenericItemsData("Fairy 5 - TA", Addresses.FairyCount, "7", "5"),
+                new GenericItemsData("Fairy 6 - TA", Addresses.FairyCount, "7", "6"),
                 new GenericItemsData("Equipment: Club in Chest at Barrier - TA", Addresses.TA_Pickup_ClubChestAtBarrier, "7", "32896", true),
                 new GenericItemsData("Equipment: Chicken Drumsticks - TA", Addresses.TA_LevelStatus, "7", "16"),
                 new GenericItemsData("Energy Vial: Before Fairy 1 - TA", Addresses.TA_Pickup_EnergyVialBeforeFairy1, "7", "32896"),
@@ -679,20 +690,6 @@ namespace MedievilArchipelago
                 new GenericItemsData("Energy Vial: Fairy 3 - TA", Addresses.TA_Pickup_EnergyVialFairy3, "7", "32896"),
                 new GenericItemsData("Energy Vial: Birthing room exit - TA", Addresses.TA_Pickup_EnergyVialBirthingRoomExit, "7", "32896"),
                 new GenericItemsData("Gold Coins: Chest at Barrier Fairy - TA", Addresses.TA_Pickup_GoldCoinsChestAtBarrierFairy, "7", "32896"),
-                new GenericItemsData("Gold Coins: Maggot at Amber 2 - TA", Addresses.TA_Pickup_GoldCoinsMaggotAtAmber2, "7", "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot after Amber 2 - TA", Addresses.TA_Pickup_GoldCoinsMaggotAfterAmber2, "7", "32896", false,  true),
-                new GenericItemsData("Gold Coins: Fairy 2 Room Center - TA",Addresses.TA_Pickup_GoldCoinsFairy2RoomCenter,"7",  "32896"),
-                new GenericItemsData("Gold Coins: Fairy 2 Room Maggot - TA", Addresses.TA_Pickup_GoldCoinsFairy2RoomMaggot, "7", "32896"),
-                new GenericItemsData("Gold Coins: Maggots before Amber 4 - TA", Addresses.TA_Pickup_GoldCoinsMaggotsBeforeAmber4, "7", "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggots at Amber 5 - TA", Addresses.TA_Pickup_GoldCoinsMaggotsAtAmber5, "7", "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggots at Amber 7 - TA", Addresses.TA_Pickup_GoldCoinsMaggotsAtAmber7_1, "7", "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot in nest at Amber 7 - TA", Addresses.TA_Pickup_GoldCoinsMaggotInNestAtAmber7, "7", "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot in Nest - TA", Addresses.TA_Pickup_GoldCoinsMaggotInNest, "7", "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot after Fairy 4 - TA", Addresses.TA_Pickup_GoldCoinsMaggotAfterFairy4, "7", "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot after Fairy 4 in Nest - TA", Addresses.TA_Pickup_GoldCoinsMaggotAfterFairy4InNest, "7", "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot at Fairy 5 - TA", Addresses.TA_Pickup_GoldCoinsMaggotAtFairy5, "7", "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot near Amber 9 - TA", Addresses.TA_Pickup_GoldCoinsMaggotNearAmber9, "7", "32896", false,  true),
-                new GenericItemsData("Gold Coins: Maggot near Shop - TA", Addresses.TA_Pickup_GoldCoinsMaggotNearShop, "7", "32896", false,  true),
                 new GenericItemsData("Cleared: Ant Hill", Addresses.TA_LevelStatus, "7", "16"),
                 new GenericItemsData("Chalice: Ant Hill", Addresses.TA_LevelStatus, "7", "19"),
             };

@@ -689,6 +689,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Energy Vial: Fairy 2 Room Center - TA", Addresses.TA_Pickup_EnergyVialFairy2RoomCenter, "7", "32896"),
                 new GenericItemsData("Energy Vial: Fairy 3 - TA", Addresses.TA_Pickup_EnergyVialFairy3, "7", "32896"),
                 new GenericItemsData("Energy Vial: Birthing room exit - TA", Addresses.TA_Pickup_EnergyVialBirthingRoomExit, "7", "32896"),
+                new GenericItemsData("Gold Coins: Chest at Barrier Fairy - TA", Addresses.TA_Pickup_GoldCoinsChestAtBarrierFairy, "7", "32896"),
                 new GenericItemsData("Cleared: Ant Hill", Addresses.TA_LevelStatus, "7", "16"),
                 new GenericItemsData("Chalice: Ant Hill", Addresses.TA_LevelStatus, "7", "19"),
             };

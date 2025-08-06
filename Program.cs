@@ -768,6 +768,8 @@ void ReceiveDragonGem()
 
 void ReceiveAmber()
 {
+    var currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+    if (currentLevel == 0x07) return; // ignore this logic if you're in the anthill. There's custom logic for this.
     UpdateCurrentItemValue("Amber Piece", 1, Addresses.APAmberPieces, true, false);
 }
 

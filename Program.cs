@@ -26,7 +26,7 @@ using System.Drawing.Text;
 using Archipelago.MultiClient.Net.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-
+using Kokuban;
 
 // set values
 const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
@@ -390,22 +390,24 @@ void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceiv
         Log.Logger.Information(JsonConvert.SerializeObject(e.Message));
 
         string prefix;
+        Kokuban.AnsiEscape.AnsiStyle bg;
+        Kokuban.AnsiEscape.AnsiStyle fg;
 
         if (message.Contains($"{slot} found") || message.Contains($"{slot} sent"))
         {
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.ForegroundColor = ConsoleColor.White;
+            bg = Chalk.BgBlue;
+            fg = Chalk.White;
             prefix = " >> ";
         }
-    else
+        else
         {
-            Console.BackgroundColor = ConsoleColor.DarkGreen;
-            Console.ForegroundColor = ConsoleColor.White;
+            bg = Chalk.BgGreen;
+            fg = Chalk.White;
             prefix = " << ";
         }
 
-        Console.WriteLine($"{prefix} {message} ");
-        Console.ResetColor();
+        Console.WriteLine(bg + (fg + $"{prefix} {message} "));
+
 }
 
 void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, ArchipelagoClient client)

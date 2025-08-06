@@ -13,9 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="appsettings.Local.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Assets\MediEvilFont.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

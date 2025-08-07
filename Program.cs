@@ -10,6 +10,7 @@ using Archipelago.Core.GameClients;
 using Archipelago.Core.Models;
 using Archipelago.Core.Traps;
 using Archipelago.Core.Util;
+using Archipelago.Core.Util.GPS;
 using MedievilArchipelago;
 using Serilog;
 using Helpers = MedievilArchipelago.Helpers;
@@ -182,6 +183,30 @@ archipelagoClient.ItemReceived += (sender, args) => ItemReceived(sender, args, a
 archipelagoClient.MessageReceived += (sender, args) => Client_MessageReceived(sender, args, archipelagoClient);
 archipelagoClient.LocationCompleted += (sender, args) => Client_LocationCompleted(sender, args, archipelagoClient); 
 archipelagoClient.EnableLocationsCondition = () => isInTheGame();
+archipelagoClient.GPSHandler = new GPSHandler(() => {
+
+    byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+
+#if DEBUG
+    Console.WriteLine("Sending GPS");
+    Console.WriteLine(currentLevel);
+#endif
+
+    return new PositionData
+    {
+        MapId = currentLevel,
+        MapName = Helpers.GetLevelNameFromId(currentLevel),
+        Region = null,
+        X = currentLevel,
+        Y = currentLevel,
+        Z = 0
+    };
+ });
+
+archipelagoClient.GPSHandler.PositionChanged += (sender, args) =>
+{
+    Console.WriteLine($"Current map changed");
+};
 
 var cts = new CancellationTokenSource();
 try

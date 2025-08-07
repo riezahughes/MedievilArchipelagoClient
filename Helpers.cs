@@ -476,6 +476,39 @@ namespace MedievilArchipelago
             };
         }
 
+        public static string GetLevelNameFromId(byte levelId)
+        {
+            var dict = new Dictionary<byte, string>
+            {
+                [0x00] = "None/Out of Game",
+                [0x01] = "The Graveyard",
+                [0x02] = "Return to the Graveyard",
+                [0x03] = "Cemetery Hill",
+                [0x04] = "The Hilltop Mausoleum",
+                [0x05] = "Scarecrow Fields",
+                [0x06] = "Dan's Crypt",
+                [0x07] = "The Ant Caves",
+                [0x08] = "The Crystal Caves",
+                [0x09] = "Pumpkin Gorge",
+                [0x0A] = "The Pumpkin Serpent",
+                [0x0B] = "The Sleeping Village",
+                [0x0C] = "Pools Of The Ancient Dead",
+                [0x0D] = "The Asylum Grounds",
+                [0x0E] = "Inside The Asylum",
+                [0x0F] = "The Enchanted Earth",
+                [0x10] = "The Gallows Gauntlet",
+                [0x11] = "The Haunted Ruins",
+                [0x12] = "Hall of Heroes",
+                [0x13] = "The Ghost Ship",
+                [0x14] = "The Entrance Hall",
+                [0x15] = "The Time Device",
+                [0x16] = "The Lake",
+                [0x17] = "Zarok's Lair",
+            };
+
+            return dict[levelId];
+        }
+
 
 
 

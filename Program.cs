@@ -131,7 +131,7 @@ catch (Exception ex)
 var configuration = new ConfigurationBuilder()
     // Add the default appsettings.json file
     .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.Local.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
     .Build();
 
 Console.WriteLine("Logging in using settings in appsettings.Local.json");
@@ -172,6 +172,8 @@ if (string.IsNullOrWhiteSpace(slot))
 }
 #endif
 Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
+
+
 
 // Register event handlers
 archipelagoClient.Connected += (sender, args) => OnConnected(sender, args, archipelagoClient);
@@ -313,6 +315,10 @@ bool isInTheGame(){
 
 async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
 {
+    // if deathlink goes here
+    var deathLink = client.EnableDeathLink();
+    deathLink.OnDeathLinkReceived += (args) => KillPlayer();
+
     Log.Logger.Information("Connected to Archipelago");
     Log.Logger.Information($"Playing {client.CurrentSession.ConnectionInfo.Game} as {client.CurrentSession.Players.GetPlayerName(client.CurrentSession.ConnectionInfo.Slot)}");
     Console.WriteLine("Connected to Archipelago!");
@@ -472,8 +478,8 @@ void UpdatePlayerState(System.Collections.ObjectModel.ReadOnlyCollection<Archipe
 
     SetItemMemoryValue(Addresses.CurrentLifePotions, 0, 0);
     SetItemMemoryValue(Addresses.SoulHelmet, 0, 0);
-    SetItemMemoryValue(Addresses.AmberPiece, 0, 0);
     SetItemMemoryValue(Addresses.DragonGem, 0, 0);
+    SetItemMemoryValue(Addresses.APAmberPieces, 0, 0);
 
     // for each location that's coming in
     bool hasEquipableWeapon = false;
@@ -768,8 +774,6 @@ void ReceiveDragonGem()
 
 void ReceiveAmber()
 {
-    var currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
-    if (currentLevel == 0x07) return; // ignore this logic if you're in the anthill. There's custom logic for this.
     UpdateCurrentItemValue("Amber Piece", 1, Addresses.APAmberPieces, true, false);
 }
 
@@ -819,6 +823,11 @@ void DefaultToArm()
 }
 
 // traps need added here and logic added into what i have already
+
+async void KillPlayer()
+{
+    Memory.WriteByte(Addresses.CurrentHP, 0x00);
+}
 
 async void RunLagTrap()
 {

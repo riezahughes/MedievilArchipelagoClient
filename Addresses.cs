@@ -53,6 +53,8 @@ namespace MedievilArchipelago
             0x18=Programmers's Playground (Freezes)
          */
 
+        public const uint CurrentHP = 0x000f81ac;
+
         public const uint CurrentChalicePercentage = 0x000f82c0;
         // 0x1000 (4096) = 100%
 
@@ -145,8 +147,9 @@ namespace MedievilArchipelago
         public const uint Crucifix = 0x000f82a0;
         public const uint LandlordsBust = 0x000F82AC;
         public const uint CrucifixCast = 0x000F82A4;
+
         public const uint AmberPiece = 0x000F828C;
-        public const uint APAmberPieces = 0x000197e2; // used to track amber pieces seperately, so a count can be made in the anthill correctly for checks.
+        public const uint APAmberPieces = 0x00000730; // used to track amber pieces seperately, so a count can be made in the anthill correctly for checks.
         public const uint HarvesterParts = 0x000F8288;
         public const uint SkullKey = 0x000f8280;
         public const uint SheetMusic = 0x000F827C;
@@ -323,25 +326,11 @@ namespace MedievilArchipelago
         public const uint TA_Pickup_Amber8 = 0x001dc560;
         public const uint TA_Pickup_Amber9 = 0x001304ec;
         public const uint TA_Pickup_Amber10 = 0x001dc064;
-        public const uint TA_Pickup_GoldCoinsMaggotAtAmber2 = 0x002b4528;
-        public const uint TA_Pickup_GoldCoinsMaggotAfterAmber2 = 0x002ce062;
         public const uint TA_Pickup_EnergyVialBeforeFairy1 = 0x00130aac;
-        public const uint TA_Pickup_EnergyVialAfterAmber2 = 0x00130b6c;
+        public const uint TA_Pickup_EnergyVialAfterAmber2 = 0x00130aec;
         public const uint TA_Pickup_EnergyVialFairy2RoomCenter = 0x00130b2c;
         public const uint TA_Pickup_EnergyVialFairy3 = 0x00130b6c;
         public const uint TA_Pickup_EnergyVialBirthingRoomExit = 0x00130a6c;
-        public const uint TA_Pickup_GoldCoinsFairy2RoomCenter = 0x002be6dc;
-        public const uint TA_Pickup_GoldCoinsFairy2RoomMaggot = 0x002c08a4;
-        public const uint TA_Pickup_GoldCoinsMaggotsBeforeAmber4 = 0x002b4420;
-        public const uint TA_Pickup_GoldCoinsMaggotsAtAmber5 = 0x002c2506;
-        public const uint TA_Pickup_GoldCoinsMaggotsAtAmber7_1 = 0x002c0f2a;
-        public const uint TA_Pickup_GoldCoinsMaggotInNestAtAmber7 = 0x002c1b62;
-        public const uint TA_Pickup_GoldCoinsMaggotInNest = 0x002c09c0;
-        public const uint TA_Pickup_GoldCoinsMaggotAfterFairy4 = 0x001db5fc;
-        public const uint TA_Pickup_GoldCoinsMaggotAfterFairy4InNest = 0x001e1b58;
-        public const uint TA_Pickup_GoldCoinsMaggotAtFairy5 = 0x001dfe38;
-        public const uint TA_Pickup_GoldCoinsMaggotNearAmber9 = 0x001e0a20;
-        public const uint TA_Pickup_GoldCoinsMaggotNearShop = 0x001e3afc;
 
         // Enchanted Earth
         public const uint EE_Pickup_GoldCoinsBagNearTreeHollow = 0x00130638;

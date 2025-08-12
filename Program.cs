@@ -196,7 +196,6 @@ archipelagoClient.GPSHandler = new GPSHandler(() => {
     {
         MapId = currentLevel,
         MapName = Helpers.GetLevelNameFromId(currentLevel),
-        Region = null,
         X = currentLevel,
         Y = currentLevel,
         Z = 0

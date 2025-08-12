@@ -516,7 +516,7 @@ namespace MedievilArchipelago
 
         private static List<GenericItemsData> GetHallOfHeroesData()
         {
-            List<GenericItemsData> hallOfHeroeVisits = new List<GenericItemsData>()
+            List<GenericItemsData> hallOfHeroesVisits = new List<GenericItemsData>()
             {
                 new GenericItemsData("Life Bottle: Hall of Heroes (Canny Tim)", Addresses.HOH_CannyTim2, "18", "9999"),
                 new GenericItemsData("Life Bottle: Hall of Heroes (Ravenhooves The Archer)", Addresses.HOH_RavenHoovesTheArcher4, "18", "9999"),
@@ -532,24 +532,14 @@ namespace MedievilArchipelago
                 new GenericItemsData("Equipment: Spear from Imanzi Shongama - HH", Addresses.HOH_Imanzi1, "18", "9999"),
                 new GenericItemsData("Equipment: Lightning from Megwynne Stormbinder - HH", Addresses.HOH_MegwynneStormbinder1, "18", "9999"),
                 new GenericItemsData("Equipment: Gold Shield from Karl Sturngard - HH", Addresses.HOH_KarlStungard1, "18", "9999"),
-                new GenericItemsData("Energy Vial: Imanzi Shongama 1 - HH", Addresses.HOH_Imanzi2, "18", "9999"),
-                new GenericItemsData("Energy Vial: Imanzi Shongama 2 - HH", Addresses.HOH_Imanzi2, "18", "9999"),
-                new GenericItemsData("Energy Vial: Megwynne Stormbinder 1 - HH", Addresses.HOH_MegwynneStormbinder2, "18", "9999"),
-                new GenericItemsData("Energy Vial: Megwynne Stormbinder 2 - HH", Addresses.HOH_MegwynneStormbinder2, "18", "9999"),
-                new GenericItemsData("Energy Vial: Megwynne Stormbinder 3 - HH", Addresses.HOH_MegwynneStormbinder2, "18", "9999"),
-                new GenericItemsData("Gold Coins: Stanyer Iron Hewer 1 - HH", Addresses.HOH_StanyerIronHewer2, "18", "9999"),
-                new GenericItemsData("Gold Coins: Stanyer Iron Hewer 2 - HH", Addresses.HOH_StanyerIronHewer2, "18", "9999"),
-                new GenericItemsData("Gold Coins: Woden the Mighty 1 - HH", Addresses.HOH_WodenTheMighty2, "18", "9999"),
-                new GenericItemsData("Gold Coins: Woden the Mighty 2 - HH", Addresses.HOH_WodenTheMighty2, "18", "9999"),
-                new GenericItemsData("Gold Coins: Bloodmonath 1 - HH", Addresses.HOH_BloodmonathSkullCleaver2, "18", "9999"),
-                new GenericItemsData("Gold Coins: Bloodmonath 2 - HH", Addresses.HOH_BloodmonathSkullCleaver2, "18", "9999"),
-                new GenericItemsData("Gold Coins: Bloodmonath 3 - HH", Addresses.HOH_BloodmonathSkullCleaver2, "18", "9999"),
-                new GenericItemsData("Gold Coins: Karl Sturngard 1 - HH", Addresses.HOH_KarlStungard2, "18", "9999"),
-                new GenericItemsData("Gold Coins: Karl Sturngard 2 - HH", Addresses.HOH_KarlStungard2, "18", "9999"),
-                new GenericItemsData("Gold Coins: Karl Sturngard 3 - HH", Addresses.HOH_KarlStungard2, "18", "9999"),
-                new GenericItemsData("Gold Coins: Karl Sturngard 4 - HH", Addresses.HOH_KarlStungard2, "18", "9999"),
+                new GenericItemsData("Energy Vial: Imanzi Shongama - HH", Addresses.HOH_Imanzi2, "18", "9999"),
+                new GenericItemsData("Energy Vial: Megwynne Stormbinder - HH", Addresses.HOH_MegwynneStormbinder2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Stanyer Iron Hewer - HH", Addresses.HOH_StanyerIronHewer2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Woden the Mighty - HH", Addresses.HOH_WodenTheMighty2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Bloodmonath - HH", Addresses.HOH_BloodmonathSkullCleaver2, "18", "9999"),
+                new GenericItemsData("Gold Coins: Karl Sturngard - HH", Addresses.HOH_KarlStungard2, "18", "9999"),
             };
-            return hallOfHeroeVisits;
+            return hallOfHeroesVisits;
         }
 
         private static List<GenericItemsData> GetDansCryptData()

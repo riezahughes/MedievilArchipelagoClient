@@ -224,15 +224,16 @@ try
     overlayOptions.TextColor = Archipelago.Core.Util.Overlay.Color.Yellow;
 
     var gameOverlay = new WindowsOverlayService(overlayOptions);
-    //gameOverlay.CreateFont("Assets/MediEvilFont.ttf", 12); // this doesn't work as intended.
+    
+    //var fontPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "MediEvilFont.ttf");
+    //Console.WriteLine(fontPath)
+    //gameOverlay.CreateFont(fontPath, 12);
 
     archipelagoClient.IntializeOverlayService(gameOverlay);
 
     archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
 
     GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
-
-
 
 #if DEBUG
 #else
@@ -443,6 +444,22 @@ void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceiv
 
 void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, ArchipelagoClient client)
 {
+    //_ = Memory.MonitorAddressForAction<ushort>(Addresses.EE_Pickup_StarRune,
+    //() => Console.WriteLine("Got STAR Rune!"),
+    //value => value == 4865);
+
+    //_ = Memory.MonitorAddressForAction<ushort>(Addresses.EE_Pickup_GoldCoinsChestInEgg,
+    //    () => Console.WriteLine("Got egg 1 Rune"),
+    //    value => value == 32768);
+
+    //_ = Memory.MonitorAddressForAction<ushort>(Addresses.EE_Pickup_CopperShieldInEgg,
+    //    () => Console.WriteLine("Got egg 2 Rune"),
+    //    value => value == 32768);
+
+    //_ = Memory.MonitorAddressForAction<ushort>(Addresses.EE_Pickup_EarthRune,
+    //    () => Console.WriteLine("Got egg 3 (Earth Rune)"),
+    //    value => value == 32768);
+
     if (client.GameState.ReceivedItems.Count >= client.CurrentSession.Items.AllItemsReceived.Count)
     {
 #if DEBUG

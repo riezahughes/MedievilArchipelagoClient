@@ -294,10 +294,10 @@ namespace MedievilArchipelago
         public const uint SF_Pickup_GoldCoinsLeftOfFireNearMoonDoor = 0x00130124;
         public const uint SF_Pickup_EnergyVialRightOfFireNearMoonDoor = 0x001301a4;
         public const uint SF_Pickup_MoonRune = 0x0012fc24;
+        public const uint SF_Pickup_ChaosRune = 0x0012fba4;
         public const uint SF_Pickup_EarthRune = 0x0012ffa4;
         public const uint SF_Pickup_ClubInsideHut = 0x00130d20;
         public const uint SF_Pickup_SilverShieldBehindWindmill = 0x00130de0;
-        public const uint SF_Pickup_ChaosRune = 0x0012fba4;
         public const uint SF_Pickup_GoldCoinsBagInTheBarn = 0x0012f7a4;
         public const uint SF_Pickup_CopperShieldChestInTheBarn = 0x001308a0;
         public const uint SF_Pickup_GoldCoinsCornfieldSquareNearBarn = 0x00130da4;

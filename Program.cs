@@ -28,6 +28,7 @@ using Archipelago.MultiClient.Net.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Kokuban;
+using System.Net;
 
 // set values
 const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
@@ -231,6 +232,8 @@ try
 
     GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
 
+
+
 #if DEBUG
 #else
     Console.Clear();
@@ -240,8 +243,6 @@ try
 
     _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient);
     _ = archipelagoClient.MonitorLocations(GameLocations);
-
-
 
     while (!cts.Token.IsCancellationRequested)
     {
@@ -456,7 +457,7 @@ void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, Archi
 void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCollection<long> newCheckedLocations)
     {
 #if DEBUG
-        Console.WriteLine($"Location CheckedLlocationsUpdated Firing.");
+        Console.WriteLine($"Location CheckedLocationsUpdated Firing.");
 #endif
     CheckGoalCondition();
 }

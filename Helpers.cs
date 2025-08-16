@@ -12,6 +12,7 @@ using System.Buffers.Text;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -308,10 +309,14 @@ namespace MedievilArchipelago
                                 continue;
                             };
                         }
+
                         if (loc.Name.Contains("Key Item:") || loc.Name.Contains("Chalice:") || loc.Name.Contains("Rune:") || loc.Name.Contains("Equipment:") || loc.Name.Contains("Gold Coins:") || loc.Name.Contains("Skill:") || loc.Name.Contains("Life Bottle:") || loc.Name.Contains("Energy Vial:") || loc.Name.Contains("HH") || loc.Name.Contains("Hall of Heroes") || loc.Name.Contains("Fairy"))
                         {
                             {
                                 List<ILocation> conditionalChoice = new List<ILocation>();
+
+                                bool checkForSFRune = loc.LevelId == "5" && (loc.Name.ToLower().Contains("chaos") || loc.Name.ToLower().Contains("moon"));
+
                                 conditionalChoice.Add(new Location()
                                 {
                                     Id = -1,
@@ -327,7 +332,7 @@ namespace MedievilArchipelago
                                     Id = -1,
                                     Name = "Pickup Check",
                                     Address = loc.Address,
-                                    CheckType = LocationCheckType.Int,
+                                    CheckType = checkForSFRune ? LocationCheckType.UShort : LocationCheckType.Int,
                                     CompareType = LocationCheckCompareType.Match,
                                     CheckValue = loc.Check
                                 });
@@ -339,10 +344,7 @@ namespace MedievilArchipelago
                                     CheckType = LocationCheckType.AND,
                                     Conditions = conditionalChoice
                                 };
-                                if (loc.Name.ToLower().Contains("rune")  && loc.LevelId == "5")
-                                {
-                                    Console.WriteLine($"{loc.Name}, {loc.Address:X}, {loc.Check}");
-                                }
+
                                 locations.Add(location);
                                 location_index++;
                                 continue;

@@ -185,15 +185,6 @@ namespace MedievilArchipelago
 
                         int locationId = (int)currentRegionBaseId + location_index;
 
-                        // option_excludesDynamicLocations
-
-
-                        if (loc.DynamicItem == true)
-                        {
-                            location_index++;
-                            continue;
-                        }
-
                         if (loc.Name.ToLower().Contains("in crystal"))
                         {
                             {

@@ -289,22 +289,22 @@ namespace MedievilArchipelago
 
         // Scarecrow Fields
 
-        public const uint SF_Pickup_GoldCoinsHaystackAtBeginning = 0x001de5d0;
-        public const uint SF_Pickup_GoldCoinsChestInHaystackNearMoonDoor = 0x001dafc0;
+        public const uint SF_Pickup_GoldCoinsHaystackAtBeginning = 0x0012f9f0;
+        public const uint SF_Pickup_GoldCoinsChestInHaystackNearMoonDoor = 0x0012f9b0;
         public const uint SF_Pickup_GoldCoinsLeftOfFireNearMoonDoor = 0x00130124;
         public const uint SF_Pickup_EnergyVialRightOfFireNearMoonDoor = 0x001301a4;
-        public const uint SF_Pickup_MoonRune = 0x001e4e44;
+        public const uint SF_Pickup_MoonRune = 0x0012fc24;
+        public const uint SF_Pickup_ChaosRune = 0x0012fba4;
         public const uint SF_Pickup_EarthRune = 0x0012ffa4;
         public const uint SF_Pickup_ClubInsideHut = 0x00130d20;
         public const uint SF_Pickup_SilverShieldBehindWindmill = 0x00130de0;
-        public const uint SF_Pickup_ChaosRune = 0x001e3b7c;
         public const uint SF_Pickup_GoldCoinsBagInTheBarn = 0x0012f7a4;
         public const uint SF_Pickup_CopperShieldChestInTheBarn = 0x001308a0;
         public const uint SF_Pickup_GoldCoinsCornfieldSquareNearBarn = 0x00130da4;
         public const uint SF_Pickup_GoldCoinsCornfieldPath1 = 0x00130024;
         public const uint SF_Pickup_EnergyVialCornfieldPath = 0x0012ffe4;
-        public const uint SF_Pickup_GoldCoinsChestUnderHaybail = 0x001dd17c;
-        public const uint SF_Pickup_GoldCoinsBagUnderBarnHaybail = 0x001ddf64;
+        public const uint SF_Pickup_GoldCoinsChestUnderHaybail = 0x0012f870;
+        public const uint SF_Pickup_GoldCoinsBagUnderBarnHaybail = 0x0012f830;
         public const uint SF_Pickup_GoldCoinsBagInThePress = 0x0012f5a4;
         public const uint SF_Pickup_GoldCoinsBagInTheSpinner = 0x0012f5e4;
         public const uint SF_Pickup_GoldCoinsChestNextToHarvesterPart = 0x0012f564;
@@ -336,15 +336,15 @@ namespace MedievilArchipelago
         public const uint EE_Pickup_GoldCoinsBagNearTreeHollow = 0x00130638;
         public const uint EE_Pickup_GoldCoinsBagBehindBigTree1 = 0x001304b8;
         public const uint EE_Pickup_GoldCoinsBagBehindBigTree2 = 0x001304f8;
-        public const uint EE_Pickup_EarthRune = 0x001d807c;
-        public const uint EE_Pickup_GoldCoinsChestInEgg = 0x001cf00c;
-        public const uint EE_Pickup_CopperShieldInEgg = 0x001d4630;
+        public const uint EE_Pickup_EarthRune = 0x00130478;
+        public const uint EE_Pickup_GoldCoinsChestInEgg = 0x00130438;
+        public const uint EE_Pickup_CopperShieldInEgg = 0x001303f8;
         public const uint EE_Pickup_GoldCoinsBagAtCaveEntrance = 0x00130678;
         public const uint EE_Pickup_ShadowTalisman = 0x0012fd38;
         public const uint EE_Pickup_EnergyVialShadowTalismanCave = 0x00130538;
         public const uint EE_Pickup_GoldCoinsBagInShadowTalismanCave = 0x00130538;
         public const uint EE_Pickup_GoldCoinsChestNearBarrier = 0x00130038;
-        public const uint EE_Pickup_StarRune = 0x001cf360;
+        public const uint EE_Pickup_StarRune = 0x0012f855;
         public const uint EE_Pickup_GoldCoinsChestLeftOfFountain = 0x0012fef8;
         public const uint EE_Pickup_GoldCoinsChestTopOfFountain = 0x0012feb8;
         public const uint EE_Pickup_GoldCoinsChestRightOfFountain = 0x0012ff38;
@@ -353,27 +353,27 @@ namespace MedievilArchipelago
         public const uint EE_Pickup_Chalice = 0x0012fd78;
 
         // The Sleeping Village
-        public const uint TSV_Pickup_GoldCoinsBagInLeftBarrelAtBlacksmith = 0x001ceafc;
-        public const uint TSV_Pickup_GoldCoinsBagInRightBarrelAtBlacksmith = 0x001cba90;
+        public const uint TSV_Pickup_GoldCoinsBagInLeftBarrelAtBlacksmith = 0x0012fc6c;
+        public const uint TSV_Pickup_GoldCoinsBagInRightBarrelAtBlacksmith = 0x0012fcec;
         public const uint TSV_Pickup_SilverShieldInBlacksmiths = 0x00131e2c;
         public const uint TSV_Pickup_GoldCoinsBagAtPond = 0x00131cb0;
         public const uint TSV_Pickup_EnergyVialAtPond = 0x00131530;
         public const uint TSV_Pickup_MoonRune = 0x0012f970;
-        public const uint TSV_Pickup_GoldCoinsBagInBarrelAtInn = 0x001cf57c;
-        public const uint TSV_Pickup_GoldCoinsBagInBarrelAtBottomOfInnStairs = 0x001d6dfc;
-        public const uint TSV_Pickup_GoldCoinsBagInBarrelBehindInnStairs = 0x001d6dfc;
+        public const uint TSV_Pickup_GoldCoinsBagInBarrelAtInn = 0x0012ff6c;
+        public const uint TSV_Pickup_GoldCoinsBagInBarrelAtBottomOfInnStairs = 0x0013126c;
+        public const uint TSV_Pickup_GoldCoinsBagInBarrelBehindInnStairs = 0x0013122c;
         public const uint TSV_Pickup_ClubInChestUnderInnStairs = 0x001314ac;
         public const uint TSV_Pickup_EarthRune = 0x00131c30;
         public const uint TSV_Pickup_EnergyVialBustSwitch = 0x001315f0;
-        public const uint TSV_Pickup_GoldCoinsBagInTopBustBarrel = 0x001c7e58;
-        public const uint TSV_Pickup_GoldCoinsBagInSwitchBustBarrel = 0x001cbe44;
+        public const uint TSV_Pickup_GoldCoinsBagInTopBustBarrel = 0x001310ac;
+        public const uint TSV_Pickup_GoldCoinsBagInSwitchBustBarrel = 0x0013102c;
         public const uint TSV_Pickup_LandlordsBust = 0x0012f670;
-        public const uint TSV_Pickup_ChaosRune = 0x001929c0;
+        public const uint TSV_Pickup_ChaosRune = 0x0012e8b0;
         public const uint TSV_Pickup_GoldCoinsBagInLibrary = 0x001319b0;
         public const uint TSV_Pickup_CrucifixCast = 0x0012f7f0;
-        public const uint TSV_Pickup_Crucifix = 0x00130730;
+        public const uint TSV_Pickup_Crucifix = 0x0015d682;
         public const uint TSV_Pickup_SafeKey = 0x0012f6f0;
-        public const uint TSV_Pickup_ShadowArtefact = 0x001cdc5c;
+        public const uint TSV_Pickup_ShadowArtefact = 0x001308f0;
         public const uint TSV_Pickup_GoldCoinsBagAtTopOfTable = 0x00130df0;
         public const uint TSV_Pickup_GoldCoinsBagAtBottomOfTable = 0x00131a30;
         public const uint TSV_Pickup_GoldCoinsChestNextToChalice = 0x001319f0;
@@ -420,17 +420,18 @@ namespace MedievilArchipelago
         public const uint TL_Pickup_GoldCoinsWhirlpoolWind1 = 0x00131b18;
         public const uint TL_Pickup_GoldCoinsWhirlpoolWind2 = 0x00131b58;
         public const uint TL_Pickup_GoldCoinsOutsideWhirlpoolExit = 0x00131a98;
+        public const uint TL_Pickup_GoldChestWhirlpoolSwitchArea = 0x0012f798;
         public const uint TL_Pickup_StarRune = 0x001311d8;
         public const uint TL_Pickup_Chalice = 0x00131218;
 
         // The Crystal Caves
         public const uint CC_Pickup_GoldCoinsBagAtWindingStaircase = 0x0012fc70;
-        public const uint CC_Pickup_GoldCoinsBagInCrystalAtStart = 0x001e0478;
+        public const uint CC_Pickup_GoldCoinsBagInCrystalAtStart = 0x0012e5f1;
         public const uint CC_Pickup_GoldCoinsBagInSpinner = 0x0012e870;
         public const uint CC_Pickup_EarthRune = 0x0012e8b0;
-        public const uint CC_Pickup_SilverShieldInCrystal = 0x001e0848;
+        public const uint CC_Pickup_SilverShieldInCrystal = 0x0012e7f1;
         public const uint CC_Pickup_GoldCoinsBagNearSilverShield = 0x0012fc30;
-        public const uint CC_Pickup_GoldCoinsChestInCrystalAfterEarthDoor = 0x001e3480;
+        public const uint CC_Pickup_GoldCoinsChestInCrystalAfterEarthDoor = 0x0012ed31;
         public const uint CC_Pickup_GoldCoinsBagInDragonRoom11stPlatform = 0x0012fa70;
         public const uint CC_Pickup_EnergyVialDragonRoom1stPlatform = 0x0012fab0;
         public const uint CC_Pickup_GoldCoinsBagInDragonRoom21stPlatform = 0x0012fa30;
@@ -446,14 +447,14 @@ namespace MedievilArchipelago
         public const uint CC_Pickup_GoldCoinsBagInDragonRoom4thPlatform2 = 0x0012f0f0;
         public const uint CC_Pickup_GoldCoinsBagOnLeftOfPool = 0x0012f7b0;
         public const uint CC_Pickup_GoldCoinsBagOnRightOfPool = 0x0012e930;
-        public const uint CC_Pickup_GoldCoinsChestInCrystalAfterPool = 0x001d9668;
+        public const uint CC_Pickup_GoldCoinsChestInCrystalAfterPool = 0x0012e653;
         public const uint CC_Pickup_DragonArmour = 0x0012f5f0;
         public const uint CC_Pickup_Chalice = 0x0012eff0;
 
         // The Gallows Gauntlet
         public const uint GG_Pickup_GoldCoinsBagBehindStoneDragon1 = 0x0012f2ac;
         public const uint GG_Pickup_GoldCoinsBagBehindStoneDragon2 = 0x0012f2ec;
-        public const uint GG_Pickup_SilverShieldInChestNearExit = 0x001b7428;
+        public const uint GG_Pickup_SilverShieldInChestNearExit = 0x0012e3e8;
         public const uint GG_Pickup_GoldCoinsChestAtSerpent = 0x0012f0ac;
         public const uint GG_Pickup_StarRune = 0x0012ecec;
         public const uint GG_Pickup_GoldCoinsChestNearStarEntrance = 0x0012f0ec;
@@ -464,7 +465,7 @@ namespace MedievilArchipelago
         public const uint AG_Pickup_GoldCoinsBagInBellGraveNearBell = 0x0012fb40;
         public const uint AG_Pickup_GoldCoinsBagInBellGraveNearEntrance = 0x0012fb80;
         public const uint AG_Pickup_GoldCoinsBagNearShootingStatue = 0x0012fa80;
-        public const uint AG_Pickup_SilverShieldInChestBehindDoor = 0x001c7144;
+        public const uint AG_Pickup_SilverShieldInChestBehindDoor = 0x0012fc7c;
         public const uint AG_Pickup_GoldCoinsBagInRatGrave = 0x0012fbc0;
         public const uint AG_Pickup_ChaosRune = 0x0012f400;
         public const uint AG_Pickup_GoldCoinsBehindChaosGate = 0x0012fb00;
@@ -474,15 +475,16 @@ namespace MedievilArchipelago
         public const uint AG_Pickup_Chalice = 0x0012fa00;
 
         // Inside the Aslyum
-        public const uint IA_Pickup_EnergyVialBatRoom = 0x001b5eb8;
-        public const uint IA_Pickup_GoldCoinsBagInBatRoomLeft = 0x001b62f0;
-        public const uint IA_Pickup_GoldCoinsChestInBatRoom = 0x001b4f60;
-        public const uint IA_Pickup_GoldCoinsBagInBatRoomCentre = 0x001b1a34;
-        public const uint IA_Pickup_SilverShieldInBatRoom = 0x001b8b34;
-        public const uint IA_Pickup_GoldCoinsBagInBatRoomRight = 0x001b6e8c;
-        public const uint IA_Pickup_EnergyVialAsylumRoom1 = 0x001b8a7c;
-        public const uint IA_Pickup_EnergyVialAsylumRoom2 = 0x001b4418;
-        public const uint IA_Pickup_GoldCoinsBagInAsylumRoom = 0x001b86c8;
+        public const uint IA_MonsterKills = 0x000ee9b4;
+        public const uint IA_Pickup_EnergyVialBatRoom = 0x0012F1A8;
+        public const uint IA_Pickup_GoldCoinsBagInBatRoomLeft = 0x0012F068;
+        public const uint IA_Pickup_GoldCoinsChestInBatRoom = 0x0012F0A8;
+        public const uint IA_Pickup_GoldCoinsBagInBatRoomCentre = 0x0012F0E8;
+        public const uint IA_Pickup_SilverShieldInBatRoom = 0x0012F168;
+        public const uint IA_Pickup_GoldCoinsBagInBatRoomRight = 0x0012F168;
+        public const uint IA_Pickup_EnergyVialAsylumRoom1 = 0x0012F1E8;
+        public const uint IA_Pickup_EnergyVialAsylumRoom2 = 0x0012F228;
+        public const uint IA_Pickup_GoldCoinsBagInAsylumRoom = 0x0012F268;
         public const uint IA_Pickup_GoldCoinsBagInSewerPrisonEntrance = 0x0012f2e4;
         public const uint IA_Pickup_GoldCoinsBagOnSewerPrisonBench = 0x0012f324;
         public const uint IA_Pickup_EarthRune = 0x0012efa4;
@@ -504,7 +506,7 @@ namespace MedievilArchipelago
         public const uint PG_Pickup_EnergyVialTopOfHill = 0x00132808;
         public const uint PG_Pickup_StarRune = 0x00131948;
         public const uint PG_Pickup_SilverShieldInChestAtTopOfHill = 0x00132c44;
-        public const uint PG_Pickup_TimeRune = 0x000f8278;
+        public const uint PG_Pickup_TimeRune = 0x000ee3c0;
         public const uint PG_Pickup_EnergyVialBouldersAfterStarRune = 0x00132c88;
         public const uint PG_Pickup_GoldCoinsChestAtBouldersAfterStarRune = 0x00132cc8;
         public const uint PG_Pickup_EnergyVialVinePatchLeft = 0x00132c08;
@@ -530,7 +532,7 @@ namespace MedievilArchipelago
         public const uint HR_Pickup_GoldCoinsNearFirstSetOfFarmers = 0x00130958;
         public const uint HR_Pickup_EnergyVialAboveRune = 0x00130a18;
         public const uint HR_Pickup_EnergyVialCornerOfWalls1 = 0x00130a58;
-        public const uint HR_Pickup_SilverShieldInChestNearRuneDoor = 0x001d99b4;
+        public const uint HR_Pickup_SilverShieldInChestNearRuneDoor = 0x00130994;
         public const uint HR_Pickup_EnergyVialCornerOfWalls2 = 0x00130a98;
         public const uint HR_Pickup_EnergyVialCornerOfWalls3 = 0x00130ad8;
         public const uint HR_Pickup_EnergyVialUpFromOil = 0x00130918;
@@ -547,7 +549,7 @@ namespace MedievilArchipelago
         // The Ghost Ship
         public const uint GS_Pickup_MoonRune = 0x0012ed64;
         public const uint GS_Pickup_GoldCoinsBagInRollingBarrelsRoom = 0x0012fde4;
-        public const uint GS_Pickup_SilverShieldInChestInBarrelRoom = 0x001cde00;
+        public const uint GS_Pickup_SilverShieldInChestInBarrelRoom = 0x00130160;
         public const uint GS_Pickup_GoldCoinsBagOnDeckAtBarrels = 0x0012f264;
         public const uint GS_Pickup_EnergyVialInCabin = 0x00130124;
         public const uint GS_Pickup_StarRune = 0x0012ede4;
@@ -557,7 +559,7 @@ namespace MedievilArchipelago
         public const uint GS_Pickup_EnergyVialRopeBridge1 = 0x001301e4;
         public const uint GS_Pickup_EnergyVialRopeBridge2 = 0x001301a4;
         public const uint GS_Pickup_GoldCoinsRopeBridge = 0x0012fe64;
-        public const uint GS_Pickup_ClubInChestAtCaptain = 0x001c9a34;
+        public const uint GS_Pickup_ClubInChestAtCaptain = 0x0012fea0;
         public const uint GS_Pickup_EnergyVialCageLift1 = 0x0012f764;
         public const uint GS_Pickup_EnergyVialCageLift2 = 0x00130264;
         public const uint GS_Pickup_Chalice = 0x0012ece4;
@@ -567,7 +569,7 @@ namespace MedievilArchipelago
 
         // The Time Device
 
-        public const uint TD_Pickup_SilverShieldOnClock = 0x001d8b7c;
+        public const uint TD_Pickup_SilverShieldOnClock = 0x001306d4;
         public const uint TD_Pickup_TimeRune = 0x0012e258;
         public const uint TD_Pickup_ChaosRune = 0x0012ef18;
         public const uint TD_Pickup_GoldCoinsLaserPlatformRight = 0x0012f098;

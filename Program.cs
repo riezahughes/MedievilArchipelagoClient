@@ -28,6 +28,7 @@ using Archipelago.MultiClient.Net.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Kokuban;
+using System.Net;
 
 // set values
 const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
@@ -223,7 +224,10 @@ try
     overlayOptions.TextColor = Archipelago.Core.Util.Overlay.Color.Yellow;
 
     var gameOverlay = new WindowsOverlayService(overlayOptions);
-    //gameOverlay.CreateFont("Assets/MediEvilFont.ttf", 12); // this doesn't work as intended.
+    
+    //var fontPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "MediEvilFont.ttf");
+    //Console.WriteLine(fontPath)
+    //gameOverlay.CreateFont(fontPath, 12);
 
     archipelagoClient.IntializeOverlayService(gameOverlay);
 
@@ -240,8 +244,6 @@ try
 
     _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient);
     _ = archipelagoClient.MonitorLocations(GameLocations);
-
-
 
     while (!cts.Token.IsCancellationRequested)
     {
@@ -442,6 +444,22 @@ void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceiv
 
 void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, ArchipelagoClient client)
 {
+    //_ = Memory.MonitorAddressForAction<ushort>(Addresses.EE_Pickup_StarRune,
+    //() => Console.WriteLine("Got STAR Rune!"),
+    //value => value == 4865);
+
+    //_ = Memory.MonitorAddressForAction<ushort>(Addresses.EE_Pickup_GoldCoinsChestInEgg,
+    //    () => Console.WriteLine("Got egg 1 Rune"),
+    //    value => value == 32768);
+
+    //_ = Memory.MonitorAddressForAction<ushort>(Addresses.EE_Pickup_CopperShieldInEgg,
+    //    () => Console.WriteLine("Got egg 2 Rune"),
+    //    value => value == 32768);
+
+    //_ = Memory.MonitorAddressForAction<ushort>(Addresses.EE_Pickup_EarthRune,
+    //    () => Console.WriteLine("Got egg 3 (Earth Rune)"),
+    //    value => value == 32768);
+
     if (client.GameState.ReceivedItems.Count >= client.CurrentSession.Items.AllItemsReceived.Count)
     {
 #if DEBUG
@@ -456,7 +474,7 @@ void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, Archi
 void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCollection<long> newCheckedLocations)
     {
 #if DEBUG
-        Console.WriteLine($"Location CheckedLlocationsUpdated Firing.");
+        Console.WriteLine($"Location CheckedLocationsUpdated Firing.");
 #endif
     CheckGoalCondition();
 }

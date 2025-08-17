@@ -18,9 +18,8 @@ namespace MedievilArchipelago.Models
         public string Check {  get; set; }
 
         public bool IsInChest { get; set; }
-        public bool DynamicItem { get; set; }
 
-        public GenericItemsData(string name, uint locationAddress, string levelId, string check, bool isChest = false, bool isDynamicItem = false, int id = 0)
+        public GenericItemsData(string name, uint locationAddress, string levelId, string check, bool isChest = false, int id = 0)
         {
             Name = name;
             Id = id;
@@ -28,7 +27,6 @@ namespace MedievilArchipelago.Models
             LevelId = levelId;
             Check = check;
             IsInChest = isChest;
-            DynamicItem = isDynamicItem;
         }
     }
 }

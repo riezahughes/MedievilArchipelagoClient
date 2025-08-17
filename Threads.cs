@@ -28,6 +28,22 @@ namespace MedievilArchipelago
 
         }
 
+        static internal void UpdateAsylumDynamicDrops()
+        {
+            List<uint> drops = [
+                Addresses.IA_Pickup_GoldCoinsChestInBatRoom,
+                Addresses.IA_Pickup_EnergyVialBatRoom,
+                Addresses.IA_Pickup_GoldCoinsBagInBatRoomCentre,
+                Addresses.IA_Pickup_GoldCoinsBagInBatRoomLeft,
+                Addresses.IA_Pickup_GoldCoinsBagInBatRoomRight
+            ];
+
+            foreach (uint drop in drops)
+            {
+                Memory.WriteByte(drop, 0x07);
+            }
+        }
+
         static internal void UpdateHallOfHeroesTable() 
         {
             // counting from base address to the item choice
@@ -80,11 +96,21 @@ namespace MedievilArchipelago
 
                 UpdateChestLocations(client, currentLocation);
 
+                if (currentLocation == 14)
+                {
+                    UpdateAsylumDynamicDrops();
+                }
+
                 while (true)
                 {
                     // checks against current levels and updates chest entities
                     byte checkCurrentLevel = Memory.ReadByte(Addresses.CurrentLevel);
                     short checkQueenAntStatus = Memory.ReadShort(Addresses.TA_BossHealth);
+
+                    if (currentLocation == 14)
+                    {
+                        UpdateAsylumDynamicDrops();
+                    }
 
                     if (currentLocation == 7 && checkQueenAntStatus == 0x03e8) // if we're in the ant hill and the queens hp has spawned
                     {

@@ -454,7 +454,7 @@ namespace MedievilArchipelago
         // The Gallows Gauntlet
         public const uint GG_Pickup_GoldCoinsBagBehindStoneDragon1 = 0x0012f2ac;
         public const uint GG_Pickup_GoldCoinsBagBehindStoneDragon2 = 0x0012f2ec;
-        public const uint GG_Pickup_SilverShieldInChestNearExit = 0x001b7428;
+        public const uint GG_Pickup_SilverShieldInChestNearExit = 0x0012e3e8;
         public const uint GG_Pickup_GoldCoinsChestAtSerpent = 0x0012f0ac;
         public const uint GG_Pickup_StarRune = 0x0012ecec;
         public const uint GG_Pickup_GoldCoinsChestNearStarEntrance = 0x0012f0ec;
@@ -475,15 +475,16 @@ namespace MedievilArchipelago
         public const uint AG_Pickup_Chalice = 0x0012fa00;
 
         // Inside the Aslyum
-        public const uint IA_Pickup_EnergyVialBatRoom = 0x001b5eb8;
-        public const uint IA_Pickup_GoldCoinsBagInBatRoomLeft = 0x001b62f0;
-        public const uint IA_Pickup_GoldCoinsChestInBatRoom = 0x001b4f60;
-        public const uint IA_Pickup_GoldCoinsBagInBatRoomCentre = 0x001b1a34;
-        public const uint IA_Pickup_SilverShieldInBatRoom = 0x001b8b34;
-        public const uint IA_Pickup_GoldCoinsBagInBatRoomRight = 0x001b6e8c;
-        public const uint IA_Pickup_EnergyVialAsylumRoom1 = 0x001b8a7c;
-        public const uint IA_Pickup_EnergyVialAsylumRoom2 = 0x001b4418;
-        public const uint IA_Pickup_GoldCoinsBagInAsylumRoom = 0x001b86c8;
+        public const uint IA_MonsterKills = 0x000ee9b4;
+        public const uint IA_Pickup_EnergyVialBatRoom = 0x0012F1A8;
+        public const uint IA_Pickup_GoldCoinsBagInBatRoomLeft = 0x0012F068;
+        public const uint IA_Pickup_GoldCoinsChestInBatRoom = 0x0012F0A8;
+        public const uint IA_Pickup_GoldCoinsBagInBatRoomCentre = 0x0012F0E8;
+        public const uint IA_Pickup_SilverShieldInBatRoom = 0x0012F168;
+        public const uint IA_Pickup_GoldCoinsBagInBatRoomRight = 0x0012F168;
+        public const uint IA_Pickup_EnergyVialAsylumRoom1 = 0x0012F1E8;
+        public const uint IA_Pickup_EnergyVialAsylumRoom2 = 0x0012F228;
+        public const uint IA_Pickup_GoldCoinsBagInAsylumRoom = 0x0012F268;
         public const uint IA_Pickup_GoldCoinsBagInSewerPrisonEntrance = 0x0012f2e4;
         public const uint IA_Pickup_GoldCoinsBagOnSewerPrisonBench = 0x0012f324;
         public const uint IA_Pickup_EarthRune = 0x0012efa4;
@@ -531,7 +532,7 @@ namespace MedievilArchipelago
         public const uint HR_Pickup_GoldCoinsNearFirstSetOfFarmers = 0x00130958;
         public const uint HR_Pickup_EnergyVialAboveRune = 0x00130a18;
         public const uint HR_Pickup_EnergyVialCornerOfWalls1 = 0x00130a58;
-        public const uint HR_Pickup_SilverShieldInChestNearRuneDoor = 0x001d99b4;
+        public const uint HR_Pickup_SilverShieldInChestNearRuneDoor = 0x00130994;
         public const uint HR_Pickup_EnergyVialCornerOfWalls2 = 0x00130a98;
         public const uint HR_Pickup_EnergyVialCornerOfWalls3 = 0x00130ad8;
         public const uint HR_Pickup_EnergyVialUpFromOil = 0x00130918;
@@ -548,7 +549,7 @@ namespace MedievilArchipelago
         // The Ghost Ship
         public const uint GS_Pickup_MoonRune = 0x0012ed64;
         public const uint GS_Pickup_GoldCoinsBagInRollingBarrelsRoom = 0x0012fde4;
-        public const uint GS_Pickup_SilverShieldInChestInBarrelRoom = 0x001cde00;
+        public const uint GS_Pickup_SilverShieldInChestInBarrelRoom = 0x00130160;
         public const uint GS_Pickup_GoldCoinsBagOnDeckAtBarrels = 0x0012f264;
         public const uint GS_Pickup_EnergyVialInCabin = 0x00130124;
         public const uint GS_Pickup_StarRune = 0x0012ede4;
@@ -558,7 +559,7 @@ namespace MedievilArchipelago
         public const uint GS_Pickup_EnergyVialRopeBridge1 = 0x001301e4;
         public const uint GS_Pickup_EnergyVialRopeBridge2 = 0x001301a4;
         public const uint GS_Pickup_GoldCoinsRopeBridge = 0x0012fe64;
-        public const uint GS_Pickup_ClubInChestAtCaptain = 0x001c9a34;
+        public const uint GS_Pickup_ClubInChestAtCaptain = 0x0012fea0;
         public const uint GS_Pickup_EnergyVialCageLift1 = 0x0012f764;
         public const uint GS_Pickup_EnergyVialCageLift2 = 0x00130264;
         public const uint GS_Pickup_Chalice = 0x0012ece4;
@@ -568,7 +569,7 @@ namespace MedievilArchipelago
 
         // The Time Device
 
-        public const uint TD_Pickup_SilverShieldOnClock = 0x001d8b7c;
+        public const uint TD_Pickup_SilverShieldOnClock = 0x001306d4;
         public const uint TD_Pickup_TimeRune = 0x0012e258;
         public const uint TD_Pickup_ChaosRune = 0x0012ef18;
         public const uint TD_Pickup_GoldCoinsLaserPlatformRight = 0x0012f098;

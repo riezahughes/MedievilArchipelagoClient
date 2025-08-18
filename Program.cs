@@ -937,7 +937,7 @@ void HeavyDanTrap()
 {
     byte[] defaultValue = BitConverter.GetBytes(0x0100);
     byte[] changedValue = BitConverter.GetBytes(0x0040);
-    TimeSpan duration = TimeSpan.FromSeconds(5);
+    TimeSpan duration = TimeSpan.FromSeconds(15);
     Memory.Write(Addresses.DanForwardSpeed, changedValue);
 
     Task.Delay(duration).ContinueWith(delegate
@@ -951,7 +951,7 @@ void LightDanTrap()
 {
     byte[] defaultValue = BitConverter.GetBytes(0x002f);
     byte[] changedValue = BitConverter.GetBytes(0x0064);
-    TimeSpan duration = TimeSpan.FromSeconds(5);
+    TimeSpan duration = TimeSpan.FromSeconds(15);
     Memory.Write(Addresses.DanJumpHeight, changedValue);
 
     Task.Delay(duration).ContinueWith(delegate
@@ -986,7 +986,7 @@ void HudlessTrap()
     byte[] ChangedChaliceIconX = BitConverter.GetBytes(0x0320);
     byte[] ChangedMoneyIconX = BitConverter.GetBytes(0x0320);
 
-    TimeSpan duration = TimeSpan.FromSeconds(5);
+    TimeSpan duration = TimeSpan.FromSeconds(15);
     Memory.Write(Addresses.WeaponIconX, ChangedWeaponIconX);
     Memory.Write(Addresses.ShieldIconX, ChangedShieldIconX);
     Memory.Write(Addresses.HealthbarX, ChangedHealthbarX);

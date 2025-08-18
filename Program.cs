@@ -301,6 +301,24 @@ try
 
 
         }
+#if DEBUG
+        else if (input?.Trim().ToLower() == "heavytrap")
+        {
+            HeavyDanTrap();
+        }
+        else if (input?.Trim().ToLower() == "lighttrap")
+        {
+            LightDanTrap();
+        }
+        else if (input?.Trim().ToLower() == "shieldtrap")
+        {
+            GoodbyeShieldTrap();
+        }
+        else if (input?.Trim().ToLower() == "hudtrap")
+        {
+            HudlessTrap();
+        }
+#endif
         else if (!string.IsNullOrWhiteSpace(input))
         {
             Console.WriteLine($"Unknown command: '{input}'");
@@ -401,7 +419,12 @@ void ItemReceived(object sender, ItemReceivedEventArgs args, ArchipelagoClient c
             case var x when x.Name.ContainsAny("Health", "Gold Coins", "Energy"): ReceiveStatItems(x); break;
             case var x when x.Name.ContainsAny("Daggers", "Ammo", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
             case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x); break;
-            case null: Console.WriteLine("Received an item with null data. Skipping."); break;
+            case var x when x.Name.Contains("Trap: Heavy Dan"): HeavyDanTrap(); break;
+            case var x when x.Name.Contains("Trap: Light Dan"): LightDanTrap(); break;
+            case var x when x.Name.Contains("Trap: Goodbye Shield"): GoodbyeShieldTrap(); break;
+            case var x when x.Name.Contains("Trap: Hudless"): HudlessTrap(); break;
+            case var x when x.Name.Contains("Trap: Lag"): RunLagTrap(); break;
+        case null: Console.WriteLine("Received an item with null data. Skipping."); break;
             default: Console.WriteLine($"Item not recognised. ({args.Item.Name}) Skipping"); break;
         };
 
@@ -428,13 +451,13 @@ void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceiv
 
         if (message.Contains($"{slot} found") || message.Contains($"{slot} sent"))
         {
-            bg = Chalk.BgBlue;
+            bg = message.Contains("Trap:") ? Chalk.BgRed : Chalk.BgBlue;
             fg = Chalk.White;
             prefix = " >> ";
         }
         else
         {
-            bg = Chalk.BgGreen;
+            bg = message.Contains("Trap:") ? Chalk.BgRed : Chalk.BgGreen;
             fg = Chalk.White;
             prefix = " << ";
         }
@@ -905,11 +928,83 @@ async void RunLagTrap()
     using (var lagTrap = new LagTrap(TimeSpan.FromSeconds(20)))
     {
         lagTrap.Start();
-        Console.WriteLine("Lag Trap activated for 20 seconds!");
         await lagTrap.WaitForCompletionAsync();
-        Console.WriteLine("Lag Trap ended.");
     }
 }
 
+void HeavyDanTrap()
 
-    
+{
+    byte[] defaultValue = BitConverter.GetBytes(0x0100);
+    byte[] changedValue = BitConverter.GetBytes(0x0040);
+    TimeSpan duration = TimeSpan.FromSeconds(5);
+    Memory.Write(Addresses.DanForwardSpeed, changedValue);
+
+    Task.Delay(duration).ContinueWith(delegate
+    {
+        Memory.Write(Addresses.DanForwardSpeed, defaultValue);
+    }, TaskScheduler.Default);
+
+}
+
+void LightDanTrap()
+{
+    byte[] defaultValue = BitConverter.GetBytes(0x002f);
+    byte[] changedValue = BitConverter.GetBytes(0x0064);
+    TimeSpan duration = TimeSpan.FromSeconds(5);
+    Memory.Write(Addresses.DanJumpHeight, changedValue);
+
+    Task.Delay(duration).ContinueWith(delegate
+    {
+        Memory.Write(Addresses.DanJumpHeight, defaultValue);
+    }, TaskScheduler.Default);
+}
+
+void GoodbyeShieldTrap()
+{
+    Memory.WriteByte(Addresses.ShieldDropped, 0x01);
+    Memory.WriteByte(Addresses.ShieldEquipped, 0x00);
+}
+
+void HudlessTrap()
+{
+
+    byte[] DefaultWeaponIconX = BitConverter.GetBytes(0x0018);
+    byte[] DefaultShieldIconX = BitConverter.GetBytes(0x0050);
+    byte[] DefaultHealthbarX = BitConverter.GetBytes(0x0100);
+    byte[] DefaultChaliceIconX = BitConverter.GetBytes(0x017e);
+    byte[] DefaultMoneyIconX = BitConverter.GetBytes(0x01b6);
+    byte[] DefaultWeaponIconY = BitConverter.GetBytes(0x001e);
+    byte[] DefaultShieldIconY = BitConverter.GetBytes(0x001e);
+    byte[] DefaultHealthbarY = BitConverter.GetBytes(0x0022);
+    byte[] DefaultChaliceIconY = BitConverter.GetBytes(0x001e);
+    byte[] DefaultMoneyIconY = BitConverter.GetBytes(0x001e);
+
+    byte[] ChangedWeaponIconX = BitConverter.GetBytes(0x0320);
+    byte[] ChangedShieldIconX = BitConverter.GetBytes(0x0320);
+    byte[] ChangedHealthbarX = BitConverter.GetBytes(0x0320);
+    byte[] ChangedChaliceIconX = BitConverter.GetBytes(0x0320);
+    byte[] ChangedMoneyIconX = BitConverter.GetBytes(0x0320);
+
+    TimeSpan duration = TimeSpan.FromSeconds(5);
+    Memory.Write(Addresses.WeaponIconX, ChangedWeaponIconX);
+    Memory.Write(Addresses.ShieldIconX, ChangedShieldIconX);
+    Memory.Write(Addresses.HealthbarX, ChangedHealthbarX);
+    Memory.Write(Addresses.ChaliceIconX, ChangedChaliceIconX);
+    Memory.Write(Addresses.MoneyIconX, ChangedMoneyIconX);
+
+    Task.Delay(duration).ContinueWith(delegate
+    {
+        Memory.Write(Addresses.WeaponIconX, DefaultWeaponIconX);
+        Memory.Write(Addresses.ShieldIconX, DefaultShieldIconX);
+        Memory.Write(Addresses.HealthbarX,DefaultHealthbarX);
+        Memory.Write(Addresses.ChaliceIconX, DefaultChaliceIconX);
+        Memory.Write(Addresses.MoneyIconX,DefaultMoneyIconX);
+        Memory.Write(Addresses.WeaponIconY, DefaultWeaponIconY);
+        Memory.Write(Addresses.ShieldIconY, DefaultShieldIconY);
+        Memory.Write(Addresses.HealthbarY, DefaultHealthbarY);
+        Memory.Write(Addresses.ChaliceIconY, DefaultChaliceIconY);
+        Memory.Write(Addresses.MoneyIconY, DefaultMoneyIconY);
+    }, TaskScheduler.Default);
+
+}

@@ -25,6 +25,7 @@ namespace MedievilArchipelago
         public const uint WinConditionCredits = 0x00010038;
 
         public const uint FairyCount = 0x001D5680;
+
         /*
             0x00=None/Out of Game
             0x01=The Graveyard
@@ -55,8 +56,27 @@ namespace MedievilArchipelago
 
         public const uint CurrentHP = 0x000f81ac;
 
+        public const uint DanForwardSpeed = 0x000d5110;
+
+        public const uint DanJumpHeight = 0x000d5126;
+
+        public const uint DanDropShield = 0x000F81BE;
+
         public const uint CurrentChalicePercentage = 0x000f82c0;
         // 0x1000 (4096) = 100%
+
+
+        public const uint WeaponIconX =	0x000DD78C;
+        public const uint WeaponIconY =	0x000DD78E;
+        public const uint ShieldIconX =	0x000DD798;
+        public const uint ShieldIconY =	0x000DD79A;
+        public const uint HealthbarX =	0x000DD7A4;
+        public const uint HealthbarY =	0x000DD7A6;
+        public const uint ChaliceIconX = 0x000DD7BC;
+        public const uint ChaliceIconY = 0x000DD7BE;
+        public const uint MoneyIconX =	0x000DD7C8;
+        public const uint MoneyIconY =	0x000DD7CA;
+
 
         public const uint DaringDashSkill = 0x000F81C4;
 
@@ -170,6 +190,7 @@ namespace MedievilArchipelago
         // Dans Hands
         public const uint ItemEquipped = 0x000f81b8;
         public const uint ShieldEquipped = 0x000f81bc;
+        public const uint ShieldDropped = 0x000F81BE;
 
         // Items Without Ammo
         public const uint SmallSword = 0x000f822c;

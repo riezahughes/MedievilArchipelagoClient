@@ -33,8 +33,9 @@ using System.Net;
 // set values
 const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
 const byte JP_OFFSET = 0; // could add more offsfets here
-const int percentageMax = 100;
+const int percentageMax = 4096;
 const int countMax = 32767;
+const int maxHealth = 300;
 
 // Connection details
 string url;
@@ -526,6 +527,7 @@ void UpdatePlayerState(System.Collections.ObjectModel.ReadOnlyCollection<Archipe
     // for each location that's coming in
     bool hasEquipableWeapon = false;
     int talismanCount = 0;
+    bool hasTalisman = false;
 
     foreach (ItemInfo itemInf in itemsCollected)
     {
@@ -543,8 +545,8 @@ void UpdatePlayerState(System.Collections.ObjectModel.ReadOnlyCollection<Archipe
             case var x when x.Name.ContainsAny("Ammo"):
                 // no plans yet
                 break;
-            case var x when talismanCount == 2:
-                ReceiveTalismanAndArtefact();
+            case var x when x.Name.ContainsAny("Charge"):
+                // no plans yet
                 break;
             case var x when x.Name.Contains("Skill"): ReceiveSkill(x); break;
             case var x when x.Name.Contains("Equipment"):
@@ -555,13 +557,22 @@ void UpdatePlayerState(System.Collections.ObjectModel.ReadOnlyCollection<Archipe
                 }
                 break;
             case var x when x.Name.Contains("Life Bottle"): ReceiveLifeBottle(); break;
-            case var x when x.Name.Contains("Soul Helmet"): ReceiveSoulHelmet(); break;
+            case var x when x.Name.Contains("Soul Helmet"): 
+                ReceiveSoulHelmet();
+                break;
             case var x when x.Name.Contains("Dragon Gem"): ReceiveDragonGem(); break;
             case var x when x.Name.Contains("Amber"): ReceiveAmber(); break;
             case var x when x.Name.Contains("Key Item"): ReceiveKeyItem(x); break;
             case var x when x.Name.Contains("Cleared"): ReceiveLevelCleared(x); break;
             case var x when x.Name.Contains("Chalice"): ReceiveChaliceComplete(x); break;
 
+        }
+
+
+        if(talismanCount == 2 && !hasTalisman)
+        {
+            ReceiveTalismanAndArtefact();
+            hasTalisman = true;
         }
 
         usedItems.Add(itm.Name);
@@ -645,6 +656,8 @@ void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAd
 {
     var currentNumberAmount = Memory.ReadShort(itemMemoryAddress);
 
+    var chargeConversion = numberUpdate == 50 ? 2048 : numberUpdate == 20 ? 819 : 0;
+
     if(currentNumberAmount == -1 && itemName.ContainsAny("Ammo", "Charge")){
         return;
     }
@@ -665,19 +678,35 @@ void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAd
     // how much of this is "too much" as it says in the docs to use it sparingly. Loading Dan's state should be fine though. Hopefully.
     // just need to make sure to not trigger the state until you are actually loaded into a level.
 
-    int maxValue = isCountType ? countMax : percentageMax; // Max count limit for gold, percentage for energy
+    int maxValue = 0;
 
-    var newNumberAmount = isEquipmentType ? 0 : Math.Min(currentNumberAmount + numberUpdate, maxValue); // Max count limit
+    if (itemName.ContainsAny("Health", "Energy"))
+    {
+        maxValue = maxHealth;
+    } else {
+        maxValue = isCountType ? countMax : percentageMax; // Max count limit for gold, percentage for energy
+    }
 
-    SetItemMemoryValue(itemMemoryAddress, newNumberAmount, countMax);
+
+    var newNumberAmount = isCountType ? Math.Min(currentNumberAmount + numberUpdate, maxValue) : Math.Min(currentNumberAmount + chargeConversion, maxValue); // Max count limit
+
+    var baseValue = isEquipmentType ? 0 : newNumberAmount;
+
+    //Console.WriteLine($"Name: {itemName}, current: {currentNumberAmount}, adding: {numberUpdate}");
+
+    SetItemMemoryValue(itemMemoryAddress, baseValue, countMax);
 
     // if you're getting a piece of equipment like the longbow/crossbow/spear/etc give it some ammo.
     if (isEquipmentType && isCountType)
     {
-        SetItemMemoryValue(itemMemoryAddress, 100, countMax);
+        var ammoToAdd = currentNumberAmount == -1 ? 100 : newNumberAmount;
+        //Console.WriteLine($"Name: {itemName}, Ammo count: {ammoToAdd}");
+        SetItemMemoryValue(itemMemoryAddress, ammoToAdd, countMax);
     } else if (isEquipmentType && !isCountType)
     {
-        SetItemMemoryValue(itemMemoryAddress, 4096, countMax);
+        var ammoToAdd = currentNumberAmount == -1 ? 4096 : newNumberAmount;
+        //Console.WriteLine($"Name: {itemName}, Charge count: {ammoToAdd}");
+        SetItemMemoryValue(itemMemoryAddress, ammoToAdd, countMax);
     }
 
 }
@@ -745,7 +774,7 @@ void ReceiveCountType(Item item)
     var amount = ExtractBracketAmount(item.Name);
     var name = ExtractDictName(item.Name);
 
-    UpdateCurrentItemValue(item.Name, amount, addressDict["Ammo"][name], true, false);
+    UpdateCurrentItemValue(item.Name, amount, addressDict["Ammo"][name], true, true);
 }
 
 void ReceiveChargeType(Item item)
@@ -754,7 +783,7 @@ void ReceiveChargeType(Item item)
     var amount = ExtractBracketAmount(item.Name);
     var name = ExtractDictName(item.Name);
 
-    UpdateCurrentItemValue(item.Name, amount, addressDict["Ammo"][name], false, false);
+    UpdateCurrentItemValue(item.Name, amount, addressDict["Ammo"][name], false, true);
 }
 
 void ReceiveEquipment(Item item)

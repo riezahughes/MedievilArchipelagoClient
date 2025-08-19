@@ -559,8 +559,6 @@ void UpdatePlayerState(System.Collections.ObjectModel.ReadOnlyCollection<Archipe
             case var x when x.Name.Contains("Amber"): ReceiveAmber(); break;
             case var x when x.Name.Contains("Key Item"): ReceiveKeyItem(x); break;
             case var x when x.Name.Contains("Cleared"): ReceiveLevelCleared(x); break;
-            case var x when x.Name.Contains("Chalice"): ReceiveChaliceComplete(x); break;
-
         }
 
 
@@ -801,14 +799,6 @@ void ReceiveLevelCleared(Item level)
     UpdateCurrentItemValue(level.Name, 16, addressDict["Level Status"][name], true, true);
 }
 
-void ReceiveChaliceComplete(Item level)
-{
-    var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-    var name = ExtractDictName(level.Name);
-
-    UpdateCurrentItemValue(level.Name, 19, addressDict["Level Status"][name], true, true);
-}
-
 void ReceiveKeyItem(Item item)
 {
     // commented out because i need to make a list of player data addresses to deal with this.
@@ -934,8 +924,9 @@ void LightDanTrap()
 
 void GoodbyeShieldTrap()
 {
-    Memory.WriteByte(Addresses.ShieldDropped, 0x01);
-    Memory.WriteByte(Addresses.ShieldEquipped, 0x00);
+    Console.WriteLine("Goodbye Shield Disabled due to bug! Sorry!");
+    //Memory.WriteByte(Addresses.ShieldDropped, 0x01);
+    //Memory.WriteByte(Addresses.ShieldEquipped, 0x00);
 }
 
 void HudlessTrap()

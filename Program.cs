@@ -451,47 +451,26 @@ void Client_MessageReceived(object sender, Archipelago.Core.Models.MessageReceiv
 
         if (message.Contains($"{slot} found") || message.Contains($"{slot} sent"))
         {
-            bg = message.Contains("Trap:") ? Chalk.BgRed : Chalk.BgBlue;
+            bg = message.Contains("Trap:") ? Chalk.BgRed : message.Contains("Congratulations") ? Chalk.Yellow : Chalk.BgBlue;
             fg = Chalk.White;
             prefix = " >> ";
         }
         else
         {
-            bg = message.Contains("Trap:") ? Chalk.BgRed : Chalk.BgGreen;
+            bg = message.Contains("Trap:") ? Chalk.BgRed : message.Contains("Congratulations") ? Chalk.Yellow : Chalk.BgGreen;
             fg = Chalk.White;
             prefix = " << ";
         }
 
         Console.WriteLine(bg + (fg + $"{prefix} {message} "));
-
 }
 
 void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, ArchipelagoClient client)
 {
-    //_ = Memory.MonitorAddressForAction<ushort>(Addresses.EE_Pickup_StarRune,
-    //() => Console.WriteLine("Got STAR Rune!"),
-    //value => value == 4865);
-
-    //_ = Memory.MonitorAddressForAction<ushort>(Addresses.EE_Pickup_GoldCoinsChestInEgg,
-    //    () => Console.WriteLine("Got egg 1 Rune"),
-    //    value => value == 32768);
-
-    //_ = Memory.MonitorAddressForAction<ushort>(Addresses.EE_Pickup_CopperShieldInEgg,
-    //    () => Console.WriteLine("Got egg 2 Rune"),
-    //    value => value == 32768);
-
-    //_ = Memory.MonitorAddressForAction<ushort>(Addresses.EE_Pickup_EarthRune,
-    //    () => Console.WriteLine("Got egg 3 (Earth Rune)"),
-    //    value => value == 32768);
-
-    if (client.GameState.ReceivedItems.Count >= client.CurrentSession.Items.AllItemsReceived.Count)
-    {
 #if DEBUG
-                Console.WriteLine($"LocationCompleted Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
+        Console.WriteLine($"LocationCompleted Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
 #endif
-        UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
         CheckGoalCondition();
-    }
 }
 
 
@@ -507,14 +486,7 @@ void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCo
 
 void CheckGoalCondition()
 {
-
-    // If you 
-
-    if (GameLocations == null || archipelagoClient.CurrentSession?.Locations?.AllLocationsChecked == null)
-        return;
-
-
-    if (archipelagoClient?.GameState.CompletedLocations.Any(x => x.Name == "Cleared: Zaroks Lair") == true)
+    if (archipelagoClient?.GameState.CompletedLocations.Any(x => x.Name.Equals("Cleared: Zaroks Lair")) == true)
     {
         archipelagoClient.SendGoalCompletion();
         Console.WriteLine("Defeated Zarok");

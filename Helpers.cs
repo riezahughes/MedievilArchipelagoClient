@@ -302,40 +302,33 @@ namespace MedievilArchipelago
                             };
                         }
 
+                        if (loc.Name.Contains("Cleared: Zaroks Lair")) // if it's cleared and we don't have an option set 
+                        {
+                            Location location = (new Location()
+                            {
+                                Id = locationId,
+                                Name = "Cleared: Zaroks Lair",
+                                Address = loc.Address,
+                                CheckType = LocationCheckType.Byte,
+                                CompareType = LocationCheckCompareType.Match,
+                                CheckValue = "101"
+                            });
+                            locations.Add(location);
+                            location_index++;
+                            continue;
+                        }
+
                         if (loc.Name.Contains("Cleared:")) // if it's cleared and we don't have an option set 
                         {
                             {
-                                List<ILocation> conditionalChoice = new List<ILocation>();
-
-                                conditionalChoice.Add(new Location()
+                                Location location = (new Location()
                                 {
-                                    Id = -1,
-                                    Name = "Level Check",
-                                    Address = Addresses.CurrentLevel,
-                                    CheckType = LocationCheckType.Byte,
-                                    CompareType = LocationCheckCompareType.Match,
-                                    CheckValue = "0"
-                                });
-
-                                conditionalChoice.Add(new Location()
-                                {
-                                    Id = -1,
-                                    Name = "Cleared Check",
-                                    Address = loc.Address,
-                                    CheckType = LocationCheckType.Byte,
-                                    CompareType = LocationCheckCompareType.Match,
-                                    CheckValue = loc.Name == "Cleared: Zaroks Lair" ? "101" : "17" // if zarok clear
-                                });
-
-                                CompositeLocation location = new CompositeLocation()
-                                {
-                                    Name = loc.Name,
                                     Id = locationId,
-                                    CheckType = LocationCheckType.AND,
-                                    Conditions = conditionalChoice
-
-                                };
-
+                                    Name = "Level Cleared Check",
+                                    Address = loc.Address,
+                                    CheckType = LocationCheckType.Bit,
+                                    AddressBit = 4
+                                });
                                 locations.Add(location);
                                 location_index++;
                                 continue;

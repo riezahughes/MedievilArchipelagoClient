@@ -78,7 +78,7 @@ namespace MedievilArchipelago
         public const uint MoneyIconY =	0x000DD7CA;
 
 
-        public const uint DaringDashSkill = 0x000F81C4;
+        public const uint DaringDashSkill = 0x000ee978;
 
         // Completed levels
         public const uint TG_LevelStatus = 0x000f81e1;

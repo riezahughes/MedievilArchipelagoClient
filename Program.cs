@@ -153,7 +153,7 @@ password = configuration["pass"];
 Console.WriteLine("Enter AP url: eg,archipelago.gg");
 string lineUrl = Console.ReadLine();
 
-url = string.IsNullOrWhiteSpace(lineUrl) ? "wss://archipelago.gg" : "wss://" + lineUrl;
+url = string.IsNullOrWhiteSpace(lineUrl) ? "archipelago.gg" : lineUrl;
 
 Console.WriteLine("Enter Port: eg, 80001");
 port = Console.ReadLine();

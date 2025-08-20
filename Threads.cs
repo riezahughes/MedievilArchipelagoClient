@@ -78,7 +78,7 @@ namespace MedievilArchipelago
         }
 
 
-        async public static Task PassiveLogicChecks(ArchipelagoClient client)
+        async public static Task PassiveLogicChecks(ArchipelagoClient client, CancellationToken cts)
         {
             await Task.Run(() =>
             {
@@ -101,67 +101,69 @@ namespace MedievilArchipelago
                     UpdateAsylumDynamicDrops();
                 }
 
-                while (true)
+                while (!cts.IsCancellationRequested)
                 {
-                    // checks against current levels and updates chest entities
-                    byte checkCurrentLevel = Memory.ReadByte(Addresses.CurrentLevel);
-                    short checkQueenAntStatus = Memory.ReadShort(Addresses.TA_BossHealth);
-
-                    if (currentLocation == 14)
+                    try
                     {
-                        UpdateAsylumDynamicDrops();
-                    }
+                        // checks against current levels and updates chest entities
+                        byte checkCurrentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+                        short checkQueenAntStatus = Memory.ReadShort(Addresses.TA_BossHealth);
 
-                    if (currentLocation == 7 && checkQueenAntStatus == 0x03e8) // if we're in the ant hill and the queens hp has spawned
-                    {
-                        UpdateInventoryWithAmber();
-                    }
-
-                    if (!firstLoop && checkCurrentLevel < 17 && checkCurrentLevel > 0)
-                    {
-                        UpdateChestLocations(client, checkCurrentLevel);
-                    }
-
-                    if (currentLocation != checkCurrentLevel)
-                    {
-                        currentLocation = checkCurrentLevel;
-                    }
-
-                    firstLoop = false;
-
-                    int currentChaliceCount = 0;
-                    var playerStatus = Helpers.StatusAndInventoryAddressDictionary();
-
-                    // for every level, read the status in memory. For ever level that matches either 19 (cleared) or 3 (picked up chalace, but havn't finished hall) increase the chalice count
-                    foreach (KeyValuePair<string, uint> ch in playerStatus["Level Status"])
-                    {
-                        int levelStatus = Memory.ReadByte(ch.Value);
-
-                        if (levelStatus == 19 || levelStatus == 3)
+                        if (currentLocation == 14)
                         {
-                            currentChaliceCount++;
+                            UpdateAsylumDynamicDrops();
                         }
 
-                    }
-                    // updates hall of heroes item dropped
+                        if (currentLocation == 7 && checkQueenAntStatus == 0x03e8) // if we're in the ant hill and the queens hp has spawned
+                        {
+                            UpdateInventoryWithAmber();
+                        }
 
-                    byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+                        if (!firstLoop && checkCurrentLevel < 17 && checkCurrentLevel > 0)
+                        {
+                            UpdateChestLocations(client, checkCurrentLevel);
+                        }
 
-                    if (currentLevel == 18)
-                    {
-                        UpdateHallOfHeroesTable();
-                    }
+                        if (currentLocation != checkCurrentLevel)
+                        {
+                            currentLocation = checkCurrentLevel;
+                        }
+
+                        firstLoop = false;
+
+                        int currentChaliceCount = 0;
+                        var playerStatus = Helpers.StatusAndInventoryAddressDictionary();
+
+                        // for every level, read the status in memory. For ever level that matches either 19 (cleared) or 3 (picked up chalace, but havn't finished hall) increase the chalice count
+                        foreach (KeyValuePair<string, uint> ch in playerStatus["Level Status"])
+                        {
+                            int levelStatus = Memory.ReadByte(ch.Value);
+
+                            if (levelStatus == 19 || levelStatus == 3)
+                            {
+                                currentChaliceCount++;
+                            }
+
+                        }
+                        // updates hall of heroes item dropped
+
+                        byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+
+                        if (currentLevel == 18)
+                        {
+                            UpdateHallOfHeroesTable();
+                        }
 
 
 
-                    short dialogueStatus = Memory.ReadShort(Addresses.HOH_ListenedToHero);
+                        short dialogueStatus = Memory.ReadShort(Addresses.HOH_ListenedToHero);
 
-                    // for debugging
-                    //Console.WriteLine($"{currentLevel} - {dialogueStatus} - {!processedChaliceCounts.Contains(currentChaliceCount)} - {client.IsConnected}");
+                        // for debugging
+                        //Console.WriteLine($"{currentLevel} - {dialogueStatus} - {!processedChaliceCounts.Contains(currentChaliceCount)} - {client.IsConnected}");
 
-                    if (currentLevel == 18 && dialogueStatus == 16 && !processedChaliceCounts.Contains(currentChaliceCount) && client.IsConnected)
-                    {
-                            
+                        if (currentLevel == 18 && dialogueStatus == 16 && !processedChaliceCounts.Contains(currentChaliceCount) && client.IsConnected)
+                        {
+
                             // check chalice count against all HOH entries.
                             switch (currentChaliceCount)
                             {
@@ -245,12 +247,20 @@ namespace MedievilArchipelago
                                     Memory.WriteByteArray(Addresses.HOH_MegwynneStormbinder2, updateValue);
                                     processedChaliceCounts.Add(currentChaliceCount);
                                     break;
+                            }
+
                         }
-       
                     }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Error in passive logic checks thread.");
+                    }
+                    #if DEBUG
+                        Console.WriteLine("Passive Checks...");
+                    #endif
                     Thread.Sleep(5000);
                 }
-            });
+            }, cts);
 
         }
     }

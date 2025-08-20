@@ -37,6 +37,8 @@ const int percentageMax = 4096;
 const int countMax = 32767;
 const int maxHealth = 300;
 
+bool firstRun = true;
+
 // Connection details
 string url;
 string port;
@@ -180,7 +182,7 @@ Console.WriteLine("Got the details! Attempting to connect to Archipelagos main s
 
 // Register event handlers
 archipelagoClient.Connected += (sender, args) => OnConnected(sender, args, archipelagoClient);
-archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args, archipelagoClient);
+archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args, archipelagoClient, firstRun);
 archipelagoClient.ItemReceived += (sender, args) => ItemReceived(sender, args, archipelagoClient);
 archipelagoClient.MessageReceived += (sender, args) => Client_MessageReceived(sender, args, archipelagoClient);
 archipelagoClient.LocationCompleted += (sender, args) => Client_LocationCompleted(sender, args, archipelagoClient); 
@@ -237,14 +239,26 @@ try
     GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
 
 #if DEBUG
+    foreach (var opt in archipelagoClient.Options)
+    {
+        Console.WriteLine($"Option: {opt.Key} - {opt.Value}");
+    }
+
 #else
     Console.Clear();
 #endif
-    Console.WriteLine("Client is connected and watching Medievil....");
 
+    //foreach (var location in GameLocations)
+    //{
+    //    Console.WriteLine($"ID: {location.Id} - {location.Name}");
+    //}
 
-    _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient);
+    _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, cts.Token);
     _ = archipelagoClient.MonitorLocations(GameLocations);
+
+
+
+    firstRun = false;
 
     while (!cts.Token.IsCancellationRequested)
     {
@@ -360,9 +374,9 @@ bool isInTheGame(){
 
 async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
 {
-    // if deathlink goes here
-    var deathLink = client.EnableDeathLink();
-    deathLink.OnDeathLinkReceived += (args) => KillPlayer();
+    //// if deathlink goes here
+    //var deathLink = client.EnableDeathLink();
+    //deathLink.OnDeathLinkReceived += (args) => KillPlayer();
 
     Log.Logger.Information("Connected to Archipelago");
     Log.Logger.Information($"Playing {client.CurrentSession.ConnectionInfo.Game} as {client.CurrentSession.Players.GetPlayerName(client.CurrentSession.ConnectionInfo.Slot)}");
@@ -370,7 +384,7 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
 
     Console.WriteLine("Checking if the game is over");
 
-    CheckGoalCondition();
+    //CheckGoalCondition();
 
     Console.WriteLine("Setting up player state..");
 
@@ -378,19 +392,37 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
         Console.WriteLine($"OnConnected Firing. Itemcount: {client.GameState.ReceivedItems.Count}");
 #endif
     UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
-    
+
+    // reset traps in case of client crashes
+
+    byte[] DefaultWeaponIconX = BitConverter.GetBytes(0x0018);
+    byte[] DefaultShieldIconX = BitConverter.GetBytes(0x0050);
+    byte[] DefaultHealthbarX = BitConverter.GetBytes(0x0100);
+    byte[] DefaultChaliceIconX = BitConverter.GetBytes(0x017e);
+    byte[] DefaultMoneyIconX = BitConverter.GetBytes(0x01b6);
+    byte[] DefaultWeaponIconY = BitConverter.GetBytes(0x001e);
+    byte[] DefaultShieldIconY = BitConverter.GetBytes(0x001e);
+    byte[] DefaultHealthbarY = BitConverter.GetBytes(0x0022);
+    byte[] DefaultChaliceIconY = BitConverter.GetBytes(0x001e);
+    byte[] DefaultMoneyIconY = BitConverter.GetBytes(0x001e);
+
+    byte[] defaultValue = BitConverter.GetBytes(0x002f);
+    byte[] defaultValuetwo = BitConverter.GetBytes(0x0100);
+
+
 
 }
 
 
 
-async void OnDisconnected(object sender, EventArgs args, ArchipelagoClient client)
+async void OnDisconnected(object sender, ConnectionChangedEventArgs args, ArchipelagoClient client, bool firstRun)
 {
-    if (client.GameState != null)
+    if (client.GameState == null && firstRun == false);
     {
 #if DEBUG
-            Console.WriteLine($"Disconnect Firing. Itemcount: {client.GameState.ReceivedItems.Count}");
+        Console.WriteLine($"Disconnect Firing. Itemcount: {client?.GameState?.ReceivedItems.Count}");
 #endif
+
         Console.WriteLine("Disconnected from Archipelago.");
     }
 }
@@ -971,3 +1003,4 @@ void HudlessTrap()
     }, TaskScheduler.Default);
 
 }
+

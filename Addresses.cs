@@ -166,6 +166,7 @@ namespace MedievilArchipelago
         public const uint CrucifixCast = 0x000F82A4;
 
         public const uint AmberPiece = 0x000F828C;
+        public const uint MaxAmberPieces = 0x000da16a;
         public const uint APAmberPieces = 0x00000730; // used to track amber pieces seperately, so a count can be made in the anthill correctly for checks.
         public const uint HarvesterParts = 0x000F8288;
         public const uint SkullKey = 0x000f8280;

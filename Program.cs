@@ -571,6 +571,7 @@ void UpdatePlayerState(System.Collections.ObjectModel.ReadOnlyCollection<Archipe
     SetItemMemoryValue(Addresses.SoulHelmet, 0, 0);
     SetItemMemoryValue(Addresses.DragonGem, 0, 0);
     SetItemMemoryValue(Addresses.APAmberPieces, 0, 0);
+    SetItemMemoryValue(Addresses.MaxAmberPieces, 10, 10);
 
     // for each location that's coming in
     bool hasEquipableWeapon = false;

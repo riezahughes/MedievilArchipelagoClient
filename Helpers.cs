@@ -320,7 +320,6 @@ namespace MedievilArchipelago
 
                         if (loc.Name.Contains("Cleared:")) // if it's cleared and we don't have an option set 
                         {
-                            {
                                 Location location = (new Location()
                                 {
                                     Id = locationId,
@@ -332,7 +331,6 @@ namespace MedievilArchipelago
                                 locations.Add(location);
                                 location_index++;
                                 continue;
-                            };
                         }
 
                         if (loc.Name.Contains("Skill:")) {
@@ -353,8 +351,9 @@ namespace MedievilArchipelago
                                 Id = -1,
                                 Name = "Skill Check",
                                 Address = loc.Address,
-                                CheckType = LocationCheckType.Bit,
-                                AddressBit = 2
+                                CheckType = LocationCheckType.UShort,
+                                CompareType = LocationCheckCompareType.Match,
+                                CheckValue = "257"
                             });
 
                             CompositeLocation location = new CompositeLocation()
@@ -741,7 +740,7 @@ namespace MedievilArchipelago
             List<GenericItemsData> rtgLocations = new List<GenericItemsData>() {
                 new GenericItemsData("Star Rune: Return to the Graveyard", Addresses.RTG_Pickup_StarRune, "2", "32896"),
                 new GenericItemsData("Equipment: Silver Shield in Chest at Shop", Addresses.RTG_Pickup_SilverShieldChestAtShop, "2", "32896", true),
-                new GenericItemsData("Skill: Daring Dash", Addresses.DaringDashSkill, "2", "257"),
+                new GenericItemsData("Skill: Daring Dash", Addresses.RTG_Pickup_DaringDash, "2", "257"),
                 new GenericItemsData("Energy Vial: Coffin Area West - RTG", Addresses.RTG_Pickup_EnergyVialCoffinAreaWest, "2", "32896"),
                 new GenericItemsData("Energy Vial: Coffin Area East - RTG", Addresses.RTG_Pickup_EnergyVialCoffinAreaEast, "2", "32896"),
                 new GenericItemsData("Energy Vial: Below Shop - RTG", Addresses.RTG_Pickup_EnergyVialBelowShop, "2", "32896"),

@@ -91,6 +91,12 @@ while (!clientInitializedAndConnected)
 bool connected = gameClient.Connect();
 var archipelagoClient = new ArchipelagoClient(gameClient);
 
+archipelagoClient.CancelMonitors();
+archipelagoClient.Connected -= (sender, args) => OnConnected(sender, args, archipelagoClient);
+archipelagoClient.Disconnected -= (sender, args) => OnDisconnected(sender, args, archipelagoClient, firstRun);
+archipelagoClient.ItemReceived -= (sender, args) => ItemReceived(sender, args, archipelagoClient);
+archipelagoClient.LocationCompleted -= (sender, args) => Client_LocationCompleted(sender, args, archipelagoClient);
+
 Console.WriteLine("Successfully connected to Duckstation.");
 
 // get the duckstation offset
@@ -177,8 +183,6 @@ if (string.IsNullOrWhiteSpace(slot))
 }
 #endif
 Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
-
-
 
 // Register event handlers
 archipelagoClient.Connected += (sender, args) => OnConnected(sender, args, archipelagoClient);
@@ -380,11 +384,8 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
 
     Log.Logger.Information("Connected to Archipelago");
     Log.Logger.Information($"Playing {client.CurrentSession.ConnectionInfo.Game} as {client.CurrentSession.Players.GetPlayerName(client.CurrentSession.ConnectionInfo.Slot)}");
-    Console.WriteLine("Connected to Archipelago!");
 
-    Console.WriteLine("Checking if the game is over");
-
-    //CheckGoalCondition();
+    CheckGoalCondition();
 
     Console.WriteLine("Setting up player state..");
 
@@ -406,11 +407,27 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
     byte[] DefaultChaliceIconY = BitConverter.GetBytes(0x001e);
     byte[] DefaultMoneyIconY = BitConverter.GetBytes(0x001e);
 
-    byte[] defaultValue = BitConverter.GetBytes(0x002f);
-    byte[] defaultValuetwo = BitConverter.GetBytes(0x0100);
+    byte[] defaultSpeedValue = BitConverter.GetBytes(0x0100);
+    byte[] defaultJumpValue = BitConverter.GetBytes(0x002f);
 
+    if (isInTheGame())
+    {
+        // Reset Hud
+        Memory.Write(Addresses.WeaponIconX, DefaultWeaponIconX);
+        Memory.Write(Addresses.ShieldIconX, DefaultShieldIconX);
+        Memory.Write(Addresses.HealthbarX, DefaultHealthbarX);
+        Memory.Write(Addresses.ChaliceIconX, DefaultChaliceIconX);
+        Memory.Write(Addresses.MoneyIconX, DefaultMoneyIconX);
+        Memory.Write(Addresses.WeaponIconY, DefaultWeaponIconY);
+        Memory.Write(Addresses.ShieldIconY, DefaultShieldIconY);
+        Memory.Write(Addresses.HealthbarY, DefaultHealthbarY);
+        Memory.Write(Addresses.ChaliceIconY, DefaultChaliceIconY);
+        Memory.Write(Addresses.MoneyIconY, DefaultMoneyIconY);
 
-
+        // Reset Jump Height
+        Memory.Write(Addresses.DanJumpHeight, defaultJumpValue);
+        Memory.Write(Addresses.DanForwardSpeed, defaultSpeedValue);
+    }
 }
 
 
@@ -419,10 +436,6 @@ async void OnDisconnected(object sender, ConnectionChangedEventArgs args, Archip
 {
     if (client.GameState == null && firstRun == false);
     {
-#if DEBUG
-        Console.WriteLine($"Disconnect Firing. Itemcount: {client?.GameState?.ReceivedItems.Count}");
-#endif
-
         Console.WriteLine("Disconnected from Archipelago.");
     }
 }

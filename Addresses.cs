@@ -64,7 +64,7 @@ namespace MedievilArchipelago
 
         public const uint CurrentChalicePercentage = 0x000f82c0;
         // 0x1000 (4096) = 100%
-
+        public const uint DaringDashSkill = 0x000F81C4;
 
         public const uint WeaponIconX =	0x000DD78C;
         public const uint WeaponIconY =	0x000DD78E;
@@ -76,9 +76,6 @@ namespace MedievilArchipelago
         public const uint ChaliceIconY = 0x000DD7BE;
         public const uint MoneyIconX =	0x000DD7C8;
         public const uint MoneyIconY =	0x000DD7CA;
-
-
-        public const uint DaringDashSkill = 0x000ee978;
 
         // Completed levels
         public const uint TG_LevelStatus = 0x000f81e1;
@@ -305,7 +302,7 @@ namespace MedievilArchipelago
         public const uint RTG_Pickup_EnergyVialCliffsRight = 0x001303b8;
         public const uint RTG_Pickup_GoldCoinsCliffsLeft = 0x00130338;
         public const uint RTG_Pickup_EnergyVialCliffsLeft = 0x00130378;
-        public const uint RTG_Pickup_DaringDash = 0x00000000;
+        public const uint RTG_Pickup_DaringDash = 0x000ee978;
         public const uint RTG_Pickup_Chalice = 0x001302f8;
 
         // Scarecrow Fields

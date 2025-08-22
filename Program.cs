@@ -29,6 +29,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Kokuban;
 using System.Net;
+using System.ComponentModel;
 
 // set values
 const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
@@ -90,6 +91,12 @@ while (!clientInitializedAndConnected)
 
 bool connected = gameClient.Connect();
 var archipelagoClient = new ArchipelagoClient(gameClient);
+
+archipelagoClient.CancelMonitors();
+archipelagoClient.Connected -= (sender, args) => OnConnected(sender, args, archipelagoClient);
+archipelagoClient.Disconnected -= (sender, args) => OnDisconnected(sender, args, archipelagoClient, firstRun);
+archipelagoClient.ItemReceived -= (sender, args) => ItemReceived(sender, args, archipelagoClient);
+archipelagoClient.LocationCompleted -= (sender, args) => Client_LocationCompleted(sender, args, archipelagoClient);
 
 Console.WriteLine("Successfully connected to Duckstation.");
 
@@ -153,7 +160,7 @@ password = configuration["pass"];
 Console.WriteLine("Enter AP url: eg,archipelago.gg");
 string lineUrl = Console.ReadLine();
 
-url = string.IsNullOrWhiteSpace(lineUrl) ? "wss://archipelago.gg" : "wss://" + lineUrl;
+url = string.IsNullOrWhiteSpace(lineUrl) ? "archipelago.gg" : lineUrl;
 
 Console.WriteLine("Enter Port: eg, 80001");
 port = Console.ReadLine();
@@ -177,8 +184,6 @@ if (string.IsNullOrWhiteSpace(slot))
 }
 #endif
 Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
-
-
 
 // Register event handlers
 archipelagoClient.Connected += (sender, args) => OnConnected(sender, args, archipelagoClient);
@@ -216,7 +221,7 @@ try
 {
     await archipelagoClient.Connect(url + ":" + port, "Medievil");
     Console.WriteLine("Connected. Attempting to Log in...");
-    await archipelagoClient.Login(slot, password);
+    await archipelagoClient?.Login(slot, password);
     Console.WriteLine("Logged in!");
 
     var overlayOptions = new OverlayOptions();
@@ -374,17 +379,21 @@ bool isInTheGame(){
 
 async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
 {
-    //// if deathlink goes here
-    //var deathLink = client.EnableDeathLink();
-    //deathLink.OnDeathLinkReceived += (args) => KillPlayer();
+    // if deathlink goes here
+    int deathlink = int.Parse(client.Options?.GetValueOrDefault("deathlink", 0).ToString());
+    if (deathlink == 1)
+    {
+#if DEBUG
+        Console.WriteLine("Deathlink is activated.");
+#endif
+        var deathLink = client.EnableDeathLink();
+        deathLink.OnDeathLinkReceived += (args) => KillPlayer();
+    }
 
     Log.Logger.Information("Connected to Archipelago");
     Log.Logger.Information($"Playing {client.CurrentSession.ConnectionInfo.Game} as {client.CurrentSession.Players.GetPlayerName(client.CurrentSession.ConnectionInfo.Slot)}");
-    Console.WriteLine("Connected to Archipelago!");
 
-    Console.WriteLine("Checking if the game is over");
-
-    //CheckGoalCondition();
+    CheckGoalCondition();
 
     Console.WriteLine("Setting up player state..");
 
@@ -406,11 +415,27 @@ async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
     byte[] DefaultChaliceIconY = BitConverter.GetBytes(0x001e);
     byte[] DefaultMoneyIconY = BitConverter.GetBytes(0x001e);
 
-    byte[] defaultValue = BitConverter.GetBytes(0x002f);
-    byte[] defaultValuetwo = BitConverter.GetBytes(0x0100);
+    byte[] defaultSpeedValue = BitConverter.GetBytes(0x0100);
+    byte[] defaultJumpValue = BitConverter.GetBytes(0x002f);
 
+    if (isInTheGame())
+    {
+        // Reset Hud
+        Memory.Write(Addresses.WeaponIconX, DefaultWeaponIconX);
+        Memory.Write(Addresses.ShieldIconX, DefaultShieldIconX);
+        Memory.Write(Addresses.HealthbarX, DefaultHealthbarX);
+        Memory.Write(Addresses.ChaliceIconX, DefaultChaliceIconX);
+        Memory.Write(Addresses.MoneyIconX, DefaultMoneyIconX);
+        Memory.Write(Addresses.WeaponIconY, DefaultWeaponIconY);
+        Memory.Write(Addresses.ShieldIconY, DefaultShieldIconY);
+        Memory.Write(Addresses.HealthbarY, DefaultHealthbarY);
+        Memory.Write(Addresses.ChaliceIconY, DefaultChaliceIconY);
+        Memory.Write(Addresses.MoneyIconY, DefaultMoneyIconY);
 
-
+        // Reset Jump Height
+        Memory.Write(Addresses.DanJumpHeight, defaultJumpValue);
+        Memory.Write(Addresses.DanForwardSpeed, defaultSpeedValue);
+    }
 }
 
 
@@ -419,10 +444,6 @@ async void OnDisconnected(object sender, ConnectionChangedEventArgs args, Archip
 {
     if (client.GameState == null && firstRun == false);
     {
-#if DEBUG
-        Console.WriteLine($"Disconnect Firing. Itemcount: {client?.GameState?.ReceivedItems.Count}");
-#endif
-
         Console.WriteLine("Disconnected from Archipelago.");
     }
 }
@@ -550,6 +571,7 @@ void UpdatePlayerState(System.Collections.ObjectModel.ReadOnlyCollection<Archipe
     SetItemMemoryValue(Addresses.SoulHelmet, 0, 0);
     SetItemMemoryValue(Addresses.DragonGem, 0, 0);
     SetItemMemoryValue(Addresses.APAmberPieces, 0, 0);
+    SetItemMemoryValue(Addresses.MaxAmberPieces, 10, 10);
 
     // for each location that's coming in
     bool hasEquipableWeapon = false;
@@ -690,6 +712,7 @@ void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAd
     // life bottles have 1 in the chamber before showing
     if(itemName == "Life Bottle" && currentNumberAmount == 0)
     {
+        Memory.Write(Addresses.LifeBottleSwitch, 0x012c);
         currentNumberAmount = 1;
     }
 
@@ -915,6 +938,7 @@ void DefaultToArm()
 async void KillPlayer()
 {
     Memory.WriteByte(Addresses.CurrentHP, 0x00);
+    // Memory.WriteByte(Addresses.CurrentEnergy, 0x00);
 }
 
 async void RunLagTrap()

@@ -69,7 +69,7 @@ namespace MedievilArchipelago
                 [1] = [Addresses.TG_Pickup_CopperShield + contents_offset],
                 [2] = [Addresses.RTG_Pickup_SilverShieldChestAtShop + contents_offset],
                 [3] = [Addresses.CH_Pickup_Club + contents_offset, Addresses.CH_Pickup_CopperShield1stOnHill + contents_offset, Addresses.CH_Pickup_CopperShield2ndOnHill + contents_offset, Addresses.CH_Pickup_CopperShield3rdOnHill + contents_offset],
-                [4] = [Addresses.HM_Pickup_ClubBrokenBenches + contents_offset, Addresses.HM_Pickup_DaggersBlockPuzzle],
+                [4] = [Addresses.HM_Pickup_ClubBrokenBenches + contents_offset, Addresses.HM_Pickup_DaggersBlockPuzzle + contents_offset],
                 [5] = [Addresses.SF_Pickup_ClubInsideHut + contents_offset, Addresses.SF_Pickup_CopperShieldChestInTheBarn + contents_offset, Addresses.SF_Pickup_SilverShieldBehindWindmill + contents_offset],
                 [6] = [Addresses.DC_Pickup_CopperShield + contents_offset],
                 [7] = [Addresses.TA_Pickup_ClubChestAtBarrier + contents_offset],
@@ -320,7 +320,6 @@ namespace MedievilArchipelago
 
                         if (loc.Name.Contains("Cleared:")) // if it's cleared and we don't have an option set 
                         {
-                            {
                                 Location location = (new Location()
                                 {
                                     Id = locationId,
@@ -332,7 +331,42 @@ namespace MedievilArchipelago
                                 locations.Add(location);
                                 location_index++;
                                 continue;
+                        }
+
+                        if (loc.Name.Contains("Skill:")) {
+                            List<ILocation> conditionalChoice = new List<ILocation>();
+
+                            conditionalChoice.Add(new Location()
+                            {
+                                Id = -1,
+                                Name = "Level Check",
+                                Address = Addresses.CurrentLevel,
+                                CheckType = LocationCheckType.Byte,
+                                CompareType = LocationCheckCompareType.Match,
+                                CheckValue = "2"
+                            });
+
+                            conditionalChoice.Add(new Location()
+                            {
+                                Id = -1,
+                                Name = "Skill Check",
+                                Address = loc.Address,
+                                CheckType = LocationCheckType.UShort,
+                                CompareType = LocationCheckCompareType.Match,
+                                CheckValue = "257"
+                            });
+
+                            CompositeLocation location = new CompositeLocation()
+                            {
+                                Name = loc.Name,
+                                Id = locationId,
+                                CheckType = LocationCheckType.AND,
+                                Conditions = conditionalChoice
                             };
+
+                            locations.Add(location);
+                            location_index++;
+                            continue;
                         }
 
                         if (loc.Name.Contains("Key Item:") || loc.Name.Contains("Chalice:") || loc.Name.Contains("Rune:") || loc.Name.Contains("Equipment:") || loc.Name.Contains("Gold Coins:") || loc.Name.Contains("Skill:") || loc.Name.Contains("Life Bottle:") || loc.Name.Contains("Energy Vial:") || loc.Name.Contains("HH") || loc.Name.Contains("Hall of Heroes") || loc.Name.Contains("Fairy") || loc.Name.Contains("Egg Drop"))
@@ -706,7 +740,7 @@ namespace MedievilArchipelago
             List<GenericItemsData> rtgLocations = new List<GenericItemsData>() {
                 new GenericItemsData("Star Rune: Return to the Graveyard", Addresses.RTG_Pickup_StarRune, "2", "32896"),
                 new GenericItemsData("Equipment: Silver Shield in Chest at Shop", Addresses.RTG_Pickup_SilverShieldChestAtShop, "2", "32896", true),
-                new GenericItemsData("Skill: Daring Dash", Addresses.DaringDashSkill, "2", "32896"),
+                new GenericItemsData("Skill: Daring Dash", Addresses.RTG_Pickup_DaringDash, "2", "257"),
                 new GenericItemsData("Energy Vial: Coffin Area West - RTG", Addresses.RTG_Pickup_EnergyVialCoffinAreaWest, "2", "32896"),
                 new GenericItemsData("Energy Vial: Coffin Area East - RTG", Addresses.RTG_Pickup_EnergyVialCoffinAreaEast, "2", "32896"),
                 new GenericItemsData("Energy Vial: Below Shop - RTG", Addresses.RTG_Pickup_EnergyVialBelowShop, "2", "32896"),

@@ -258,7 +258,7 @@ namespace MedievilArchipelago
                     #if DEBUG
                         Console.WriteLine("Passive Checks...");
                     #endif
-                    Thread.Sleep(5000);
+                    Thread.Sleep(10000);
                 }
             }, cts);
 

@@ -183,6 +183,7 @@ namespace MedievilArchipelago
         public const uint CurrentGold = 0x000f82c4;
         public const uint CurrentEnergy = 0x000f81ac;
         public const uint CurrentLifePotions = 0x000f81b5;
+        public const uint LifeBottleSwitch = 0x000f81b4;
 
         // Dans Hands
         public const uint ItemEquipped = 0x000f81b8;

@@ -29,6 +29,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Kokuban;
 using System.Net;
+using System.ComponentModel;
 
 // set values
 const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
@@ -220,7 +221,7 @@ try
 {
     await archipelagoClient.Connect(url + ":" + port, "Medievil");
     Console.WriteLine("Connected. Attempting to Log in...");
-    await archipelagoClient.Login(slot, password);
+    await archipelagoClient?.Login(slot, password);
     Console.WriteLine("Logged in!");
 
     var overlayOptions = new OverlayOptions();
@@ -378,9 +379,16 @@ bool isInTheGame(){
 
 async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
 {
-    //// if deathlink goes here
-    //var deathLink = client.EnableDeathLink();
-    //deathLink.OnDeathLinkReceived += (args) => KillPlayer();
+    // if deathlink goes here
+    int deathlink = int.Parse(client.Options?.GetValueOrDefault("deathlink", 0).ToString());
+    if (deathlink == 1)
+    {
+#if DEBUG
+        Console.WriteLine("Deathlink is activated.");
+#endif
+        var deathLink = client.EnableDeathLink();
+        deathLink.OnDeathLinkReceived += (args) => KillPlayer();
+    }
 
     Log.Logger.Information("Connected to Archipelago");
     Log.Logger.Information($"Playing {client.CurrentSession.ConnectionInfo.Game} as {client.CurrentSession.Players.GetPlayerName(client.CurrentSession.ConnectionInfo.Slot)}");
@@ -703,6 +711,7 @@ void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAd
     // life bottles have 1 in the chamber before showing
     if(itemName == "Life Bottle" && currentNumberAmount == 0)
     {
+        Memory.Write(Addresses.LifeBottleSwitch, 0x012c);
         currentNumberAmount = 1;
     }
 
@@ -928,6 +937,7 @@ void DefaultToArm()
 async void KillPlayer()
 {
     Memory.WriteByte(Addresses.CurrentHP, 0x00);
+    // Memory.WriteByte(Addresses.CurrentEnergy, 0x00);
 }
 
 async void RunLagTrap()

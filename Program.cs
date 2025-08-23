@@ -732,12 +732,13 @@ if (string.IsNullOrWhiteSpace(slot))
                 return;
             }
 
+
             // life bottles have 1 in the chamber before showing
             if (itemName == "Life Bottle" && currentNumberAmount == 0)
             {
-                Memory.Write(Addresses.LifeBottleSwitch, 0x012c);
                 currentNumberAmount = 1;
             }
+
 
             // leaving for the sake of debugging
             //Console.WriteLine($"{ itemName} current amount: {currentNumberAmount}, update amount: {numberUpdate}");
@@ -768,6 +769,12 @@ if (string.IsNullOrWhiteSpace(slot))
             //Console.WriteLine($"Name: {itemName}, current: {currentNumberAmount}, adding: {numberUpdate}");
 
             SetItemMemoryValue(itemMemoryAddress, baseValue, countMax);
+
+            if (itemName == "Life Bottle")
+            {
+                Console.WriteLine($"Current count: {currentNumberAmount}");
+                SetItemMemoryValue(Addresses.LifeBottleSwitch, (300 * newNumberAmount - 1), 10000);
+            }
 
             // if you're getting a piece of equipment like the longbow/crossbow/spear/etc give it some ammo.
             if (isEquipmentType && isCountType)

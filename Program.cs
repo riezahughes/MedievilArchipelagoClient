@@ -646,6 +646,7 @@ if (string.IsNullOrWhiteSpace(slot))
 
                 usedItems.Add(itm.Name);
 
+
             }
 
             Dictionary<string, uint> remainingItemsDict = all_items
@@ -772,7 +773,6 @@ if (string.IsNullOrWhiteSpace(slot))
 
             if (itemName == "Life Bottle")
             {
-                Console.WriteLine($"Current count: {currentNumberAmount}");
                 SetItemMemoryValue(Addresses.LifeBottleSwitch, (300 * newNumberAmount - 1), 10000);
             }
 

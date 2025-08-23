@@ -167,6 +167,8 @@ namespace MedievilArchipelago
             allLevelLocations.Add("Locked Items SF", GetLockedItemsSF());
 
             var regional_index = 0;
+
+            var debug_levelCount = 0;
             foreach (var region_name in table_order.ToList())
             {
 
@@ -304,69 +306,99 @@ namespace MedievilArchipelago
 
                         if (loc.Name.Contains("Cleared: Zaroks Lair")) // if it's cleared and we don't have an option set 
                         {
-                            Location location = (new Location()
                             {
-                                Id = locationId,
-                                Name = "Cleared: Zaroks Lair",
-                                Address = loc.Address,
-                                CheckType = LocationCheckType.Byte,
-                                CompareType = LocationCheckCompareType.Match,
-                                CheckValue = "101"
-                            });
-                            locations.Add(location);
-                            location_index++;
-                            continue;
+                                List<ILocation> conditionalChoice = new List<ILocation>();
+
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Cleared: Zaroks Lair",
+                                    Address = loc.Address,
+                                    CheckType = LocationCheckType.Byte,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = "101"
+                                });
+                                CompositeLocation location = new CompositeLocation()
+                                {
+                                    Name = loc.Name,
+                                    Id = locationId,
+                                    CheckType = LocationCheckType.AND,
+                                    Conditions = conditionalChoice
+                                };
+
+                                locations.Add(location);
+                                location_index++;
+                                continue;
+                            }
                         }
 
-                        if (loc.Name.Contains("Cleared:")) // if it's cleared and we don't have an option set 
+                        if (loc.Name.Contains("Cleared: ")) // if it's cleared and we don't have an option set 
                         {
-                                Location location = (new Location()
+
+                            {
+                                List<ILocation> conditionalChoice = new List<ILocation>();
+
+                                conditionalChoice.Add(new Location()
                                 {
-                                    Id = locationId,
-                                    Name = "Level Cleared Check",
+                                    Id = -1,
+                                    Name = "Cleared Level",
                                     Address = loc.Address,
                                     CheckType = LocationCheckType.Bit,
                                     AddressBit = 4
                                 });
+                                CompositeLocation location = new CompositeLocation()
+                                {
+                                    Name = loc.Name,
+                                    Id = locationId,
+                                    CheckType = LocationCheckType.AND,
+                                    Conditions = conditionalChoice
+                                };
+
+
+
                                 locations.Add(location);
                                 location_index++;
                                 continue;
+                            }
                         }
 
-                        if (loc.Name.Contains("Skill:")) {
-                            List<ILocation> conditionalChoice = new List<ILocation>();
-
-                            conditionalChoice.Add(new Location()
+                        if (loc.Name.Contains("Skill:"))
+                        {
                             {
-                                Id = -1,
-                                Name = "Level Check",
-                                Address = Addresses.CurrentLevel,
-                                CheckType = LocationCheckType.Byte,
-                                CompareType = LocationCheckCompareType.Match,
-                                CheckValue = "2"
-                            });
+                                List<ILocation> conditionalChoice = new List<ILocation>();
 
-                            conditionalChoice.Add(new Location()
-                            {
-                                Id = -1,
-                                Name = "Skill Check",
-                                Address = loc.Address,
-                                CheckType = LocationCheckType.UShort,
-                                CompareType = LocationCheckCompareType.Match,
-                                CheckValue = "257"
-                            });
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Level Check",
+                                    Address = Addresses.CurrentLevel,
+                                    CheckType = LocationCheckType.Byte,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = "2"
+                                });
 
-                            CompositeLocation location = new CompositeLocation()
-                            {
-                                Name = loc.Name,
-                                Id = locationId,
-                                CheckType = LocationCheckType.AND,
-                                Conditions = conditionalChoice
-                            };
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Skill Check",
+                                    Address = loc.Address,
+                                    CheckType = LocationCheckType.UShort,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = "257"
+                                });
 
-                            locations.Add(location);
-                            location_index++;
-                            continue;
+                                CompositeLocation location = new CompositeLocation()
+                                {
+                                    Name = loc.Name,
+                                    Id = locationId,
+                                    CheckType = LocationCheckType.AND,
+                                    Conditions = conditionalChoice
+                                };
+
+                                locations.Add(location);
+                                location_index++;
+                                continue;
+                            }
                         }
 
                         if (loc.Name.Contains("Key Item:") || loc.Name.Contains("Chalice:") || loc.Name.Contains("Rune:") || loc.Name.Contains("Equipment:") || loc.Name.Contains("Gold Coins:") || loc.Name.Contains("Skill:") || loc.Name.Contains("Life Bottle:") || loc.Name.Contains("Energy Vial:") || loc.Name.Contains("HH") || loc.Name.Contains("Hall of Heroes") || loc.Name.Contains("Fairy") || loc.Name.Contains("Egg Drop"))
@@ -424,6 +456,7 @@ namespace MedievilArchipelago
                 regional_index++;
             }
 
+            Console.WriteLine($"Count is {locations.Count()}");
             //foreach (var location in locations)
             //{
             //    Console.WriteLine($"{location.Id}: {location.Name}");

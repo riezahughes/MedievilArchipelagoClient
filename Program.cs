@@ -244,13 +244,16 @@ if (string.IsNullOrWhiteSpace(slot))
 
             archipelagoClient.IntializeOverlayService(gameOverlay);
 
-            archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
-
-            while (archipelagoClient.Options?.Count == 0)
+            while (archipelagoClient.CurrentSession == null)
             {
-                Console.WriteLine("Building Locations");
+                Console.WriteLine("Waiting for current session");
                 Thread.Sleep(1000);
             }
+
+            archipelagoClient.ShouldSaveStateOnItemReceived = false;
+            archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
+
+
 
             GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
 
@@ -392,62 +395,63 @@ if (string.IsNullOrWhiteSpace(slot))
 
         async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
         {
-            // if deathlink goes here
-            int deathlink = int.Parse(client.Options?.GetValueOrDefault("deathlink", 0).ToString());
-            if (deathlink == 1)
-            {
+            if (client.CurrentSession != null) {
+                // if deathlink goes here
+                int deathlink = int.Parse(client.Options?.GetValueOrDefault("deathlink", 0).ToString());
+                if (deathlink == 1)
+                {
 #if DEBUG
                 Console.WriteLine("Deathlink is activated.");
 #endif
-                var deathLink = client.EnableDeathLink();
-                deathLink.OnDeathLinkReceived += (args) => KillPlayer();
-            }
+                    var deathLink = client.EnableDeathLink();
+                    deathLink.OnDeathLinkReceived += (args) => KillPlayer();
+                }
 
-            Log.Logger.Information("Connected to Archipelago");
-            Log.Logger.Information($"Playing {client.CurrentSession.ConnectionInfo.Game} as {client.CurrentSession.Players.GetPlayerName(client.CurrentSession.ConnectionInfo.Slot)}");
+                Log.Logger.Information("Connected to Archipelago");
+                Log.Logger.Information($"Playing {client.CurrentSession.ConnectionInfo.Game} as {client.CurrentSession.Players.GetPlayerName(client.CurrentSession.ConnectionInfo.Slot)}");
 
-            CheckGoalCondition();
-
-            Console.WriteLine("Setting up player state..");
+                Console.WriteLine("Setting up player state..");
 
 #if DEBUG
             Console.WriteLine($"OnConnected Firing. Itemcount: {client.GameState.ReceivedItems.Count}");
 #endif
-            UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
+                UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
 
-            // reset traps in case of client crashes
 
-            byte[] DefaultWeaponIconX = BitConverter.GetBytes(0x0018);
-            byte[] DefaultShieldIconX = BitConverter.GetBytes(0x0050);
-            byte[] DefaultHealthbarX = BitConverter.GetBytes(0x0100);
-            byte[] DefaultChaliceIconX = BitConverter.GetBytes(0x017e);
-            byte[] DefaultMoneyIconX = BitConverter.GetBytes(0x01b6);
-            byte[] DefaultWeaponIconY = BitConverter.GetBytes(0x001e);
-            byte[] DefaultShieldIconY = BitConverter.GetBytes(0x001e);
-            byte[] DefaultHealthbarY = BitConverter.GetBytes(0x0022);
-            byte[] DefaultChaliceIconY = BitConverter.GetBytes(0x001e);
-            byte[] DefaultMoneyIconY = BitConverter.GetBytes(0x001e);
+                // reset traps in case of client crashes
 
-            byte[] defaultSpeedValue = BitConverter.GetBytes(0x0100);
-            byte[] defaultJumpValue = BitConverter.GetBytes(0x002f);
+                byte[] DefaultWeaponIconX = BitConverter.GetBytes(0x0018);
+                byte[] DefaultShieldIconX = BitConverter.GetBytes(0x0050);
+                byte[] DefaultHealthbarX = BitConverter.GetBytes(0x0100);
+                byte[] DefaultChaliceIconX = BitConverter.GetBytes(0x017e);
+                byte[] DefaultMoneyIconX = BitConverter.GetBytes(0x01b6);
+                byte[] DefaultWeaponIconY = BitConverter.GetBytes(0x001e);
+                byte[] DefaultShieldIconY = BitConverter.GetBytes(0x001e);
+                byte[] DefaultHealthbarY = BitConverter.GetBytes(0x0022);
+                byte[] DefaultChaliceIconY = BitConverter.GetBytes(0x001e);
+                byte[] DefaultMoneyIconY = BitConverter.GetBytes(0x001e);
 
-            if (isInTheGame())
-            {
-                // Reset Hud
-                Memory.Write(Addresses.WeaponIconX, DefaultWeaponIconX);
-                Memory.Write(Addresses.ShieldIconX, DefaultShieldIconX);
-                Memory.Write(Addresses.HealthbarX, DefaultHealthbarX);
-                Memory.Write(Addresses.ChaliceIconX, DefaultChaliceIconX);
-                Memory.Write(Addresses.MoneyIconX, DefaultMoneyIconX);
-                Memory.Write(Addresses.WeaponIconY, DefaultWeaponIconY);
-                Memory.Write(Addresses.ShieldIconY, DefaultShieldIconY);
-                Memory.Write(Addresses.HealthbarY, DefaultHealthbarY);
-                Memory.Write(Addresses.ChaliceIconY, DefaultChaliceIconY);
-                Memory.Write(Addresses.MoneyIconY, DefaultMoneyIconY);
+                byte[] defaultSpeedValue = BitConverter.GetBytes(0x0100);
+                byte[] defaultJumpValue = BitConverter.GetBytes(0x002f);
 
-                // Reset Jump Height
-                Memory.Write(Addresses.DanJumpHeight, defaultJumpValue);
-                Memory.Write(Addresses.DanForwardSpeed, defaultSpeedValue);
+                if (isInTheGame())
+                {
+                    // Reset Hud
+                    Memory.Write(Addresses.WeaponIconX, DefaultWeaponIconX);
+                    Memory.Write(Addresses.ShieldIconX, DefaultShieldIconX);
+                    Memory.Write(Addresses.HealthbarX, DefaultHealthbarX);
+                    Memory.Write(Addresses.ChaliceIconX, DefaultChaliceIconX);
+                    Memory.Write(Addresses.MoneyIconX, DefaultMoneyIconX);
+                    Memory.Write(Addresses.WeaponIconY, DefaultWeaponIconY);
+                    Memory.Write(Addresses.ShieldIconY, DefaultShieldIconY);
+                    Memory.Write(Addresses.HealthbarY, DefaultHealthbarY);
+                    Memory.Write(Addresses.ChaliceIconY, DefaultChaliceIconY);
+                    Memory.Write(Addresses.MoneyIconY, DefaultMoneyIconY);
+
+                    // Reset Jump Height
+                    Memory.Write(Addresses.DanJumpHeight, defaultJumpValue);
+                    Memory.Write(Addresses.DanForwardSpeed, defaultSpeedValue);
+                }
             }
         }
 
@@ -467,34 +471,35 @@ if (string.IsNullOrWhiteSpace(slot))
         void ItemReceived(object sender, ItemReceivedEventArgs args, ArchipelagoClient client)
         {
 
-
+            if (client.CurrentSession != null) {
 #if DEBUG
             Console.WriteLine($"ItemReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
 #endif
-            switch (args.Item)
-            {
-                // incoming runes need added here
-                case var x when x.Name.ContainsAny("Rune"): ReceiveRune(x); break;
-                case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
-                case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
-                case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(); break;
-                case var x when x.Name.ContainsAny("Soul Helmet"): ReceiveSoulHelmet(); break;
-                case var x when x.Name.ContainsAny("Dragon Gem"): ReceiveDragonGem(); break;
-                case var x when x.Name.ContainsAny("Amber"): ReceiveAmber(); break;
-                case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
-                case var x when x.Name.ContainsAny("Health", "Gold Coins", "Energy"): ReceiveStatItems(x); break;
-                case var x when x.Name.ContainsAny("Daggers", "Ammo", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
-                case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x); break;
-                case var x when x.Name.Contains("Trap: Heavy Dan"): HeavyDanTrap(); break;
-                case var x when x.Name.Contains("Trap: Light Dan"): LightDanTrap(); break;
-                case var x when x.Name.Contains("Trap: Goodbye Shield"): GoodbyeShieldTrap(); break;
-                case var x when x.Name.Contains("Trap: Hudless"): HudlessTrap(); break;
-                case var x when x.Name.Contains("Trap: Lag"): RunLagTrap(); break;
-                case null: Console.WriteLine("Received an item with null data. Skipping."); break;
-                default: Console.WriteLine($"Item not recognised. ({args.Item.Name}) Skipping"); break;
-            };
+                switch (args.Item)
+                {
+                    // incoming runes need added here
+                    case var x when x.Name.ContainsAny("Rune"): ReceiveRune(x); break;
+                    case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
+                    case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
+                    case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(); break;
+                    case var x when x.Name.ContainsAny("Soul Helmet"): ReceiveSoulHelmet(); break;
+                    case var x when x.Name.ContainsAny("Dragon Gem"): ReceiveDragonGem(); break;
+                    case var x when x.Name.ContainsAny("Amber"): ReceiveAmber(); break;
+                    case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
+                    case var x when x.Name.ContainsAny("Health", "Gold Coins", "Energy"): ReceiveStatItems(x); break;
+                    case var x when x.Name.ContainsAny("Daggers", "Ammo", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
+                    case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x); break;
+                    case var x when x.Name.Contains("Trap: Heavy Dan"): HeavyDanTrap(); break;
+                    case var x when x.Name.Contains("Trap: Light Dan"): LightDanTrap(); break;
+                    case var x when x.Name.Contains("Trap: Goodbye Shield"): GoodbyeShieldTrap(); break;
+                    case var x when x.Name.Contains("Trap: Hudless"): HudlessTrap(); break;
+                    case var x when x.Name.Contains("Trap: Lag"): RunLagTrap(); break;
+                    case null: Console.WriteLine("Received an item with null data. Skipping."); break;
+                    default: Console.WriteLine($"Item not recognised. ({args.Item.Name}) Skipping"); break;
+                };
 
-            UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
+                UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
+            }
 
         }
 
@@ -536,7 +541,6 @@ if (string.IsNullOrWhiteSpace(slot))
 #if DEBUG
             Console.WriteLine($"LocationCompleted Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
 #endif
-            CheckGoalCondition();
         }
 
 
@@ -545,19 +549,19 @@ if (string.IsNullOrWhiteSpace(slot))
 #if DEBUG
             Console.WriteLine($"Location CheckedLocationsUpdated Firing.");
 #endif
-            CheckGoalCondition();
         }
 
 
 
-        void CheckGoalCondition()
+        bool CheckGoalCondition()
         {
             if (archipelagoClient?.GameState.CompletedLocations.Any(x => x.Name.Equals("Cleared: Zaroks Lair")) == true)
             {
                 archipelagoClient.SendGoalCompletion();
                 Console.WriteLine("Defeated Zarok");
-                return;
+                return true;
             }
+            return false;
         }
 
 
@@ -590,6 +594,11 @@ if (string.IsNullOrWhiteSpace(slot))
             bool hasEquipableWeapon = false;
             int talismanCount = 0;
             bool hasTalisman = false;
+
+            if(CheckGoalCondition()){
+                Console.WriteLine("No need for player state update. You've cleared!");
+                return;
+            };
 
             foreach (ItemInfo itemInf in itemsCollected)
             {

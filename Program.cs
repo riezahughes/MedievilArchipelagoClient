@@ -488,8 +488,8 @@ if (string.IsNullOrWhiteSpace(slot))
                 switch (args.Item)
                 {
                     // incoming runes need added here
-                    case var x when x.Name.ContainsAny("Rune"): ReceiveRune(currentLevel, x); break;
-                    case var x when x.Name.ContainsAny("Skill") && runeSanityOption == 1: ReceiveSkill(x); break;
+                    case var x when x.Name.ContainsAny("Rune") && runeSanityOption == 1: ReceiveRune(currentLevel, x); break;
+                    case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
                     case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
                     case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(); break;
                     case var x when x.Name.ContainsAny("Soul Helmet"): ReceiveSoulHelmet(); break;
@@ -1070,9 +1070,6 @@ if (string.IsNullOrWhiteSpace(slot))
 
             var name = ExtractRuneName(item.Name);
             var runeLevel = ExtractRuneLevel(item.Name);
-
-            Console.WriteLine($"{levelName} {name} {runeLevel}");
-            Console.WriteLine(levelName == runeLevel);
 
             if (levelName == runeLevel)
             {

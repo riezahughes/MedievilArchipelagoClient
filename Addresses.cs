@@ -100,6 +100,32 @@ namespace MedievilArchipelago
         public const uint EH_LevelStatus = 0x000F81F4;
         public const uint TD_LevelStatus = 0x000F81F5;
 
+        // Unlocking the Map
+        public const uint MAP_Unlock1 = 0x000F8214;
+        public const uint MAP_Unlock2 = 0x000F8215;
+        public const uint MAP_Unlock3 = 0x000F8216;
+        public const uint MAP_Unlock4 = 0x000F8217;
+        public const uint MAP_Unlock5 = 0x000F8218;
+        public const uint MAP_Unlock6 = 0x000F8219;
+        public const uint MAP_Unlock7 = 0x000F821A;
+        public const uint MAP_Unlock8 = 0x000F821B;
+        public const uint MAP_Unlock9 = 0x000F821C;
+        public const uint MAP_Unlock10 = 0x000F821D;
+        public const uint MAP_Unlock11 = 0x000F821E;
+        public const uint MAP_Unlock12 = 0x000F821F;
+        public const uint MAP_Unlock13 = 0x000F8220;
+        public const uint MAP_Unlock14 = 0x000F8221;
+        public const uint MAP_Unlock15 = 0x000F8222;
+        public const uint MAP_Unlock16 = 0x000F8223;
+        public const uint MAP_Unlock17 = 0x000F8224;
+        public const uint MAP_Unlock18 = 0x000F8225;
+        public const uint MAP_Unlock19 = 0x000F8226;
+        public const uint MAP_Unlock20 = 0x000F8227;
+        public const uint MAP_Unlock21 = 0x000F8228;
+        public const uint MAP_Unlock22 = 0x000F8229;
+        public const uint MAP_Unlock23 = 0x000F822A;
+        public const uint MAP_Unlock24 = 0x000F822B;
+
         // Rune Entity Locations
 
         public const uint TG_ChaosRuneYAxis = 0x00000000;

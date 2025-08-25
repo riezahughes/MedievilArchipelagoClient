@@ -49,6 +49,15 @@ namespace MedievilArchipelago
             }
         }
 
+        static internal void OpenTheMap()
+        {
+            var mapList = Helpers.OpenMapMemoryLocations();
+            foreach (uint address in mapList)
+            {
+                Memory.WriteByte(address, 0x01);
+            }
+        }
+
         static internal void UpdateHallOfHeroesTable() 
         {
             // counting from base address to the item choice
@@ -133,6 +142,8 @@ namespace MedievilArchipelago
 
                         if (currentLocation != checkCurrentLevel)
                         {
+                            OpenTheMap();   
+
                             if(checkCurrentLevel != 0)
                             {
                                 SetRuneAxis();

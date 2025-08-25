@@ -92,6 +92,37 @@ namespace MedievilArchipelago
             };
         }
 
+        public static List<uint> OpenMapMemoryLocations()
+        {
+            return new List<uint>
+            {
+                Addresses.MAP_Unlock1,
+                Addresses.MAP_Unlock2,
+                Addresses.MAP_Unlock3,
+                Addresses.MAP_Unlock4,
+                Addresses.MAP_Unlock5,
+                Addresses.MAP_Unlock6,
+                Addresses.MAP_Unlock7,
+                Addresses.MAP_Unlock8,
+                Addresses.MAP_Unlock9,
+                Addresses.MAP_Unlock10,
+                Addresses.MAP_Unlock11,
+                Addresses.MAP_Unlock12,
+                Addresses.MAP_Unlock13,
+                Addresses.MAP_Unlock14,
+                Addresses.MAP_Unlock15,
+                Addresses.MAP_Unlock16,
+                Addresses.MAP_Unlock17,
+                Addresses.MAP_Unlock18,
+                Addresses.MAP_Unlock19,
+                Addresses.MAP_Unlock20,
+                Addresses.MAP_Unlock21,
+                Addresses.MAP_Unlock22,
+                Addresses.MAP_Unlock23,
+                Addresses.MAP_Unlock24
+            };
+        }
+
         
 
 

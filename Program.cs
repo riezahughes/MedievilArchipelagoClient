@@ -404,7 +404,7 @@ if (string.IsNullOrWhiteSpace(slot))
         {
             if (client.CurrentSession != null) {
                 // if deathlink goes here
-                int deathlink = int.Parse(client.Options?.GetValueOrDefault("deathlink", 0).ToString());
+                int deathlink = int.Parse(client.Options?.GetValueOrDefault("deathlink", "0").ToString());
                 if (deathlink == 1)
                 {
 #if DEBUG
@@ -482,11 +482,14 @@ if (string.IsNullOrWhiteSpace(slot))
 #if DEBUG
             Console.WriteLine($"ItemReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
 #endif
+                byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+                int runeSanityOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("runesanity", "0").ToString());
+
                 switch (args.Item)
                 {
                     // incoming runes need added here
-                    case var x when x.Name.ContainsAny("Rune"): ReceiveRune(x); break;
-                    case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
+                    case var x when x.Name.ContainsAny("Rune"): ReceiveRune(currentLevel, x); break;
+                    case var x when x.Name.ContainsAny("Skill") && runeSanityOption == 1: ReceiveSkill(x); break;
                     case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
                     case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(); break;
                     case var x when x.Name.ContainsAny("Soul Helmet"): ReceiveSoulHelmet(); break;
@@ -657,12 +660,18 @@ if (string.IsNullOrWhiteSpace(slot))
 
             short currentWeapon = Memory.ReadShort(Addresses.ItemEquipped);
             byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+            int runeSanityOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("runesanity", "0").ToString());
 
             SetItemMemoryValue(Addresses.CurrentLifePotions, 0, 0);
             SetItemMemoryValue(Addresses.SoulHelmet, 0, 0);
             SetItemMemoryValue(Addresses.DragonGem, 0, 0);
             SetItemMemoryValue(Addresses.APAmberPieces, 0, 0);
             SetItemMemoryValue(Addresses.MaxAmberPieces, 10, 10);
+            SetItemMemoryValue(Addresses.ChaosRune, 65535, 65535);
+            SetItemMemoryValue(Addresses.EarthRune, 65535, 65535);
+            SetItemMemoryValue(Addresses.MoonRune, 65535, 65535);
+            SetItemMemoryValue(Addresses.StarRune, 65535, 65535);
+            SetItemMemoryValue(Addresses.TimeRune, 65535, 65535);
 
             // for each location that's coming in
             bool hasEquipableWeapon = false;
@@ -690,6 +699,9 @@ if (string.IsNullOrWhiteSpace(slot))
                     // Update memory
                     case var x when x.Name.ContainsAny("Ammo"):
                         // no plans yet
+                        break;
+                    case var x when x.Name.Contains("Rune") && runeSanityOption == 1:
+                        ReceiveRune(currentLevel, x);                        
                         break;
                     case var x when x.Name.ContainsAny("Charge"):
                         // no plans yet
@@ -894,6 +906,42 @@ if (string.IsNullOrWhiteSpace(slot))
             return "N/A";
         }
 
+        string ExtractRuneName(string itemName)
+        {
+            // The regex pattern to match and capture the text before the colon
+            string pattern = @"^(.+?):";
+
+            // Find the first match in the input string
+            Match match = Regex.Match(itemName, pattern);
+
+            // Check if a match was found
+            if (match.Success)
+            {
+                // The captured group is at index 1. Trim to remove any trailing spaces.
+                return match.Groups[1].Value.Trim();
+            }
+
+            return null;
+        }
+        string ExtractRuneLevel(string itemName)
+        {
+            // The regex pattern to match and capture the text after the colon and space
+            string pattern = @":\s(.+)";
+
+            // Find the first match in the input string
+            Match match = Regex.Match(itemName, pattern);
+
+            // Check if a match was found
+            if (match.Success)
+            {
+                // The captured group is at index 1
+                return match.Groups[1].Value;
+            }
+
+            // Return null or an empty string if no match is found
+            return null;
+        }
+
         string ExtractKeyItemName(string itemName)
         {
             var dashRemovedMatch = Regex.Match(itemName, @"^(?:Key Item:\s*)?([^-]+?)(?: - .*)?$");
@@ -1013,16 +1061,24 @@ if (string.IsNullOrWhiteSpace(slot))
             UpdateCurrentItemValue(item.Name, amount, addressDict["Player Stats"][name], true, false);
         }
 
-        void ReceiveRune(Item item)
+        void ReceiveRune(byte levelId, Item item)
         {
-            // need to do the logic for this
-            return;
-            // get the type of rune
 
-            //var runeName = GetRuneName(item.Name);
-            //var addressDict = Helpers.InventoryAddressDictionary;
+            var addressDict = Helpers.StatusAndInventoryAddressDictionary();
 
-            //UpdateCurrentItemValue(item.Name, 1, addressDict[runeName], false, false);
+            var levelName = Helpers.GetLevelNameFromId(levelId);
+
+            var name = ExtractRuneName(item.Name);
+            var runeLevel = ExtractRuneLevel(item.Name);
+
+            Console.WriteLine($"{levelName} {name} {runeLevel}");
+            Console.WriteLine(levelName == runeLevel);
+
+            if (levelName == runeLevel)
+            {
+                SetItemMemoryValue(addressDict["Runes"][name], 0, 0);
+                //UpdateCurrentItemValue(item.Name, 0, addressDict["Runes"][name], true, false);
+            }
         }
 
         void ReceiveSkill(Item item)

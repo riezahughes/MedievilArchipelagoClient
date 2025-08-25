@@ -100,6 +100,51 @@ namespace MedievilArchipelago
         public const uint EH_LevelStatus = 0x000F81F4;
         public const uint TD_LevelStatus = 0x000F81F5;
 
+        // Rune Entity Locations
+
+        public const uint TG_ChaosRuneYAxis = 0x00000000;
+        public const uint HM_ChaosRuneYAxis = 0x00000000;
+        public const uint SF_ChaosRuneYAxis = 0x00000000;
+        public const uint TL_ChaosRuneYAxis = 0x00000000;
+        public const uint PG_ChaosRuneYAxis = 0x00000000;
+        public const uint SV_ChaosRuneYAxis = 0x00000000;
+        public const uint POD_ChaosRuneYAxis = 0x00000000;
+        public const uint AG_ChaosRuneYAxis = 0x00000000;
+        public const uint HR_ChaosRuneYAxis = 0x00000000;
+        public const uint GS_ChaosRuneYAxis = 0x00000000;
+        public const uint TD_ChaosRuneYAxis = 0x00000000;
+
+        public const uint TG_EarthRuneYAxis = 0x0012edc4;
+        public const uint HM_EarthRuneYAxis = 0x00000000;
+        public const uint SF_EarthRuneYAxis = 0x00000000;
+        public const uint CC_EarthRuneYAxis = 0x00000000;
+        public const uint TL_EarthRuneYAxis = 0x00000000;
+        public const uint PG_EarthRuneYAxis = 0x00000000;
+        public const uint SV_EarthRuneYAxis = 0x00000000;
+        public const uint IA_EarthRuneYAxis = 0x00000000;
+        public const uint EE_EarthRuneYAxis = 0x00000000;
+        public const uint HR_EarthRuneYAxis = 0x00000000;
+        public const uint EH_EarthRuneYAxis = 0x00000000;
+        public const uint TD_EarthRuneYAxis = 0x00000000;
+
+        public const uint HM_MoonRuneYAxis = 0x00000000;
+        public const uint SF_MoonRuneYAxis = 0x00000000;
+        public const uint PG_MoonRuneYAxis = 0x00000000;
+        public const uint GS_MoonRuneYAxis = 0x00000000;
+        public const uint TD_MoonRuneYAxis = 0x00000000;
+
+        public const uint RTG_StarRuneYAxis = 0x00000000;
+        public const uint DC_StarRuneYAxis = 0x00000000;
+        public const uint CC_StarRuneYAxis = 0x00000000;
+        public const uint TL_StarRuneYAxis = 0x00000000;
+        public const uint EE_StarRuneYAxis = 0x00000000;
+        public const uint GG_StarRuneYAxis = 0x00000000;
+        public const uint GS_StarRuneYAxis = 0x00000000;
+
+        public const uint TL_TimeRuneYAxis = 0x00000000;
+        public const uint PG_TimeRuneYAxis = 0x00000000;
+        public const uint TD_TimeRuneYAxis = 0x00000000;
+
         // Boss Max Health
         public const uint TA_BossHealth = 0x000F1754; // The Ant Caves
 

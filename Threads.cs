@@ -18,6 +18,11 @@ namespace MedievilArchipelago
     public class MemoryCheckThreads
     {
 
+        static internal void SetRuneAxis()
+        {
+            Memory.WriteByte(Addresses.TG_EarthRuneYAxis, 0x0000);
+        }
+
        static internal void UpdateChestLocations(ArchipelagoClient client, int id)
         {
             var chestEntityList = Helpers.ChestContentsDictionary();
@@ -109,6 +114,8 @@ namespace MedievilArchipelago
                         byte checkCurrentLevel = Memory.ReadByte(Addresses.CurrentLevel);
                         short checkQueenAntStatus = Memory.ReadShort(Addresses.TA_BossHealth);
 
+
+
                         if (currentLocation == 14)
                         {
                             UpdateAsylumDynamicDrops();
@@ -126,6 +133,10 @@ namespace MedievilArchipelago
 
                         if (currentLocation != checkCurrentLevel)
                         {
+                            if(checkCurrentLevel != 0)
+                            {
+                                SetRuneAxis();
+                            }
                             currentLocation = checkCurrentLevel;
                         }
 

@@ -323,9 +323,9 @@ if (string.IsNullOrWhiteSpace(slot))
                     var equipment = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Equipment") select item;
 
                     Console.WriteLine("Current Equipment: ");
-                    foreach (var item in items.OrderBy(item => item.ItemName))
+                    foreach (var weapon in equipment.OrderBy(item => item.ItemName))
                     {
-                        Console.WriteLine(item.ItemName);
+                        Console.WriteLine(weapon.ItemName);
                     }
 
                     Console.WriteLine("Current Key Items: ");

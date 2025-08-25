@@ -18,10 +18,10 @@ namespace MedievilArchipelago
     public class MemoryCheckThreads
     {
 
-        static internal void SetRuneAxis()
-        {
-            Memory.WriteByte(Addresses.TG_EarthRuneYAxis, 0x0000);
-        }
+        //static internal void SetRuneAxis()
+        //{
+        //    Memory.WriteByte(Addresses.TG_EarthRuneYAxis, 0x0000);
+        //}
 
        static internal void UpdateChestLocations(ArchipelagoClient client, int id)
         {
@@ -103,6 +103,8 @@ namespace MedievilArchipelago
                 // created an array of bytes for the update value to be 9999
                 byte[] updateValue = BitConverter.GetBytes(0x270F);
 
+                int runeSanityOption = Int32.Parse(client.Options?.GetValueOrDefault("runesanity", "0").ToString());
+
                 // creates a hashset to compare against
                 HashSet<int> processedChaliceCounts = new HashSet<int>();
 
@@ -142,11 +144,14 @@ namespace MedievilArchipelago
 
                         if (currentLocation != checkCurrentLevel)
                         {
-                            OpenTheMap();   
 
                             if(checkCurrentLevel != 0)
                             {
-                                SetRuneAxis();
+                                if (runeSanityOption == 1)
+                                {
+                                    OpenTheMap();
+                                }
+                                //SetRuneAxis();
                             }
                             currentLocation = checkCurrentLevel;
                         }

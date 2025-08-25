@@ -43,6 +43,7 @@ internal class Program
         const int maxHealth = 300;
 
         bool firstRun = true;
+        bool gameCleared = false;
 
         // Connection details
         string url;
@@ -319,7 +320,13 @@ if (string.IsNullOrWhiteSpace(slot))
 
                     var bottles = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Bottle") select item;
 
+                    var equipment = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Equipment") select item;
 
+                    Console.WriteLine("Current Equipment: ");
+                    foreach (var item in items.OrderBy(item => item.ItemName))
+                    {
+                        Console.WriteLine(item.ItemName);
+                    }
 
                     Console.WriteLine("Current Key Items: ");
                     foreach (var item in items.OrderBy(item => item.ItemName))
@@ -551,16 +558,83 @@ if (string.IsNullOrWhiteSpace(slot))
 #endif
         }
 
-
-
-        bool CheckGoalCondition()
+        bool CheckZarokCondition(ArchipelagoClient client)
         {
             if (archipelagoClient?.GameState.CompletedLocations.Any(x => x.Name.Equals("Cleared: Zaroks Lair")) == true)
             {
-                archipelagoClient.SendGoalCompletion();
-                Console.WriteLine("Defeated Zarok");
+                Console.WriteLine("You've Defeated Zarok");
                 return true;
             }
+            return false;
+        }
+
+        bool CheckChaliceCondition(ArchipelagoClient client)
+        {
+            int antOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("include_ant_hill_in_checks", "0").ToString());
+
+            int maxChaliceCount = antOption == 1 ? 20 : 19;
+
+            int currentCount = 0;
+
+            foreach (CompositeLocation loc in archipelagoClient.GameState.CompletedLocations)
+            {
+                if (loc.Name.Contains("Chalice: "))
+                {
+                    currentCount++;
+                }
+            }
+
+            if (currentCount == maxChaliceCount)
+            {
+                archipelagoClient.SendGoalCompletion();
+                Console.WriteLine("You got all the chalices!");
+                return true;
+            }
+            return false;
+        }
+
+
+
+        bool CheckGoalCondition() {
+
+            if (archipelagoClient?.GameState?.CompletedLocations == null)
+            {
+                return false;
+            }
+
+            int goalCondition = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("goal", "0").ToString());
+
+            if (goalCondition == PlayerGoals.DEFEAT_ZAROK)
+            {
+                bool goal = CheckZarokCondition(archipelagoClient);
+
+                if (goal)
+                {
+                    archipelagoClient.SendGoalCompletion();
+                }
+            }
+
+            if (goalCondition == PlayerGoals.CHALICE)
+            {
+                bool goal = CheckChaliceCondition(archipelagoClient);
+
+                if (goal)
+                {
+                    archipelagoClient.SendGoalCompletion();
+                }
+            }
+
+            if (goalCondition == PlayerGoals.BOTH)
+            {
+                bool zarokGoal = CheckZarokCondition(archipelagoClient);
+                bool chaliceGoal = CheckChaliceCondition(archipelagoClient);
+
+                if(zarokGoal && chaliceGoal)
+                {
+                    archipelagoClient.SendGoalCompletion();
+                }
+            }
+
             return false;
         }
 
@@ -595,7 +669,8 @@ if (string.IsNullOrWhiteSpace(slot))
             int talismanCount = 0;
             bool hasTalisman = false;
 
-            if(CheckGoalCondition()){
+            if(CheckGoalCondition() && gameCleared == false){
+                gameCleared = true;
                 Console.WriteLine("No need for player state update. You've cleared!");
                 return;
             };

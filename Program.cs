@@ -548,6 +548,7 @@ if (string.IsNullOrWhiteSpace(slot))
 
         void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, ArchipelagoClient client)
         {
+            CheckGoalCondition();
 #if DEBUG
             Console.WriteLine($"LocationCompleted Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
 #endif
@@ -614,6 +615,7 @@ if (string.IsNullOrWhiteSpace(slot))
                 if (goal)
                 {
                     archipelagoClient.SendGoalCompletion();
+                    return true;
                 }
             }
 
@@ -624,6 +626,7 @@ if (string.IsNullOrWhiteSpace(slot))
                 if (goal)
                 {
                     archipelagoClient.SendGoalCompletion();
+                    return true;
                 }
             }
 
@@ -635,6 +638,7 @@ if (string.IsNullOrWhiteSpace(slot))
                 if(zarokGoal && chaliceGoal)
                 {
                     archipelagoClient.SendGoalCompletion();
+                    return true;
                 }
             }
 
@@ -1073,7 +1077,7 @@ if (string.IsNullOrWhiteSpace(slot))
 
             if (levelName == runeLevel)
             {
-                SetItemMemoryValue(addressDict["Runes"][name], 1, 1);
+                SetItemMemoryValue(addressDict["Runes"][name], 0, 0);
                 //UpdateCurrentItemValue(item.Name, 0, addressDict["Runes"][name], true, false);
             }
         }

@@ -85,6 +85,31 @@ namespace MedievilArchipelago
             Memory.WriteByte(Addresses.HOH_MegwynneStormbinder2_drop, 0x08);
         }
 
+        static internal void SetCheatMenu(ArchipelagoClient client)
+        {
+            if(client.Options == null)
+            {
+                return;
+            }
+
+            int cheatMenu = Int32.Parse(client.Options?.GetValueOrDefault("cheat_menu", "0").ToString());
+
+            Console.WriteLine($"Cheatmenu: {cheatMenu}");
+
+            switch (cheatMenu)
+            {
+                case 0:
+                    break;
+                case 1:
+                    Memory.WriteByte(Addresses.CheatMenu, 0x01);
+                    break;
+                case 2:
+                    Memory.WriteByte(Addresses.CheatMenu, 0x01);
+                    break;
+            }
+            return;
+        }
+
         static internal void UpdateInventoryWithAmber()
         {
             var currentCount = Memory.ReadByte(Addresses.APAmberPieces);
@@ -105,12 +130,19 @@ namespace MedievilArchipelago
 
                 int runeSanityOption = Int32.Parse(client.Options?.GetValueOrDefault("runesanity", "0").ToString());
 
+                SetCheatMenu(client);
+
                 // creates a hashset to compare against
                 HashSet<int> processedChaliceCounts = new HashSet<int>();
 
                 bool firstLoop = true;
 
                 UpdateChestLocations(client, currentLocation);
+
+                if(currentLocation == 0 && runeSanityOption == 1)
+                {
+                    Memory.WriteByte(Addresses.CurrentLevel, 0);
+                }
 
                 if(currentLocation != 0)
                 {
@@ -152,10 +184,16 @@ namespace MedievilArchipelago
                             UpdateChestLocations(client, checkCurrentLevel);
                         }
 
+                        if (currentLocation == 0 && runeSanityOption == 1)
+                        {
+                            Memory.WriteByte(Addresses.CurrentLevel, 0);
+                        }
+
                         if (currentLocation != checkCurrentLevel)
                         {
+                            SetCheatMenu(client);
 
-                            if(checkCurrentLevel != 0)
+                            if (checkCurrentLevel != 0)
                             {
                                 if (runeSanityOption == 1)
                                 {
@@ -167,6 +205,8 @@ namespace MedievilArchipelago
                         }
 
                         firstLoop = false;
+
+
 
                         int currentChaliceCount = 0;
                         var playerStatus = Helpers.StatusAndInventoryAddressDictionary();

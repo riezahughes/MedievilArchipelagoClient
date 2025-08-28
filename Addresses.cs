@@ -15,11 +15,17 @@ namespace MedievilArchipelago
     {
         public const uint FakeAddress = 0x00000000; // This is a placeholder for an address that doesn't exist in the game. Used for testing.
 
+        // checks if you can control Dan
         public const uint InGameCheck = 0x000f88a0;
+
         // Current Level
         public const uint CurrentLevel = 0x000eee68;
 
+        // Current Map POS (could randomize it for fun i guess)
         public const uint CurrentMapPosition = 0x000f81d8;
+
+        // Cheat menu. Comes in two flavours. 0x01 or 0x02
+        public const uint CheatMenu = 0x000EEE76;
 
         // Game Complete
         public const uint WinConditionCredits = 0x00010038;

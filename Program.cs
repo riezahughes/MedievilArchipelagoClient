@@ -1077,7 +1077,7 @@ if (string.IsNullOrWhiteSpace(slot))
 
             if (levelName == runeLevel)
             {
-                SetItemMemoryValue(addressDict["Runes"][name], 0, 0);
+                SetItemMemoryValue(addressDict["Runes"][name], 1, 1);
                 //UpdateCurrentItemValue(item.Name, 0, addressDict["Runes"][name], true, false);
             }
         }

@@ -112,6 +112,16 @@ namespace MedievilArchipelago
 
                 UpdateChestLocations(client, currentLocation);
 
+                if(currentLocation != 0)
+                {
+                    if (runeSanityOption == 1)
+                    {
+                        OpenTheMap();
+                    }
+
+                    //SetRuneAxis();
+                }
+
                 if (currentLocation == 14)
                 {
                     UpdateAsylumDynamicDrops();

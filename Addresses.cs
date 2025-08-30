@@ -133,6 +133,11 @@ namespace MedievilArchipelago
         public const uint MAP_Unlock23 = 0x000F822A;
         public const uint MAP_Unlock24 = 0x000F822B;
 
+        // Quit characters on the start menu
+        public const uint MENU_Quit1 = 0x000ed764;
+        public const uint MENU_Quit2 = 0x000ed765; 
+
+
         // Rune Entity Locations
 
         public const uint TG_ChaosRuneYAxis = 0x00000000;

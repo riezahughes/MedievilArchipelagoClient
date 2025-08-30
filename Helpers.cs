@@ -123,7 +123,16 @@ namespace MedievilArchipelago
             };
         }
 
-        
+        public static List<uint> QuitTextMemoryLocations()
+        {
+            return new List<uint>
+            {
+                Addresses.MENU_Quit1,
+                Addresses.MENU_Quit2,
+            };
+        }
+
+
 
 
         public static List<ILocation> BuildLocationList(Dictionary<string, object> options)

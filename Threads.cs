@@ -63,6 +63,13 @@ namespace MedievilArchipelago
             }
         }
 
+        static internal void StartMenuToExit()
+        {
+            var exitList = Helpers.QuitTextMemoryLocations();
+            Memory.WriteByte(exitList[0], 0x45);
+            Memory.WriteByte(exitList[0], 0x78);
+        }
+
         static internal void UpdateHallOfHeroesTable() 
         {
             // counting from base address to the item choice
@@ -99,8 +106,6 @@ namespace MedievilArchipelago
 
             int cheatMenu = Int32.Parse(client.Options?.GetValueOrDefault("cheat_menu", "0").ToString());
 
-            Console.WriteLine($"Cheatmenu: {cheatMenu}");
-
             switch (cheatMenu)
             {
                 case 0:
@@ -136,7 +141,7 @@ namespace MedievilArchipelago
                 int runeSanityOption = Int32.Parse(client.Options?.GetValueOrDefault("runesanity", "0").ToString());
                 int openWorldOption = Int32.Parse(client.Options?.GetValueOrDefault("progression_option", "0").ToString());
 
-
+                //StartMenuToExit();
                 SetCheatMenu(client);
 
                 // creates a hashset to compare against
@@ -196,6 +201,7 @@ namespace MedievilArchipelago
 
                         if (currentLocation != checkCurrentLevel)
                         {
+                            //StartMenuToExit();
                             SetCheatMenu(client);
 
                             if (checkCurrentLevel != 0)

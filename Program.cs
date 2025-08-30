@@ -31,11 +31,13 @@ using Kokuban;
 using System.Net;
 using System.ComponentModel;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
+using System.Text;
 
 internal class Program
 {
     private static async Task Main(string[] args)
     {
+        Console.OutputEncoding = Encoding.UTF8;
         // set values
         const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
         const byte JP_OFFSET = 0; // could add more offsfets here
@@ -52,6 +54,8 @@ internal class Program
         string password;
 
         DateTime lastDeathTime = default(DateTime);
+        Task _deathlinkMonitorTask = null;
+        CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         List<ILocation> GameLocations = null;
 
@@ -191,11 +195,9 @@ if (string.IsNullOrWhiteSpace(slot))
 #endif
         Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
 
-        var cts = new CancellationTokenSource();
-
         // Register event handlers
         archipelagoClient.Connected += (sender, args) => OnConnected(sender, args, archipelagoClient);
-        archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args, archipelagoClient, cts);
+        archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args, archipelagoClient, _cancellationTokenSource);
         archipelagoClient.ItemReceived += (sender, args) => ItemReceived(sender, args, archipelagoClient);
         archipelagoClient.MessageReceived += (sender, args) => Client_MessageReceived(sender, args, archipelagoClient);
         archipelagoClient.LocationCompleted += (sender, args) => Client_LocationCompleted(sender, args, archipelagoClient);
@@ -277,17 +279,17 @@ if (string.IsNullOrWhiteSpace(slot))
             //    Console.WriteLine($"ID: {location.Id} - {location.Name}");
             //}
 
-            _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, cts.Token);
+            _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, _cancellationTokenSource.Token);
             _ = archipelagoClient.MonitorLocations(GameLocations);
 
-            while (!cts.Token.IsCancellationRequested)
+            while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {
                 try
                 {
                     var input = Console.ReadLine();
                     if (input?.Trim().ToLower() == "exit")
                     {
-                        cts.Cancel();
+                        _cancellationTokenSource.Cancel();
                         break;
                     }
                     else if (input?.Trim().ToLower().Contains("hint") == true)
@@ -680,7 +682,6 @@ if (string.IsNullOrWhiteSpace(slot))
             short currentWeapon = Memory.ReadShort(Addresses.ItemEquipped);
             byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
             int runeSanityOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("runesanity", "0").ToString());
-            Console.Write($"Runesanity: {runeSanityOption}");
 
             SetItemMemoryValue(Addresses.CurrentLifePotions, 0, 0);
             SetItemMemoryValue(Addresses.SoulHelmet, 0, 0);
@@ -1091,11 +1092,8 @@ if (string.IsNullOrWhiteSpace(slot))
             var name = ExtractRuneName(item.Name);
             var runeLevel = ExtractRuneLevel(item.Name);
 
-            Console.WriteLine($"Level: {levelName} Rune Level: {runeLevel}");
-
             if (levelName == runeLevel)
             {
-                Console.WriteLine($"Made it!");
                 SetItemMemoryValue(addressDict["Runes"][name], 1, 1);
             }
         }
@@ -1117,39 +1115,77 @@ if (string.IsNullOrWhiteSpace(slot))
             SetItemMemoryValue(Addresses.SmallSword, 65535, 65535);
         }
 
-        void StartDeathlinkMonitor(DeathLinkService deathLink, ArchipelagoClient client)
-        {
-            Memory.MonitorAddressForAction<int>(Addresses.CurrentEnergy,
-                () => IsTrulyDead(deathLink, client),
-                value => value == 0);
-
-        }
-
         void KillPlayer()
         {
             Memory.WriteByte(Addresses.GameGlobalScene, 0x06);
         }
 
-        void IsTrulyDead(DeathLinkService deathlink, ArchipelagoClient client)
-
+        void StartDeathlinkMonitor(DeathLinkService deathLink, ArchipelagoClient client)
         {
+            // If a previous task is running, cancel it first.
+            if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
+            {
+                _cancellationTokenSource.Cancel();
+            }
 
-            if (DateTime.Now - lastDeathTime >= TimeSpan.FromSeconds(20))
+            _cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = _cancellationTokenSource.Token;
+
+            _deathlinkMonitorTask = Task.Run(async () =>
+            {
+                // This is a continuous loop that runs until the task is canceled.
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    // Read the memory address.
+                    int currentValue = Memory.ReadUShort(Addresses.CurrentEnergy);
+
+                    // Check your condition.
+                    if (currentValue == 0)
+                    {
+                        // Execute the action.
+                        IsTrulyDead(deathLink, client);
+                    }
+
+                    // Await a short delay to prevent high CPU usage.
+                    await Task.Delay(100, cancellationToken);
+                }
+            }, cancellationToken);
+        }
+
+        void IsTrulyDead(DeathLinkService deathlink, ArchipelagoClient client)
+        {
+            var rnd = new Random();
+
+            List<string> deathResponse = new List<string>
+            {
+                "Everyone disliked that.",
+                "We're in danger!",
+                "You hate to see it.",
+                "Press F to pay respects.",
+                "This is fine.",
+                "Dan's dissapointment: Immeasurable.",
+                "We're going down swimming.",
+                "Lock, Stock and... we're all dead."
+            };
+
+            int listChoice = rnd.Next(deathResponse.Count);
+
+
+            if (DateTime.Now - lastDeathTime >= TimeSpan.FromSeconds(30))
             {
                 ushort bottleEnergy = Memory.ReadUShort(Addresses.CurrentStoredEnergy);
                 ushort currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
 
+                Kokuban.AnsiEscape.AnsiStyle bg = Chalk.BgCyan;
+                Kokuban.AnsiEscape.AnsiStyle fg = Chalk.Black;
 
-                if (bottleEnergy == 0 && currentLevel != 0)
+                if (bottleEnergy == 0 && currentLevel != 0 && isInTheGame())
                 {
-                    Console.WriteLine("Deathlink Sent");
+                    Console.WriteLine(bg + (fg + "[   ☠️💀 Deathlink Sent. " + deathResponse[listChoice] + " 💀☠️   ]"));
                     deathlink.SendDeathLink(new DeathLink(client.CurrentSession.Players.ActivePlayer.Name));
                     lastDeathTime = DateTime.Now;
                 }
-
             }
-
-            StartDeathlinkMonitor(deathlink, client);
         }
 
         // traps need added here and logic added into what i have already

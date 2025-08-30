@@ -503,9 +503,6 @@ if (string.IsNullOrWhiteSpace(slot))
                 int breakAmmoLimitOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("break_ammo_limit", "0").ToString());
                 int breakChargeLimitOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("break_percentage_limit", "0").ToString());
 
-                Console.WriteLine(breakChargeLimitOption);
-                Console.WriteLine(breakAmmoLimitOption);
-
                 switch (args.Item)
                 {
                     // incoming runes need added here

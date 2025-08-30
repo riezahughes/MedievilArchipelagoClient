@@ -842,6 +842,8 @@ namespace MedievilArchipelago
                 new GenericItemsData("Chalice Reward 18", Addresses.HOH_KarlStungard2, "18", "9999"),
                 new GenericItemsData("Chalice Reward 19", Addresses.HOH_DirkSteadfast2, "18", "9999"),
                 new GenericItemsData("Chalice Reward 20", Addresses.HOH_MegwynneStormbinder2, "18", "9999"),
+                new GenericItemsData("Book: Heores of Eld - HH", Addresses.HOH_Book_HeroesOfEld, "18", "9999"),
+                new GenericItemsData("Gergoyle: Entrance - HH", Addresses.HOH_Gargoyle_Entrance, "18", "9999"),
             };
             return hallOfHeroesVisits;
         }
@@ -1465,6 +1467,7 @@ namespace MedievilArchipelago
             List<GenericItemsData> zlLocations = new List<GenericItemsData>() {
                 new GenericItemsData("Equipment: Good Lightning - ZL", Addresses.ZL_Pickup_GoodLightning, "22", "32896", true),
                 new GenericItemsData("Equipment: Silver Shield Arena - ZL", Addresses.ZL_Pickup_SilverShield,"22", "32896", true),
+                new GenericItemsData("Gargoyle: Entrance - ZL", Addresses.TD_Gargoyle_Entrance, "21", "0"),
                 new GenericItemsData("Cleared: Zaroks Lair", Addresses.WinConditionCredits, "22", "101"),
             };
             return zlLocations;

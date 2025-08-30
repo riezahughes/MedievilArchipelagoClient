@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices.JavaScript;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using SharpDX.Direct2D1;
@@ -231,6 +232,9 @@ namespace MedievilArchipelago
         public const uint HOH_BloodmonathSkullCleaver2_drop = 0x0001977a;
         public const uint HOH_MegwynneStormbinder1_drop = 0x000197a2;
         public const uint HOH_MegwynneStormbinder2_drop = 0x000197aa;
+
+        public const uint HOH_Book_HeroesOfEld = 0x0001bcf8;
+        public const uint HOH_Gargoyle_Entrance = 0x0001b6ce;
 
         public const uint HOH_ItemCount = 0x000f90fa;
         public const uint HOH_ListenedToHero = 0x000196f0;
@@ -789,7 +793,7 @@ namespace MedievilArchipelago
 
         // Zaroks Lair
 
-        public const uint ZL_Pickup_GoodLightning = 0x001af3d0;
-        public const uint ZL_Pickup_SilverShield = 0x001aecf4;
+        public const uint ZL_Pickup_GoodLightning = 0x0012ED38;
+        public const uint ZL_Pickup_SilverShield = 0x0012EDF8;
     }
 }

@@ -460,6 +460,16 @@ namespace MedievilArchipelago
                             conditionalChoice.Add(new Location()
                             {
                                 Id = -1,
+                                Name = "Dan Frozen",
+                                Address = Addresses.DanFrozen,
+                                CheckType = LocationCheckType.Byte,
+                                CompareType = LocationCheckCompareType.Match,
+                                CheckValue = "2"
+                            });
+
+                            conditionalChoice.Add(new Location()
+                            {
+                                Id = -1,
                                 Name = "Gargoyle Check",
                                 Address = loc.Address,
                                 CheckType = LocationCheckType.Byte,
@@ -492,6 +502,16 @@ namespace MedievilArchipelago
                                 CheckType = LocationCheckType.Byte,
                                 CompareType = LocationCheckCompareType.Match,
                                 CheckValue = loc.LevelId
+                            });
+
+                            conditionalChoice.Add(new Location()
+                            {
+                                Id = -1,
+                                Name = "Dan Frozen",
+                                Address = Addresses.DanFrozen,
+                                CheckType = LocationCheckType.Byte,
+                                CompareType = LocationCheckCompareType.Match,
+                                CheckValue = "2"
                             });
 
                             conditionalChoice.Add(new Location()
@@ -623,6 +643,28 @@ namespace MedievilArchipelago
 
 
         }
+
+        public static Dictionary<string, int> AmmoAndChargeLimits()
+        {
+            return new Dictionary<string, int>
+            {
+                ["Dagger"] = 250,
+                ["Broadsword"] = 4096,
+                ["Club"] = 4096,
+                ["Chicken Drumsticks"] = 30,
+                ["Crossbow"] = 200,
+                ["Longbow"] = 200,
+                ["Fire Longbow"] = 100,
+                ["Magic Longbow"] = 50,
+                ["Spear"] = 30,
+                ["Copper Shield"] = 150,
+                ["Silver Shield"] = 250,
+                ["Gold Shield"] = 400,
+                ["Lightning"] = 4096
+            };
+        }
+
+
         public static Dictionary<string, Dictionary<string, uint>> StatusAndInventoryAddressDictionary()
         {
             return new Dictionary<string, Dictionary<string, uint>>
@@ -666,7 +708,10 @@ namespace MedievilArchipelago
                     ["Gold Shield Ammo"] = Addresses.GoldShieldAmmo,
                     ["Lightning Charge"] = Addresses.LightningCharge,
                 },
+                ["AmmoMaximum"] = new Dictionary<string, uint>
+                {
 
+                },
                 ["Player Stats"] = new Dictionary<string, uint>
                 {
                     ["Gold Coins"] = Addresses.CurrentGold,
@@ -816,6 +861,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Book: Power Attack - DC", Addresses.DC_Book_PowerAttack, "6", "0"),
                 new GenericItemsData("Book: Swimming - DC", Addresses.DC_Book_Swimming, "6", "0"),
                 new GenericItemsData("Book: Coins - DC", Addresses.DC_Book_Coins, "6", "0"),
+                new GenericItemsData("Book: Track Down Zarok - DC", Addresses.DC_Book_Zarok, "6", "0"),
                 new GenericItemsData("Gargoyle: Left - DC", Addresses.DC_Gargoyle_Left, "6", "0"),
                 new GenericItemsData("Gargoyle: Right - DC", Addresses.DC_Gargoyle_Right, "6", "0"),
                 new GenericItemsData("Cleared: Dan's Crypt", Addresses.DC_LevelStatus,  "6", "16"),

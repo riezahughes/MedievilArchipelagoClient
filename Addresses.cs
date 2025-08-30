@@ -66,6 +66,8 @@ namespace MedievilArchipelago
 
         public const uint DanDropShield = 0x000F81BE;
 
+        public const uint DanFrozen = 0x000eeea8;
+
         public const uint CurrentChalicePercentage = 0x000f82c0;
 
         public const uint GameGlobalScene = 0x000eeea4;
@@ -322,6 +324,7 @@ namespace MedievilArchipelago
         public const uint DC_Book_PowerAttack = 0x00011533;
         public const uint DC_Book_Swimming = 0x000115e0;
         public const uint DC_Book_Coins = 0x00011802;
+        public const uint DC_Book_Zarok = 0x00011959;
         public const uint DC_Gargoyle_Left = 0x00011302;
         public const uint DC_Gargoyle_Right = 0x00011c05;
 

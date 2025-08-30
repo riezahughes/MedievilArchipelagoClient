@@ -41,7 +41,7 @@ internal class Program
         // set values
         const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
         const byte JP_OFFSET = 0; // could add more offsfets here
-        const int percentageMax = 4096;
+        const int percentageMax = 20480;
         const int countMax = 32767;
         const int maxHealth = 300;
 
@@ -500,7 +500,11 @@ if (string.IsNullOrWhiteSpace(slot))
 #endif
                 byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
                 int runeSanityOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("runesanity", "0").ToString());
-                Console.WriteLine(runeSanityOption);
+                int breakAmmoLimitOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("break_ammo_limit", "0").ToString());
+                int breakChargeLimitOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("break_percentage_limit", "0").ToString());
+
+                Console.WriteLine(breakChargeLimitOption);
+                Console.WriteLine(breakAmmoLimitOption);
 
                 switch (args.Item)
                 {
@@ -514,8 +518,8 @@ if (string.IsNullOrWhiteSpace(slot))
                     case var x when x.Name.ContainsAny("Amber"): ReceiveAmber(); break;
                     case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
                     case var x when x.Name.ContainsAny("Health", "Gold Coins", "Energy"): ReceiveStatItems(x); break;
-                    case var x when x.Name.ContainsAny("Daggers", "Ammo", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x); break;
-                    case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x); break;
+                    case var x when x.Name.ContainsAny("Daggers", "Ammo", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x, breakAmmoLimitOption); break;
+                    case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x, breakChargeLimitOption); break;
                     case var x when x.Name.Contains("Trap: Heavy Dan"): HeavyDanTrap(); break;
                     case var x when x.Name.Contains("Trap: Light Dan"): LightDanTrap(); break;
                     case var x when x.Name.Contains("Trap: Goodbye Shield"): DarknessTrap(); break;
@@ -682,6 +686,11 @@ if (string.IsNullOrWhiteSpace(slot))
             short currentWeapon = Memory.ReadShort(Addresses.ItemEquipped);
             byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
             int runeSanityOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("runesanity", "0").ToString());
+            //int breakAmmoLimitOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("break_ammo_limit", "0").ToString());
+            ////int breakChargeLimitOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("break_percentage_limit", "0").ToString());
+
+            //Console.WriteLine(breakChargeLimitOption);
+            //Console.WriteLine(breakAmmoLimitOption);
 
             SetItemMemoryValue(Addresses.CurrentLifePotions, 0, 0);
             SetItemMemoryValue(Addresses.SoulHelmet, 0, 0);
@@ -726,6 +735,7 @@ if (string.IsNullOrWhiteSpace(slot))
                         break;
                     case var x when x.Name.ContainsAny("Charge"):
                         // no plans yet
+                        //ReceiveChargeType(x, breakChargeLimitOption);
                         break;
                     case var x when x.Name.Contains("Skill"): ReceiveSkill(x); break;
                     case var x when x.Name.Contains("Equipment"):
@@ -830,7 +840,7 @@ if (string.IsNullOrWhiteSpace(slot))
 
         // Update functions with correct logic
 
-        void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAddress, bool isCountType, bool isEquipmentType)
+        void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAddress, bool isCountType, bool isEquipmentType, int breakLimit = 0)
         {
             var currentNumberAmount = Memory.ReadShort(itemMemoryAddress);
 
@@ -861,9 +871,19 @@ if (string.IsNullOrWhiteSpace(slot))
 
             int maxValue = 0;
 
+            Console.WriteLine($"Break? {breakLimit} ");
+
             if (itemName.ContainsAny("Health", "Energy"))
             {
                 maxValue = maxHealth;
+            }
+            else if (breakLimit == 0 && itemName.ContainsAny("Ammo", "Charge"))
+            {
+                var dict = Helpers.AmmoAndChargeLimits();
+                string mainWeapon = itemName.Replace(" Ammo", "");
+                mainWeapon = mainWeapon.Replace(" Charge", "");
+                maxValue = dict[mainWeapon];
+
             }
             else
             {
@@ -993,22 +1013,22 @@ if (string.IsNullOrWhiteSpace(slot))
             return cleanedName;
         }
 
-        void ReceiveCountType(Item item)
+        void ReceiveCountType(Item item, int breakAmmoLimit)
         {
             var addressDict = Helpers.StatusAndInventoryAddressDictionary();
             var amount = ExtractBracketAmount(item.Name);
             var name = ExtractDictName(item.Name);
 
-            UpdateCurrentItemValue(item.Name, amount, addressDict["Ammo"][name], true, true);
+            UpdateCurrentItemValue(name, amount, addressDict["Ammo"][name], true, true, breakAmmoLimit);
         }
 
-        void ReceiveChargeType(Item item)
+        void ReceiveChargeType(Item item, int breakChargeLimit)
         {
             var addressDict = Helpers.StatusAndInventoryAddressDictionary();
             var amount = ExtractBracketAmount(item.Name);
             var name = ExtractDictName(item.Name);
 
-            UpdateCurrentItemValue(item.Name, amount, addressDict["Ammo"][name], false, true);
+            UpdateCurrentItemValue(name, amount, addressDict["Ammo"][name], false, true, breakChargeLimit);
         }
 
         void ReceiveEquipment(Item item)

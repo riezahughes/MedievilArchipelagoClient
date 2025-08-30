@@ -11,6 +11,7 @@ using Archipelago.Core.Models;
 using Serilog;
 using GameOverlay.Drawing;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 
 
 namespace MedievilArchipelago
@@ -18,7 +19,16 @@ namespace MedievilArchipelago
     public class MemoryCheckThreads
     {
 
-       static internal void UpdateChestLocations(ArchipelagoClient client, int id)
+        static DateTime lastDeathTime = default(DateTime);
+
+
+
+        //static internal void SetRuneAxis()
+        //{
+        //    Memory.WriteByte(Addresses.TG_EarthRuneYAxis, 0x0000);
+        //}
+
+        static internal void UpdateChestLocations(ArchipelagoClient client, int id)
         {
             var chestEntityList = Helpers.ChestContentsDictionary();
             foreach (ulong chestEntity in chestEntityList[id])
@@ -42,6 +52,22 @@ namespace MedievilArchipelago
             {
                 Memory.WriteByte(drop, 0x07);
             }
+        }
+
+        static internal void OpenTheMap()
+        {
+            var mapList = Helpers.OpenMapMemoryLocations();
+            foreach (uint address in mapList)
+            {
+                Memory.WriteByte(address, 0x01);
+            }
+        }
+
+        static internal void StartMenuToExit()
+        {
+            var exitList = Helpers.QuitTextMemoryLocations();
+            Memory.WriteByte(exitList[0], 0x45);
+            Memory.WriteByte(exitList[0], 0x78);
         }
 
         static internal void UpdateHallOfHeroesTable() 
@@ -71,6 +97,29 @@ namespace MedievilArchipelago
             Memory.WriteByte(Addresses.HOH_MegwynneStormbinder2_drop, 0x08);
         }
 
+        static internal void SetCheatMenu(ArchipelagoClient client)
+        {
+            if(client.Options == null)
+            {
+                return;
+            }
+
+            int cheatMenu = Int32.Parse(client.Options?.GetValueOrDefault("cheat_menu", "0").ToString());
+
+            switch (cheatMenu)
+            {
+                case 0:
+                    break;
+                case 1:
+                    Memory.WriteByte(Addresses.CheatMenu, 0x01);
+                    break;
+                case 2:
+                    Memory.WriteByte(Addresses.CheatMenu, 0x03);
+                    break;
+            }
+            return;
+        }
+
         static internal void UpdateInventoryWithAmber()
         {
             var currentCount = Memory.ReadByte(Addresses.APAmberPieces);
@@ -78,7 +127,7 @@ namespace MedievilArchipelago
         }
 
 
-        async public static Task PassiveLogicChecks(ArchipelagoClient client, CancellationToken cts)
+        async public static Task PassiveLogicChecks(ArchipelagoClient client, CancellationToken cts, DeathLinkService deathlink = null)
         {
             await Task.Run(() =>
             {
@@ -89,12 +138,33 @@ namespace MedievilArchipelago
                 // created an array of bytes for the update value to be 9999
                 byte[] updateValue = BitConverter.GetBytes(0x270F);
 
+                int runeSanityOption = Int32.Parse(client.Options?.GetValueOrDefault("runesanity", "0").ToString());
+                int openWorldOption = Int32.Parse(client.Options?.GetValueOrDefault("progression_option", "0").ToString());
+
+                //StartMenuToExit();
+                SetCheatMenu(client);
+
                 // creates a hashset to compare against
                 HashSet<int> processedChaliceCounts = new HashSet<int>();
 
                 bool firstLoop = true;
 
                 UpdateChestLocations(client, currentLocation);
+
+                if(currentLocation == 0 && runeSanityOption == 1)
+                {
+                    Memory.WriteByte(Addresses.CurrentLevel, 0);
+                }
+
+                if(currentLocation != 0)
+                {
+                    if (openWorldOption == 1)
+                    {
+                        OpenTheMap();
+                    }
+
+                    //SetRuneAxis();
+                }
 
                 if (currentLocation == 14)
                 {
@@ -123,13 +193,31 @@ namespace MedievilArchipelago
                         {
                             UpdateChestLocations(client, checkCurrentLevel);
                         }
+                        // i think i'm losing my mind
+                        //if (currentLocation == 0 && openWorldOption == 1)
+                        //{
+                        //    Memory.WriteByte(Addresses.CurrentLevel, 0);
+                        //}
 
                         if (currentLocation != checkCurrentLevel)
                         {
+                            //StartMenuToExit();
+                            SetCheatMenu(client);
+
+                            if (checkCurrentLevel != 0)
+                            {
+                                if (openWorldOption == 1)
+                                {
+                                    OpenTheMap();
+                                }
+                                //SetRuneAxis();
+                            }
                             currentLocation = checkCurrentLevel;
                         }
 
                         firstLoop = false;
+
+
 
                         int currentChaliceCount = 0;
                         var playerStatus = Helpers.StatusAndInventoryAddressDictionary();
@@ -256,8 +344,9 @@ namespace MedievilArchipelago
                         Log.Error(ex, "Error in passive logic checks thread.");
                     }
                     #if DEBUG
-                        Console.WriteLine("Passive Checks...");
+                        Console.Write(".");
                     #endif
+
                     Thread.Sleep(10000);
                 }
             }, cts);

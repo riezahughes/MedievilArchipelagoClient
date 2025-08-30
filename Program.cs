@@ -30,6 +30,7 @@ using Microsoft.Extensions.Configuration;
 using Kokuban;
 using System.Net;
 using System.ComponentModel;
+using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 
 internal class Program
 {
@@ -42,7 +43,6 @@ internal class Program
         const int countMax = 32767;
         const int maxHealth = 300;
 
-        bool firstRun = true;
         bool gameCleared = false;
 
         // Connection details
@@ -51,6 +51,7 @@ internal class Program
         string slot;
         string password;
 
+        DateTime lastDeathTime = default(DateTime);
 
         List<ILocation> GameLocations = null;
 
@@ -99,7 +100,7 @@ internal class Program
 
         archipelagoClient.CancelMonitors();
         archipelagoClient.Connected -= (sender, args) => OnConnected(sender, args, archipelagoClient);
-        archipelagoClient.Disconnected -= (sender, args) => OnDisconnected(sender, args, archipelagoClient, firstRun);
+        archipelagoClient.Disconnected -= (sender, args) => OnDisconnected(sender, args, archipelagoClient);
         archipelagoClient.ItemReceived -= (sender, args) => ItemReceived(sender, args, archipelagoClient);
         archipelagoClient.LocationCompleted -= (sender, args) => Client_LocationCompleted(sender, args, archipelagoClient);
 
@@ -190,9 +191,11 @@ if (string.IsNullOrWhiteSpace(slot))
 #endif
         Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
 
+        var cts = new CancellationTokenSource();
+
         // Register event handlers
         archipelagoClient.Connected += (sender, args) => OnConnected(sender, args, archipelagoClient);
-        archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args, archipelagoClient, firstRun);
+        archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args, archipelagoClient, cts);
         archipelagoClient.ItemReceived += (sender, args) => ItemReceived(sender, args, archipelagoClient);
         archipelagoClient.MessageReceived += (sender, args) => Client_MessageReceived(sender, args, archipelagoClient);
         archipelagoClient.LocationCompleted += (sender, args) => Client_LocationCompleted(sender, args, archipelagoClient);
@@ -222,7 +225,7 @@ if (string.IsNullOrWhiteSpace(slot))
             Console.WriteLine($"Current map changed");
         };
 
-        var cts = new CancellationTokenSource();
+
         try
         {
             await archipelagoClient.Connect(url + ":" + port, "Medievil");
@@ -277,92 +280,95 @@ if (string.IsNullOrWhiteSpace(slot))
             _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, cts.Token);
             _ = archipelagoClient.MonitorLocations(GameLocations);
 
-
-
-            firstRun = false;
-
             while (!cts.Token.IsCancellationRequested)
             {
-                var input = Console.ReadLine();
-                if (input?.Trim().ToLower() == "exit")
+                try
                 {
-                    cts.Cancel();
-                    break;
-                }
-                else if (input?.Trim().ToLower().Contains("hint") == true)
-                {
-
-                    string hintString = input?.Trim().ToLower() == "hint" ? "!hint" : $"!hint {input.Substring(5).Trim()}";
-                    archipelagoClient.SendMessage(hintString);
-                }
-                else if (input?.Trim().ToLower() == "update")
-                {
-                    if (archipelagoClient.GameState.CompletedLocations != null)
+                    var input = Console.ReadLine();
+                    if (input?.Trim().ToLower() == "exit")
                     {
-                        UpdatePlayerState(archipelagoClient.CurrentSession.Items.AllItemsReceived);
-                        Console.WriteLine($"Player state updated. Total Count: {archipelagoClient.CurrentSession.Items.AllItemsReceived.Count}");
+                        cts.Cancel();
+                        break;
+                    }
+                    else if (input?.Trim().ToLower().Contains("hint") == true)
+                    {
 
-#if DEBUG
-                        foreach (ItemInfo item in archipelagoClient.CurrentSession.Items.AllItemsReceived)
+                        string hintString = input?.Trim().ToLower() == "hint" ? "!hint" : $"!hint {input.Substring(5).Trim()}";
+                        archipelagoClient.SendMessage(hintString);
+                    }
+                    else if (input?.Trim().ToLower() == "update")
+                    {
+                        if (archipelagoClient.GameState.CompletedLocations != null)
                         {
-                            Console.WriteLine($"id: {item.ItemId} - {item.ItemName}");
-                        }
-#endif
-                    }
-                    else
-                    {
-                        Console.WriteLine("Cannot update player state: GameState or CompletedLocations is null.");
-                    }
-                }
-                else if (input?.Trim().ToLower() == "items")
-                {
-                    var items = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Key Item") select item;
+                            UpdatePlayerState(archipelagoClient.CurrentSession.Items.AllItemsReceived);
+                            Console.WriteLine($"Player state updated. Total Count: {archipelagoClient.CurrentSession.Items.AllItemsReceived.Count}");
 
-                    var bottles = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Bottle") select item;
-
-                    var equipment = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Equipment") select item;
-
-                    Console.WriteLine("Current Equipment: ");
-                    foreach (var weapon in equipment.OrderBy(item => item.ItemName))
-                    {
-                        Console.WriteLine(weapon.ItemName);
-                    }
-
-                    Console.WriteLine("Current Key Items: ");
-                    foreach (var item in items.OrderBy(item => item.ItemName))
-                    {
-                        Console.WriteLine(item.ItemName);
-                    }
-
-                    Console.WriteLine("Current Bottles: ");
-                    foreach (var bottle in bottles.OrderBy(item => item.ItemName))
-                    {
-                        Console.WriteLine(bottle.ItemName);
-                    }
-
-
-                }
 #if DEBUG
-                else if (input?.Trim().ToLower() == "heavytrap")
-                {
-                    HeavyDanTrap();
-                }
-                else if (input?.Trim().ToLower() == "lighttrap")
-                {
-                    LightDanTrap();
-                }
-                else if (input?.Trim().ToLower() == "shieldtrap")
-                {
-                    GoodbyeShieldTrap();
-                }
-                else if (input?.Trim().ToLower() == "hudtrap")
-                {
-                    HudlessTrap();
-                }
+                            foreach (ItemInfo item in archipelagoClient.CurrentSession.Items.AllItemsReceived)
+                            {
+                                Console.WriteLine($"id: {item.ItemId} - {item.ItemName}");
+                            }
 #endif
-                else if (!string.IsNullOrWhiteSpace(input))
+                        }
+                        else
+                        {
+                            Console.WriteLine("Cannot update player state: GameState or CompletedLocations is null.");
+                        }
+                    }
+                    else if (input?.Trim().ToLower() == "items")
+                    {
+                        var items = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Key Item") select item;
+
+                        var bottles = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Bottle") select item;
+
+                        var equipment = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Equipment") select item;
+
+                        Console.WriteLine("Current Equipment: ");
+                        foreach (var weapon in equipment.OrderBy(item => item.ItemName))
+                        {
+                            Console.WriteLine(weapon.ItemName);
+                        }
+
+                        Console.WriteLine("Current Key Items: ");
+                        foreach (var item in items.OrderBy(item => item.ItemName))
+                        {
+                            Console.WriteLine(item.ItemName);
+                        }
+
+                        Console.WriteLine("Current Bottles: ");
+                        foreach (var bottle in bottles.OrderBy(item => item.ItemName))
+                        {
+                            Console.WriteLine(bottle.ItemName);
+                        }
+
+
+                    }
+#if DEBUG
+                    else if (input?.Trim().ToLower() == "heavytrap")
+                    {
+                        HeavyDanTrap();
+                    }
+                    else if (input?.Trim().ToLower() == "lighttrap")
+                    {
+                        LightDanTrap();
+                    }
+                    else if (input?.Trim().ToLower() == "darknesstrap")
+                    {
+                        DarknessTrap();
+                    }
+                    else if (input?.Trim().ToLower() == "hudtrap")
+                    {
+                        HudlessTrap();
+                    }
+#endif
+                    else if (!string.IsNullOrWhiteSpace(input))
+                    {
+                        Console.WriteLine($"Unknown command: '{input}'");
+                    }
+                }
+                catch (Exception ex)
                 {
-                    Console.WriteLine($"Unknown command: '{input}'");
+                    Console.WriteLine("The system has crashed. (Probably broken connection");
                 }
             }
         }
@@ -402,26 +408,35 @@ if (string.IsNullOrWhiteSpace(slot))
 
         async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
         {
-            if (client.CurrentSession != null) {
-                // if deathlink goes here
-                int deathlink = int.Parse(client.Options?.GetValueOrDefault("deathlink", "0").ToString());
-                if (deathlink == 1)
-                {
-#if DEBUG
+            if (client.CurrentSession == null) {
+                Console.WriteLine("Client is null on connect hook");
+                return;
+            }
+
+             Log.Logger.Information("Connected to Archipelago");
+             Log.Logger.Information($"Playing {client.CurrentSession.ConnectionInfo.Game} as {client.CurrentSession.Players.GetPlayerName(client.CurrentSession.ConnectionInfo.Slot)}");
+
+            // if deathlink goes here
+            int deathlink = Int32.Parse(client.Options?.GetValueOrDefault("deathlink", "0").ToString());
+
+
+            DeathLinkService deathLinkClient = null;
+
+            if (deathlink == 1)
+            {
+            #if DEBUG
                 Console.WriteLine("Deathlink is activated.");
-#endif
-                    var deathLink = client.EnableDeathLink();
-                    deathLink.OnDeathLinkReceived += (args) => KillPlayer();
-                }
+            #endif
+                deathLinkClient = client.EnableDeathLink();
+                deathLinkClient.OnDeathLinkReceived += (args) => KillPlayer();
+                StartDeathlinkMonitor(deathLinkClient, client);
+            }
 
-                Log.Logger.Information("Connected to Archipelago");
-                Log.Logger.Information($"Playing {client.CurrentSession.ConnectionInfo.Game} as {client.CurrentSession.Players.GetPlayerName(client.CurrentSession.ConnectionInfo.Slot)}");
+            Console.WriteLine("Setting up player state..");
 
-                Console.WriteLine("Setting up player state..");
-
-#if DEBUG
-            Console.WriteLine($"OnConnected Firing. Itemcount: {client.GameState.ReceivedItems.Count}");
-#endif
+            #if DEBUG
+                Console.WriteLine($"OnConnected Firing. Itemcount: {client.GameState.ReceivedItems.Count}");
+            #endif
                 UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
 
 
@@ -459,14 +474,13 @@ if (string.IsNullOrWhiteSpace(slot))
                     Memory.Write(Addresses.DanJumpHeight, defaultJumpValue);
                     Memory.Write(Addresses.DanForwardSpeed, defaultSpeedValue);
                 }
-            }
         }
 
 
 
-        async void OnDisconnected(object sender, ConnectionChangedEventArgs args, ArchipelagoClient client, bool firstRun)
+        async void OnDisconnected(object sender, ConnectionChangedEventArgs args, ArchipelagoClient client, CancellationTokenSource cts = null)
         {
-            if (client.GameState == null && firstRun == false) ;
+            if (client.GameState == null || cts.IsCancellationRequested)
             {
                 Console.WriteLine("Disconnected from Archipelago.");
             }
@@ -484,6 +498,7 @@ if (string.IsNullOrWhiteSpace(slot))
 #endif
                 byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
                 int runeSanityOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("runesanity", "0").ToString());
+                Console.WriteLine(runeSanityOption);
 
                 switch (args.Item)
                 {
@@ -501,7 +516,7 @@ if (string.IsNullOrWhiteSpace(slot))
                     case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x); break;
                     case var x when x.Name.Contains("Trap: Heavy Dan"): HeavyDanTrap(); break;
                     case var x when x.Name.Contains("Trap: Light Dan"): LightDanTrap(); break;
-                    case var x when x.Name.Contains("Trap: Goodbye Shield"): GoodbyeShieldTrap(); break;
+                    case var x when x.Name.Contains("Trap: Goodbye Shield"): DarknessTrap(); break;
                     case var x when x.Name.Contains("Trap: Hudless"): HudlessTrap(); break;
                     case var x when x.Name.Contains("Trap: Lag"): RunLagTrap(); break;
                     case null: Console.WriteLine("Received an item with null data. Skipping."); break;
@@ -550,7 +565,7 @@ if (string.IsNullOrWhiteSpace(slot))
         {
             CheckGoalCondition();
 #if DEBUG
-            Console.WriteLine($"LocationCompleted Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
+            Console.WriteLine($"LocationCompleted Firing. {e.CompletedLocation.Name} - {e.CompletedLocation.Id} Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
 #endif
         }
 
@@ -665,6 +680,7 @@ if (string.IsNullOrWhiteSpace(slot))
             short currentWeapon = Memory.ReadShort(Addresses.ItemEquipped);
             byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
             int runeSanityOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("runesanity", "0").ToString());
+            Console.Write($"Runesanity: {runeSanityOption}");
 
             SetItemMemoryValue(Addresses.CurrentLifePotions, 0, 0);
             SetItemMemoryValue(Addresses.SoulHelmet, 0, 0);
@@ -705,7 +721,7 @@ if (string.IsNullOrWhiteSpace(slot))
                         // no plans yet
                         break;
                     case var x when x.Name.Contains("Rune") && runeSanityOption == 1:
-                        ReceiveRune(currentLevel, x);                        
+                        ReceiveRune(currentLevel, x);
                         break;
                     case var x when x.Name.ContainsAny("Charge"):
                         // no plans yet
@@ -1075,8 +1091,11 @@ if (string.IsNullOrWhiteSpace(slot))
             var name = ExtractRuneName(item.Name);
             var runeLevel = ExtractRuneLevel(item.Name);
 
+            Console.WriteLine($"Level: {levelName} Rune Level: {runeLevel}");
+
             if (levelName == runeLevel)
             {
+                Console.WriteLine($"Made it!");
                 SetItemMemoryValue(addressDict["Runes"][name], 1, 1);
             }
         }
@@ -1098,13 +1117,42 @@ if (string.IsNullOrWhiteSpace(slot))
             SetItemMemoryValue(Addresses.SmallSword, 65535, 65535);
         }
 
-        // traps need added here and logic added into what i have already
-
-        async void KillPlayer()
+        void StartDeathlinkMonitor(DeathLinkService deathLink, ArchipelagoClient client)
         {
-            Memory.WriteByte(Addresses.CurrentHP, 0x00);
-            // Memory.WriteByte(Addresses.CurrentEnergy, 0x00);
+            Memory.MonitorAddressForAction<int>(Addresses.CurrentEnergy,
+                () => IsTrulyDead(deathLink, client),
+                value => value == 0);
+
         }
+
+        void KillPlayer()
+        {
+            Memory.WriteByte(Addresses.GameGlobalScene, 0x06);
+        }
+
+        void IsTrulyDead(DeathLinkService deathlink, ArchipelagoClient client)
+
+        {
+
+            if (DateTime.Now - lastDeathTime >= TimeSpan.FromSeconds(20))
+            {
+                ushort bottleEnergy = Memory.ReadUShort(Addresses.CurrentStoredEnergy);
+                ushort currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+
+
+                if (bottleEnergy == 0 && currentLevel != 0)
+                {
+                    Console.WriteLine("Deathlink Sent");
+                    deathlink.SendDeathLink(new DeathLink(client.CurrentSession.Players.ActivePlayer.Name));
+                    lastDeathTime = DateTime.Now;
+                }
+
+            }
+
+            StartDeathlinkMonitor(deathlink, client);
+        }
+
+        // traps need added here and logic added into what i have already
 
         async void RunLagTrap()
         {
@@ -1143,7 +1191,7 @@ if (string.IsNullOrWhiteSpace(slot))
             }, TaskScheduler.Default);
         }
 
-        void GoodbyeShieldTrap()
+        void DarknessTrap()
         {
             Console.WriteLine("Goodbye Shield Disabled due to bug! Sorry!");
             //Memory.WriteByte(Addresses.ShieldDropped, 0x01);

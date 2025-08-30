@@ -11,6 +11,7 @@ using Archipelago.Core.Models;
 using Serilog;
 using GameOverlay.Drawing;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 
 
 namespace MedievilArchipelago
@@ -18,12 +19,16 @@ namespace MedievilArchipelago
     public class MemoryCheckThreads
     {
 
+        static DateTime lastDeathTime = default(DateTime);
+
+
+
         //static internal void SetRuneAxis()
         //{
         //    Memory.WriteByte(Addresses.TG_EarthRuneYAxis, 0x0000);
         //}
 
-       static internal void UpdateChestLocations(ArchipelagoClient client, int id)
+        static internal void UpdateChestLocations(ArchipelagoClient client, int id)
         {
             var chestEntityList = Helpers.ChestContentsDictionary();
             foreach (ulong chestEntity in chestEntityList[id])
@@ -104,7 +109,7 @@ namespace MedievilArchipelago
                     Memory.WriteByte(Addresses.CheatMenu, 0x01);
                     break;
                 case 2:
-                    Memory.WriteByte(Addresses.CheatMenu, 0x01);
+                    Memory.WriteByte(Addresses.CheatMenu, 0x03);
                     break;
             }
             return;
@@ -117,7 +122,7 @@ namespace MedievilArchipelago
         }
 
 
-        async public static Task PassiveLogicChecks(ArchipelagoClient client, CancellationToken cts)
+        async public static Task PassiveLogicChecks(ArchipelagoClient client, CancellationToken cts, DeathLinkService deathlink = null)
         {
             await Task.Run(() =>
             {
@@ -129,6 +134,8 @@ namespace MedievilArchipelago
                 byte[] updateValue = BitConverter.GetBytes(0x270F);
 
                 int runeSanityOption = Int32.Parse(client.Options?.GetValueOrDefault("runesanity", "0").ToString());
+                int openWorldOption = Int32.Parse(client.Options?.GetValueOrDefault("progression_option", "0").ToString());
+
 
                 SetCheatMenu(client);
 
@@ -146,7 +153,7 @@ namespace MedievilArchipelago
 
                 if(currentLocation != 0)
                 {
-                    if (runeSanityOption == 1)
+                    if (openWorldOption == 1)
                     {
                         OpenTheMap();
                     }
@@ -167,8 +174,6 @@ namespace MedievilArchipelago
                         byte checkCurrentLevel = Memory.ReadByte(Addresses.CurrentLevel);
                         short checkQueenAntStatus = Memory.ReadShort(Addresses.TA_BossHealth);
 
-
-
                         if (currentLocation == 14)
                         {
                             UpdateAsylumDynamicDrops();
@@ -183,11 +188,11 @@ namespace MedievilArchipelago
                         {
                             UpdateChestLocations(client, checkCurrentLevel);
                         }
-
-                        if (currentLocation == 0 && runeSanityOption == 1)
-                        {
-                            Memory.WriteByte(Addresses.CurrentLevel, 0);
-                        }
+                        // i think i'm losing my mind
+                        //if (currentLocation == 0 && openWorldOption == 1)
+                        //{
+                        //    Memory.WriteByte(Addresses.CurrentLevel, 0);
+                        //}
 
                         if (currentLocation != checkCurrentLevel)
                         {
@@ -195,7 +200,7 @@ namespace MedievilArchipelago
 
                             if (checkCurrentLevel != 0)
                             {
-                                if (runeSanityOption == 1)
+                                if (openWorldOption == 1)
                                 {
                                     OpenTheMap();
                                 }
@@ -333,8 +338,9 @@ namespace MedievilArchipelago
                         Log.Error(ex, "Error in passive logic checks thread.");
                     }
                     #if DEBUG
-                        Console.WriteLine("Passive Checks...");
+                        Console.Write(".");
                     #endif
+
                     Thread.Sleep(10000);
                 }
             }, cts);

@@ -871,8 +871,6 @@ if (string.IsNullOrWhiteSpace(slot))
 
             int maxValue = 0;
 
-            Console.WriteLine($"Break? {breakLimit} ");
-
             if (itemName.ContainsAny("Health", "Energy"))
             {
                 maxValue = maxHealth;

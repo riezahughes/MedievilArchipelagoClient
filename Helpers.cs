@@ -379,14 +379,41 @@ namespace MedievilArchipelago
                             {
                                 List<ILocation> conditionalChoice = new List<ILocation>();
 
-                                conditionalChoice.Add(new Location()
+                                if (loc.Name.Contains("Enchanted"))
                                 {
-                                    Id = -1,
-                                    Name = "Cleared Level",
-                                    Address = loc.Address,
-                                    CheckType = LocationCheckType.Bit,
-                                    AddressBit = 4
-                                });
+                                    conditionalChoice.Add(new Location()
+                                    {
+                                        Id = -1,
+                                        Name = "Level Check",
+                                        Address = Addresses.CurrentLevel,
+                                        CheckType = LocationCheckType.Byte,
+                                        CompareType = LocationCheckCompareType.Match,
+                                        CheckValue = "15"
+                                    });
+
+                                    conditionalChoice.Add(new Location()
+                                    {
+                                        Id = -1,
+                                        Name = "EE Check",
+                                        Address = loc.Address,
+                                        CheckType = LocationCheckType.UShort,
+                                        CompareType = LocationCheckCompareType.Match,
+                                        CheckValue = "1"
+                                    });
+
+                                } else {
+                                    conditionalChoice.Add(new Location()
+                                    {
+                                        Id = -1,
+                                        Name = "Cleared Level",
+                                        Address = loc.Address,
+                                        CheckType = LocationCheckType.Bit,
+                                        AddressBit = 4
+                                    });
+                                }
+
+
+
                                 CompositeLocation location = new CompositeLocation()
                                 {
                                     Name = loc.Name,
@@ -1009,6 +1036,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Bag in the Spinner - SF", Addresses.SF_Pickup_GoldCoinsBagInTheSpinner, "5", "32896"),
                 new GenericItemsData("Gold Coins: Chest next to Harvester Part - SF", Addresses.SF_Pickup_GoldCoinsChestNextToHarvesterPart, "5", "32896"),
                 new GenericItemsData("Book: Scarecrows - SF", Addresses.SF_Book_Scarecrows, "5", "0"),
+                new GenericItemsData("Book: Mischief Makers - SF", Addresses.SF_Book_MischiefMakers, "5", "0"),
                 new GenericItemsData("Book: Kul Katura - SF", Addresses.SF_Book_KulKatura, "5", "0"),
                 new GenericItemsData("Book: Cornfields - SF", Addresses.SF_Book_Cornfields, "5", "0"),
                 new GenericItemsData("Book: Mad Machines - SF", Addresses.SF_Book_MadMachines, "5", "0"),
@@ -1081,7 +1109,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Book: Take the Talisman - EE", Addresses.EE_Book_TakeTheTalisman, "15", "0"),
                 new GenericItemsData("Gargoyle: Outside Demon Entrance - EE", Addresses.EE_Gargoyle_OutsideDemonEntrance, "15", "0"),
                 new GenericItemsData("Gargoyle: Outside Demon Exit - EE", Addresses.EE_Gargoyle_OutsideDemonExit, "15", "0"),
-                new GenericItemsData("Cleared: Enchanted Earth", Addresses.EE_LevelStatus, "15", "16"),
+                new GenericItemsData("Cleared: Enchanted Earth", Addresses.EE_LevelStatus, "15", "1"),
                 new GenericItemsData("Chalice: Enchanted Earth", Addresses.EE_Pickup_Chalice, "15", "32896"),
             };
             return eeLocations;
@@ -1203,21 +1231,21 @@ namespace MedievilArchipelago
 
                 new GenericItemsData("Earth Rune: The Crystal Caves", Addresses.CC_Pickup_EarthRune, "8", "32896"),
                 new GenericItemsData("Star Rune: The Crystal Caves", Addresses.CC_Pickup_StarRune, "8", "32896"),
-                new GenericItemsData("Equipment: Silver Shield in Crystal - CC", Addresses.CC_Pickup_SilverShieldInCrystal, "8", "128"),
+                new GenericItemsData("Equipment: Silver Shield in Crystal - CC", Addresses.CC_Pickup_SilverShieldInCrystal, "8", "0"),
                 new GenericItemsData("Equipment: Dragon Armour - CC", Addresses.CC_Pickup_DragonArmour, "8", "32896"),
                 new GenericItemsData("Energy Vial: Dragon Room 1st Platform - CC", Addresses.CC_Pickup_EnergyVialDragonRoom1stPlatform, "8", "32896"),
                 new GenericItemsData("Energy Vial: Dragon Room 3rd Platform - CC", Addresses.CC_Pickup_EnergyVialDragonRoom3rdPlatform, "8", "32896"),
                 new GenericItemsData("Gold Coins: Bag at bottom of winding staircase  - CC", Addresses.CC_Pickup_GoldCoinsBagAtWindingStaircase, "8", "32896"),
-                new GenericItemsData("Gold Coins: Chest in Crystal after Pool - CC", Addresses.CC_Pickup_GoldCoinsChestInCrystalAfterPool, "8", "128"),
-                new GenericItemsData("Gold Coins: Bag in Crystal at Start - CC", Addresses.CC_Pickup_GoldCoinsBagInCrystalAtStart, "8", "128"),
+                new GenericItemsData("Gold Coins: Chest in Crystal after Pool - CC", Addresses.CC_Pickup_GoldCoinsChestInCrystalAfterPool, "8", "0"),
+                new GenericItemsData("Gold Coins: Bag in Crystal at Start - CC", Addresses.CC_Pickup_GoldCoinsBagInCrystalAtStart, "8", "05"),
                 new GenericItemsData("Gold Coins: Bag in Spinner - CC", Addresses.CC_Pickup_GoldCoinsBagInSpinner, "8", "32896"),
                 new GenericItemsData("Gold Coins: Bag near Silver Shield - CC", Addresses.CC_Pickup_GoldCoinsBagNearSilverShield, "8", "32896"),
-                new GenericItemsData("Gold Coins: Chest in Crystal After Earth Door - CC", Addresses.CC_Pickup_GoldCoinsChestInCrystalAfterEarthDoor, "8", "128"),
+                new GenericItemsData("Gold Coins: Chest in Crystal After Earth Door - CC", Addresses.CC_Pickup_GoldCoinsChestInCrystalAfterEarthDoor, "8", "0"),
                 new GenericItemsData("Gold Coins: Bag in Dragon Room 1 1st Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom11stPlatform, "8", "32896"),
                 new GenericItemsData("Gold Coins: Bag in Dragon Room 2 1st Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom21stPlatform, "8", "32896"),
                 new GenericItemsData("Gold Coins: Chest in Dragon Room 1st Platform - CC", Addresses.CC_Pickup_GoldCoinsChestInDragonRoom1stPlatform, "8", "32896"),
                 new GenericItemsData("Gold Coins: Bag in Dragon Room 2nd Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom2ndPlatform, "8", "32896"),
-                new GenericItemsData("Gold Coins: Bag in Dragon Room 1 3rd Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom13rdPlatform, "8", "32896"),
+                new GenericItemsData("Gold Coins: Bag in Dragon Room 1 3rd Platform - C6C", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom13rdPlatform, "8", "32896"),
                 new GenericItemsData("Gold Coins: Bag in Dragon Room 2 3rd Platform - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom23rdPlatform,"8",  "32896"),
                 new GenericItemsData("Gold Coins: Chest in Dragon Room 3rd Platform - CC", Addresses.CC_Pickup_GoldCoinsChestInDragonRoom3rdPlatform, "8", "32896"),
                 new GenericItemsData("Gold Coins: Bag in Dragon Room 4th Platform 1 - CC", Addresses.CC_Pickup_GoldCoinsBagInDragonRoom4thPlatform1, "8", "32896"),
@@ -1226,6 +1254,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Bag on Left of Pool - CC", Addresses.CC_Pickup_GoldCoinsBagOnLeftOfPool, "8", "32896"),
                 new GenericItemsData("Gold Coins: Bag on Right of Pool - CC", Addresses.CC_Pickup_GoldCoinsBagOnRightOfPool, "8", "32896"),
                 new GenericItemsData("Book: Dragon Book - CC", Addresses.CC_Book_DragonBook, "8", "0"),
+                new GenericItemsData("Book: Summon Dragon - CC", Addresses.CC_Book_DragonBook, "8", "0")
                 new GenericItemsData("Gargoyle: Cave Entrance - CC", Addresses.CC_Gargoyle_CaveEntrance, "8", "0"),
                 new GenericItemsData("Cleared: The Crystal Caves", Addresses.CC_LevelStatus, "8", "16"),
                 new GenericItemsData("Chalice: The Crystal Caves", Addresses.CC_Pickup_Chalice, "8",  "32896"),

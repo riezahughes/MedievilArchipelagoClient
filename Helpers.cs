@@ -249,8 +249,18 @@ namespace MedievilArchipelago
                                     Name = "Crystal Check",
                                     Address = loc.Address,
                                     CheckType = LocationCheckType.Byte,
-                                    CompareType = LocationCheckCompareType.GreaterThan,
+                                    CompareType = LocationCheckCompareType.Match,
                                     CheckValue = "0"
+                                });
+
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Loading Check",
+                                    Address = Addresses.IsLoaded,
+                                    CheckType = LocationCheckType.UShort,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = "59580"
                                 });
 
                                 CompositeLocation location = new CompositeLocation()
@@ -1254,7 +1264,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Bag on Left of Pool - CC", Addresses.CC_Pickup_GoldCoinsBagOnLeftOfPool, "8", "32896"),
                 new GenericItemsData("Gold Coins: Bag on Right of Pool - CC", Addresses.CC_Pickup_GoldCoinsBagOnRightOfPool, "8", "32896"),
                 new GenericItemsData("Book: Dragon Book - CC", Addresses.CC_Book_DragonBook, "8", "0"),
-                new GenericItemsData("Book: Summon Dragon - CC", Addresses.CC_Book_DragonBook, "8", "0")
+                new GenericItemsData("Book: Summon Dragon - CC", Addresses.CC_Book_DragonBook, "8", "0"),
                 new GenericItemsData("Gargoyle: Cave Entrance - CC", Addresses.CC_Gargoyle_CaveEntrance, "8", "0"),
                 new GenericItemsData("Cleared: The Crystal Caves", Addresses.CC_LevelStatus, "8", "16"),
                 new GenericItemsData("Chalice: The Crystal Caves", Addresses.CC_Pickup_Chalice, "8",  "32896"),

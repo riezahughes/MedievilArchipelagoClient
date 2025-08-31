@@ -19,6 +19,8 @@ namespace MedievilArchipelago
         // checks if you can control Dan
         public const uint InGameCheck = 0x000f88a0;
 
+        public const uint IsLoaded = 0x001fff5c;
+
         // Current Level
         public const uint CurrentLevel = 0x000eee68;
 

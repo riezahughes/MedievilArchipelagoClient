@@ -903,15 +903,11 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetCemeteryHillData()
         {
             List<GenericItemsData> chLocations = new List<GenericItemsData>() {
-
-                new GenericItemsData("Key Item: Witches Talisman - CH", Addresses.CH_Pickup_WitchTalisman, "3", "32896"),
                 new GenericItemsData("Equipment: Copper Shield 1 - CH", Addresses.CH_Pickup_CopperShield1stOnHill, "3", "32896", true),
                 new GenericItemsData("Equipment: Copper Shield 2 - CH", Addresses.CH_Pickup_CopperShield2ndOnHill, "3", "32896", true),
                 new GenericItemsData("Equipment: Copper Shield 3 - CH", Addresses.CH_Pickup_CopperShield3rdOnHill, "3", "32896", true),
                 new GenericItemsData("Equipment: Club - CH", Addresses.CH_Pickup_Club, "3", "32896", true),
-                new GenericItemsData("Equipment: Copper Shield in Arena - CH", Addresses.CH_Pickup_CopperShieldArena, "3", "32896"),
                 new GenericItemsData("Energy Vial: Near Shop - CH", Addresses.CH_Pickup_EnergyVialNearShop, "3", "32896"),
-                new GenericItemsData("Energy Vial: Arena - CH", Addresses.CH_Pickup_EnergyVialArena, "3", "32896"),
                 new GenericItemsData("Gold Coins: Near Boulder Entrance - CH", Addresses.CH_Pickup_GoldCoinsNearBoulderEntrance, "3", "32896"),
                 new GenericItemsData("Gold Coins: Up Hill 1 - CH", Addresses.CH_Pickup_GoldCoinsUpHill1, "3", "32896"),
                 new GenericItemsData("Gold Coins: Up Hill 2 - CH", Addresses.CH_Pickup_GoldCoinsUpHill2, "3", "32896"),
@@ -920,9 +916,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Book: Breakables - CH", Addresses.CH_Book_Breakables, "3", "0"),
                 new GenericItemsData("Book: Club - CH", Addresses.CH_Book_Club, "3", "0"),
                 new GenericItemsData("Book: Destroy Boulder - CH", Addresses.CH_Book_DestroyBoulder, "3", "0"),
-                new GenericItemsData("Book: A Guide to Covens - CH", Addresses.CH_Book_AGuideToCovens, "3", "0"),
                 new GenericItemsData("Book: Hidden Locations - CH", Addresses.CH_Book_HiddenLocations, "3", "0"),
-                new GenericItemsData("Gargoyle: Witch Cave - CH", Addresses.CH_Gargoyle_WitchCave, "3", "0"),
                 new GenericItemsData("Cleared: Cemetery Hill", Addresses.CH_LevelStatus, "3", "16"),
             };
             return chLocations;
@@ -950,7 +944,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Book: Glass Demon - HM", Addresses.HM_Book_GlassDemon, "4", "0"),
                 new GenericItemsData("Book: Phantom of the Opera - HM", Addresses.HM_Book_PhantomOfTheOpera, "4", "0"),
                 new GenericItemsData("Book: Demon Heart - HM", Addresses.HM_Book_DemonHeart, "4", "0"),
-                new GenericItemsData("Book: Theving Imps - HM", Addresses.HM_Book_ThevingImps, "4", "0"),
+                new GenericItemsData("Book: Thieving Imps - HM", Addresses.HM_Book_ThevingImps, "4", "0"),
                 new GenericItemsData("Cleared: The Hilltop Mausoleum", Addresses.HM_LevelStatus, "4", "16"),
             };
             return hmLocations;
@@ -1327,14 +1321,14 @@ namespace MedievilArchipelago
                 new GenericItemsData("Energy Vial: In Coop - PG", Addresses.PG_Pickup_EnergyVialInCoop, "9", "32896"),
                 new GenericItemsData("Energy Vial: In Moon Hut - PG", Addresses.PG_Pickup_EnergyVialInMoonHut, "9", "32896"),
                 new GenericItemsData("Energy Vial: Top of Hill - PG", Addresses.PG_Pickup_EnergyVialTopOfHill, "9", "32896"),
-                new GenericItemsData("Energy Vial: Boulders After Star Rune - PG",  Addresses.PG_Pickup_EnergyVialBouldersAfterStarRune, "9", "32896"),
+                new GenericItemsData("Energy Vial: Boulders After Time Rune - PG",  Addresses.PG_Pickup_EnergyVialBouldersAfterStarRune, "9", "32896"),
                 new GenericItemsData("Energy Vial: Chalice Path - PG", Addresses.PG_Pickup_EnergyVialChalicePath, "9", "32896"),
                 new GenericItemsData("Gold Coins: Bag Behind Rocks At Start - PG", Addresses.PG_Pickup_GoldCoinsBagBehindRocksAtStart, "9", "32896"),
                 new GenericItemsData("Gold Coins: Chest in Coop 1 - PG", Addresses.PG_Pickup_GoldCoinsChestInCoop1, "9", "32896"),
                 new GenericItemsData("Gold Coins: Chest in Coop 2 - PG", Addresses.PG_Pickup_GoldCoinsChestInCoop2, "9", "32896"),
                 new GenericItemsData("Gold Coins: Chest in Coop 3 - PG", Addresses.PG_Pickup_GoldCoinsChestInCoop3, "9", "32896"),
                 new GenericItemsData("Gold Coins: Bag in Mushroom Area - PG", Addresses.PG_Pickup_GoldCoinsBagInMushroomArea, "9", "32896"),
-                new GenericItemsData("Gold Coins: Chest at Boulders after Star Rune - PG", Addresses.PG_Pickup_GoldCoinsChestAtBouldersAfterStarRune, "9", "32896"),
+                new GenericItemsData("Gold Coins: Chest at Boulders after Time Rune - PG", Addresses.PG_Pickup_GoldCoinsChestAtBouldersAfterStarRune, "9", "32896"),
                 new GenericItemsData("Gold Coins: Chest Near Chalice - PG", Addresses.PG_Pickup_GoldCoinsChestNearChalice,"9",  "32896"),
                 new GenericItemsData("Gargoyle: Exit - PG", Addresses.PG_Gargoyle_Exit, "9", "0"),
                 new GenericItemsData("Book: Mushrooms - PG", Addresses.PG_Book_Mushrooms, "9", "0"),
@@ -1486,6 +1480,11 @@ namespace MedievilArchipelago
         private static List<GenericItemsData> GetLockedItemsCH()
         {
             List<GenericItemsData> chLocations = new List<GenericItemsData>() {
+                new GenericItemsData("Key Item: Witches Talisman - CH", Addresses.CH_Pickup_WitchTalisman, "3", "32896"),
+                new GenericItemsData("Equipment: Copper Shield in Arena - CH", Addresses.CH_Pickup_CopperShieldArena, "3", "32896"),
+                new GenericItemsData("Energy Vial: Arena - CH", Addresses.CH_Pickup_EnergyVialArena, "3", "32896"),
+                new GenericItemsData("Book: A Guide to Covens - CH", Addresses.CH_Book_AGuideToCovens, "3", "0"),
+                new GenericItemsData("Gargoyle: Witch Cave - CH", Addresses.CH_Gargoyle_WitchCave, "3", "0"),
                 new GenericItemsData("Chalice: Cemetery Hill", Addresses.CH_Pickup_Chalice, "3", "32896"),
             };
             return chLocations;

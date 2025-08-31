@@ -67,6 +67,8 @@ namespace MedievilArchipelago
 
         public const uint DanDropShield = 0x000F81BE;
 
+        public const uint RenderDistance = 0x000eee1c;
+
         public const uint DanFrozen = 0x000eeea8;
 
         public const uint CurrentChalicePercentage = 0x000f82c0;

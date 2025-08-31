@@ -519,7 +519,7 @@ if (string.IsNullOrWhiteSpace(slot))
                     case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x, breakChargeLimitOption); break;
                     case var x when x.Name.Contains("Trap: Heavy Dan"): HeavyDanTrap(); break;
                     case var x when x.Name.Contains("Trap: Light Dan"): LightDanTrap(); break;
-                    case var x when x.Name.Contains("Trap: Goodbye Shield"): DarknessTrap(); break;
+                    case var x when x.Name.Contains("Trap: Goodbye Shield"): DarknessTrap(currentLevel); break;
                     case var x when x.Name.Contains("Trap: Hudless"): HudlessTrap(); break;
                     case var x when x.Name.Contains("Trap: Lag"): RunLagTrap(); break;
                     case null: Console.WriteLine("Received an item with null data. Skipping."); break;
@@ -1242,11 +1242,23 @@ if (string.IsNullOrWhiteSpace(slot))
             }, TaskScheduler.Default);
         }
 
-        void DarknessTrap()
+        void DarknessTrap(byte currentLevel)
         {
-            Console.WriteLine("Goodbye Shield Disabled due to bug! Sorry!");
-            //Memory.WriteByte(Addresses.ShieldDropped, 0x01);
-            //Memory.WriteByte(Addresses.ShieldEquipped, 0x00);
+
+            byte[] byteArray = BitConverter.GetBytes(0x0600);
+            byte[] defaultValue = BitConverter.GetBytes(0x0600);
+
+            TimeSpan duration = TimeSpan.FromSeconds(15);
+
+            if (currentLevel != 14)
+            {
+                Memory.WriteByteArray(Addresses.RenderDistance, byteArray);
+                Task.Delay(duration).ContinueWith(delegate
+                {
+                    Memory.Write(Addresses.RenderDistance, defaultValue);
+                }, TaskScheduler.Default);
+
+            }
         }
 
         void HudlessTrap()

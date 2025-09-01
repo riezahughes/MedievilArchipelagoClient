@@ -356,7 +356,7 @@ if (string.IsNullOrWhiteSpace(slot))
                     }
                     else if (input?.Trim().ToLower() == "darknesstrap")
                     {
-                        DarknessTrap();
+                        DarknessTrap(0x01);
                     }
                     else if (input?.Trim().ToLower() == "hudtrap")
                     {
@@ -1242,7 +1242,7 @@ if (string.IsNullOrWhiteSpace(slot))
             }, TaskScheduler.Default);
         }
 
-        void DarknessTrap(byte currentLevel)
+        void DarknessTrap(int currentLevel)
         {
 
             byte[] byteArray = BitConverter.GetBytes(0x0600);

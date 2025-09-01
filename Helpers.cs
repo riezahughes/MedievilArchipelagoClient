@@ -26,6 +26,52 @@ namespace MedievilArchipelago
 {
     public class Helpers
     {
+
+        public static Dictionary<string, bool> ListCurrentRunesForLevel(List<string> currentRunes, byte currentLevel)
+        {
+            var reference = GetLevelNameFromMapId(currentLevel);
+            var dictOfRunes = LevelToRuneItemDictionary[reference];
+
+            var levelStatus = new Dictionary<string, bool>();
+
+            foreach ( var rune in dictOfRunes)
+            {
+                levelStatus[rune] = currentRunes.Contains(rune);
+            }
+
+            return levelStatus;
+            
+        }
+
+
+        public static Dictionary<string, List<string>> LevelToRuneItemDictionary = new Dictionary<string, List<string>>
+        {
+            { "The Graveyard", new List<string> { "Chaos Rune: The Graveyard", "Earth Rune: The Graveyard" } },
+            { "Return to the Graveyard", new List<string> { "Star Rune: Return to the Graveyard" } },
+            { "Cemetery Hill", new List<string> {} },
+            { "The Hilltop Mausoleum", new List<string> { "Chaos Rune: The Hilltop Mausoleum", "Earth Rune: The Hilltop Mausoleum", "Moon Rune: The Hilltop Mausoleum" } },
+            { "Scarecrow Fields", new List<string> { "Chaos Rune: Scarecrow Fields", "Earth Rune: Scarecrow Fields", "Moon Rune: Scarecrow Fields" } },
+            { "Dan's Crypt", new List<string> { "Star Rune: Dan's Crypt" } },
+            { "Ant Hill", new List<string> {} },
+            { "The Crystal Caves", new List<string> { "Earth Rune: The Crystal Caves", "Star Rune: The Crystal Caves" } },
+            { "Pumpkin Gorge", new List<string> { "Chaos Rune: Pumpkin Gorge", "Earth Rune: Pumpkin Gorge", "Moon Rune: Pumpkin Gorge", "Time Rune: Pumpkin Gorge" } },
+            { "The Pumpkin Serpent", new List<string> {} },
+            { "The Sleeping Village", new List<string> { "Chaos Rune: The Sleeping Village", "Earth Rune: The Sleeping Village", "Moon Rune: The Sleeping Village" } },
+            { "Pools of the Ancient Dead", new List<string> { "Chaos Rune: Pools of the Ancient Dead" } },
+            { "The Asylum Grounds", new List<string> { "Chaos Rune: The Asylum Grounds" } },
+            { "Inside The Asylum", new List<string> { "Earth Rune: Inside the Asylum" } },
+            { "Enchanted Earth", new List<string> { "Earth Rune: Enchanted Earth", "Star Rune: Enchanted Earth" } },
+            { "The Gallows Gauntlet", new List<string> { "Star Rune: The Gallows Gauntlet" } },
+            { "The Haunted Ruins", new List<string> { "Chaos Rune: The Haunted Ruins", "Earth Rune: The Haunted Ruins" } },
+            { "Hall of Heroes", new List<string> {} },
+            { "Ghost Ship", new List<string> { "Chaos Rune: The Ghost Ship", "Moon Rune: The Ghost Ship", "Star Rune: The Ghost Ship" } },
+            { "The Entrance Hall", new List<string> {} },
+            { "The Time Device", new List<string> { "Chaos Rune: The Time Device", "Earth Rune: The Time Device", "Moon Rune: The Time Device", "Time Rune: The Time Device" } },
+            { "The Lake", new List<string> { "Chaos Rune: The Lake", "Earth Rune: The Lake", "Star Rune: The Lake", "Time Rune: The Lake" } },
+            { "Zarok's Lair", new List<string> {} }
+
+        };
+
         public static Dictionary<string, int> WeaponEquipDictionary = new Dictionary<string, int>
         {
             {"Equipment: Small Sword", 0},
@@ -828,12 +874,12 @@ namespace MedievilArchipelago
                 [0x04] = "The Hilltop Mausoleum",
                 [0x05] = "Scarecrow Fields",
                 [0x06] = "Dan's Crypt",
-                [0x07] = "Ant Caves",
+                [0x07] = "Ant Hill",
                 [0x08] = "The Crystal Caves",
                 [0x09] = "Pumpkin Gorge",
                 [0x0A] = "The Pumpkin Serpent",
                 [0x0B] = "The Sleeping Village",
-                [0x0C] = "Pools Of The Ancient Dead",
+                [0x0C] = "Pools of the Ancient Dead",
                 [0x0D] = "The Asylum Grounds",
                 [0x0E] = "Inside The Asylum",
                 [0x0F] = "Enchanted Earth",
@@ -845,6 +891,36 @@ namespace MedievilArchipelago
                 [0x15] = "The Time Device",
                 [0x16] = "The Lake",
                 [0x17] = "Zarok's Lair",
+            };
+
+            return dict[levelId];
+        }
+
+        public static string GetLevelNameFromMapId(byte levelId)
+        {
+            var dict = new Dictionary<byte, string>
+            {
+                [0] = "Dan's Crypt",
+                [1] = "The Graveyard",
+                [2] = "Return to the Graveyard",
+                [3] = "Cemetery Hill",
+                [4] = "The Hilltop Mausoleum",
+                [5] = "Scarecrow Fields",
+                [6] = "Enchanted Earth",
+                [7] = "Pumpkin Gorge",
+                [8] = "The Pumpkin Serpent",
+                [9] = "The Sleeping Village",
+                [10] = "The Asylum Grounds",
+                [11] = "Inside The Asylum",
+                [12] = "Pools of the Ancient Dead",
+                [13] = "The Lake",
+                [14] = "The Crystal Caves",
+                [15] = "The Haunted Ruins",
+                [16] = "Ghost Ship",
+                [17] = "The Gallows Gauntlet",
+                [18] = "The Entrance Hall",
+                [19] = "The Time Device",
+                [20] = "Zarok's Lair"
             };
 
             return dict[levelId];
@@ -880,7 +956,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Chalice Reward 19", Addresses.HOH_DirkSteadfast2, "18", "9999"),
                 new GenericItemsData("Chalice Reward 20", Addresses.HOH_MegwynneStormbinder2, "18", "9999"),
                 new GenericItemsData("Book: Heores of Eld - HH", Addresses.HOH_Book_HeroesOfEld, "18", "9999"),
-                new GenericItemsData("Gergoyle: Entrance - HH", Addresses.HOH_Gargoyle_Entrance, "18", "9999"),
+                new GenericItemsData("Gargoyle: Entrance - HH", Addresses.HOH_Gargoyle_Entrance, "18", "9999"),
             };
             return hallOfHeroesVisits;
         }

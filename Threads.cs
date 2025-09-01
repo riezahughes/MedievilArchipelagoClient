@@ -11,7 +11,10 @@ using Archipelago.Core.Models;
 using Serilog;
 using GameOverlay.Drawing;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
+using Archipelago.MultiClient.Net.Models;
+using SharpDX;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json.Linq;
 
 
 namespace MedievilArchipelago
@@ -38,6 +41,26 @@ namespace MedievilArchipelago
 
         }
 
+        // feeling lazy so i'm just duplicating this.
+        static internal string ExtractRuneName(string itemName)
+        {
+            // The regex pattern to match and capture the text before the colon
+            string pattern = @"^(.+?):";
+
+            // Find the first match in the input string
+            Match match = Regex.Match(itemName, pattern);
+
+            // Check if a match was found
+            if (match.Success)
+            {
+                // The captured group is at index 1. Trim to remove any trailing spaces.
+                return match.Groups[1].Value.Trim();
+            }
+
+            return null;
+        }
+
+
         static internal void UpdateAsylumDynamicDrops()
         {
             List<uint> drops = [
@@ -61,6 +84,40 @@ namespace MedievilArchipelago
             {
                 Memory.WriteByte(address, 0x01);
             }
+        }
+
+        static internal void ShowCurrentRuneStatus(ArchipelagoClient client, byte currentMapLevel)
+        {
+            var items = client.CurrentSession.Items.AllItemsReceived;
+            string levelName = Helpers.GetLevelNameFromMapId(currentMapLevel);
+
+            List<string> currentRunesForLevel = [];
+
+            foreach (ItemInfo itemInf in items)
+            {
+                Console.WriteLine(itemInf.ItemName.ToLower());
+                if (itemInf.ItemName.ToLower().Contains("rune:") && itemInf.ItemName.ToLower().Contains("rune: " + levelName.ToLower())){
+                    
+                    currentRunesForLevel.Add(itemInf.ItemName);
+                }
+            }
+
+
+            var dict = Helpers.ListCurrentRunesForLevel(currentRunesForLevel, currentMapLevel);
+
+            string textMessage = "";
+
+            foreach(string rune in dict.Keys)
+            {
+                Console.WriteLine(dict[rune]);
+                string result = dict[rune] == false ? "[ ]" : "[X]";
+                string line = rune + " " + result + "\n";
+                textMessage = textMessage + line;
+
+            }
+
+            client.AddOverlayMessage(textMessage);
+
         }
 
         static internal void StartMenuToExit()
@@ -127,13 +184,14 @@ namespace MedievilArchipelago
         }
 
 
-        async public static Task PassiveLogicChecks(ArchipelagoClient client, CancellationToken cts, DeathLinkService deathlink = null)
+        async public static Task PassiveLogicChecks(ArchipelagoClient client, CancellationToken cts)
         {
             await Task.Run(() =>
             {
                 Console.WriteLine("Background task running...");
 
                 byte currentLocation = Memory.ReadByte(Addresses.CurrentLevel);
+                byte mapCoords = Memory.ReadByte(Addresses.CurrentMapPosition);
 
                 // created an array of bytes for the update value to be 9999
                 byte[] updateValue = BitConverter.GetBytes(0x270F);
@@ -150,11 +208,17 @@ namespace MedievilArchipelago
                 bool firstLoop = true;
 
                 UpdateChestLocations(client, currentLocation);
-
-                if(currentLocation == 0 && runeSanityOption == 1)
+                if (currentLocation == 1 && runeSanityOption == 1)
                 {
+
                     Memory.WriteByte(Addresses.CurrentLevel, 0);
                 }
+
+                if (runeSanityOption == 1)
+                {
+                    ShowCurrentRuneStatus(client, mapCoords);
+                }
+
 
                 if(currentLocation != 0)
                 {
@@ -178,6 +242,7 @@ namespace MedievilArchipelago
                         // checks against current levels and updates chest entities
                         byte checkCurrentLevel = Memory.ReadByte(Addresses.CurrentLevel);
                         short checkQueenAntStatus = Memory.ReadShort(Addresses.TA_BossHealth);
+                        byte checkMapCoords = Memory.ReadByte(Addresses.CurrentMapPosition);
 
                         if (currentLocation == 14)
                         {
@@ -213,6 +278,11 @@ namespace MedievilArchipelago
                                 //SetRuneAxis();
                             }
                             currentLocation = checkCurrentLevel;
+                        }
+
+                        if(runeSanityOption == 1)
+                        {
+                            ShowCurrentRuneStatus(client, checkMapCoords);
                         }
 
                         firstLoop = false;

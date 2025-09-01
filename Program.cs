@@ -279,8 +279,8 @@ if (string.IsNullOrWhiteSpace(slot))
             //    Console.WriteLine($"ID: {location.Id} - {location.Name}");
             //}
 
-            _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, _cancellationTokenSource.Token);
             _ = archipelagoClient.MonitorLocations(GameLocations);
+            await MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, _cancellationTokenSource.Token);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {
@@ -519,7 +519,7 @@ if (string.IsNullOrWhiteSpace(slot))
                     case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x, breakChargeLimitOption); break;
                     case var x when x.Name.Contains("Trap: Heavy Dan"): HeavyDanTrap(); break;
                     case var x when x.Name.Contains("Trap: Light Dan"): LightDanTrap(); break;
-                    case var x when x.Name.Contains("Trap: Goodbye Shield"): DarknessTrap(currentLevel); break;
+                    case var x when x.Name.Contains("Trap: Darkness"): DarknessTrap(currentLevel); break;
                     case var x when x.Name.Contains("Trap: Hudless"): HudlessTrap(); break;
                     case var x when x.Name.Contains("Trap: Lag"): RunLagTrap(); break;
                     case null: Console.WriteLine("Received an item with null data. Skipping."); break;
@@ -694,11 +694,14 @@ if (string.IsNullOrWhiteSpace(slot))
             SetItemMemoryValue(Addresses.DragonGem, 0, 0);
             SetItemMemoryValue(Addresses.APAmberPieces, 0, 0);
             SetItemMemoryValue(Addresses.MaxAmberPieces, 10, 10);
-            SetItemMemoryValue(Addresses.ChaosRune, 65535, 65535);
-            SetItemMemoryValue(Addresses.EarthRune, 65535, 65535);
-            SetItemMemoryValue(Addresses.MoonRune, 65535, 65535);
-            SetItemMemoryValue(Addresses.StarRune, 65535, 65535);
-            SetItemMemoryValue(Addresses.TimeRune, 65535, 65535);
+            if (runeSanityOption == 1)
+            {
+                SetItemMemoryValue(Addresses.ChaosRune, 65535, 65535);
+                SetItemMemoryValue(Addresses.EarthRune, 65535, 65535);
+                SetItemMemoryValue(Addresses.MoonRune, 65535, 65535);
+                SetItemMemoryValue(Addresses.StarRune, 65535, 65535);
+                SetItemMemoryValue(Addresses.TimeRune, 65535, 65535);
+            }
 
             // for each location that's coming in
             bool hasEquipableWeapon = false;

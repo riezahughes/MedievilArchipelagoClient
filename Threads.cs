@@ -88,6 +88,13 @@ namespace MedievilArchipelago
 
         static internal void ShowCurrentRuneStatus(ArchipelagoClient client, byte currentMapLevel)
         {
+            var currentDanStatus = Memory.ReadUShort(Addresses.IsLoaded);
+
+            if (currentDanStatus == 59580 || currentMapLevel == 0 || (currentMapLevel > 20 || currentMapLevel < 0))
+            {
+                return;
+            }
+
             var items = client.CurrentSession.Items.AllItemsReceived;
             string levelName = Helpers.GetLevelNameFromMapId(currentMapLevel);
 
@@ -95,7 +102,6 @@ namespace MedievilArchipelago
 
             foreach (ItemInfo itemInf in items)
             {
-                Console.WriteLine(itemInf.ItemName.ToLower());
                 if (itemInf.ItemName.ToLower().Contains("rune:") && itemInf.ItemName.ToLower().Contains("rune: " + levelName.ToLower())){
                     
                     currentRunesForLevel.Add(itemInf.ItemName);
@@ -107,10 +113,10 @@ namespace MedievilArchipelago
 
             string textMessage = "";
 
+
             foreach(string rune in dict.Keys)
             {
-                Console.WriteLine(dict[rune]);
-                string result = dict[rune] == false ? "[ ]" : "[X]";
+                string result = dict[rune] == false ? "[  ]" : "[X]";
                 string line = rune + " " + result + "\n";
                 textMessage = textMessage + line;
 

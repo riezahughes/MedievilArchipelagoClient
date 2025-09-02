@@ -458,7 +458,9 @@ if (string.IsNullOrWhiteSpace(slot))
                 byte[] defaultSpeedValue = BitConverter.GetBytes(0x0100);
                 byte[] defaultJumpValue = BitConverter.GetBytes(0x002f);
 
-                if (isInTheGame())
+                byte[] defaultRenderDistance = BitConverter.GetBytes(0x0600);
+
+            if (isInTheGame())
                 {
                     // Reset Hud
                     Memory.Write(Addresses.WeaponIconX, DefaultWeaponIconX);
@@ -474,8 +476,13 @@ if (string.IsNullOrWhiteSpace(slot))
 
                     // Reset Jump Height
                     Memory.Write(Addresses.DanJumpHeight, defaultJumpValue);
+
+                    // Reset Normal Speed
                     Memory.Write(Addresses.DanForwardSpeed, defaultSpeedValue);
-                }
+
+                    // Reset Lighting
+                    Memory.Write(Addresses.RenderDistance, defaultRenderDistance);
+            }
         }
 
 
@@ -566,7 +573,7 @@ if (string.IsNullOrWhiteSpace(slot))
 
         void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, ArchipelagoClient client)
         {
-            CheckGoalCondition();
+            UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
 #if DEBUG
             Console.WriteLine($"LocationCompleted Firing. {e.CompletedLocation.Name} - {e.CompletedLocation.Id} Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
 #endif

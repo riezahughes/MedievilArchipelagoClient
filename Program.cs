@@ -280,7 +280,7 @@ if (string.IsNullOrWhiteSpace(slot))
             //}
 
             _ = archipelagoClient.MonitorLocations(GameLocations);
-            await MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, _cancellationTokenSource.Token);
+            _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, _cancellationTokenSource.Token);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {

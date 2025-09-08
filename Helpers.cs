@@ -526,96 +526,108 @@ namespace MedievilArchipelago
 
                         }
 
-                        if (loc.Name.Contains("Gargoyle:") && gargoyleSanity == 1)
+                        if (loc.Name.Contains("Gargoyle:"))
                         {
-                            List<ILocation> conditionalChoice = new List<ILocation>();
-
-                            conditionalChoice.Add(new Location()
+                            if (gargoyleSanity == 1)
                             {
-                                Id = -1,
-                                Name = "Level Check",
-                                Address = Addresses.CurrentLevel,
-                                CheckType = LocationCheckType.Byte,
-                                CompareType = LocationCheckCompareType.Match,
-                                CheckValue = loc.LevelId
-                            });
+                                List<ILocation> conditionalChoice = new List<ILocation>();
 
-                            conditionalChoice.Add(new Location()
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Level Check",
+                                    Address = Addresses.CurrentLevel,
+                                    CheckType = LocationCheckType.Byte,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = loc.LevelId
+                                });
+
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Dan Frozen",
+                                    Address = Addresses.DanFrozen,
+                                    CheckType = LocationCheckType.Byte,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = "2"
+                                });
+
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Gargoyle Check",
+                                    Address = loc.Address,
+                                    CheckType = LocationCheckType.Byte,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = "0"
+                                });
+
+                                CompositeLocation location = new CompositeLocation()
+                                {
+                                    Name = loc.Name,
+                                    Id = locationId,
+                                    CheckType = LocationCheckType.AND,
+                                    Conditions = conditionalChoice
+                                };
+
+                                locations.Add(location);
+                            } else
                             {
-                                Id = -1,
-                                Name = "Dan Frozen",
-                                Address = Addresses.DanFrozen,
-                                CheckType = LocationCheckType.Byte,
-                                CompareType = LocationCheckCompareType.Match,
-                                CheckValue = "2"
-                            });
-
-                            conditionalChoice.Add(new Location()
-                            {
-                                Id = -1,
-                                Name = "Gargoyle Check",
-                                Address = loc.Address,
-                                CheckType = LocationCheckType.Byte,
-                                CompareType = LocationCheckCompareType.Match,
-                                CheckValue = "0"
-                            });
-
-                            CompositeLocation location = new CompositeLocation()
-                            {
-                                Name = loc.Name,
-                                Id = locationId,
-                                CheckType = LocationCheckType.AND,
-                                Conditions = conditionalChoice
-                            };
-
-                            locations.Add(location);
+                                Console.WriteLine($"Gargoylesanity not on. ignoring {loc.Name}, id: {loc.Id}");
+                            }
                             location_index++;
                             continue;
                         }
 
                         if (loc.Name.Contains("Book:") && bookSanity == 1)
                         {
-                            List<ILocation> conditionalChoice = new List<ILocation>();
-
-                            conditionalChoice.Add(new Location()
+                            if (bookSanity == 1)
                             {
-                                Id = -1,
-                                Name = "Level Check",
-                                Address = Addresses.CurrentLevel,
-                                CheckType = LocationCheckType.Byte,
-                                CompareType = LocationCheckCompareType.Match,
-                                CheckValue = loc.LevelId
-                            });
+                                List<ILocation> conditionalChoice = new List<ILocation>();
 
-                            conditionalChoice.Add(new Location()
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Level Check",
+                                    Address = Addresses.CurrentLevel,
+                                    CheckType = LocationCheckType.Byte,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = loc.LevelId
+                                });
+
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Dan Frozen",
+                                    Address = Addresses.DanFrozen,
+                                    CheckType = LocationCheckType.Byte,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = "2"
+                                });
+
+                                conditionalChoice.Add(new Location()
+                                {
+                                    Id = -1,
+                                    Name = "Book Check",
+                                    Address = loc.Address,
+                                    CheckType = LocationCheckType.Byte,
+                                    CompareType = LocationCheckCompareType.Match,
+                                    CheckValue = "0"
+                                });
+
+                                CompositeLocation location = new CompositeLocation()
+                                {
+                                    Name = loc.Name,
+                                    Id = locationId,
+                                    CheckType = LocationCheckType.AND,
+                                    Conditions = conditionalChoice
+                                };
+
+                                locations.Add(location);
+                            } else
                             {
-                                Id = -1,
-                                Name = "Dan Frozen",
-                                Address = Addresses.DanFrozen,
-                                CheckType = LocationCheckType.Byte,
-                                CompareType = LocationCheckCompareType.Match,
-                                CheckValue = "2"
-                            });
-
-                            conditionalChoice.Add(new Location()
-                            {
-                                Id = -1,
-                                Name = "Book Check",
-                                Address = loc.Address,
-                                CheckType = LocationCheckType.Byte,
-                                CompareType = LocationCheckCompareType.Match,
-                                CheckValue = "0"
-                            });
-
-                            CompositeLocation location = new CompositeLocation()
-                            {
-                                Name = loc.Name,
-                                Id = locationId,
-                                CheckType = LocationCheckType.AND,
-                                Conditions = conditionalChoice
-                            };
-
-                            locations.Add(location);
+                                Console.WriteLine($"BookSanity not on. ignoring {loc.Name}, id: {loc.Id}");
+                            }
                             location_index++;
                             continue;
                         }
@@ -670,6 +682,7 @@ namespace MedievilArchipelago
                         else
                         {
                             Console.WriteLine($"Could not add {loc.Name}, id: {loc.Id}");
+                            location_index++;
                         }
                     }
                 }
@@ -1110,14 +1123,14 @@ namespace MedievilArchipelago
                 new GenericItemsData("Equipment: Copper Shield in Chest In the Barn - SF", Addresses.SF_Pickup_CopperShieldChestInTheBarn, "5", "32896", true),
                 new GenericItemsData("Energy Vial: Right of fire near Moon Door - SF", Addresses.SF_Pickup_EnergyVialRightOfFireNearMoonDoor, "5", "32896"),
                 new GenericItemsData("Energy Vial: Cornfield Path - SF", Addresses.SF_Pickup_EnergyVialCornfieldPath, "5", "32896"),
-                new GenericItemsData("Gold Coins: Haystack at Beginning - SF", Addresses.SF_Pickup_GoldCoinsHaystackAtBeginning, "5", "128"),
-                new GenericItemsData("Gold Coins: Chest in Haystack near Moon Door - SF", Addresses.SF_Pickup_GoldCoinsChestInHaystackNearMoonDoor, "5", "128"),
+                new GenericItemsData("Gold Coins: Hay Stack at Beginning - SF", Addresses.SF_Pickup_GoldCoinsHayStackAtBeginning, "5", "128"),
+                new GenericItemsData("Gold Coins: Chest in Hay Stack near Moon Door - SF", Addresses.SF_Pickup_GoldCoinsChestInHayStackNearMoonDoor, "5", "128"),
                 new GenericItemsData("Gold Coins: Left of fire near Moon Door - SF", Addresses.SF_Pickup_GoldCoinsLeftOfFireNearMoonDoor, "5", "32896"),
                 new GenericItemsData("Gold Coins: Bag in the Barn - SF", Addresses.SF_Pickup_GoldCoinsBagInTheBarn, "5", "32896"),
                 new GenericItemsData("Gold Coins: Cornfield Square near Barn - SF", Addresses.SF_Pickup_GoldCoinsCornfieldSquareNearBarn, "5", "32896"),
                 new GenericItemsData("Gold Coins: Cornfield Path 1 - SF", Addresses.SF_Pickup_GoldCoinsCornfieldPath1, "5", "32896"),
-                new GenericItemsData("Gold Coins: Chest Under Haybail - SF", Addresses.SF_Pickup_GoldCoinsChestUnderHaybail, "5", "128"),
-                new GenericItemsData("Gold Coins: Bag under Barn Haybail - SF", Addresses.SF_Pickup_GoldCoinsBagUnderBarnHaybail, "5", "128"),
+                new GenericItemsData("Gold Coins: Chest Under Hay Stack - SF", Addresses.SF_Pickup_GoldCoinsChestUnderHayStack, "5", "128"),
+                new GenericItemsData("Gold Coins: Bag under Barn Hay Stack - SF", Addresses.SF_Pickup_GoldCoinsBagUnderBarnHayStack, "5", "128"),
                 new GenericItemsData("Gold Coins: Bag in the Press - SF", Addresses.SF_Pickup_GoldCoinsBagInThePress, "5", "32896"),
                 new GenericItemsData("Gold Coins: Bag in the Spinner - SF", Addresses.SF_Pickup_GoldCoinsBagInTheSpinner, "5", "32896"),
                 new GenericItemsData("Gold Coins: Chest next to Harvester Part - SF", Addresses.SF_Pickup_GoldCoinsChestNextToHarvesterPart, "5", "32896"),

@@ -433,8 +433,8 @@ namespace MedievilArchipelago
 
         // Scarecrow Fields
 
-        public const uint SF_Pickup_GoldCoinsHaystackAtBeginning = 0x0012f9f0;
-        public const uint SF_Pickup_GoldCoinsChestInHaystackNearMoonDoor = 0x0012f9b0;
+        public const uint SF_Pickup_GoldCoinsHayStackAtBeginning = 0x0012f9f0;
+        public const uint SF_Pickup_GoldCoinsChestInHayStackNearMoonDoor = 0x0012f9b0;
         public const uint SF_Pickup_GoldCoinsLeftOfFireNearMoonDoor = 0x00130124;
         public const uint SF_Pickup_EnergyVialRightOfFireNearMoonDoor = 0x001301a4;
         public const uint SF_Pickup_MoonRune = 0x0012fc24;
@@ -447,8 +447,8 @@ namespace MedievilArchipelago
         public const uint SF_Pickup_GoldCoinsCornfieldSquareNearBarn = 0x00130da4;
         public const uint SF_Pickup_GoldCoinsCornfieldPath1 = 0x00130024;
         public const uint SF_Pickup_EnergyVialCornfieldPath = 0x0012ffe4;
-        public const uint SF_Pickup_GoldCoinsChestUnderHaybail = 0x0012f870;
-        public const uint SF_Pickup_GoldCoinsBagUnderBarnHaybail = 0x0012f830;
+        public const uint SF_Pickup_GoldCoinsChestUnderHayStack = 0x0012f870;
+        public const uint SF_Pickup_GoldCoinsBagUnderBarnHayStack = 0x0012f830;
         public const uint SF_Pickup_GoldCoinsBagInThePress = 0x0012f5a4;
         public const uint SF_Pickup_GoldCoinsBagInTheSpinner = 0x0012f5e4;
         public const uint SF_Pickup_GoldCoinsChestNextToHarvesterPart = 0x0012f564;

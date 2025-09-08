@@ -46,6 +46,7 @@ internal class Program
         const int maxHealth = 300;
 
         bool gameCleared = false;
+        bool playerStateUpdating = false;
 
         // Connection details
         string url;
@@ -458,7 +459,7 @@ if (string.IsNullOrWhiteSpace(slot))
                 byte[] defaultSpeedValue = BitConverter.GetBytes(0x0100);
                 byte[] defaultJumpValue = BitConverter.GetBytes(0x002f);
 
-                byte[] defaultRenderDistance = BitConverter.GetBytes(0x0600);
+                byte[] defaultRenderDistance = BitConverter.GetBytes(0x1000);
 
             if (isInTheGame())
                 {
@@ -571,12 +572,18 @@ if (string.IsNullOrWhiteSpace(slot))
             Console.WriteLine(bg + (fg + $"{prefix} {message} "));
         }
 
+        // should be renamed "location triggered". As in "i will trigger every time a location is matched".
+        // This could end up with a very long wait time if not careful.
+        // added a guard so it doesn't fire prematurely
         void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, ArchipelagoClient client)
         {
-            UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
+            if (playerStateUpdating == false && client?.CurrentSession?.Items?.AllItemsReceived.Count != null)
+            {
+                UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
 #if DEBUG
-            Console.WriteLine($"LocationCompleted Firing. {e.CompletedLocation.Name} - {e.CompletedLocation.Id} Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
+                Console.WriteLine($"LocationCompleted Firing. {e.CompletedLocation.Name} - {e.CompletedLocation.Id} Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
 #endif
+            }
         }
 
 
@@ -681,6 +688,7 @@ if (string.IsNullOrWhiteSpace(slot))
 
         void UpdatePlayerState(System.Collections.ObjectModel.ReadOnlyCollection<ItemInfo> itemsCollected)
         {
+            playerStateUpdating = true;
             // get a list of all locatoins
             Dictionary<string, uint> all_items = Helpers.FlattenedInventoryStrings();
 
@@ -701,6 +709,7 @@ if (string.IsNullOrWhiteSpace(slot))
             SetItemMemoryValue(Addresses.DragonGem, 0, 0);
             SetItemMemoryValue(Addresses.APAmberPieces, 0, 0);
             SetItemMemoryValue(Addresses.MaxAmberPieces, 10, 10);
+
             if (runeSanityOption == 1)
             {
                 SetItemMemoryValue(Addresses.ChaosRune, 65535, 65535);
@@ -742,7 +751,6 @@ if (string.IsNullOrWhiteSpace(slot))
                         break;
                     case var x when x.Name.ContainsAny("Charge"):
                         // no plans yet
-                        //ReceiveChargeType(x, breakChargeLimitOption);
                         break;
                     case var x when x.Name.Contains("Skill"): ReceiveSkill(x); break;
                     case var x when x.Name.Contains("Equipment"):
@@ -830,6 +838,7 @@ if (string.IsNullOrWhiteSpace(slot))
             {
                 EquipWeapon(currentWeapon);
             }
+            playerStateUpdating = false;
         }
 
 
@@ -888,11 +897,11 @@ if (string.IsNullOrWhiteSpace(slot))
                 string mainWeapon = itemName.Replace(" Ammo", "");
                 mainWeapon = mainWeapon.Replace(" Charge", "");
                 maxValue = dict[mainWeapon];
-
             }
             else
             {
                 maxValue = isCountType ? countMax : percentageMax; // Max count limit for gold, percentage for energy
+
             }
 
 
@@ -904,6 +913,8 @@ if (string.IsNullOrWhiteSpace(slot))
 
             SetItemMemoryValue(itemMemoryAddress, baseValue, countMax);
 
+
+
             if (itemName == "Life Bottle")
             {
                 SetItemMemoryValue(Addresses.LifeBottleSwitch, (300 * newNumberAmount - 1), 10000);
@@ -913,14 +924,14 @@ if (string.IsNullOrWhiteSpace(slot))
             if (isEquipmentType && isCountType)
             {
                 var ammoToAdd = currentNumberAmount == -1 ? 100 : newNumberAmount;
-                //Console.WriteLine($"Name: {itemName}, Ammo count: {ammoToAdd}");
-                SetItemMemoryValue(itemMemoryAddress, ammoToAdd, countMax);
+                //Console.WriteLine($"Name: {itemName}, Ammo count: {ammoToAdd}, Max: {maxValue}");
+                SetItemMemoryValue(itemMemoryAddress, ammoToAdd, maxValue);
             }
             else if (isEquipmentType && !isCountType)
             {
                 var ammoToAdd = currentNumberAmount == -1 ? 4096 : newNumberAmount;
-                //Console.WriteLine($"Name: {itemName}, Charge count: {ammoToAdd}");
-                SetItemMemoryValue(itemMemoryAddress, ammoToAdd, countMax);
+                //Console.WriteLine($"Name: {itemName}, Charge count: {ammoToAdd}, Max: {maxValue}");
+                SetItemMemoryValue(itemMemoryAddress, ammoToAdd, maxValue);
             }
 
         }
@@ -1256,7 +1267,7 @@ if (string.IsNullOrWhiteSpace(slot))
         {
 
             byte[] byteArray = BitConverter.GetBytes(0x0600);
-            byte[] defaultValue = BitConverter.GetBytes(0x0600);
+            byte[] defaultValue = BitConverter.GetBytes(0x1000);
 
             TimeSpan duration = TimeSpan.FromSeconds(15);
 

@@ -93,7 +93,6 @@ namespace MedievilArchipelago
             if (client.GPSHandler.MapId == 8 && client.GPSHandler.X >= 373 && client.GPSHandler.X <= 639 && client.GPSHandler.Y >= 64288 && client.GPSHandler.Y <= 64291 && client.GPSHandler.Z >= 3149 && client.GPSHandler.Z <= 3295)
             {
                 var location = builtLocations.FirstOrDefault(loc => loc.Name == "Gold Coins: Chest in Crystal after Pool - CC");
-                Console.WriteLine("Hit!");
                 if (location != null)
                 {
                     {

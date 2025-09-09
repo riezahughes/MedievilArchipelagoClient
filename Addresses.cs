@@ -63,6 +63,10 @@ namespace MedievilArchipelago
             0x18=Programmers's Playground (Freezes)
          */
 
+        public const uint DanRespawnPositionX = 0x000f8886;
+        public const uint DanRespawnPositionY = 0x000f8888;
+        public const uint DanRespawnPositionZ = 0x000f888a;
+
         public const uint DanForwardSpeed = 0x000d5110;
 
         public const uint DanJumpHeight = 0x000d5126;

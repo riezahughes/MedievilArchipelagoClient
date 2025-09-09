@@ -1,6 +1,7 @@
 ﻿using Archipelago.Core;
 using Archipelago.Core.Models;
 using Archipelago.Core.Util;
+using Archipelago.Core.Util.GPS;
 using Archipelago.MultiClient.Net.Models;
 using MedievilArchipelago;
 using MedievilArchipelago.Models;
@@ -41,6 +42,90 @@ namespace MedievilArchipelago
 
             return levelStatus;
             
+        }
+
+        public static void CheckPositionalLocations(ArchipelagoClient client, List<ILocation> builtLocations)
+        {
+            if(builtLocations?.Count == null)
+            {
+                return;
+            }
+
+
+            // Crystal 1
+            if (client.GPSHandler.MapId == 8 && client.GPSHandler.X >= 1186 && client.GPSHandler.X <= 1550 && client.GPSHandler.Y >= 65449 && client.GPSHandler.Y <= 65465 && client.GPSHandler.Z >= 63075 && client.GPSHandler.Z <= 63351)
+            {
+                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Gold Coins: Bag in Crystal at Start - CC");
+                if (location != null)
+                {
+                    {
+                        client.SendLocation(location);
+                    }
+                }
+            }
+
+            // Crystal 2
+            if (client.GPSHandler.MapId == 8 && client.GPSHandler.X >= 60389 && client.GPSHandler.X <= 60768 && client.GPSHandler.Y >= 65127 && client.GPSHandler.Y <= 65150 && client.GPSHandler.Z >= 165 && client.GPSHandler.Z <= 301)
+            {
+                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Silver Shield in Crystal - CC");
+                if (location != null)
+                {
+                    {
+                        client.SendLocation(location);
+                    }
+                }
+            }
+
+            // Crystal 3
+            if (client.GPSHandler.MapId == 8 && client.GPSHandler.X >= 59734 && client.GPSHandler.X <= 60010 && client.GPSHandler.Y >= 64629 && client.GPSHandler.Y <= 64643 && client.GPSHandler.Z >= 7163 && client.GPSHandler.Z <= 7516)
+            {
+                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Gold Coins: Chest in Crystal After Earth Door - CC");
+
+                if (location != null)
+                {
+                    {
+                        client.SendLocation(location);
+                    }
+                }
+            }
+
+            // Crystal 4
+            if (client.GPSHandler.MapId == 8 && client.GPSHandler.X >= 373 && client.GPSHandler.X <= 639 && client.GPSHandler.Y >= 64288 && client.GPSHandler.Y <= 64291 && client.GPSHandler.Z >= 3149 && client.GPSHandler.Z <= 3295)
+            {
+                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Gold Coins: Chest in Crystal after Pool - CC");
+                Console.WriteLine("Hit!");
+                if (location != null)
+                {
+                    {
+                        client.SendLocation(location);
+                    }
+                }
+            }
+
+
+            // Zarok Chest 1
+            if (client.GPSHandler.MapId == 23 && client.GPSHandler.X >= 64639 && client.GPSHandler.X <= 64693 && client.GPSHandler.Y >= 9 && client.GPSHandler.Y <= 13 && client.GPSHandler.Z >= 2820 && client.GPSHandler.Z <= 2939)
+            {
+                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Good Lightning - ZL");
+                if (location != null)
+                {
+                    {
+                        client.SendLocation(location);
+                    }
+                }
+            }
+
+            // Zarok Chest 2
+            if (client.GPSHandler.MapId == 23 && client.GPSHandler.X >= 768 && client.GPSHandler.X <= 999 && client.GPSHandler.Y >= 9 && client.GPSHandler.Y <= 13 && client.GPSHandler.Z >= 2830 && client.GPSHandler.Z <= 2965)
+            {
+                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Silver Shield Arena - ZL");
+                if (location != null)
+                {
+                    {
+                        client.SendLocation(location);
+                    }
+                }
+            }
         }
 
 
@@ -296,7 +381,6 @@ namespace MedievilArchipelago
                                     Address = loc.Address,
                                     CheckType = LocationCheckType.Byte,
                                     CompareType = LocationCheckCompareType.Match,
-                                    CheckValue = "0"
                                 });
 
                                 conditionalChoice.Add(new Location()
@@ -345,7 +429,7 @@ namespace MedievilArchipelago
                                     Address = loc.Address,
                                     CheckType = LocationCheckType.Short,
                                     CompareType = LocationCheckCompareType.Match,
-                                    CheckValue = "801"
+                                    CheckValue = loc.LevelId == "22" ? "500" : "801" // set zarok chests to wierd numbers so they don't trigger
                                 });
 
                                 CompositeLocation location = new CompositeLocation()
@@ -1589,7 +1673,7 @@ namespace MedievilArchipelago
             List<GenericItemsData> zlLocations = new List<GenericItemsData>() {
                 new GenericItemsData("Equipment: Good Lightning - ZL", Addresses.ZL_Pickup_GoodLightning, "22", "32896", true),
                 new GenericItemsData("Equipment: Silver Shield Arena - ZL", Addresses.ZL_Pickup_SilverShield,"22", "32896", true),
-                new GenericItemsData("Gargoyle: Entrance - ZL", Addresses.TD_Gargoyle_Entrance, "21", "0"),
+                new GenericItemsData("Gargoyle: Entrance - ZL", Addresses.ZL_Gargoyle_Entrance, "21", "0"),
                 new GenericItemsData("Cleared: Zaroks Lair", Addresses.WinConditionCredits, "22", "101"),
             };
             return zlLocations;

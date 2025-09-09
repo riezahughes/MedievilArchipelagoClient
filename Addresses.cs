@@ -801,9 +801,11 @@ namespace MedievilArchipelago
         public const uint TD_Gargoyle_Entrance = 0x0001cb62;
         public const uint TD_Pickup_Chalice = 0x0012ee58;
 
+
         // Zaroks Lair
 
         public const uint ZL_Pickup_GoodLightning = 0x0012ED38;
         public const uint ZL_Pickup_SilverShield = 0x0012EDF8;
+        public const uint ZL_Gargoyle_Entrance = 0x0019f26e;
     }
 }

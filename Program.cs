@@ -204,6 +204,44 @@ if (string.IsNullOrWhiteSpace(slot))
         archipelagoClient.LocationCompleted += (sender, args) => Client_LocationCompleted(sender, args, archipelagoClient);
         archipelagoClient.EnableLocationsCondition = () => isInTheGame();
 
+        archipelagoClient.GPSHandler = new GPSHandler(() =>
+        {
+
+            byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+            if (isInTheGame())
+            {
+                return new PositionData
+                {
+                    MapId = currentLevel,
+                    MapName = Helpers.GetLevelNameFromId(currentLevel),
+                    X = Memory.ReadUShort(Addresses.DanRespawnPositionX),
+                    Y = Memory.ReadUShort(Addresses.DanRespawnPositionY),
+                    Z = Memory.ReadUShort(Addresses.DanRespawnPositionZ)
+                };
+            }
+            else
+            {
+                return new PositionData
+                {
+                    MapId = 0,
+                    MapName = "No Map Detected",
+                    X = 0,
+                    Y = 0,
+                    Z = 0,
+                };
+            }
+        });
+
+        archipelagoClient.GPSHandler.SetInterval(100);
+
+        archipelagoClient.GPSHandler.PositionChanged += (sender, args) =>
+        {
+            if (!isInTheGame()) return;
+            Helpers.CheckPositionalLocations(archipelagoClient, GameLocations);
+        };
+
+        archipelagoClient.GPSHandler.Start();
+
 
         try
         {
@@ -411,41 +449,6 @@ if (string.IsNullOrWhiteSpace(slot))
                 StartDeathlinkMonitor(deathLinkClient, client);
             }
 
-            archipelagoClient.GPSHandler = new GPSHandler(() =>
-            {
-
-                byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
-                if (isInTheGame())
-                {
-                    return new PositionData
-                    {
-                        MapId = currentLevel,
-                        MapName = Helpers.GetLevelNameFromId(currentLevel),
-                        X = Memory.ReadUShort(Addresses.DanRespawnPositionX),
-                        Y = Memory.ReadUShort(Addresses.DanRespawnPositionY),
-                        Z = Memory.ReadUShort(Addresses.DanRespawnPositionZ)
-                    };
-                }
-                else
-                {
-                    return new PositionData
-                    {
-                        MapId = 0,
-                        MapName = "No Map Detected",
-                        X = 0,
-                        Y = 0,
-                        Z = 0,
-                    };
-                }
-            });
-
-            //archipelagoClient.GPSHandler.PositionChanged += (sender, args) =>
-            //{
-            //    Console.WriteLine($"Current map changed");
-            //};
-
-            archipelagoClient.GPSHandler.Start();
-
             Console.WriteLine("Setting up player state..");
 
             #if DEBUG
@@ -504,7 +507,7 @@ if (string.IsNullOrWhiteSpace(slot))
 
             if (client.GameState == null || cts.IsCancellationRequested)
             {
-                archipelagoClient.GPSHandler.Stop();
+
                 Console.WriteLine("Disconnected from Archipelago.");
             }
         }

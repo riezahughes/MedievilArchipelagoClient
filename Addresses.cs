@@ -428,7 +428,7 @@ namespace MedievilArchipelago
         public const uint RTG_Pickup_EnergyVialCliffsRight = 0x001303b8;
         public const uint RTG_Pickup_GoldCoinsCliffsLeft = 0x00130338;
         public const uint RTG_Pickup_EnergyVialCliffsLeft = 0x00130378;
-        public const uint RTG_Pickup_DaringDash = 0x00019160;
+        public const uint RTG_Pickup_DaringDash = 0x000ee9b4;
         public const uint RTG_Book_SecretAreas = 0x00018db4;
         public const uint RTG_Book_SkullKey = 0x00018f80;
         public const uint RTG_Book_DaringDash = 0x0001901b;

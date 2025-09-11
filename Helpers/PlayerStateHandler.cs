@@ -146,13 +146,6 @@ namespace MedievilArchipelago.Helpers
             int talismanCount = 0;
             bool hasTalisman = false;
 
-            if (GoalConditionHandlers.CheckGoalCondition(client) && gameCleared == false)
-            {
-                gameCleared = true;
-                Console.WriteLine("No need for player state update. You've cleared!");
-                return;
-            };
-
             foreach (ItemInfo itemInf in itemsCollected)
             {
                 Item itm = new Item();
@@ -261,6 +254,15 @@ namespace MedievilArchipelago.Helpers
             {
                 ItemHandlers.EquipWeapon(currentWeapon);
             }
+
+
+            if (GoalConditionHandlers.CheckGoalCondition(client) && gameCleared == false)
+            {
+                gameCleared = true;
+                Console.WriteLine("No need for player state update. You've cleared!");
+                return;
+            };
+
             playerStateUpdating = false;
         }
     }

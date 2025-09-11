@@ -181,7 +181,7 @@ namespace MedievilArchipelago.Helpers
         // added a guard so it doesn't fire prematurely
         public static void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, ArchipelagoClient client)
         {
-            if (client?.CurrentSession?.Items?.AllItemsReceived.Count != null)
+            if (client?.CurrentSession?.Items?.AllItemsReceived.Count == client?.GameState.ReceivedItems.Count())
             {
                 PlayerStateHandler.UpdatePlayerState(client, false);
                 #if DEBUG

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Archipelago.Core.Models;
 using Archipelago.Core;
+using Microsoft.Extensions.Options;
 
 namespace MedievilArchipelago.Helpers
 {
@@ -15,6 +16,41 @@ namespace MedievilArchipelago.Helpers
             if (builtLocations?.Count == null)
             {
                 return;
+            }
+
+            int gargoyleSanity = int.Parse(client.Options?.GetValueOrDefault("gargoylesanity", "0").ToString());
+
+            // starting gargoyles
+            if (client.GPSHandler.MapId == 6 && client.GPSHandler.X == 64189 && client.GPSHandler.Y == 0 && client.GPSHandler.Z == 16 && gargoyleSanity == 1) {
+                var location1 = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Left - DC");
+                var location2 = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Right - DC");
+                if (location1 != null && location2 != null)
+                {
+                    {
+                        client.SendLocation(location1);
+                        client.SendLocation(location2);
+                    }
+                }
+            }
+
+
+            // RtG Gargoyle + Daring Dash
+            if (client.GPSHandler.MapId == 2 && client.GPSHandler.X >= 19333 && client.GPSHandler.X <= 19455 && client.GPSHandler.Y >= 65057 && client.GPSHandler.Y <= 65072 && client.GPSHandler.Z >= 5925 && client.GPSHandler.Z <= 6667)
+            {
+                var location1 = builtLocations.FirstOrDefault(loc => loc.Name == "Skill: Daring Dash");
+                if (location1 != null)
+                {
+                    client.SendLocation(location1);
+                }
+
+                var location2 = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Exit - RTG");
+
+
+                if (location2 != null && gargoyleSanity == 1)
+                {
+                    client.SendLocation(location2);
+                }
+
             }
 
 

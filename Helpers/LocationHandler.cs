@@ -333,46 +333,6 @@ namespace MedievilArchipelago.Helpers
                             }
                         }
 
-                        if (loc.Name.Contains("Skill:"))
-                        {
-                            {
-                                List<ILocation> conditionalChoice = new List<ILocation>();
-
-                                conditionalChoice.Add(new Location()
-                                {
-                                    Id = -1,
-                                    Name = "Level Check",
-                                    Address = Addresses.CurrentLevel,
-                                    CheckType = LocationCheckType.Byte,
-                                    CompareType = LocationCheckCompareType.Match,
-                                    CheckValue = "2"
-                                });
-
-                                conditionalChoice.Add(new Location()
-                                {
-                                    Id = -1,
-                                    Name = "Skill Check",
-                                    Address = loc.Address,
-                                    CheckType = LocationCheckType.UShort,
-                                    CompareType = LocationCheckCompareType.Match,
-                                    CheckValue = "257"
-                                });
-
-                                CompositeLocation location = new CompositeLocation()
-                                {
-                                    Name = loc.Name,
-                                    Id = locationId,
-                                    CheckType = LocationCheckType.AND,
-                                    Conditions = conditionalChoice
-                                };
-
-                                locations.Add(location);
-                                location_index++;
-                                continue;
-                            }
-
-                        }
-
                         if (loc.Name.Contains("Gargoyle:"))
                         {
                             if (gargoyleSanity == 1)
@@ -686,7 +646,7 @@ namespace MedievilArchipelago.Helpers
             List<GenericItemsData> rtgLocations = new List<GenericItemsData>() {
                 new GenericItemsData("Star Rune: Return to the Graveyard", Addresses.RTG_Pickup_StarRune, "2", "32896"),
                 new GenericItemsData("Equipment: Silver Shield in Chest at Shop", Addresses.RTG_Pickup_SilverShieldChestAtShop, "2", "32896", true),
-                new GenericItemsData("Skill: Daring Dash", Addresses.RTG_Pickup_DaringDash, "2", "257"),
+                new GenericItemsData("Skill: Daring Dash", Addresses.RTG_Pickup_DaringDash, "2", "199999"),
                 new GenericItemsData("Energy Vial: Coffin Area West - RTG", Addresses.RTG_Pickup_EnergyVialCoffinAreaWest, "2", "32896"),
                 new GenericItemsData("Energy Vial: Coffin Area East - RTG", Addresses.RTG_Pickup_EnergyVialCoffinAreaEast, "2", "32896"),
                 new GenericItemsData("Energy Vial: Below Shop - RTG", Addresses.RTG_Pickup_EnergyVialBelowShop, "2", "32896"),
@@ -708,7 +668,7 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Book: Secret Areas - RTG", Addresses.RTG_Book_SecretAreas, "2", "0"),
                 new GenericItemsData("Book: Skull Key - RTG", Addresses.RTG_Book_SkullKey, "2", "0"),
                 new GenericItemsData("Book: Daring Dash - RTG", Addresses.RTG_Book_DaringDash, "2", "0"),
-                new GenericItemsData("Gargoyle: Exit - RTG", Addresses.RTG_Gargoyle_Exit, "2", "0"),
+                new GenericItemsData("Gargoyle: Exit - RTG", Addresses.RTG_Gargoyle_Exit, "2", "199999"),
                 new GenericItemsData("Cleared: Return to the Graveyard", Addresses.RTG_LevelStatus, "2", "16"),
                 new GenericItemsData("Chalice: Return to the Graveyard", Addresses.RTG_Pickup_Chalice, "2", "32896"),
             };

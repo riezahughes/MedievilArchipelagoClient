@@ -534,7 +534,8 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Chalice Reward 19", Addresses.HOH_DirkSteadfast2, "18", "9999"),
                 new GenericItemsData("Chalice Reward 20", Addresses.HOH_MegwynneStormbinder2, "18", "9999"),
                 new GenericItemsData("Book: Heores of Eld - HH", Addresses.HOH_Book_HeroesOfEld, "18", "9999"),
-                new GenericItemsData("Gargoyle: Entrance - HH", Addresses.HOH_Gargoyle_Entrance, "18", "9999"),
+                new GenericItemsData("Book: Heores of Eld - HH", Addresses.HOH_Book_WorthyHero, "18", "9999"),
+                new GenericItemsData("Gargoyle: Entrance - HH", Addresses.HOH_Gargoyle_Entrance, "18", "19999"),
             };
             return hallOfHeroesVisits;
         }
@@ -770,10 +771,11 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Gold Coins: Chest Right of Fountain - EE", Addresses.EE_Pickup_GoldCoinsChestRightOfFountain, "15", "32896"),
                 new GenericItemsData("Book: Coven of Witches - EE", Addresses.EE_Book_CovenOfWitches, "15", "0"),
                 new GenericItemsData("Book: Dragon Bird - EE", Addresses.EE_Book_DragonBird, "15", "0"),
+                new GenericItemsData("Book: Keep Out - EE", Addresses.EE_Book_KeepOut, "15", "0"),
                 new GenericItemsData("Book: Take the Talisman - EE", Addresses.EE_Book_TakeTheTalisman, "15", "0"),
                 new GenericItemsData("Gargoyle: Outside Demon Entrance - EE", Addresses.EE_Gargoyle_OutsideDemonEntrance, "15", "0"),
                 new GenericItemsData("Gargoyle: Outside Demon Exit - EE", Addresses.EE_Gargoyle_OutsideDemonExit, "15", "0"),
-                new GenericItemsData("Cleared: Enchanted Earth", Addresses.EE_LevelStatus, "15", "1"),
+                new GenericItemsData("Cleared: Enchanted Earth", Addresses.EE_LevelStatus, "15", "19999"),
                 new GenericItemsData("Chalice: Enchanted Earth", Addresses.EE_Pickup_Chalice, "15", "32896"),
             };
             return eeLocations;
@@ -1023,8 +1025,8 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Gold Coins: Bag in Mushroom Area - PG", Addresses.PG_Pickup_GoldCoinsBagInMushroomArea, "9", "32896"),
                 new GenericItemsData("Gold Coins: Chest at Boulders after Time Rune - PG", Addresses.PG_Pickup_GoldCoinsChestAtBouldersAfterStarRune, "9", "32896"),
                 new GenericItemsData("Gold Coins: Chest Near Chalice - PG", Addresses.PG_Pickup_GoldCoinsChestNearChalice,"9",  "32896"),
-                new GenericItemsData("Gargoyle: Exit - PG", Addresses.PG_Gargoyle_Exit, "9", "0"),
                 new GenericItemsData("Book: Mushrooms - PG", Addresses.PG_Book_Mushrooms, "9", "0"),
+                new GenericItemsData("Gargoyle: Exit - PG", Addresses.PG_Gargoyle_Exit, "9", "0"),
                 new GenericItemsData("Cleared: Pumpkin Gorge", Addresses.PG_LevelStatus, "9", "16"),
                 new GenericItemsData("Chalice: Pumpkin Gorge", Addresses.PG_Pickup_Chalice, "9", "32896"),
             };

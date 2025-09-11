@@ -242,6 +242,7 @@ namespace MedievilArchipelago
         public const uint HOH_MegwynneStormbinder2_drop = 0x000197aa;
 
         public const uint HOH_Book_HeroesOfEld = 0x0001bcf8;
+        public const uint HOH_Book_WorthyHero = 0x0001bcf8;
         public const uint HOH_Gargoyle_Entrance = 0x0001b6ce;
 
         public const uint HOH_ItemCount = 0x000f90fa;
@@ -510,7 +511,7 @@ namespace MedievilArchipelago
         public const uint EE_Pickup_EnergyVialRightOfTreeDrop = 0x001305f8;
         public const uint EE_Book_CovenOfWitches = 0x0001de33;
         public const uint EE_Book_DragonBird = 0x0001e427;
-        // public const uint EE_Book_KeepOut = ??????????; -  Note: "Keep Out" has no hexadecimal value provided.
+        public const uint EE_Book_KeepOut = 0x0001ddb5;
         public const uint EE_Book_TakeTheTalisman = 0x0001dc53;
         public const uint EE_Gargoyle_OutsideDemonEntrance = 0x0001df3d;
         public const uint EE_Gargoyle_OutsideDemonExit = 0x0001df9c;
@@ -738,14 +739,14 @@ namespace MedievilArchipelago
         public const uint HR_Pickup_GoldCoinsBagNearChaliceSouth = 0x0012f6d8;
         public const uint HR_Pickup_KingPeregrinsCrown = 0x0012ff98;
         public const uint HR_Pickup_GoldCoinsBagInCrownRoom = 0x001309d8;
-        public const uint HR_Pickup_EarthRune = 0x001a1fc4;
+        public const uint HR_Pickup_EarthRune = 0x0012fe18;
         public const uint HR_Pickup_GoldCoinsChestAtCatapult1 = 0x0012f758;
         public const uint HR_Pickup_GoldCoinsChestAtCatapult2 = 0x0012f7d8;
         public const uint HR_Pickup_GoldCoinsChestAtCatapult3 = 0x0012f798;
         public const uint HR_Book_Chickens = 0x0001aec0;
         public const uint HR_Book_Farmers = 0x0001afc1;
         public const uint HR_Book_SadKing = 0x0001b157;
-        public const uint HR_Book_GhostKing = 0x0001b157;
+        public const uint HR_Book_GhostKing = 0x0001b4a8;
         public const uint HR_Book_TheVolcano = 0x0001b1fb;
         public const uint HR_Book_Escape = 0x0001b299;
         public const uint HR_Book_Oil = 0x0001ba57;

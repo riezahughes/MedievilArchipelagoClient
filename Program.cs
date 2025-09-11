@@ -189,9 +189,16 @@ public class Program
 
         try
         {
+
+            
+
             await archipelagoClient.Connect(url + ":" + port, "Medievil");
+
+            Thread.Sleep(1000);
+
             await archipelagoClient?.Login(slot, password);
 
+            
             int retryCount = 0;
             Console.WriteLine("Waiting for connection...");
             while (archipelagoClient.IsLoggedIn == false)
@@ -199,7 +206,7 @@ public class Program
 
                 if(retryCount >= 10)
                 {
-                    throw new Exception("The Medievil Client was unable to connect to Archipelago. Please make sure your room is running, that you are putting in the correct details and that you are online.");
+                    throw new Exception("The Medievil Client was unable to log into Archipelago. Please make sure your room is running, that you are putting in the correct details and that you are online.");
 
                 }
                 

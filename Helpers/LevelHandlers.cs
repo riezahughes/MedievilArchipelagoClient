@@ -33,6 +33,17 @@ namespace MedievilArchipelago.Helpers
                 }
             }
 
+            // HoH Gargoyle
+
+            if (client.GPSHandler.MapId == 18 && client.GPSHandler.Y == 0 && client.GPSHandler.Z >= 65166 && client.GPSHandler.Z <= 65465 && gargoyleSanity == 1)
+            {
+                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Entrance - HH");
+                if (location != null)
+                {
+                    client.SendLocation(location);
+                }
+
+            }
 
             // RtG Gargoyle + Daring Dash
             if (client.GPSHandler.MapId == 2 && client.GPSHandler.X >= 19333 && client.GPSHandler.X <= 19455 && client.GPSHandler.Y >= 65057 && client.GPSHandler.Y <= 65072 && client.GPSHandler.Z >= 5925 && client.GPSHandler.Z <= 6667)
@@ -49,6 +60,18 @@ namespace MedievilArchipelago.Helpers
                 if (location2 != null && gargoyleSanity == 1)
                 {
                     client.SendLocation(location2);
+                }
+
+            }
+
+            // EE Level Complete
+
+            if (client.GPSHandler.MapId == 15 && client.GPSHandler.X >= 61307 && client.GPSHandler.X <= 61632 && client.GPSHandler.Y >= 64576 && client.GPSHandler.Y <= 64586 && client.GPSHandler.Z >= 1784 && client.GPSHandler.Z <= 2235)
+            {
+                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Cleared: Enchanted Earth");
+                if (location != null)
+                {
+                    client.SendLocation(location);
                 }
 
             }

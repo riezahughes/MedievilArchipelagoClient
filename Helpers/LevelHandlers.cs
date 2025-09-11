@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Archipelago.Core.Models;
 using Archipelago.Core;
 using Microsoft.Extensions.Options;
+using Archipelago.Core.Util;
 
 namespace MedievilArchipelago.Helpers
 {
@@ -13,6 +14,14 @@ namespace MedievilArchipelago.Helpers
     {
         public static void CheckPositionalLocations(ArchipelagoClient client, List<ILocation> builtLocations)
         {
+
+            //
+
+            // A large pile of custom pieces are here. These are mostly things that are in dynamic memory/are hard to work out. 
+            // By doing it this way, it allows us to create a plane and custom logic from it, which, i'm really fucking greatful for.
+            // Bit thanks to Arson for the GPS btw. Holy shit. What a godsend.
+
+            //
             if (builtLocations?.Count == null)
             {
                 return;
@@ -73,6 +82,37 @@ namespace MedievilArchipelago.Helpers
                 {
                     client.SendLocation(location);
                 }
+
+            }
+
+            // Anthill Checks Complete
+
+            if (client.GPSHandler.MapId == 7 && client.GPSHandler.X >= 38238 && client.GPSHandler.X <= 38366 && client.GPSHandler.Y >= 955 && client.GPSHandler.Y <= 975 && client.GPSHandler.Z >= 8374 && client.GPSHandler.Z <= 8630)
+            {
+                var amber = Memory.ReadByte(Addresses.AmberPiece);
+                var fairies = Memory.ReadByte(Addresses.FairyCount);
+
+                Console.WriteLine($"Amber: {amber}");
+                Console.WriteLine($"Fairies: {fairies}");
+
+                if (amber >= 7)
+                {
+                    var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Chicken Drumsticks - TA");
+                    if (location != null)
+                    {
+                        client.SendLocation(location);
+                    }
+                }
+
+                if(fairies == 6)
+                {
+                    var location = builtLocations.FirstOrDefault(loc => loc.Name == "Chalice: Ant Hill");
+                    if (location != null)
+                    {
+                        client.SendLocation(location);
+                    }
+                }
+
 
             }
 

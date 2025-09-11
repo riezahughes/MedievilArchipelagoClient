@@ -280,30 +280,6 @@ namespace MedievilArchipelago.Helpers
                             {
                                 List<ILocation> conditionalChoice = new List<ILocation>();
 
-                                if (loc.Name.Contains("Enchanted"))
-                                {
-                                    conditionalChoice.Add(new Location()
-                                    {
-                                        Id = -1,
-                                        Name = "Level Check",
-                                        Address = Addresses.CurrentLevel,
-                                        CheckType = LocationCheckType.Byte,
-                                        CompareType = LocationCheckCompareType.Match,
-                                        CheckValue = "15"
-                                    });
-
-                                    conditionalChoice.Add(new Location()
-                                    {
-                                        Id = -1,
-                                        Name = "EE Check",
-                                        Address = loc.Address,
-                                        CheckType = LocationCheckType.UShort,
-                                        CompareType = LocationCheckCompareType.Match,
-                                        CheckValue = "1"
-                                    });
-
-                                }
-                                else
                                 {
                                     conditionalChoice.Add(new Location()
                                     {
@@ -316,6 +292,38 @@ namespace MedievilArchipelago.Helpers
                                 }
 
 
+
+                                CompositeLocation location = new CompositeLocation()
+                                {
+                                    Name = loc.Name,
+                                    Id = locationId,
+                                    CheckType = LocationCheckType.AND,
+                                    Conditions = conditionalChoice
+                                };
+
+
+
+                                locations.Add(location);
+                                location_index++;
+                                continue;
+                            }
+                        }
+
+                        if (loc.Name == "Chalice: Ant Hill")
+                        {
+                            {
+                                List<ILocation> conditionalChoice = new List<ILocation>();
+
+                                {
+                                    conditionalChoice.Add(new Location()
+                                    {
+                                        Id = -1,
+                                        Name = "Got Anthill Chalice",
+                                        Address = loc.Address,
+                                        CheckType = LocationCheckType.Bit,
+                                        AddressBit = 5
+                                    });
+                                }
 
                                 CompositeLocation location = new CompositeLocation()
                                 {

@@ -29,7 +29,7 @@ namespace MedievilArchipelago.Helpers
             int currentCount = 0;
             if (client?.GameState == null || client.CurrentSession == null) return false;
 
-            foreach (CompositeLocation loc in client.GameState.CompletedLocations)
+            foreach (CompositeLocation loc in client.GameState.CompletedLocations.Distinct())
             {
                 if (loc.Name.Contains("Chalice: "))
                 {

@@ -92,9 +92,6 @@ namespace MedievilArchipelago.Helpers
                 var amber = Memory.ReadByte(Addresses.AmberPiece);
                 var fairies = Memory.ReadByte(Addresses.FairyCount);
 
-                Console.WriteLine($"Amber: {amber}");
-                Console.WriteLine($"Fairies: {fairies}");
-
                 if (amber >= 7)
                 {
                     var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Chicken Drumsticks - TA");

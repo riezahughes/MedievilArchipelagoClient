@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Archipelago.Core.Models;
 using Archipelago.Core;
 using Microsoft.Extensions.Options;
+using Archipelago.Core.Util;
 
 namespace MedievilArchipelago.Helpers
 {
@@ -13,6 +14,14 @@ namespace MedievilArchipelago.Helpers
     {
         public static void CheckPositionalLocations(ArchipelagoClient client, List<ILocation> builtLocations)
         {
+
+            //
+
+            // A large pile of custom pieces are here. These are mostly things that are in dynamic memory/are hard to work out. 
+            // By doing it this way, it allows us to create a plane and custom logic from it, which, i'm really fucking greatful for.
+            // Bit thanks to Arson for the GPS btw. Holy shit. What a godsend.
+
+            //
             if (builtLocations?.Count == null)
             {
                 return;
@@ -33,6 +42,17 @@ namespace MedievilArchipelago.Helpers
                 }
             }
 
+            // HoH Gargoyle
+
+            if (client.GPSHandler.MapId == 18 && client.GPSHandler.Y == 0 && client.GPSHandler.Z >= 65166 && client.GPSHandler.Z <= 65465 && gargoyleSanity == 1)
+            {
+                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Entrance - HH");
+                if (location != null)
+                {
+                    client.SendLocation(location);
+                }
+
+            }
 
             // RtG Gargoyle + Daring Dash
             if (client.GPSHandler.MapId == 2 && client.GPSHandler.X >= 19333 && client.GPSHandler.X <= 19455 && client.GPSHandler.Y >= 65057 && client.GPSHandler.Y <= 65072 && client.GPSHandler.Z >= 5925 && client.GPSHandler.Z <= 6667)
@@ -50,6 +70,46 @@ namespace MedievilArchipelago.Helpers
                 {
                     client.SendLocation(location2);
                 }
+
+            }
+
+            // EE Level Complete
+
+            if (client.GPSHandler.MapId == 15 && client.GPSHandler.X >= 61307 && client.GPSHandler.X <= 61632 && client.GPSHandler.Y >= 64576 && client.GPSHandler.Y <= 64586 && client.GPSHandler.Z >= 1784 && client.GPSHandler.Z <= 2235)
+            {
+                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Cleared: Enchanted Earth");
+                if (location != null)
+                {
+                    client.SendLocation(location);
+                }
+
+            }
+
+            // Anthill Checks Complete
+
+            if (client.GPSHandler.MapId == 7 && client.GPSHandler.X >= 38238 && client.GPSHandler.X <= 38366 && client.GPSHandler.Y >= 955 && client.GPSHandler.Y <= 975 && client.GPSHandler.Z >= 8374 && client.GPSHandler.Z <= 8630)
+            {
+                var amber = Memory.ReadByte(Addresses.AmberPiece);
+                var fairies = Memory.ReadByte(Addresses.FairyCount);
+
+                if (amber >= 7)
+                {
+                    var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Chicken Drumsticks - TA");
+                    if (location != null)
+                    {
+                        client.SendLocation(location);
+                    }
+                }
+
+                if(fairies == 6)
+                {
+                    var location = builtLocations.FirstOrDefault(loc => loc.Name == "Chalice: Ant Hill");
+                    if (location != null)
+                    {
+                        client.SendLocation(location);
+                    }
+                }
+
 
             }
 

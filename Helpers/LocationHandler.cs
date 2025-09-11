@@ -808,7 +808,7 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Gold Coins: Bag at Top of table - SV", Addresses.TSV_Pickup_GoldCoinsBagAtTopOfTable, "11", "32896"),
                 new GenericItemsData("Gold Coins: Bag at Bottom of table - SV", Addresses.TSV_Pickup_GoldCoinsBagAtBottomOfTable, "11", "32896"),
                 new GenericItemsData("Gold Coins: Chest next to Chalice - SV", Addresses.TSV_Pickup_GoldCoinsChestNextToChalice, "11", "32896"),
-                new GenericItemsData("Book: Blacksmiths Montly - SV", Addresses.TSV_Book_BlacksmithsMontly, "11", "0"),
+                new GenericItemsData("Book: Blacksmiths Monthly - SV", Addresses.TSV_Book_BlacksmithsMonthly, "11", "0"),
                 new GenericItemsData("Book: Missing Crucifix - SV", Addresses.TSV_Book_MissingCrucifix, "11", "0"),
                 new GenericItemsData("Book: Fountain Rune - SV", Addresses.TSV_Book_FountainRune, "11", "0"),
                 new GenericItemsData("Book: Mayors Bust - SV", Addresses.TSV_Book_MayorsBust, "11", "0"),

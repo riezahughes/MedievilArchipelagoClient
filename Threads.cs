@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using Archipelago.Core;
+﻿using Archipelago.Core;
 using Archipelago.Core.Util;
-using Helpers = MedievilArchipelago.Helpers;
-using Archipelago.Core.Models;
 using Serilog;
-using GameOverlay.Drawing;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Archipelago.MultiClient.Net.Models;
-using SharpDX;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
+using MedievilArchipelago.Helpers;
+using System.Net.NetworkInformation;
+using Microsoft.Extensions.Hosting;
+using System.Threading;
 
 
 namespace MedievilArchipelago
@@ -22,179 +12,13 @@ namespace MedievilArchipelago
     public class MemoryCheckThreads
     {
 
-        static DateTime lastDeathTime = default(DateTime);
-
-
-
-        //static internal void SetRuneAxis()
-        //{
-        //    Memory.WriteByte(Addresses.TG_EarthRuneYAxis, 0x0000);
-        //}
-
-        static internal void UpdateChestLocations(ArchipelagoClient client, int id)
-        {
-            var chestEntityList = Helpers.ChestContentsDictionary();
-            foreach (ulong chestEntity in chestEntityList[id])
-            {
-                Memory.WriteByte(chestEntity, 0x0008);
-            }
-
-        }
-
-        // feeling lazy so i'm just duplicating this.
-        static internal string ExtractRuneName(string itemName)
-        {
-            // The regex pattern to match and capture the text before the colon
-            string pattern = @"^(.+?):";
-
-            // Find the first match in the input string
-            Match match = Regex.Match(itemName, pattern);
-
-            // Check if a match was found
-            if (match.Success)
-            {
-                // The captured group is at index 1. Trim to remove any trailing spaces.
-                return match.Groups[1].Value.Trim();
-            }
-
-            return null;
-        }
-
-
-        static internal void UpdateAsylumDynamicDrops()
-        {
-            List<uint> drops = [
-                Addresses.IA_Pickup_GoldCoinsChestInBatRoom,
-                Addresses.IA_Pickup_EnergyVialBatRoom,
-                Addresses.IA_Pickup_GoldCoinsBagInBatRoomCentre,
-                Addresses.IA_Pickup_GoldCoinsBagInBatRoomLeft,
-                Addresses.IA_Pickup_GoldCoinsBagInBatRoomRight
-            ];
-
-            foreach (uint drop in drops)
-            {
-                Memory.WriteByte(drop, 0x07);
-            }
-        }
-
-        static internal void OpenTheMap()
-        {
-            var mapList = Helpers.OpenMapMemoryLocations();
-            foreach (uint address in mapList)
-            {
-                Memory.WriteByte(address, 0x01);
-            }
-        }
-
-        static internal void ShowCurrentRuneStatus(ArchipelagoClient client, byte currentMapLevel)
-        {
-            var currentDanStatus = Memory.ReadUShort(Addresses.IsLoaded);
-
-            if (currentDanStatus == 59580 || currentMapLevel == 0 || (currentMapLevel > 20 || currentMapLevel < 0))
-            {
-                return;
-            }
-
-            var items = client.CurrentSession.Items.AllItemsReceived;
-            string levelName = Helpers.GetLevelNameFromMapId(currentMapLevel);
-
-            List<string> currentRunesForLevel = [];
-
-            foreach (ItemInfo itemInf in items)
-            {
-                if (itemInf.ItemName.ToLower().Contains("rune:") && itemInf.ItemName.ToLower().Contains("rune: " + levelName.ToLower())){
-                    
-                    currentRunesForLevel.Add(itemInf.ItemName);
-                }
-            }
-
-
-            var dict = Helpers.ListCurrentRunesForLevel(currentRunesForLevel, currentMapLevel);
-
-            string textMessage = "";
-
-
-            foreach(string rune in dict.Keys)
-            {
-                string result = dict[rune] == false ? "[  ]" : "[X]";
-                string line = rune + " " + result + "\n";
-                textMessage = textMessage + line;
-
-            }
-
-            client.AddOverlayMessage(textMessage);
-
-        }
-
-        static internal void StartMenuToExit()
-        {
-            var exitList = Helpers.QuitTextMemoryLocations();
-            Memory.WriteByte(exitList[0], 0x45);
-            Memory.WriteByte(exitList[0], 0x78);
-        }
-
-        static internal void UpdateHallOfHeroesTable() 
-        {
-            // counting from base address to the item choice
-            ulong offset = 0x36;
-
-            Memory.WriteByte(Addresses.HOH_CannyTim1_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_CannyTim2_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_StanyerIronHewer1_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_StanyerIronHewer2_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_WodenTheMighty1_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_WodenTheMighty2_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_Imanzi1_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_Imanzi2_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher1_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher2_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher3_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_RavenHoovesTheArcher4_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_BloodmonathSkullCleaver1_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_BloodmonathSkullCleaver2_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_KarlStungard1_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_KarlStungard2_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_DirkSteadfast1_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_DirkSteadfast2_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_MegwynneStormbinder1_drop, 0x08);
-            Memory.WriteByte(Addresses.HOH_MegwynneStormbinder2_drop, 0x08);
-        }
-
-        static internal void SetCheatMenu(ArchipelagoClient client)
-        {
-            if(client.Options == null)
-            {
-                return;
-            }
-
-            int cheatMenu = Int32.Parse(client.Options?.GetValueOrDefault("cheat_menu", "0").ToString());
-
-            switch (cheatMenu)
-            {
-                case 0:
-                    break;
-                case 1:
-                    Memory.WriteByte(Addresses.CheatMenu, 0x01);
-                    break;
-                case 2:
-                    Memory.WriteByte(Addresses.CheatMenu, 0x03);
-                    break;
-            }
-            return;
-        }
-
-        static internal void UpdateInventoryWithAmber()
-        {
-            var currentCount = Memory.ReadByte(Addresses.APAmberPieces);
-            Memory.WriteByte(Addresses.AmberPiece, currentCount);
-        }
-
-
-        async public static Task PassiveLogicChecks(ArchipelagoClient client, CancellationToken cts)
+        async public static Task PassiveLogicChecks(ArchipelagoClient client, CancellationTokenSource cts)
         {
             await Task.Run(() =>
             {
                 Console.WriteLine("Background task running...");
+
+                Ping ping = new Ping();
 
                 byte currentLocation = Memory.ReadByte(Addresses.CurrentLevel);
                 byte mapCoords = Memory.ReadByte(Addresses.CurrentMapPosition);
@@ -206,14 +30,14 @@ namespace MedievilArchipelago
                 int openWorldOption = Int32.Parse(client.Options?.GetValueOrDefault("progression_option", "0").ToString());
 
                 //StartMenuToExit();
-                SetCheatMenu(client);
+                ThreadHandlers.SetCheatMenu(client);
 
                 // creates a hashset to compare against
                 HashSet<int> processedChaliceCounts = new HashSet<int>();
 
                 bool firstLoop = true;
 
-                UpdateChestLocations(client, currentLocation);
+                ThreadHandlers.UpdateChestLocations(client, currentLocation);
                 if (currentLocation == 1 && runeSanityOption == 1)
                 {
 
@@ -222,7 +46,7 @@ namespace MedievilArchipelago
 
                 if (runeSanityOption == 1)
                 {
-                    ShowCurrentRuneStatus(client, mapCoords);
+                    ThreadHandlers.ShowCurrentRuneStatus(client, mapCoords);
                 }
 
 
@@ -230,7 +54,7 @@ namespace MedievilArchipelago
                 {
                     if (openWorldOption == 1)
                     {
-                        OpenTheMap();
+                        ThreadHandlers.OpenTheMap();
                     }
 
                     //SetRuneAxis();
@@ -238,13 +62,23 @@ namespace MedievilArchipelago
 
                 if (currentLocation == 14)
                 {
-                    UpdateAsylumDynamicDrops();
+                    ThreadHandlers.UpdateAsylumDynamicDrops();
                 }
 
-                while (!cts.IsCancellationRequested)
+                while (!cts.Token.IsCancellationRequested)
                 {
                     try
                     {
+                        // a really dumb way to check but it works.
+                        PingReply reply = ping.Send("www.google.com", 1000);
+
+                        if (reply.Status == IPStatus.TimedOut)
+                        {
+                            cts.Cancel();
+                            Console.WriteLine("Connection has timed out. Background Task Stopped. Please Restart the Client.");
+                            throw new Exception("Connection has timed out");
+                        }
+
                         // checks against current levels and updates chest entities
                         byte checkCurrentLevel = Memory.ReadByte(Addresses.CurrentLevel);
                         short checkQueenAntStatus = Memory.ReadShort(Addresses.TA_BossHealth);
@@ -252,17 +86,17 @@ namespace MedievilArchipelago
 
                         if (currentLocation == 14)
                         {
-                            UpdateAsylumDynamicDrops();
+                            ThreadHandlers.UpdateAsylumDynamicDrops();
                         }
 
                         if (currentLocation == 7 && checkQueenAntStatus == 0x03e8) // if we're in the ant hill and the queens hp has spawned
                         {
-                            UpdateInventoryWithAmber();
+                            ThreadHandlers.UpdateInventoryWithAmber();
                         }
 
                         if (!firstLoop && checkCurrentLevel < 17 && checkCurrentLevel > 0)
                         {
-                            UpdateChestLocations(client, checkCurrentLevel);
+                            ThreadHandlers.UpdateChestLocations(client, checkCurrentLevel);
                         }
                         // i think i'm losing my mind
                         //if (currentLocation == 0 && openWorldOption == 1)
@@ -273,13 +107,13 @@ namespace MedievilArchipelago
                         if (currentLocation != checkCurrentLevel)
                         {
                             //StartMenuToExit();
-                            SetCheatMenu(client);
+                            ThreadHandlers.SetCheatMenu(client);
 
                             if (checkCurrentLevel != 0)
                             {
                                 if (openWorldOption == 1)
                                 {
-                                    OpenTheMap();
+                                    ThreadHandlers.OpenTheMap();
                                 }
                                 //SetRuneAxis();
                             }
@@ -288,7 +122,7 @@ namespace MedievilArchipelago
 
                         if(runeSanityOption == 1)
                         {
-                            ShowCurrentRuneStatus(client, checkMapCoords);
+                            ThreadHandlers.ShowCurrentRuneStatus(client, checkMapCoords);
                         }
 
                         firstLoop = false;
@@ -296,7 +130,7 @@ namespace MedievilArchipelago
 
 
                         int currentChaliceCount = 0;
-                        var playerStatus = Helpers.StatusAndInventoryAddressDictionary();
+                        var playerStatus = ItemHandlers.StatusAndInventoryAddressDictionary();
 
                         // for every level, read the status in memory. For ever level that matches either 19 (cleared) or 3 (picked up chalace, but havn't finished hall) increase the chalice count
                         foreach (KeyValuePair<string, uint> ch in playerStatus["Level Status"])
@@ -315,7 +149,7 @@ namespace MedievilArchipelago
 
                         if (currentLevel == 18)
                         {
-                            UpdateHallOfHeroesTable();
+                            ThreadHandlers.UpdateHallOfHeroesTable();
                         }
 
 
@@ -417,6 +251,8 @@ namespace MedievilArchipelago
                     }
                     catch (Exception ex)
                     {
+                        cts.Cancel();
+                        Console.WriteLine("Connection has timed out. Background Task Stopped. Please Restart the Client.");
                         Log.Error(ex, "Error in passive logic checks thread.");
                     }
                     #if DEBUG
@@ -425,7 +261,7 @@ namespace MedievilArchipelago
 
                     Thread.Sleep(10000);
                 }
-            }, cts);
+            }, cts.Token);
 
         }
     }

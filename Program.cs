@@ -13,8 +13,9 @@ using Archipelago.MultiClient.Net.Models;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 
-internal class Program
+public class Program
 {
+    public static List<ItemReceivedEventArgs> delayedItems = new List<ItemReceivedEventArgs>();
 
     private static async Task Main(string[] args)
     {
@@ -36,6 +37,7 @@ internal class Program
         string password;
 
         bool firstRun = true;
+        
 
 
         CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
@@ -246,7 +248,6 @@ internal class Program
 
             archipelagoClient.ShouldSaveStateOnItemReceived = false;
             archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Helpers.APHandlers.Locations_CheckedLocationsUpdated;
-
 
 
             GameLocations = Helpers.LocationHandlers.BuildLocationList(archipelagoClient.Options);

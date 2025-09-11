@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Serilog;
 using MedievilArchipelago.Helpers;
 using Archipelago.Core.Util.GPS;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MedievilArchipelago.Helpers
 {
@@ -96,9 +97,16 @@ namespace MedievilArchipelago.Helpers
         // logic for item receiving goes here (gold, health, ammo, etc)
         public static void ItemReceived(object sender, ItemReceivedEventArgs args, ArchipelagoClient client)
         {
+            var isValidForDelay = args.Item.Name.ContainsAny("Ammo", "Charge", "Energy", "Trap:");
 
             if (client.CurrentSession != null)
             {
+                if (!PlayerStateHandler.isInTheGame() && isValidForDelay)
+                {
+                    Program.delayedItems.Add(args);
+                    return;
+                }
+
                 #if DEBUG
                     Console.WriteLine($"ItemReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
                 #endif

@@ -79,6 +79,8 @@ namespace MedievilArchipelago
                             throw new Exception("Connection has timed out");
                         }
 
+                        ThreadHandlers.ProcessDelayedItems(client);
+
                         // checks against current levels and updates chest entities
                         byte checkCurrentLevel = Memory.ReadByte(Addresses.CurrentLevel);
                         short checkQueenAntStatus = Memory.ReadShort(Addresses.TA_BossHealth);

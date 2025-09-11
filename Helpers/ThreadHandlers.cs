@@ -11,6 +11,23 @@ namespace MedievilArchipelago.Helpers
 {
     internal class ThreadHandlers
     {
+        static internal void ProcessDelayedItems(ArchipelagoClient client)
+        {
+
+            if (!PlayerStateHandler.isInTheGame())
+            {
+                return;
+            }
+
+            Object sender = null;
+
+            foreach (var item in Program.delayedItems)
+            {
+                APHandlers.ItemReceived(sender, item, client);
+            }
+
+            Program.delayedItems.Clear();
+        }
         // will hide the rune under the map. Only set for one rune right now due to experimentation. Not used yet.
         static internal void SetRuneAxis()
         {

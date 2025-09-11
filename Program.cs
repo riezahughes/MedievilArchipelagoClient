@@ -1,10 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Archipelago.Core;
 using Archipelago.Core.GameClients;
 using Archipelago.Core.Models;
@@ -12,50 +7,39 @@ using Archipelago.Core.Traps;
 using Archipelago.Core.Util;
 using Archipelago.Core.Util.GPS;
 using MedievilArchipelago;
-using Serilog;
 using Helpers = MedievilArchipelago.Helpers;
-using System.Threading;
 using Archipelago.Core.Util.Overlay;
-using Newtonsoft.Json;
-using MedievilArchipelago.Models;
-using System.Xml.Linq;
-using System.Diagnostics;
-using System.Drawing;
-using System.Collections;
-using System.Reflection;
-using System.Drawing.Text;
 using Archipelago.MultiClient.Net.Models;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using Kokuban;
-using System.Net;
-using System.ComponentModel;
-using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using System.Text;
 
-internal class Program
+public class Program
 {
+    public static List<ItemReceivedEventArgs> delayedItems = new List<ItemReceivedEventArgs>();
+
     private static async Task Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;
+        Console.Title = "Medievil Archipelago Client";
+
         // set values
         const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
         const byte JP_OFFSET = 0; // could add more offsfets here
-        const int percentageMax = 20480;
-        const int countMax = 32767;
-        const int maxHealth = 300;
 
-        bool gameCleared = false;
+
+
         bool playerStateUpdating = false;
 
         // Connection details
         string url;
         string port;
-        string slot;
+        string slot = "";
         string password;
 
-        DateTime lastDeathTime = default(DateTime);
-        Task _deathlinkMonitorTask = null;
+        bool firstRun = true;
+        
+
+
         CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         List<ILocation> GameLocations = null;
@@ -95,19 +79,22 @@ internal class Program
             }
         }
 
-#if DEBUG
-#else
-    Console.Clear();
-#endif
+        #if DEBUG
+        #else
+            Console.Clear();
+        #endif
 
         bool connected = gameClient.Connect();
+
         var archipelagoClient = new ArchipelagoClient(gameClient);
 
-        archipelagoClient.CancelMonitors();
-        archipelagoClient.Connected -= (sender, args) => OnConnected(sender, args, archipelagoClient);
-        archipelagoClient.Disconnected -= (sender, args) => OnDisconnected(sender, args, archipelagoClient);
-        archipelagoClient.ItemReceived -= (sender, args) => ItemReceived(sender, args, archipelagoClient);
-        archipelagoClient.LocationCompleted -= (sender, args) => Client_LocationCompleted(sender, args, archipelagoClient);
+        // Register event handlers
+        archipelagoClient.Connected += (sender, args) => Helpers.APHandlers.OnConnected(sender, args, archipelagoClient);
+        archipelagoClient.Disconnected += (sender, args) => Helpers.APHandlers.OnDisconnected(sender, args, archipelagoClient, firstRun);
+        archipelagoClient.ItemReceived += (sender, args) => Helpers.APHandlers.ItemReceived(sender, args, archipelagoClient);
+        archipelagoClient.MessageReceived += (sender, args) => Helpers.APHandlers.Client_MessageReceived(sender, args, archipelagoClient, slot);
+        archipelagoClient.LocationCompleted += (sender, args) => Helpers.APHandlers.Client_LocationCompleted(sender, args, archipelagoClient);
+        archipelagoClient.EnableLocationsCondition = () => Helpers.PlayerStateHandler.isInTheGame();
 
         Console.WriteLine("Successfully connected to Duckstation.");
 
@@ -149,108 +136,96 @@ internal class Program
 
         //};
 
-#if DEBUG
+        #if DEBUG
+            // auto logs in with Local.json settings if it's set to dev (because laziness)
+            var configuration = new ConfigurationBuilder()
+                // Add the default appsettings.json file
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
+                .Build();
 
-        var configuration = new ConfigurationBuilder()
-            // Add the default appsettings.json file
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
-            .Build();
+            Console.WriteLine("Logging in using settings in appsettings.Local.json");
+            Console.WriteLine(configuration["port"]);
+            Console.WriteLine(configuration["slot"]);
+            Console.WriteLine(configuration["pass"]);
+            url = "wss://archipelago.gg";
+            port = configuration["port"];
+            slot = configuration["slot"];
+            password = configuration["pass"];
 
-        Console.WriteLine("Logging in using settings in appsettings.Local.json");
-        Console.WriteLine(configuration["port"]);
-        Console.WriteLine(configuration["slot"]);
-        Console.WriteLine(configuration["pass"]);
-        url = "wss://archipelago.gg";
-        port = configuration["port"];
-        slot = configuration["slot"];
-        password = configuration["pass"];
-#else
-// start AP Login
+        #else
+            // start AP Login
 
-Console.WriteLine("Enter AP url: eg,archipelago.gg");
-string lineUrl = Console.ReadLine();
+            Console.WriteLine("Enter AP Domain: (archipelago.gg)");
+            string lineUrl = Console.ReadLine();
 
-url = string.IsNullOrWhiteSpace(lineUrl) ? "archipelago.gg" : lineUrl;
+            url = string.IsNullOrWhiteSpace(lineUrl) ? "archipelago.gg" : lineUrl;
 
-Console.WriteLine("Enter Port: eg, 80001");
-port = Console.ReadLine();
+            Console.WriteLine("Enter Port: eg, 80001");
+            port = Console.ReadLine();
 
-Console.WriteLine("Enter Slot Name:");
-slot = Console.ReadLine();
+            Console.WriteLine("Enter Slot Name:");
+            slot = Console.ReadLine();
 
-Console.WriteLine("Room Password:");
-string linePassword = Console.ReadLine();
-password = string.IsNullOrWhiteSpace(linePassword) ? null : linePassword;
+            Console.WriteLine("Room Password:");
+            string linePassword = Console.ReadLine();
+            password = string.IsNullOrWhiteSpace(linePassword) ? null : linePassword;
 
-Console.WriteLine("Details:");
-Console.WriteLine($"URL:{url}:{port}");
-Console.WriteLine($"Slot: {slot}");
-Console.WriteLine($"Password: {password}");
+            Console.WriteLine("Details:");
+            Console.WriteLine($"URL:{url}:{port}");
+            Console.WriteLine($"Slot: {slot}");
+            Console.WriteLine($"Password: {password}");
 
-if (string.IsNullOrWhiteSpace(slot))
-{
-    Console.WriteLine("Slot name cannot be empty. Please provide a valid slot name.");
-    return;
-}
-#endif
+            if (string.IsNullOrWhiteSpace(slot))
+            {
+                Console.WriteLine("Slot name cannot be empty. Please provide a valid slot name.");
+                return;
+            }
+        #endif
+
+
         Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
-
-        // Register event handlers
-        archipelagoClient.Connected += (sender, args) => OnConnected(sender, args, archipelagoClient);
-        archipelagoClient.Disconnected += (sender, args) => OnDisconnected(sender, args, archipelagoClient, _cancellationTokenSource);
-        archipelagoClient.ItemReceived += (sender, args) => ItemReceived(sender, args, archipelagoClient);
-        archipelagoClient.MessageReceived += (sender, args) => Client_MessageReceived(sender, args, archipelagoClient);
-        archipelagoClient.LocationCompleted += (sender, args) => Client_LocationCompleted(sender, args, archipelagoClient);
-        archipelagoClient.EnableLocationsCondition = () => isInTheGame();
-
-        archipelagoClient.GPSHandler = new GPSHandler(() =>
-        {
-
-            byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
-            if (isInTheGame())
-            {
-                return new PositionData
-                {
-                    MapId = currentLevel,
-                    MapName = Helpers.GetLevelNameFromId(currentLevel),
-                    X = Memory.ReadUShort(Addresses.DanRespawnPositionX),
-                    Y = Memory.ReadUShort(Addresses.DanRespawnPositionY),
-                    Z = Memory.ReadUShort(Addresses.DanRespawnPositionZ)
-                };
-            }
-            else
-            {
-                return new PositionData
-                {
-                    MapId = 0,
-                    MapName = "No Map Detected",
-                    X = 0,
-                    Y = 0,
-                    Z = 0,
-                };
-            }
-        });
-
-        archipelagoClient.GPSHandler.SetInterval(100);
-
-        archipelagoClient.GPSHandler.PositionChanged += (sender, args) =>
-        {
-            if (!isInTheGame()) return;
-            Helpers.CheckPositionalLocations(archipelagoClient, GameLocations);
-        };
-
-        archipelagoClient.GPSHandler.Start();
 
 
         try
         {
             await archipelagoClient.Connect(url + ":" + port, "Medievil");
-            Console.WriteLine("Connected. Attempting to Log in...");
             await archipelagoClient?.Login(slot, password);
-            Console.WriteLine("Logged in!");
 
-            var overlayOptions = new OverlayOptions();
+            int retryCount = 0;
+            Console.WriteLine("Waiting for connection...");
+            while (archipelagoClient.IsLoggedIn == false)
+            {
+
+                if(retryCount >= 10)
+                {
+                    throw new Exception("The Medievil Client was unable to connect to Archipelago. Please make sure your room is running, that you are putting in the correct details and that you are online.");
+
+                }
+                
+                retryCount++;
+                Console.Write(".");
+                Thread.Sleep(1000);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"\nAn error occurred while connecting to Archipelago: {ex.Message}");
+            #if DEBUG
+                Console.WriteLine(ex); // Print full exception for debugging
+            #endif
+            Console.ReadKey();
+            Environment.Exit(1);
+
+        }
+
+        try { 
+
+
+
+
+        var overlayOptions = new OverlayOptions();
 
             overlayOptions.XOffset = 50;
             overlayOptions.YOffset = 500;
@@ -272,21 +247,27 @@ if (string.IsNullOrWhiteSpace(slot))
             }
 
             archipelagoClient.ShouldSaveStateOnItemReceived = false;
-            archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
+            archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Helpers.APHandlers.Locations_CheckedLocationsUpdated;
 
 
+            GameLocations = Helpers.LocationHandlers.BuildLocationList(archipelagoClient.Options);
 
-            GameLocations = Helpers.BuildLocationList(archipelagoClient.Options);
+            // Set up GPS
+            archipelagoClient.GPSHandler = Helpers.APHandlers.Client_GPSHandler();
+            archipelagoClient.GPSHandler.SetInterval(100);
+            archipelagoClient.GPSHandler.PositionChanged += (sender, args) => Helpers.APHandlers.Client_GPSPositionChanged(archipelagoClient, GameLocations);
+            archipelagoClient.GPSHandler.Start();
 
 
 #if DEBUG
+
             //foreach (var opt in archipelagoClient.Options)
             //{
             //    Console.WriteLine($"Option: {opt.Key} - {opt.Value}");
             //}
 
 #else
-    Console.Clear();
+            Console.Clear();
 #endif
 
             //foreach (var location in GameLocations)
@@ -294,8 +275,10 @@ if (string.IsNullOrWhiteSpace(slot))
             //    Console.WriteLine($"ID: {location.Id} - {location.Name}");
             //}
 
-            _ = archipelagoClient.MonitorLocations(GameLocations);
-            _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, _cancellationTokenSource.Token);
+            firstRun = false;
+
+            _ = archipelagoClient.MonitorLocations(GameLocations, _cancellationTokenSource.Token);
+            _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, _cancellationTokenSource);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {
@@ -317,7 +300,7 @@ if (string.IsNullOrWhiteSpace(slot))
                     {
                         if (archipelagoClient.GameState.CompletedLocations != null)
                         {
-                            UpdatePlayerState(archipelagoClient.CurrentSession.Items.AllItemsReceived);
+                            Helpers.PlayerStateHandler.UpdatePlayerState(archipelagoClient, false);
                             Console.WriteLine($"Player state updated. Total Count: {archipelagoClient.CurrentSession.Items.AllItemsReceived.Count}");
 
 #if DEBUG
@@ -360,24 +343,25 @@ if (string.IsNullOrWhiteSpace(slot))
 
 
                     }
-#if DEBUG
-                    else if (input?.Trim().ToLower() == "heavytrap")
-                    {
-                        HeavyDanTrap();
-                    }
-                    else if (input?.Trim().ToLower() == "lighttrap")
-                    {
-                        LightDanTrap();
-                    }
-                    else if (input?.Trim().ToLower() == "darknesstrap")
-                    {
-                        DarknessTrap(0x01);
-                    }
-                    else if (input?.Trim().ToLower() == "hudtrap")
-                    {
-                        HudlessTrap();
-                    }
-#endif
+                    // allow manually handling traps if you're in dev mode (for testing)
+                    #if DEBUG
+                        else if (input?.Trim().ToLower() == "heavytrap")
+                        {
+                            Helpers.TrapHandlers.HeavyDanTrap();
+                        }
+                        else if (input?.Trim().ToLower() == "lighttrap")
+                        {
+                            Helpers.TrapHandlers.LightDanTrap();
+                        }
+                        else if (input?.Trim().ToLower() == "darknesstrap")
+                        {
+                            Helpers.TrapHandlers.DarknessTrap(0x01);
+                        }
+                        else if (input?.Trim().ToLower() == "hudtrap")
+                        {
+                            Helpers.TrapHandlers.HudlessTrap();
+                        }
+                    #endif
                     else if (!string.IsNullOrWhiteSpace(input))
                     {
                         Console.WriteLine($"Unknown command: '{input}'");
@@ -385,960 +369,23 @@ if (string.IsNullOrWhiteSpace(slot))
                 }
                 catch (Exception ex)
                 {
+                    _cancellationTokenSource.Cancel();
                     Console.WriteLine("The system has crashed. (Probably broken connection");
                 }
             }
+
+            Console.WriteLine("Shutting down due to connection issues.");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"An error occurred while connecting to Archipelago: {ex.Message}");
+            _cancellationTokenSource.Cancel();
+            Console.WriteLine($"An unexpected error occurred while connecting to Archipelago: {ex.Message}");
             Console.WriteLine(ex); // Print full exception for debugging
         }
         finally
         {
             // Perform any necessary cleanup here
             Console.WriteLine("Shutting down...");
-
-        }
-
-        bool isInTheGame()
-        {
-            ulong currentGameStatus = Memory.ReadUInt(Addresses.InGameCheck);
-            ulong currentGold = Memory.ReadUInt(Addresses.CurrentGold);
-            ulong currentMapPosition = Memory.ReadUInt(Addresses.CurrentMapPosition);
-
-
-            if (currentGameStatus != 0x800f8198 || currentGold == 0x82a4 || currentMapPosition > 0x32)
-            {
-                return false;
-            }
-            return true;
-
-        }
-
-        ////////////////////////////////////
-        //
-        // AP CORE HOOKS
-        //
-        ////////////////////////////////////
-
-
-        async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
-        {
-            if (client.CurrentSession == null) {
-                Console.WriteLine("Client is null on connect hook");
-                return;
-            }
-
-             Log.Logger.Information("Connected to Archipelago");
-             Log.Logger.Information($"Playing {client.CurrentSession.ConnectionInfo.Game} as {client.CurrentSession.Players.GetPlayerName(client.CurrentSession.ConnectionInfo.Slot)}");
-
-            // if deathlink goes here
-            int deathlink = Int32.Parse(client.Options?.GetValueOrDefault("deathlink", "0").ToString());
-
-
-            DeathLinkService deathLinkClient = null;
-
-            if (deathlink == 1)
-            {
-            #if DEBUG
-                Console.WriteLine("Deathlink is activated.");
-            #endif
-                deathLinkClient = client.EnableDeathLink();
-                deathLinkClient.OnDeathLinkReceived += (args) => KillPlayer();
-                StartDeathlinkMonitor(deathLinkClient, client);
-            }
-
-            Console.WriteLine("Setting up player state..");
-
-            #if DEBUG
-                Console.WriteLine($"OnConnected Firing. Itemcount: {client.GameState.ReceivedItems.Count}");
-            #endif
-                UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
-
-
-                // reset traps in case of client crashes
-
-                byte[] DefaultWeaponIconX = BitConverter.GetBytes(0x0018);
-                byte[] DefaultShieldIconX = BitConverter.GetBytes(0x0050);
-                byte[] DefaultHealthbarX = BitConverter.GetBytes(0x0100);
-                byte[] DefaultChaliceIconX = BitConverter.GetBytes(0x017e);
-                byte[] DefaultMoneyIconX = BitConverter.GetBytes(0x01b6);
-                byte[] DefaultWeaponIconY = BitConverter.GetBytes(0x001e);
-                byte[] DefaultShieldIconY = BitConverter.GetBytes(0x001e);
-                byte[] DefaultHealthbarY = BitConverter.GetBytes(0x0022);
-                byte[] DefaultChaliceIconY = BitConverter.GetBytes(0x001e);
-                byte[] DefaultMoneyIconY = BitConverter.GetBytes(0x001e);
-
-                byte[] defaultSpeedValue = BitConverter.GetBytes(0x0100);
-                byte[] defaultJumpValue = BitConverter.GetBytes(0x002f);
-
-                byte[] defaultRenderDistance = BitConverter.GetBytes(0x1000);
-
-            if (isInTheGame())
-                {
-                    // Reset Hud
-                    Memory.Write(Addresses.WeaponIconX, DefaultWeaponIconX);
-                    Memory.Write(Addresses.ShieldIconX, DefaultShieldIconX);
-                    Memory.Write(Addresses.HealthbarX, DefaultHealthbarX);
-                    Memory.Write(Addresses.ChaliceIconX, DefaultChaliceIconX);
-                    Memory.Write(Addresses.MoneyIconX, DefaultMoneyIconX);
-                    Memory.Write(Addresses.WeaponIconY, DefaultWeaponIconY);
-                    Memory.Write(Addresses.ShieldIconY, DefaultShieldIconY);
-                    Memory.Write(Addresses.HealthbarY, DefaultHealthbarY);
-                    Memory.Write(Addresses.ChaliceIconY, DefaultChaliceIconY);
-                    Memory.Write(Addresses.MoneyIconY, DefaultMoneyIconY);
-
-                    // Reset Jump Height
-                    Memory.Write(Addresses.DanJumpHeight, defaultJumpValue);
-
-                    // Reset Normal Speed
-                    Memory.Write(Addresses.DanForwardSpeed, defaultSpeedValue);
-
-                    // Reset Lighting
-                    Memory.Write(Addresses.RenderDistance, defaultRenderDistance);
-            }
-        }
-
-
-
-        async void OnDisconnected(object sender, ConnectionChangedEventArgs args, ArchipelagoClient client, CancellationTokenSource cts = null)
-        {
-
-            if (client.GameState == null || cts.IsCancellationRequested)
-            {
-
-                Console.WriteLine("Disconnected from Archipelago.");
-            }
-        }
-
-
-
-        // logic for item receiving goes here (gold, health, ammo, etc)
-        void ItemReceived(object sender, ItemReceivedEventArgs args, ArchipelagoClient client)
-        {
-
-            if (client.CurrentSession != null) {
-#if DEBUG
-            Console.WriteLine($"ItemReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
-#endif
-                byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
-                int runeSanityOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("runesanity", "0").ToString());
-                int breakAmmoLimitOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("break_ammo_limit", "0").ToString());
-                int breakChargeLimitOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("break_percentage_limit", "0").ToString());
-
-                switch (args.Item)
-                {
-                    // incoming runes need added here
-                    case var x when x.Name.ContainsAny("Rune") && runeSanityOption == 1: ReceiveRune(currentLevel, x); break;
-                    case var x when x.Name.ContainsAny("Skill"): ReceiveSkill(x); break;
-                    case var x when x.Name.ContainsAny("Equipment"): ReceiveEquipment(x); break;
-                    case var x when x.Name.ContainsAny("Life Bottle"): ReceiveLifeBottle(); break;
-                    case var x when x.Name.ContainsAny("Soul Helmet"): ReceiveSoulHelmet(); break;
-                    case var x when x.Name.ContainsAny("Dragon Gem"): ReceiveDragonGem(); break;
-                    case var x when x.Name.ContainsAny("Amber"): ReceiveAmber(); break;
-                    case var x when x.Name.ContainsAny("Key Item"): ReceiveKeyItem(x); break;
-                    case var x when x.Name.ContainsAny("Health", "Gold Coins", "Energy"): ReceiveStatItems(x); break;
-                    case var x when x.Name.ContainsAny("Daggers", "Ammo", "Chicken Drumsticks", "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow", "Spear", "Copper Shield", "Silver Shield", "Gold Shield"): ReceiveCountType(x, breakAmmoLimitOption); break;
-                    case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ReceiveChargeType(x, breakChargeLimitOption); break;
-                    case var x when x.Name.Contains("Trap: Heavy Dan"): HeavyDanTrap(); break;
-                    case var x when x.Name.Contains("Trap: Light Dan"): LightDanTrap(); break;
-                    case var x when x.Name.Contains("Trap: Darkness"): DarknessTrap(currentLevel); break;
-                    case var x when x.Name.Contains("Trap: Hudless"): HudlessTrap(); break;
-                    case var x when x.Name.Contains("Trap: Lag"): RunLagTrap(); break;
-                    case null: Console.WriteLine("Received an item with null data. Skipping."); break;
-                    default: Console.WriteLine($"Item not recognised. ({args.Item.Name}) Skipping"); break;
-                };
-
-                UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
-            }
-
-        }
-
-        void Client_MessageReceived(object sender, MessageReceivedEventArgs e, ArchipelagoClient client)
-        {
-#if DEBUG
-            Console.WriteLine($"MessageReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
-#endif
-            var message = string.Join("", e.Message.Parts.Select(p => p.Text));
-
-            // this message can use emoji's through the overlay. Look into maybe making it a little more obvious 
-            // what each item is with a symbol
-            client.AddOverlayMessage(e.Message.ToString());
-
-            Log.Logger.Information(JsonConvert.SerializeObject(e.Message));
-
-            string prefix;
-            Kokuban.AnsiEscape.AnsiStyle bg;
-            Kokuban.AnsiEscape.AnsiStyle fg;
-
-            if (message.Contains($"{slot} found") || message.Contains($"{slot} sent"))
-            {
-                bg = message.Contains("Trap:") ? Chalk.BgRed : message.Contains("Congratulations") ? Chalk.Yellow : Chalk.BgBlue;
-                fg = Chalk.White;
-                prefix = " >> ";
-            }
-            else
-            {
-                bg = message.Contains("Trap:") ? Chalk.BgRed : message.Contains("Congratulations") ? Chalk.Yellow : Chalk.BgGreen;
-                fg = Chalk.White;
-                prefix = " << ";
-            }
-
-            Console.WriteLine(bg + (fg + $"{prefix} {message} "));
-        }
-
-        // should be renamed "location triggered". As in "i will trigger every time a location is matched".
-        // This could end up with a very long wait time if not careful.
-        // added a guard so it doesn't fire prematurely
-        void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, ArchipelagoClient client)
-        {
-            if (playerStateUpdating == false && client?.CurrentSession?.Items?.AllItemsReceived.Count != null)
-            {
-                UpdatePlayerState(client.CurrentSession.Items.AllItemsReceived);
-#if DEBUG
-                Console.WriteLine($"LocationCompleted Firing. {e.CompletedLocation.Name} - {e.CompletedLocation.Id} Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
-#endif
-            }
-        }
-
-
-        void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCollection<long> newCheckedLocations)
-        {
-#if DEBUG
-            Console.WriteLine($"Location CheckedLocationsUpdated Firing.");
-#endif
-        }
-
-        bool CheckZarokCondition(ArchipelagoClient client)
-        {
-            if (archipelagoClient?.GameState.CompletedLocations.Any(x => x.Name.Equals("Cleared: Zaroks Lair")) == true)
-            {
-                Console.WriteLine("You've Defeated Zarok");
-                return true;
-            }
-            return false;
-        }
-
-        bool CheckChaliceCondition(ArchipelagoClient client)
-        {
-            int antOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("include_ant_hill_in_checks", "0").ToString());
-
-            int maxChaliceCount = antOption == 1 ? 20 : 19;
-
-            int currentCount = 0;
-
-            foreach (CompositeLocation loc in archipelagoClient.GameState.CompletedLocations)
-            {
-                if (loc.Name.Contains("Chalice: "))
-                {
-                    currentCount++;
-                }
-            }
-
-            if (currentCount == maxChaliceCount)
-            {
-                archipelagoClient.SendGoalCompletion();
-                Console.WriteLine("You got all the chalices!");
-                return true;
-            }
-            return false;
-        }
-
-
-
-        bool CheckGoalCondition() {
-
-            if (archipelagoClient?.GameState?.CompletedLocations == null)
-            {
-                return false;
-            }
-
-            int goalCondition = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("goal", "0").ToString());
-
-            if (goalCondition == PlayerGoals.DEFEAT_ZAROK)
-            {
-                bool goal = CheckZarokCondition(archipelagoClient);
-
-                if (goal)
-                {
-                    archipelagoClient.SendGoalCompletion();
-                    return true;
-                }
-            }
-
-            if (goalCondition == PlayerGoals.CHALICE)
-            {
-                bool goal = CheckChaliceCondition(archipelagoClient);
-
-                if (goal)
-                {
-                    archipelagoClient.SendGoalCompletion();
-                    return true;
-                }
-            }
-
-            if (goalCondition == PlayerGoals.BOTH)
-            {
-                bool zarokGoal = CheckZarokCondition(archipelagoClient);
-                bool chaliceGoal = CheckChaliceCondition(archipelagoClient);
-
-                if(zarokGoal && chaliceGoal)
-                {
-                    archipelagoClient.SendGoalCompletion();
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-
-        ////////////////////////////////////
-        //
-        // Player Status Update
-        //
-        ////////////////////////////////////
-
-
-
-        void UpdatePlayerState(System.Collections.ObjectModel.ReadOnlyCollection<ItemInfo> itemsCollected)
-        {
-            playerStateUpdating = true;
-            // get a list of all locatoins
-            Dictionary<string, uint> all_items = Helpers.FlattenedInventoryStrings();
-
-            // get a list of used locations
-            var usedItems = new List<string>();
-
-            short currentWeapon = Memory.ReadShort(Addresses.ItemEquipped);
-            byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
-            int runeSanityOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("runesanity", "0").ToString());
-            //int breakAmmoLimitOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("break_ammo_limit", "0").ToString());
-            ////int breakChargeLimitOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("break_percentage_limit", "0").ToString());
-
-            //Console.WriteLine(breakChargeLimitOption);
-            //Console.WriteLine(breakAmmoLimitOption);
-
-            SetItemMemoryValue(Addresses.CurrentLifePotions, 0, 0);
-            SetItemMemoryValue(Addresses.SoulHelmet, 0, 0);
-            SetItemMemoryValue(Addresses.DragonGem, 0, 0);
-            SetItemMemoryValue(Addresses.APAmberPieces, 0, 0);
-            SetItemMemoryValue(Addresses.MaxAmberPieces, 10, 10);
-
-            if (runeSanityOption == 1)
-            {
-                SetItemMemoryValue(Addresses.ChaosRune, 65535, 65535);
-                SetItemMemoryValue(Addresses.EarthRune, 65535, 65535);
-                SetItemMemoryValue(Addresses.MoonRune, 65535, 65535);
-                SetItemMemoryValue(Addresses.StarRune, 65535, 65535);
-                SetItemMemoryValue(Addresses.TimeRune, 65535, 65535);
-            }
-
-            // for each location that's coming in
-            bool hasEquipableWeapon = false;
-            int talismanCount = 0;
-            bool hasTalisman = false;
-
-            if(CheckGoalCondition() && gameCleared == false){
-                gameCleared = true;
-                Console.WriteLine("No need for player state update. You've cleared!");
-                return;
-            };
-
-            foreach (ItemInfo itemInf in itemsCollected)
-            {
-                Item itm = new Item();
-                itm.Name = itemInf.ItemName;
-
-                if (itm.Name.ContainsAny("Shadow"))
-                {
-                    talismanCount++;
-                }
-
-                switch (itm)
-                {
-                    // Update memory
-                    case var x when x.Name.ContainsAny("Ammo"):
-                        // no plans yet
-                        break;
-                    case var x when x.Name.Contains("Rune") && runeSanityOption == 1:
-                        ReceiveRune(currentLevel, x);
-                        break;
-                    case var x when x.Name.ContainsAny("Charge"):
-                        // no plans yet
-                        break;
-                    case var x when x.Name.Contains("Skill"): ReceiveSkill(x); break;
-                    case var x when x.Name.Contains("Equipment"):
-                        ReceiveEquipment(x);
-                        if (!x.Name.Contains("Shield"))
-                        {
-                            hasEquipableWeapon = true;
-                        }
-                        break;
-                    case var x when x.Name.Contains("Life Bottle"): ReceiveLifeBottle(); break;
-                    case var x when x.Name.Contains("Soul Helmet"):
-                        ReceiveSoulHelmet();
-                        break;
-                    case var x when x.Name.Contains("Dragon Gem"): ReceiveDragonGem(); break;
-                    case var x when x.Name.Contains("Amber"): ReceiveAmber(); break;
-                    case var x when x.Name.Contains("Key Item"): ReceiveKeyItem(x); break;
-                    case var x when x.Name.Contains("Cleared"): ReceiveLevelCleared(x); break;
-                }
-
-
-                if (talismanCount == 2 && !hasTalisman)
-                {
-                    ReceiveTalismanAndArtefact();
-                    hasTalisman = true;
-                }
-
-                usedItems.Add(itm.Name);
-
-
-            }
-
-            Dictionary<string, uint> remainingItemsDict = all_items
-                .Where(kvp => !usedItems.Contains(kvp.Key))
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-            foreach (KeyValuePair<string, uint> item in remainingItemsDict)
-            {
-
-                string itemName = item.Key;
-                uint itemAddress = item.Value;
-
-                if (itemName.ContainsAny("Soul Helmet", "Dragon Gem", "Amber"))
-                {
-                    continue;
-                }
-
-                if (itemName.ContainsAny("Shadow Artefact", "Shadow Talisman"))
-                {
-                    SetItemMemoryValue(Addresses.ShadowArtefact, 65535, 65535);
-                    SetItemMemoryValue(Addresses.ShadowTalisman, 65535, 65535);
-                }
-
-                // reset any other values
-                if (itemName.ContainsAny("Skill"))
-                {
-                    SetItemMemoryValue(itemAddress, 0, 0);
-                    continue;
-                }
-                else if (itemName.ContainsAny("Equipment"))
-                {
-                    SetItemMemoryValue(itemAddress, 65535, 65535); // Assuming 65535 is "reset/max" for equipment
-                    continue;
-                }
-                else if (itemName.ContainsAny("Complete"))
-                {
-                    SetItemMemoryValue(itemAddress, 0, 0);
-                    continue;
-
-                }
-                else if (itemName.ContainsAny("Key Item"))
-                {
-                    SetItemMemoryValue(itemAddress, 65535, 65535);
-                    continue;
-
-                }
-
-            }
-
-
-            if (!hasEquipableWeapon)
-            {
-                DefaultToArm();
-            }
-            else
-            {
-                EquipWeapon(currentWeapon);
-            }
-            playerStateUpdating = false;
-        }
-
-
-        int SetItemMemoryValue(uint itemMemoryAddress, int itemUpdateValue, int maxCount)
-        {
-            int addition = Math.Min(itemUpdateValue, maxCount);
-
-            byte[] byteArray = BitConverter.GetBytes(addition);
-
-            Memory.WriteByteArray(itemMemoryAddress, byteArray);
-
-            // Add more types as needed
-            return itemUpdateValue;
-        }
-
-        // Update functions with correct logic
-
-        void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAddress, bool isCountType, bool isEquipmentType, int breakLimit = 0)
-        {
-            var currentNumberAmount = Memory.ReadShort(itemMemoryAddress);
-
-            var chargeConversion = numberUpdate == 50 ? 2048 : numberUpdate == 20 ? 819 : 0;
-
-            if (currentNumberAmount == -1 && itemName.ContainsAny("Ammo", "Charge"))
-            {
-                return;
-            }
-
-
-            // life bottles have 1 in the chamber before showing
-            if (itemName == "Life Bottle" && currentNumberAmount == 0)
-            {
-                currentNumberAmount = 1;
-            }
-
-
-            // leaving for the sake of debugging
-            //Console.WriteLine($"{ itemName} current amount: {currentNumberAmount}, update amount: {numberUpdate}");
-
-            // there needs to be some logic here. It has to go something like:
-            // if ammo and you don't have the equipment, then don't trigger, but save the ammo for when you have it.
-            // There's also an interesting issue with lifebottles where when you get your first one, it's automatically equipping a sword.
-            // I think i need to look into some sort of "global state" for the player using archipelago's slot data. Though i'm not sure
-            // how much of this is "too much" as it says in the docs to use it sparingly. Loading Dan's state should be fine though. Hopefully.
-            // just need to make sure to not trigger the state until you are actually loaded into a level.
-
-            int maxValue = 0;
-
-            if (itemName.ContainsAny("Health", "Energy"))
-            {
-                maxValue = maxHealth;
-            }
-            else if (breakLimit == 0 && itemName.ContainsAny("Ammo", "Charge"))
-            {
-                var dict = Helpers.AmmoAndChargeLimits();
-                string mainWeapon = itemName.Replace(" Ammo", "");
-                mainWeapon = mainWeapon.Replace(" Charge", "");
-                maxValue = dict[mainWeapon];
-            }
-            else
-            {
-                maxValue = isCountType ? countMax : percentageMax; // Max count limit for gold, percentage for energy
-
-            }
-
-
-            var newNumberAmount = isCountType ? Math.Min(currentNumberAmount + numberUpdate, maxValue) : Math.Min(currentNumberAmount + chargeConversion, maxValue); // Max count limit
-
-            var baseValue = isEquipmentType ? 0 : newNumberAmount;
-
-            //Console.WriteLine($"Name: {itemName}, current: {currentNumberAmount}, adding: {numberUpdate}");
-
-            SetItemMemoryValue(itemMemoryAddress, baseValue, countMax);
-
-
-
-            if (itemName == "Life Bottle")
-            {
-                SetItemMemoryValue(Addresses.LifeBottleSwitch, (300 * newNumberAmount - 1), 10000);
-            }
-
-            // if you're getting a piece of equipment like the longbow/crossbow/spear/etc give it some ammo.
-            if (isEquipmentType && isCountType)
-            {
-                var ammoToAdd = currentNumberAmount == -1 ? 100 : newNumberAmount;
-                //Console.WriteLine($"Name: {itemName}, Ammo count: {ammoToAdd}, Max: {maxValue}");
-                SetItemMemoryValue(itemMemoryAddress, ammoToAdd, maxValue);
-            }
-            else if (isEquipmentType && !isCountType)
-            {
-                var ammoToAdd = currentNumberAmount == -1 ? 4096 : newNumberAmount;
-                //Console.WriteLine($"Name: {itemName}, Charge count: {ammoToAdd}, Max: {maxValue}");
-                SetItemMemoryValue(itemMemoryAddress, ammoToAdd, maxValue);
-            }
-
-        }
-
-        int ExtractBracketAmount(string itemName)
-        {
-            var match = Regex.Match(itemName, @"\((\d+)\)");
-            if (match.Success && int.TryParse(match.Groups[1].Value, out int bracketAmount))
-            {
-                return bracketAmount;
-            }
-            return 0;
-        }
-
-        string ExtractDictName(string itemName)
-        {
-
-            var colonMatch = Regex.Match(itemName, @"^[^:]*:\s*(.*)$");
-            if (colonMatch.Success)
-            {
-                return colonMatch.Groups[1].Value.Trim();
-            }
-
-            var parenthesesMatch = Regex.Match(itemName, @"^(.*?)(?:\s*\(.*?\))?$");
-            if (parenthesesMatch.Success)
-            {
-                return parenthesesMatch.Groups[1].Value.Trim();
-            }
-            return "N/A";
-        }
-
-        string ExtractRuneName(string itemName)
-        {
-            // The regex pattern to match and capture the text before the colon
-            string pattern = @"^(.+?):";
-
-            // Find the first match in the input string
-            Match match = Regex.Match(itemName, pattern);
-
-            // Check if a match was found
-            if (match.Success)
-            {
-                // The captured group is at index 1. Trim to remove any trailing spaces.
-                return match.Groups[1].Value.Trim();
-            }
-
-            return null;
-        }
-        string ExtractRuneLevel(string itemName)
-        {
-            // The regex pattern to match and capture the text after the colon and space
-            string pattern = @":\s(.+)";
-
-            // Find the first match in the input string
-            Match match = Regex.Match(itemName, pattern);
-
-            // Check if a match was found
-            if (match.Success)
-            {
-                // The captured group is at index 1
-                return match.Groups[1].Value;
-            }
-
-            // Return null or an empty string if no match is found
-            return null;
-        }
-
-        string ExtractKeyItemName(string itemName)
-        {
-            var dashRemovedMatch = Regex.Match(itemName, @"^(?:Key Item:\s*)?([^-]+?)(?: - .*)?$");
-
-            string cleanedName = itemName;
-
-            if (dashRemovedMatch.Success)
-            {
-                cleanedName = dashRemovedMatch.Groups[1].Value.Trim();
-            }
-            else
-            {
-                var keyItemPrefixMatch = Regex.Match(itemName, @"^Key Item:\s*(.*)$");
-                if (keyItemPrefixMatch.Success)
-                {
-                    cleanedName = keyItemPrefixMatch.Groups[1].Value.Trim();
-                }
-                else
-                {
-
-                    cleanedName = itemName.Trim();
-                }
-            }
-
-
-            cleanedName = Regex.Replace(cleanedName, @"\s*\d+$", "").Trim();
-
-            return cleanedName;
-        }
-
-        void ReceiveCountType(Item item, int breakAmmoLimit)
-        {
-            var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-            var amount = ExtractBracketAmount(item.Name);
-            var name = ExtractDictName(item.Name);
-
-            UpdateCurrentItemValue(name, amount, addressDict["Ammo"][name], true, true, breakAmmoLimit);
-        }
-
-        void ReceiveChargeType(Item item, int breakChargeLimit)
-        {
-            var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-            var amount = ExtractBracketAmount(item.Name);
-            var name = ExtractDictName(item.Name);
-
-            UpdateCurrentItemValue(name, amount, addressDict["Ammo"][name], false, true, breakChargeLimit);
-        }
-
-        void ReceiveEquipment(Item item)
-        {
-            var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-            var name = ExtractDictName(item.Name);
-
-            var isChargeType = item.Name.ContainsAny("Broadsword", "Club", "Lightning");
-
-            UpdateCurrentItemValue(item.Name, 0, addressDict["Equipment"][name], !isChargeType, true);
-
-        }
-
-
-        void ReceiveLevelCleared(Item level)
-        {
-            var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-            var name = ExtractDictName(level.Name);
-
-            UpdateCurrentItemValue(level.Name, 16, addressDict["Level Status"][name], true, true);
-        }
-
-        void ReceiveKeyItem(Item item)
-        {
-            // commented out because i need to make a list of player data addresses to deal with this.
-            var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-            var name = ExtractKeyItemName(item.Name);
-
-            UpdateCurrentItemValue(item.Name, 0, addressDict["Key Items"][name], true, true);
-
-        }
-
-        void ReceiveLifeBottle()
-        {
-            var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-
-            UpdateCurrentItemValue("Life Bottle", 1, addressDict["Player Stats"]["Life Bottle"], true, false);
-        }
-
-        void ReceiveSoulHelmet()
-        {
-            var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-            UpdateCurrentItemValue("Soul Helmet", 1, addressDict["Key Items"]["Soul Helmet"], true, false);
-        }
-
-        void ReceiveDragonGem()
-        {
-            var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-            UpdateCurrentItemValue("Dragon Gem", 1, addressDict["Key Items"]["Dragon Gem"], true, false);
-        }
-
-        void ReceiveAmber()
-        {
-            UpdateCurrentItemValue("Amber Piece", 1, Addresses.APAmberPieces, true, false);
-        }
-
-        void ReceiveTalismanAndArtefact()
-        {
-            var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-
-            UpdateCurrentItemValue("Shadow Artefact", 0, addressDict["Key Items"]["Shadow Artefact"], true, true);
-            UpdateCurrentItemValue("Shadow Talisman", 0, addressDict["Key Items"]["Shadow Talisman"], true, true);
-        }
-
-        void ReceiveStatItems(Item item)
-        {
-            var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-            var amount = ExtractBracketAmount(item.Name);
-            var name = ExtractDictName(item.Name);
-
-            UpdateCurrentItemValue(item.Name, amount, addressDict["Player Stats"][name], true, false);
-        }
-
-        void ReceiveRune(byte levelId, Item item)
-        {
-
-            var addressDict = Helpers.StatusAndInventoryAddressDictionary();
-
-            var levelName = Helpers.GetLevelNameFromId(levelId);
-
-            var name = ExtractRuneName(item.Name);
-            var runeLevel = ExtractRuneLevel(item.Name);
-
-            if (levelName == runeLevel)
-            {
-                SetItemMemoryValue(addressDict["Runes"][name], 1, 1);
-            }
-        }
-
-        void ReceiveSkill(Item item)
-        {
-            // setting it here till i fix my ridiculous update function
-            SetItemMemoryValue(Addresses.DaringDashSkill, 1, 1);
-        }
-
-        void EquipWeapon(int value)
-        {
-            SetItemMemoryValue(Addresses.ItemEquipped, value, value);
-        }
-
-        void DefaultToArm()
-        {
-            SetItemMemoryValue(Addresses.ItemEquipped, 8, 8);
-            SetItemMemoryValue(Addresses.SmallSword, 65535, 65535);
-        }
-
-        void KillPlayer()
-        {
-            Memory.WriteByte(Addresses.GameGlobalScene, 0x06);
-        }
-
-        void StartDeathlinkMonitor(DeathLinkService deathLink, ArchipelagoClient client)
-        {
-            // If a previous task is running, cancel it first.
-            if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
-            {
-                _cancellationTokenSource.Cancel();
-            }
-
-            _cancellationTokenSource = new CancellationTokenSource();
-            CancellationToken cancellationToken = _cancellationTokenSource.Token;
-
-            _deathlinkMonitorTask = Task.Run(async () =>
-            {
-                // This is a continuous loop that runs until the task is canceled.
-                while (!cancellationToken.IsCancellationRequested)
-                {
-                    // Read the memory address.
-                    int currentValue = Memory.ReadUShort(Addresses.CurrentEnergy);
-
-                    // Check your condition.
-                    if (currentValue == 0)
-                    {
-                        // Execute the action.
-                        IsTrulyDead(deathLink, client);
-                    }
-
-                    // Await a short delay to prevent high CPU usage.
-                    await Task.Delay(100, cancellationToken);
-                }
-            }, cancellationToken);
-        }
-
-        void IsTrulyDead(DeathLinkService deathlink, ArchipelagoClient client)
-        {
-            var rnd = new Random();
-
-            List<string> deathResponse = new List<string>
-            {
-                "Everyone disliked that.",
-                "We're in danger!",
-                "You hate to see it.",
-                "Press F to pay respects.",
-                "This is fine.",
-                "Dan's dissapointment: Immeasurable.",
-                "We're going down swimming.",
-                "Lock, Stock and... we're all dead."
-            };
-
-            int listChoice = rnd.Next(deathResponse.Count);
-
-
-            if (DateTime.Now - lastDeathTime >= TimeSpan.FromSeconds(30))
-            {
-                ushort bottleEnergy = Memory.ReadUShort(Addresses.CurrentStoredEnergy);
-                ushort currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
-
-                Kokuban.AnsiEscape.AnsiStyle bg = Chalk.BgCyan;
-                Kokuban.AnsiEscape.AnsiStyle fg = Chalk.Black;
-
-                if (bottleEnergy == 0 && currentLevel != 0 && isInTheGame())
-                {
-                    Console.WriteLine(bg + (fg + "[   ☠️💀 Deathlink Sent. " + deathResponse[listChoice] + " 💀☠️   ]"));
-                    deathlink.SendDeathLink(new DeathLink(client.CurrentSession.Players.ActivePlayer.Name));
-                    lastDeathTime = DateTime.Now;
-                }
-            }
-        }
-
-        // traps need added here and logic added into what i have already
-
-        async void RunLagTrap()
-        {
-            using (var lagTrap = new LagTrap(TimeSpan.FromSeconds(20)))
-            {
-                lagTrap.Start();
-                await lagTrap.WaitForCompletionAsync();
-            }
-        }
-
-        void HeavyDanTrap()
-
-        {
-            byte[] defaultValue = BitConverter.GetBytes(0x0100);
-            byte[] changedValue = BitConverter.GetBytes(0x0040);
-            TimeSpan duration = TimeSpan.FromSeconds(15);
-            Memory.Write(Addresses.DanForwardSpeed, changedValue);
-
-            Task.Delay(duration).ContinueWith(delegate
-            {
-                Memory.Write(Addresses.DanForwardSpeed, defaultValue);
-            }, TaskScheduler.Default);
-
-        }
-
-        void LightDanTrap()
-        {
-            byte[] defaultValue = BitConverter.GetBytes(0x002f);
-            byte[] changedValue = BitConverter.GetBytes(0x0064);
-            TimeSpan duration = TimeSpan.FromSeconds(15);
-            Memory.Write(Addresses.DanJumpHeight, changedValue);
-
-            Task.Delay(duration).ContinueWith(delegate
-            {
-                Memory.Write(Addresses.DanJumpHeight, defaultValue);
-            }, TaskScheduler.Default);
-        }
-
-        void DarknessTrap(int currentLevel)
-        {
-
-            byte[] byteArray = BitConverter.GetBytes(0x0600);
-            byte[] defaultValue = BitConverter.GetBytes(0x1000);
-
-            TimeSpan duration = TimeSpan.FromSeconds(15);
-
-            if (currentLevel != 14)
-            {
-                Memory.WriteByteArray(Addresses.RenderDistance, byteArray);
-                Task.Delay(duration).ContinueWith(delegate
-                {
-                    Memory.Write(Addresses.RenderDistance, defaultValue);
-                }, TaskScheduler.Default);
-
-            }
-        }
-
-        void HudlessTrap()
-        {
-
-            byte[] DefaultWeaponIconX = BitConverter.GetBytes(0x0018);
-            byte[] DefaultShieldIconX = BitConverter.GetBytes(0x0050);
-            byte[] DefaultHealthbarX = BitConverter.GetBytes(0x0100);
-            byte[] DefaultChaliceIconX = BitConverter.GetBytes(0x017e);
-            byte[] DefaultMoneyIconX = BitConverter.GetBytes(0x01b6);
-            byte[] DefaultWeaponIconY = BitConverter.GetBytes(0x001e);
-            byte[] DefaultShieldIconY = BitConverter.GetBytes(0x001e);
-            byte[] DefaultHealthbarY = BitConverter.GetBytes(0x0022);
-            byte[] DefaultChaliceIconY = BitConverter.GetBytes(0x001e);
-            byte[] DefaultMoneyIconY = BitConverter.GetBytes(0x001e);
-
-            byte[] ChangedWeaponIconX = BitConverter.GetBytes(0x0320);
-            byte[] ChangedShieldIconX = BitConverter.GetBytes(0x0320);
-            byte[] ChangedHealthbarX = BitConverter.GetBytes(0x0320);
-            byte[] ChangedChaliceIconX = BitConverter.GetBytes(0x0320);
-            byte[] ChangedMoneyIconX = BitConverter.GetBytes(0x0320);
-
-            TimeSpan duration = TimeSpan.FromSeconds(15);
-            Memory.Write(Addresses.WeaponIconX, ChangedWeaponIconX);
-            Memory.Write(Addresses.ShieldIconX, ChangedShieldIconX);
-            Memory.Write(Addresses.HealthbarX, ChangedHealthbarX);
-            Memory.Write(Addresses.ChaliceIconX, ChangedChaliceIconX);
-            Memory.Write(Addresses.MoneyIconX, ChangedMoneyIconX);
-
-            Task.Delay(duration).ContinueWith(delegate
-            {
-                Memory.Write(Addresses.WeaponIconX, DefaultWeaponIconX);
-                Memory.Write(Addresses.ShieldIconX, DefaultShieldIconX);
-                Memory.Write(Addresses.HealthbarX, DefaultHealthbarX);
-                Memory.Write(Addresses.ChaliceIconX, DefaultChaliceIconX);
-                Memory.Write(Addresses.MoneyIconX, DefaultMoneyIconX);
-                Memory.Write(Addresses.WeaponIconY, DefaultWeaponIconY);
-                Memory.Write(Addresses.ShieldIconY, DefaultShieldIconY);
-                Memory.Write(Addresses.HealthbarY, DefaultHealthbarY);
-                Memory.Write(Addresses.ChaliceIconY, DefaultChaliceIconY);
-                Memory.Write(Addresses.MoneyIconY, DefaultMoneyIconY);
-            }, TaskScheduler.Default);
-
         }
     }
 }

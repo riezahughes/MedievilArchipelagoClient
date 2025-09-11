@@ -428,7 +428,7 @@ namespace MedievilArchipelago
         public const uint RTG_Pickup_EnergyVialCliffsRight = 0x001303b8;
         public const uint RTG_Pickup_GoldCoinsCliffsLeft = 0x00130338;
         public const uint RTG_Pickup_EnergyVialCliffsLeft = 0x00130378;
-        public const uint RTG_Pickup_DaringDash = 0x00019160;
+        public const uint RTG_Pickup_DaringDash = 0x000ee9b4;
         public const uint RTG_Book_SecretAreas = 0x00018db4;
         public const uint RTG_Book_SkullKey = 0x00018f80;
         public const uint RTG_Book_DaringDash = 0x0001901b;
@@ -543,7 +543,7 @@ namespace MedievilArchipelago
         public const uint TSV_Pickup_GoldCoinsChestNextToChalice = 0x001319f0;
         public const uint TSV_Pickup_EnergyVialNearExit = 0x00131630;
         public const uint TSV_Pickup_EnergyVialNearChalice = 0x001318f0;
-        public const uint TSV_Book_BlacksmithsMontly = 0x01ca8c;
+        public const uint TSV_Book_BlacksmithsMonthly = 0x01ca8c;
         public const uint TSV_Book_MissingCrucifix = 0x01a5b6;
         public const uint TSV_Book_FountainRune = 0x01a638;
         public const uint TSV_Book_MayorsBust = 0x01a8d3;

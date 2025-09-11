@@ -3,7 +3,6 @@ using Archipelago.Core.Models;
 using Archipelago.Core.Util;
 using Archipelago.Core.Util.GPS;
 using Archipelago.MultiClient.Net.Models;
-using MedievilArchipelago;
 using MedievilArchipelago.Models;
 using Newtonsoft.Json;
 using Serilog;
@@ -23,255 +22,18 @@ using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Location = Archipelago.Core.Models.Location;
 
-namespace MedievilArchipelago
+namespace MedievilArchipelago.Helpers
 {
-    public class Helpers
+    public class LocationHandlers
     {
-
-        public static Dictionary<string, bool> ListCurrentRunesForLevel(List<string> currentRunes, byte currentLevel)
-        {
-            var reference = GetLevelNameFromMapId(currentLevel);
-            var dictOfRunes = LevelToRuneItemDictionary[reference];
-
-            var levelStatus = new Dictionary<string, bool>();
-
-            foreach ( var rune in dictOfRunes)
-            {
-                levelStatus[rune] = currentRunes.Contains(rune);
-            }
-
-            return levelStatus;
-            
-        }
-
-        public static void CheckPositionalLocations(ArchipelagoClient client, List<ILocation> builtLocations)
-        {
-            if(builtLocations?.Count == null)
-            {
-                return;
-            }
-
-
-            // Crystal 1
-            if (client.GPSHandler.MapId == 8 && client.GPSHandler.X >= 1186 && client.GPSHandler.X <= 1550 && client.GPSHandler.Y >= 65449 && client.GPSHandler.Y <= 65465 && client.GPSHandler.Z >= 63075 && client.GPSHandler.Z <= 63351)
-            {
-                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Gold Coins: Bag in Crystal at Start - CC");
-                if (location != null)
-                {
-                    {
-                        client.SendLocation(location);
-                    }
-                }
-            }
-
-            // Crystal 2
-            if (client.GPSHandler.MapId == 8 && client.GPSHandler.X >= 60389 && client.GPSHandler.X <= 60768 && client.GPSHandler.Y >= 65127 && client.GPSHandler.Y <= 65150 && client.GPSHandler.Z >= 165 && client.GPSHandler.Z <= 301)
-            {
-                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Silver Shield in Crystal - CC");
-                if (location != null)
-                {
-                    {
-                        client.SendLocation(location);
-                    }
-                }
-            }
-
-            // Crystal 3
-            if (client.GPSHandler.MapId == 8 && client.GPSHandler.X >= 59734 && client.GPSHandler.X <= 60010 && client.GPSHandler.Y >= 64629 && client.GPSHandler.Y <= 64643 && client.GPSHandler.Z >= 7163 && client.GPSHandler.Z <= 7516)
-            {
-                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Gold Coins: Chest in Crystal After Earth Door - CC");
-
-                if (location != null)
-                {
-                    {
-                        client.SendLocation(location);
-                    }
-                }
-            }
-
-            // Crystal 4
-            if (client.GPSHandler.MapId == 8 && client.GPSHandler.X >= 373 && client.GPSHandler.X <= 639 && client.GPSHandler.Y >= 64288 && client.GPSHandler.Y <= 64291 && client.GPSHandler.Z >= 3149 && client.GPSHandler.Z <= 3295)
-            {
-                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Gold Coins: Chest in Crystal after Pool - CC");
-                if (location != null)
-                {
-                    {
-                        client.SendLocation(location);
-                    }
-                }
-            }
-
-
-            // Zarok Chest 1
-            if (client.GPSHandler.MapId == 23 && client.GPSHandler.X >= 64639 && client.GPSHandler.X <= 64693 && client.GPSHandler.Y >= 9 && client.GPSHandler.Y <= 13 && client.GPSHandler.Z >= 2820 && client.GPSHandler.Z <= 2939)
-            {
-                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Good Lightning - ZL");
-                if (location != null)
-                {
-                    {
-                        client.SendLocation(location);
-                    }
-                }
-            }
-
-            // Zarok Chest 2
-            if (client.GPSHandler.MapId == 23 && client.GPSHandler.X >= 768 && client.GPSHandler.X <= 999 && client.GPSHandler.Y >= 9 && client.GPSHandler.Y <= 13 && client.GPSHandler.Z >= 2830 && client.GPSHandler.Z <= 2965)
-            {
-                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Silver Shield Arena - ZL");
-                if (location != null)
-                {
-                    {
-                        client.SendLocation(location);
-                    }
-                }
-            }
-        }
-
-
-        public static Dictionary<string, List<string>> LevelToRuneItemDictionary = new Dictionary<string, List<string>>
-        {
-            { "The Graveyard", new List<string> { "Chaos Rune: The Graveyard", "Earth Rune: The Graveyard" } },
-            { "Return to the Graveyard", new List<string> { "Star Rune: Return to the Graveyard" } },
-            { "Cemetery Hill", new List<string> {} },
-            { "The Hilltop Mausoleum", new List<string> { "Chaos Rune: The Hilltop Mausoleum", "Earth Rune: The Hilltop Mausoleum", "Moon Rune: The Hilltop Mausoleum" } },
-            { "Scarecrow Fields", new List<string> { "Chaos Rune: Scarecrow Fields", "Earth Rune: Scarecrow Fields", "Moon Rune: Scarecrow Fields" } },
-            { "Dan's Crypt", new List<string> { "Star Rune: Dan's Crypt" } },
-            { "Ant Hill", new List<string> {} },
-            { "The Crystal Caves", new List<string> { "Earth Rune: The Crystal Caves", "Star Rune: The Crystal Caves" } },
-            { "Pumpkin Gorge", new List<string> { "Chaos Rune: Pumpkin Gorge", "Earth Rune: Pumpkin Gorge", "Moon Rune: Pumpkin Gorge", "Time Rune: Pumpkin Gorge" } },
-            { "The Pumpkin Serpent", new List<string> {} },
-            { "The Sleeping Village", new List<string> { "Chaos Rune: The Sleeping Village", "Earth Rune: The Sleeping Village", "Moon Rune: The Sleeping Village" } },
-            { "Pools of the Ancient Dead", new List<string> { "Chaos Rune: Pools of the Ancient Dead" } },
-            { "The Asylum Grounds", new List<string> { "Chaos Rune: The Asylum Grounds" } },
-            { "Inside The Asylum", new List<string> { "Earth Rune: Inside the Asylum" } },
-            { "Enchanted Earth", new List<string> { "Earth Rune: Enchanted Earth", "Star Rune: Enchanted Earth" } },
-            { "The Gallows Gauntlet", new List<string> { "Star Rune: The Gallows Gauntlet" } },
-            { "The Haunted Ruins", new List<string> { "Chaos Rune: The Haunted Ruins", "Earth Rune: The Haunted Ruins" } },
-            { "Hall of Heroes", new List<string> {} },
-            { "Ghost Ship", new List<string> { "Chaos Rune: The Ghost Ship", "Moon Rune: The Ghost Ship", "Star Rune: The Ghost Ship" } },
-            { "The Entrance Hall", new List<string> {} },
-            { "The Time Device", new List<string> { "Chaos Rune: The Time Device", "Earth Rune: The Time Device", "Moon Rune: The Time Device", "Time Rune: The Time Device" } },
-            { "The Lake", new List<string> { "Chaos Rune: The Lake", "Earth Rune: The Lake", "Star Rune: The Lake", "Time Rune: The Lake" } },
-            { "Zarok's Lair", new List<string> {} }
-
-        };
-
-        public static Dictionary<string, int> WeaponEquipDictionary = new Dictionary<string, int>
-        {
-            {"Equipment: Small Sword", 0},
-            {"Equipment: Broadsword", 1},
-            {"Equipment: Magic Sword", 2},
-            {"Equipment: Club", 5},
-            {"Equipment: Hammer", 12},
-            {"Equipment: Daggers", 3},
-            {"Equipment: Axe", 4},
-            {"Equipment: Chicken Drumsticks", 7},
-            {"Equipment: Crossbow", 6},
-            {"Equipment: Longbow", 10},
-            {"Equipment: Fire Longbow",13 },
-            {"Equipment: Magic Longbow",14},
-            {"Equipment: Spear", 11},
-            {"Equipment: Lightning", 9},
-            {"Equipment: Good Lightning", 15},
-            {"Equipment: Dragon Armour", 16 },
-            {"Dans Arm", 8 }
-        };
-
-        public static Dictionary<string, int> ShieldEquipDictionary = new Dictionary<string, int>
-        {
-            {"Equipment: Copper Shield", 1},
-            {"Equipment: Silver Shield", 2},
-            {"Equipment: Gold Shield", 3}
-        };
-
-
-        // will contain a list of offset values based on the original entities on/off switch address given in addresses. As every entity follows the same table
-        // it makes sense that you could just count forward a few bytes to get the chests contents.
-
-        // pretty sure i could just loop these tbh, but i'll refactor when i'm not busy
-        public static Dictionary<int, List<ulong>> ChestContentsDictionary()
-        {
-
-            ulong contents_offset = 0xc;
-            return new Dictionary<int, List<ulong>>
-            {
-                [0] = [], // main menu
-                [1] = [Addresses.TG_Pickup_CopperShield + contents_offset],
-                [2] = [Addresses.RTG_Pickup_SilverShieldChestAtShop + contents_offset],
-                [3] = [Addresses.CH_Pickup_Club + contents_offset, Addresses.CH_Pickup_CopperShield1stOnHill + contents_offset, Addresses.CH_Pickup_CopperShield2ndOnHill + contents_offset, Addresses.CH_Pickup_CopperShield3rdOnHill + contents_offset],
-                [4] = [Addresses.HM_Pickup_ClubBrokenBenches + contents_offset, Addresses.HM_Pickup_DaggersBlockPuzzle + contents_offset],
-                [5] = [Addresses.SF_Pickup_ClubInsideHut + contents_offset, Addresses.SF_Pickup_CopperShieldChestInTheBarn + contents_offset, Addresses.SF_Pickup_SilverShieldBehindWindmill + contents_offset],
-                [6] = [Addresses.DC_Pickup_CopperShield + contents_offset],
-                [7] = [Addresses.TA_Pickup_ClubChestAtBarrier + contents_offset],
-                [8] = [], // crystal caves
-                [9] = [Addresses.PG_Pickup_ClubInChestInTunnel + contents_offset, Addresses.PG_Pickup_SilverShieldInChestAtTopOfHill + contents_offset],
-                [10] = [Addresses.PS_Pickup_SilverShieldInChestNearLeeches + contents_offset],
-                [11] = [Addresses.TSV_Pickup_SilverShieldInBlacksmiths + contents_offset, Addresses.TSV_Pickup_ClubInChestUnderInnStairs + contents_offset],
-                [12] = [Addresses.PAD_Pickup_SilverShieldInChestNearSoul5 + contents_offset],
-                [13] = [Addresses.AG_Pickup_SilverShieldInChestBehindDoor + contents_offset],
-                [14] = [Addresses.IA_Pickup_SilverShieldInBatRoom], // this is technically a chest here, but there's no need for an offset
-                [15] = [], // enchanted earth
-                [16] = [Addresses.GG_Pickup_SilverShieldInChestNearExit + contents_offset],
-                [17] = [Addresses.HR_Pickup_SilverShieldInChestNearRuneDoor + contents_offset],
-                [18] = [], // hall of heroes
-                [19] = [Addresses.GS_Pickup_SilverShieldInChestInBarrelRoom + contents_offset, Addresses.GS_Pickup_ClubInChestAtCaptain + contents_offset],
-                [20] = [], //entrance hall
-                [21] = [Addresses.TD_Pickup_SilverShieldOnClock + contents_offset],
-                [22] = [Addresses.TL_Pickup_SilverShieldInWhirlpool + contents_offset],
-                [23] = [Addresses.ZL_Pickup_GoodLightning + contents_offset, Addresses.ZL_Pickup_SilverShield + contents_offset],
-            };
-        }
-
-        public static List<uint> OpenMapMemoryLocations()
-        {
-            return new List<uint>
-            {
-                Addresses.MAP_Unlock1,
-                Addresses.MAP_Unlock2,
-                Addresses.MAP_Unlock3,
-                Addresses.MAP_Unlock4,
-                Addresses.MAP_Unlock5,
-                Addresses.MAP_Unlock6,
-                Addresses.MAP_Unlock7,
-                Addresses.MAP_Unlock8,
-                Addresses.MAP_Unlock9,
-                Addresses.MAP_Unlock10,
-                Addresses.MAP_Unlock11,
-                Addresses.MAP_Unlock12,
-                Addresses.MAP_Unlock13,
-                Addresses.MAP_Unlock14,
-                Addresses.MAP_Unlock15,
-                Addresses.MAP_Unlock16,
-                Addresses.MAP_Unlock17,
-                Addresses.MAP_Unlock18,
-                Addresses.MAP_Unlock19,
-                Addresses.MAP_Unlock20,
-                Addresses.MAP_Unlock21,
-                Addresses.MAP_Unlock22,
-                Addresses.MAP_Unlock23,
-                Addresses.MAP_Unlock24
-            };
-        }
-
-        public static List<uint> QuitTextMemoryLocations()
-        {
-            return new List<uint>
-            {
-                Addresses.MENU_Quit1,
-                Addresses.MENU_Quit2,
-            };
-        }
-
-
-
 
         public static List<ILocation> BuildLocationList(Dictionary<string, object> options)
         {
             int base_id = 99250000;
             int region_offset = 1000;
 
-            int gargoyleSanity = Int32.Parse(options?.GetValueOrDefault("gargoylesanity", "0").ToString());
-            int bookSanity = Int32.Parse(options?.GetValueOrDefault("booksanity", "0").ToString());
+            int gargoyleSanity = int.Parse(options?.GetValueOrDefault("gargoylesanity", "0").ToString());
+            int bookSanity = int.Parse(options?.GetValueOrDefault("booksanity", "0").ToString());
 
             List<string> table_order = [
                 "Map",
@@ -343,7 +105,7 @@ namespace MedievilArchipelago
             foreach (var region_name in table_order.ToList())
             {
 
-                long currentRegionBaseId = base_id + (regional_index * region_offset);
+                long currentRegionBaseId = base_id + regional_index * region_offset;
 
                 if (allLevelLocations.ContainsKey(region_name))
                 {
@@ -540,7 +302,9 @@ namespace MedievilArchipelago
                                         CheckValue = "1"
                                     });
 
-                                } else {
+                                }
+                                else
+                                {
                                     conditionalChoice.Add(new Location()
                                     {
                                         Id = -1,
@@ -567,46 +331,6 @@ namespace MedievilArchipelago
                                 location_index++;
                                 continue;
                             }
-                        }
-
-                        if (loc.Name.Contains("Skill:"))
-                        {
-                            {
-                                List<ILocation> conditionalChoice = new List<ILocation>();
-
-                                conditionalChoice.Add(new Location()
-                                {
-                                    Id = -1,
-                                    Name = "Level Check",
-                                    Address = Addresses.CurrentLevel,
-                                    CheckType = LocationCheckType.Byte,
-                                    CompareType = LocationCheckCompareType.Match,
-                                    CheckValue = "2"
-                                });
-
-                                conditionalChoice.Add(new Location()
-                                {
-                                    Id = -1,
-                                    Name = "Skill Check",
-                                    Address = loc.Address,
-                                    CheckType = LocationCheckType.UShort,
-                                    CompareType = LocationCheckCompareType.Match,
-                                    CheckValue = "257"
-                                });
-
-                                CompositeLocation location = new CompositeLocation()
-                                {
-                                    Name = loc.Name,
-                                    Id = locationId,
-                                    CheckType = LocationCheckType.AND,
-                                    Conditions = conditionalChoice
-                                };
-
-                                locations.Add(location);
-                                location_index++;
-                                continue;
-                            }
-
                         }
 
                         if (loc.Name.Contains("Gargoyle:"))
@@ -654,7 +378,8 @@ namespace MedievilArchipelago
                                 };
 
                                 locations.Add(location);
-                            } else
+                            }
+                            else
                             {
                                 Console.WriteLine($"Gargoylesanity not on. ignoring {loc.Name}, id: {loc.Id}");
                             }
@@ -707,7 +432,8 @@ namespace MedievilArchipelago
                                 };
 
                                 locations.Add(location);
-                            } else
+                            }
+                            else
                             {
                                 Console.WriteLine($"BookSanity not on. ignoring {loc.Name}, id: {loc.Id}");
                             }
@@ -764,7 +490,9 @@ namespace MedievilArchipelago
                         }
                         else
                         {
-                            Console.WriteLine($"Could not add {loc.Name}, id: {loc.Id}");
+                            #if DEBUG
+                                Console.WriteLine($"Could not add {loc.Name}, id: {loc.Id}");
+                            #endif
                             location_index++;
                         }
                     }
@@ -780,252 +508,6 @@ namespace MedievilArchipelago
 
             return locations;
         }
-
-        public static Dictionary<string, uint> FlattenedInventoryStrings()
-        {
-            Dictionary<string, Dictionary<string, uint>> currentDict = StatusAndInventoryAddressDictionary();
-            Dictionary<string, uint> newDict = new Dictionary<string, uint>();
-
-            List<string> validList = new List<string>
-            {
-                "Equipment",
-                "Player Stats",
-                "Key Items",
-                "Skills",
-                "Level Status"
-            };
-
-
-            foreach (KeyValuePair<string, Dictionary<string, uint>> location in currentDict)
-            {
-                string categoryName = location.Key;
-
-                if (!validList.Contains(categoryName))
-                {
-                    continue;
-                }
-
-                Dictionary<string, uint> categoryItems = location.Value;
-
-
-                foreach (KeyValuePair<string, uint> item in categoryItems)
-                {
-                    string prefix = location.Key == "Equipment" ? "Equipment: " : location.Key == "Key Items" ? "Key Item: " : location.Key == "Skills" ? "Skill: " : location.Key == "Level Status" ? "Cleared: " : "";
-                    string itemName = prefix + item.Key;
-                    uint itemAddress = item.Value;
-                    newDict.Add(itemName, itemAddress);
-                }
-
-            }
-
-            return newDict;
-
-
-        }
-
-        public static Dictionary<string, int> AmmoAndChargeLimits()
-        {
-            return new Dictionary<string, int>
-            {
-                ["Dagger"] = 250,
-                ["Broadsword"] = 4096,
-                ["Club"] = 4096,
-                ["Chicken Drumsticks"] = 30,
-                ["Crossbow"] = 200,
-                ["Longbow"] = 200,
-                ["Fire Longbow"] = 100,
-                ["Magic Longbow"] = 50,
-                ["Spear"] = 30,
-                ["Copper Shield"] = 150,
-                ["Silver Shield"] = 250,
-                ["Gold Shield"] = 400,
-                ["Lightning"] = 4096
-            };
-        }
-
-
-        public static Dictionary<string, Dictionary<string, uint>> StatusAndInventoryAddressDictionary()
-        {
-            return new Dictionary<string, Dictionary<string, uint>>
-            {
-                ["Equipment"] = new Dictionary<string, uint>
-                {
-                    ["Small Sword"] = Addresses.SmallSword,
-                    ["Magic Sword"] = Addresses.MagicSword,
-                    ["Hammer"] = Addresses.Hammer,
-                    ["Axe"] = Addresses.Axe,
-                    ["Good Lightning"] = Addresses.GoodLightning,
-                    ["Dragon Armour"] = Addresses.DragonArmour,
-                    ["Daggers"] = Addresses.DaggerAmmo,
-                    ["Broadsword"] = Addresses.BroadswordCharge,
-                    ["Club"] = Addresses.ClubCharge,
-                    ["Chicken Drumsticks"] = Addresses.ChickenDrumsticksAmmo,
-                    ["Crossbow"] = Addresses.CrossbowAmmo,
-                    ["Longbow"] = Addresses.LongbowAmmo,
-                    ["Fire Longbow"] = Addresses.FireLongbowAmmo,
-                    ["Magic Longbow"] = Addresses.MagicLongbowAmmo,
-                    ["Spear"] = Addresses.SpearAmmo,
-                    ["Copper Shield"] = Addresses.CopperShieldAmmo,
-                    ["Silver Shield"] = Addresses.SilverShieldAmmo,
-                    ["Gold Shield"] = Addresses.GoldShieldAmmo,
-                    ["Lightning"] = Addresses.LightningCharge,
-                },
-
-                ["Ammo"] = new Dictionary<string, uint>
-                {
-                    ["Dagger Ammo"] = Addresses.DaggerAmmo,
-                    ["Broadsword Charge"] = Addresses.BroadswordCharge,
-                    ["Club Charge"] = Addresses.ClubCharge,
-                    ["Chicken Drumsticks Ammo"] = Addresses.ChickenDrumsticksAmmo,
-                    ["Crossbow Ammo"] = Addresses.CrossbowAmmo,
-                    ["Longbow Ammo"] = Addresses.LongbowAmmo,
-                    ["Fire Longbow Ammo"] = Addresses.FireLongbowAmmo,
-                    ["Magic Longbow Ammo"] = Addresses.MagicLongbowAmmo,
-                    ["Spear Ammo"] = Addresses.SpearAmmo,
-                    ["Copper Shield Ammo"] = Addresses.CopperShieldAmmo,
-                    ["Silver Shield Ammo"] = Addresses.SilverShieldAmmo,
-                    ["Gold Shield Ammo"] = Addresses.GoldShieldAmmo,
-                    ["Lightning Charge"] = Addresses.LightningCharge,
-                },
-                ["AmmoMaximum"] = new Dictionary<string, uint>
-                {
-
-                },
-                ["Player Stats"] = new Dictionary<string, uint>
-                {
-                    ["Gold Coins"] = Addresses.CurrentGold,
-                    ["Health"] = Addresses.CurrentEnergy,
-                    ["Health Vial"] = Addresses.CurrentEnergy,
-                    ["Life Bottle"] = Addresses.CurrentLifePotions,
-                    ["Energy"] = Addresses.CurrentEnergy,
-                },
-                ["Skills"] = new Dictionary<string, uint>
-                {
-                    ["Daring Dash"] = Addresses.DaringDashSkill,
-                },
-                ["Key Items"] = new Dictionary<string, uint>
-                {
-                    ["Dragon Gem"] = Addresses.DragonGem,
-                    ["King Peregrine's Crown"] = Addresses.KingPeregrinesCrown,
-                    ["Soul Helmet"] = Addresses.SoulHelmet,
-                    ["Witches Talisman"] = Addresses.WitchesTalisman,
-                    ["Safe Key"] = Addresses.SafeKey,
-                    ["Shadow Artefact"] = Addresses.ShadowArtefact,
-                    ["Shadow Talisman"] = Addresses.ShadowTalisman, 
-                    ["Crucifix"] = Addresses.Crucifix,
-                    ["Landlords Bust"] = Addresses.LandlordsBust,
-                    ["Crucifix Cast"] = Addresses.CrucifixCast,
-                    ["Amber Piece"] = Addresses.AmberPiece,
-                    ["Harvester Parts"] = Addresses.HarvesterParts,
-                    ["Skull Key"] = Addresses.SkullKey,
-                    ["Sheet Music"] = Addresses.SheetMusic
-                },
-                ["Level Status"] = new Dictionary<string, uint>
-                {
-
-                    ["Dan's Crypt"] = Addresses.DC_LevelStatus,
-                    ["The Graveyard"] = Addresses.TG_LevelStatus,
-                    ["Cemetery Hill"] = Addresses.CH_LevelStatus,
-                    ["The Hilltop Mausoleum"] = Addresses.HM_LevelStatus,
-                    ["Return to the Graveyard"] = Addresses.RTG_LevelStatus,
-                    ["Scarecrow Fields"] = Addresses.SF_LevelStatus,
-                    ["Ant Hill"] = Addresses.TA_LevelStatus,
-                    ["Enchanted Earth"] = Addresses.EE_LevelStatus,
-                    ["Sleeping Village"] = Addresses.TSV_LevelStatus,
-                    ["Pools of the Ancient Dead"] = Addresses.PAD_LevelStatus,
-                    ["The Lake"] = Addresses.TL_LevelStatus,
-                    ["The Crystal Caves"] = Addresses.CC_LevelStatus,
-                    ["The Gallows Gauntlet"] = Addresses.GG_LevelStatus,
-                    ["Asylum Grounds"] = Addresses.AG_LevelStatus,
-                    ["Inside the Asylum"] = Addresses.IA_LevelStatus,
-                    ["Pumpkin Gorge"] = Addresses.PG_LevelStatus,
-                    ["Pumpkin Serpent"] = Addresses.PS_LevelStatus,
-                    ["The Haunted Ruins"] = Addresses.HR_LevelStatus,
-                    ["Ghost Ship"] = Addresses.GS_LevelStatus,
-                    ["The Entrance Hall"] = Addresses.EH_LevelStatus,
-                    ["The Time Device"] = Addresses.TD_LevelStatus
-                },
-
-                ["Runes"] = new Dictionary<string, uint>
-                {
-                    ["Chaos Rune"] = Addresses.ChaosRune,
-                    ["Earth Rune"] = Addresses.EarthRune,
-                    ["Star Rune"] = Addresses.StarRune,
-                    ["Moon Rune"] = Addresses.MoonRune,
-                    ["Time Rune"] = Addresses.TimeRune
-                }
-
-
-            };
-        }
-
-        public static string GetLevelNameFromId(byte levelId)
-        {
-            var dict = new Dictionary<byte, string>
-            {
-                [0x00] = "None/Out of Game",
-                [0x01] = "The Graveyard",
-                [0x02] = "Return to the Graveyard",
-                [0x03] = "Cemetery Hill",
-                [0x04] = "The Hilltop Mausoleum",
-                [0x05] = "Scarecrow Fields",
-                [0x06] = "Dan's Crypt",
-                [0x07] = "Ant Hill",
-                [0x08] = "The Crystal Caves",
-                [0x09] = "Pumpkin Gorge",
-                [0x0A] = "The Pumpkin Serpent",
-                [0x0B] = "The Sleeping Village",
-                [0x0C] = "Pools of the Ancient Dead",
-                [0x0D] = "The Asylum Grounds",
-                [0x0E] = "Inside the Asylum",
-                [0x0F] = "Enchanted Earth",
-                [0x10] = "The Gallows Gauntlet",
-                [0x11] = "The Haunted Ruins",
-                [0x12] = "Hall of Heroes",
-                [0x13] = "Ghost Ship",
-                [0x14] = "The Entrance Hall",
-                [0x15] = "The Time Device",
-                [0x16] = "The Lake",
-                [0x17] = "Zarok's Lair",
-            };
-
-            return dict[levelId];
-        }
-
-        public static string GetLevelNameFromMapId(byte levelId)
-        {
-            var dict = new Dictionary<byte, string>
-            {
-                [0] = "Dan's Crypt",
-                [1] = "The Graveyard",
-                [2] = "Return to the Graveyard",
-                [3] = "Cemetery Hill",
-                [4] = "The Hilltop Mausoleum",
-                [5] = "Scarecrow Fields",
-                [6] = "Enchanted Earth",
-                [7] = "Pumpkin Gorge",
-                [8] = "The Pumpkin Serpent",
-                [9] = "The Sleeping Village",
-                [10] = "The Asylum Grounds",
-                [11] = "Inside the Asylum",
-                [12] = "Pools of the Ancient Dead",
-                [13] = "The Lake",
-                [14] = "The Crystal Caves",
-                [15] = "The Haunted Ruins",
-                [16] = "Ghost Ship",
-                [17] = "The Gallows Gauntlet",
-                [18] = "The Entrance Hall",
-                [19] = "The Time Device",
-                [20] = "Zarok's Lair"
-            };
-
-            return dict[levelId];
-        }
-
-
-
-
-        // Hall of Heroes needs an overhaul. Not worth dealing with right now
 
         private static List<GenericItemsData> GetHallOfHeroesData()
         {
@@ -1164,7 +646,7 @@ namespace MedievilArchipelago
             List<GenericItemsData> rtgLocations = new List<GenericItemsData>() {
                 new GenericItemsData("Star Rune: Return to the Graveyard", Addresses.RTG_Pickup_StarRune, "2", "32896"),
                 new GenericItemsData("Equipment: Silver Shield in Chest at Shop", Addresses.RTG_Pickup_SilverShieldChestAtShop, "2", "32896", true),
-                new GenericItemsData("Skill: Daring Dash", Addresses.RTG_Pickup_DaringDash, "2", "257"),
+                new GenericItemsData("Skill: Daring Dash", Addresses.RTG_Pickup_DaringDash, "2", "199999"),
                 new GenericItemsData("Energy Vial: Coffin Area West - RTG", Addresses.RTG_Pickup_EnergyVialCoffinAreaWest, "2", "32896"),
                 new GenericItemsData("Energy Vial: Coffin Area East - RTG", Addresses.RTG_Pickup_EnergyVialCoffinAreaEast, "2", "32896"),
                 new GenericItemsData("Energy Vial: Below Shop - RTG", Addresses.RTG_Pickup_EnergyVialBelowShop, "2", "32896"),
@@ -1186,7 +668,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Book: Secret Areas - RTG", Addresses.RTG_Book_SecretAreas, "2", "0"),
                 new GenericItemsData("Book: Skull Key - RTG", Addresses.RTG_Book_SkullKey, "2", "0"),
                 new GenericItemsData("Book: Daring Dash - RTG", Addresses.RTG_Book_DaringDash, "2", "0"),
-                new GenericItemsData("Gargoyle: Exit - RTG", Addresses.RTG_Gargoyle_Exit, "2", "0"),
+                new GenericItemsData("Gargoyle: Exit - RTG", Addresses.RTG_Gargoyle_Exit, "2", "199999"),
                 new GenericItemsData("Cleared: Return to the Graveyard", Addresses.RTG_LevelStatus, "2", "16"),
                 new GenericItemsData("Chalice: Return to the Graveyard", Addresses.RTG_Pickup_Chalice, "2", "32896"),
             };
@@ -1273,8 +755,8 @@ namespace MedievilArchipelago
                 new GenericItemsData("Key Item: Shadow Talisman - EE", Addresses.EE_Pickup_ShadowTalisman, "15", "32896"),
                 new GenericItemsData("Star Rune: Enchanted Earth", Addresses.EE_Pickup_StarRune, "15", "4865"),
                 new GenericItemsData("Egg Drop 1 - EE", Addresses.EE_Pickup_GoldCoinsChestInEgg, "15", "32768"),
-                new GenericItemsData("Egg Drop 2 - EE", Addresses.EE_Pickup_CopperShieldInEgg, "15", "32768"), 
-                new GenericItemsData("Egg Drop 3 - EE", Addresses.EE_Pickup_EarthRune, "15", "32768"), 
+                new GenericItemsData("Egg Drop 2 - EE", Addresses.EE_Pickup_CopperShieldInEgg, "15", "32768"),
+                new GenericItemsData("Egg Drop 3 - EE", Addresses.EE_Pickup_EarthRune, "15", "32768"),
                 new GenericItemsData("Energy Vial: Shadow Talisman Cave - EE", Addresses.EE_Pickup_EnergyVialShadowTalismanCave, "15", "32896"),
                 new GenericItemsData("Energy Vial: Left of Tree Drop - EE", Addresses.EE_Pickup_EnergyVialLeftOfTreeDrop, "15", "32896"),
                 new GenericItemsData("Energy Vial: Right of Tree Drop - EE", Addresses.EE_Pickup_EnergyVialRightOfTreeDrop, "15", "32896"),
@@ -1326,7 +808,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Bag at Top of table - SV", Addresses.TSV_Pickup_GoldCoinsBagAtTopOfTable, "11", "32896"),
                 new GenericItemsData("Gold Coins: Bag at Bottom of table - SV", Addresses.TSV_Pickup_GoldCoinsBagAtBottomOfTable, "11", "32896"),
                 new GenericItemsData("Gold Coins: Chest next to Chalice - SV", Addresses.TSV_Pickup_GoldCoinsChestNextToChalice, "11", "32896"),
-                new GenericItemsData("Book: Blacksmiths Montly - SV", Addresses.TSV_Book_BlacksmithsMontly, "11", "0"),
+                new GenericItemsData("Book: Blacksmiths Monthly - SV", Addresses.TSV_Book_BlacksmithsMonthly, "11", "0"),
                 new GenericItemsData("Book: Missing Crucifix - SV", Addresses.TSV_Book_MissingCrucifix, "11", "0"),
                 new GenericItemsData("Book: Fountain Rune - SV", Addresses.TSV_Book_FountainRune, "11", "0"),
                 new GenericItemsData("Book: Mayors Bust - SV", Addresses.TSV_Book_MayorsBust, "11", "0"),
@@ -1436,7 +918,7 @@ namespace MedievilArchipelago
                 new GenericItemsData("Gold Coins: Bag on Left of Pool - CC", Addresses.CC_Pickup_GoldCoinsBagOnLeftOfPool, "8", "32896"),
                 new GenericItemsData("Gold Coins: Bag on Right of Pool - CC", Addresses.CC_Pickup_GoldCoinsBagOnRightOfPool, "8", "32896"),
                 new GenericItemsData("Book: Dragon Book - CC", Addresses.CC_Book_DragonBook, "8", "0"),
-                new GenericItemsData("Book: Summon Dragon - CC", Addresses.CC_Book_DragonBook, "8", "0"),
+                new GenericItemsData("Book: Summon Dragon - CC", Addresses.CC_Book_SummonDragon, "8", "0"),
                 new GenericItemsData("Gargoyle: Cave Entrance - CC", Addresses.CC_Gargoyle_CaveEntrance, "8", "0"),
                 new GenericItemsData("Cleared: The Crystal Caves", Addresses.CC_LevelStatus, "8", "16"),
                 new GenericItemsData("Chalice: The Crystal Caves", Addresses.CC_Pickup_Chalice, "8",  "32896"),

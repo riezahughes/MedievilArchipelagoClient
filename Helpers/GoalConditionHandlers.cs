@@ -13,8 +13,9 @@ namespace MedievilArchipelago.Helpers
     {
         private static bool CheckZarokCondition(ArchipelagoClient client)
         {
-            if(client?.GameState == null) return false;
-            if (client?.GameState.CompletedLocations.Any(x => x.Name.Equals("Cleared: Zaroks Lair")) == true)
+            if(client?.GameState?.CompletedLocations == null) return false;
+
+            if (client?.GameState?.CompletedLocations.Any(x => x != null && x.Name.Equals("Cleared: Zaroks Lair")) == true)
             {
                 Console.WriteLine("You've Defeated Zarok");
                 return true;

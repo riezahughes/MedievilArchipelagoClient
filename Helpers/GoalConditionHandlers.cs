@@ -56,6 +56,8 @@ namespace MedievilArchipelago.Helpers
                 return false;
             }
 
+            if(client?.Options == null) { return false; }
+
             int goalCondition = Int32.Parse(client.Options?.GetValueOrDefault("goal", "0").ToString());
 
             if (goalCondition == PlayerGoals.DEFEAT_ZAROK)

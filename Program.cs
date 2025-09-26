@@ -285,7 +285,7 @@ public class Program
             firstRun = false;
 
             _ = archipelagoClient.MonitorLocations(GameLocations, _cancellationTokenSource.Token);
-            _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, _cancellationTokenSource);
+            _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, url, _cancellationTokenSource);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {

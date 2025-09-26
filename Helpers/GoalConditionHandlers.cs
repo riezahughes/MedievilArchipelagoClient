@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Archipelago.Core.Models;
 using Archipelago.Core;
 using MedievilArchipelago.Models;
+using Archipelago.Core.Util;
 
 namespace MedievilArchipelago.Helpers
 {
@@ -27,16 +28,9 @@ namespace MedievilArchipelago.Helpers
         {
             int antOption = Int32.Parse(client.Options?.GetValueOrDefault("include_ant_hill_in_checks", "0").ToString());
             int maxChaliceCount = antOption == 1 ? 20 : 19;
-            int currentCount = 0;
+            int currentCount = Memory.ReadShort(Addresses.ChaliceWorldMapCount);
             if (client?.GameState == null || client.CurrentSession == null) return false;
 
-            foreach (CompositeLocation loc in client.GameState.CompletedLocations.Distinct())
-            {
-                if (loc.Name.Contains("Chalice: "))
-                {
-                    currentCount++;
-                }
-            }
 
             if (currentCount == maxChaliceCount)
             {

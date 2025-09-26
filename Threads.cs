@@ -12,7 +12,7 @@ namespace MedievilArchipelago
     public class MemoryCheckThreads
     {
 
-        async public static Task PassiveLogicChecks(ArchipelagoClient client, CancellationTokenSource cts)
+        async public static Task PassiveLogicChecks(ArchipelagoClient client, string url, CancellationTokenSource cts)
         {
             await Task.Run(() =>
             {
@@ -69,15 +69,17 @@ namespace MedievilArchipelago
                 {
                     try
                     {
-                        // a really dumb way to check but it works.
-                        PingReply reply = ping.Send("www.google.com", 1000);
+                        // a really dumb way to check but it works. Removing for now. There's no need and people complained when hosting without any public internet access.
+                        //if (!url.Contains("localhost")) {
+                        //    PingReply reply = ping.Send("www.google.com", 1000);
 
-                        if (reply.Status == IPStatus.TimedOut)
-                        {
-                            cts.Cancel();
-                            Console.WriteLine("Connection has timed out. Background Task Stopped. Please Restart the Client.");
-                            throw new Exception("Connection has timed out");
-                        }
+                        //    if (reply.Status == IPStatus.TimedOut)
+                        //    {
+                        //        cts.Cancel();
+                        //        Console.WriteLine("Connection has timed out. Background Task Stopped. Please Restart the Client.");
+                        //        throw new Exception("Connection has timed out");
+                        //    }
+                        //}
 
                         ThreadHandlers.ProcessDelayedItems(client);
 
@@ -119,6 +121,7 @@ namespace MedievilArchipelago
                                 }
                                 //SetRuneAxis();
                             }
+                            GoalConditionHandlers.CheckGoalCondition(client);
                             currentLocation = checkCurrentLevel;
                         }
 

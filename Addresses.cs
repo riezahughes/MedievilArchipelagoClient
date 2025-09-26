@@ -35,6 +35,7 @@ namespace MedievilArchipelago
 
         public const uint FairyCount = 0x001D5680;
 
+        public const uint ChaliceWorldMapCount = 0x00014f80;
         /*
             0x00=None/Out of Game
             0x01=The Graveyard
@@ -241,7 +242,7 @@ namespace MedievilArchipelago
         public const uint HOH_MegwynneStormbinder1_drop = 0x000197a2;
         public const uint HOH_MegwynneStormbinder2_drop = 0x000197aa;
 
-        public const uint HOH_Book_HeroesOfEld = 0x0001bcf8;
+        public const uint HOH_Book_HeroesOfEld = 0x0001be00;
         public const uint HOH_Book_WorthyHero = 0x0001bcf8;
         public const uint HOH_Gargoyle_Entrance = 0x0001b6ce;
 

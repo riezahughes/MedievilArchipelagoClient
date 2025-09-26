@@ -30,7 +30,7 @@ namespace MedievilArchipelago.Helpers
             int gargoyleSanity = int.Parse(client.Options?.GetValueOrDefault("gargoylesanity", "0").ToString());
 
             // starting gargoyles
-            if (client.GPSHandler.MapId == 6 && client.GPSHandler.X == 64189 && client.GPSHandler.Y == 0 && client.GPSHandler.Z == 16 && gargoyleSanity == 1) {
+            if (client.GPSHandler.MapId == 6 && client.GPSHandler.X >= 64189 && client.GPSHandler.X >= 60484 && client.GPSHandler.Y == 0 && client.GPSHandler.Z >= 94 && client.GPSHandler.Z >= 65436 && gargoyleSanity == 1) {
                 var location1 = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Left - DC");
                 var location2 = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Right - DC");
                 if (location1 != null && location2 != null)

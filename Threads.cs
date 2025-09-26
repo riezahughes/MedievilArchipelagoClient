@@ -121,7 +121,6 @@ namespace MedievilArchipelago
                                 }
                                 //SetRuneAxis();
                             }
-                            GoalConditionHandlers.CheckGoalCondition(client);
                             currentLocation = checkCurrentLevel;
                         }
 
@@ -132,7 +131,7 @@ namespace MedievilArchipelago
 
                         firstLoop = false;
 
-
+                        GoalConditionHandlers.CheckGoalCondition(client);
 
                         int currentChaliceCount = 0;
                         var playerStatus = ItemHandlers.StatusAndInventoryAddressDictionary();

@@ -201,7 +201,7 @@ namespace MedievilArchipelago.Helpers
             { "Dan's Crypt", new List<string> { "Star Rune: Dan's Crypt" } },
             { "Ant Hill", new List<string> {} },
             { "The Crystal Caves", new List<string> { "Earth Rune: The Crystal Caves", "Star Rune: The Crystal Caves" } },
-            { "Pumpkin Gorge", new List<string> { "Chaos Rune: Pumpkin Gorge", "Earth Rune: Pumpkin Gorge", "Moon Rune: Pumpkin Gorge", "Time Rune: Pumpkin Gorge" } },
+            { "Pumpkin Gorge", new List<string> { "Chaos Rune: Pumpkin Gorge", "Earth Rune: Pumpkin Gorge", "Moon Rune: Pumpkin Gorge", "Star Rune: Pumpkin Gorge", "Time Rune: Pumpkin Gorge" } },
             { "The Pumpkin Serpent", new List<string> {} },
             { "The Sleeping Village", new List<string> { "Chaos Rune: The Sleeping Village", "Earth Rune: The Sleeping Village", "Moon Rune: The Sleeping Village" } },
             { "Pools of the Ancient Dead", new List<string> { "Chaos Rune: Pools of the Ancient Dead" } },

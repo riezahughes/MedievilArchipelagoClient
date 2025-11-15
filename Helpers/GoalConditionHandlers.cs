@@ -29,12 +29,12 @@ namespace MedievilArchipelago.Helpers
             int antOption = Int32.Parse(client.Options?.GetValueOrDefault("include_ant_hill_in_checks", "0").ToString());
             int maxChaliceCount = antOption == 1 ? 20 : 19;
             int currentCount = Memory.ReadShort(Addresses.ChaliceWorldMapCount);
+            int overworldLevel = Memory.ReadShort(Addresses.CurrentMapPosition);
             if (client?.GameState == null || client.CurrentSession == null) return false;
-
+            if (overworldLevel == 8) return false;
 
             if (currentCount == maxChaliceCount)
             {
-                client.SendGoalCompletion();
                 Console.WriteLine("You got all the chalices!");
                 return true;
             }

@@ -211,7 +211,7 @@ namespace MedievilArchipelago.Helpers
             { "The Gallows Gauntlet", new List<string> { "Star Rune: The Gallows Gauntlet" } },
             { "The Haunted Ruins", new List<string> { "Chaos Rune: The Haunted Ruins", "Earth Rune: The Haunted Ruins" } },
             { "Hall of Heroes", new List<string> {} },
-            { "Ghost Ship", new List<string> { "Chaos Rune: The Ghost Ship", "Moon Rune: The Ghost Ship", "Star Rune: The Ghost Ship" } },
+            { "Ghost Ship", new List<string> { "Chaos Rune: Ghost Ship", "Moon Rune: Ghost Ship", "Star Rune: Ghost Ship" } },
             { "The Entrance Hall", new List<string> {} },
             { "The Time Device", new List<string> { "Chaos Rune: The Time Device", "Earth Rune: The Time Device", "Moon Rune: The Time Device", "Time Rune: The Time Device" } },
             { "The Lake", new List<string> { "Chaos Rune: The Lake", "Earth Rune: The Lake", "Star Rune: The Lake", "Time Rune: The Lake" } },

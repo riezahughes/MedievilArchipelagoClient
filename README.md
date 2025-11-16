@@ -22,3 +22,21 @@ To play medievil on archipelago requires:
 - Run the client
 - Fill in the blanks to connect to the server
 - Start playing!
+
+# Development
+- Clone the repository
+- Create an appsettings.Local.Json in the root of the project
+- Create an AP room on the archipelago website and fill the file with the following content:
+
+```json
+{
+    "port": "portnumber",
+    "slot": "slotname",
+    "pass": "passifused"
+}
+
+```
+
+- Running debug will now automatically connect you to the room without the need of you filling in the fields
+
+Note: Sometimes the ap client can be funny in debug mode. When you run it, check visual steudio's play button and see if you need to hit continue. There's a race condition under the hood. In a release you don't see it.

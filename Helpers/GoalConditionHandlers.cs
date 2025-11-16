@@ -30,9 +30,12 @@ namespace MedievilArchipelago.Helpers
             int maxChaliceCount = antOption == 1 ? 20 : 19;
             int currentCount = Memory.ReadShort(Addresses.ChaliceWorldMapCount);
             int currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+            int currentMapPosition = Memory.ReadByte(Addresses.CurrentMapPosition);
             if (client?.GameState == null || client.CurrentSession == null) return false;
 
             if(currentLevel == 10 && currentCount == 20) return false;
+
+            if (currentMapPosition == 8 && currentCount == 20) return false;
             
 
             if (currentCount == maxChaliceCount)

@@ -14,11 +14,10 @@ namespace MedievilArchipelago.Helpers
     {
         private static bool CheckZarokCondition(ArchipelagoClient client)
         {
-            if(client?.GameState?.CompletedLocations == null) return false;
+            if (client?.GameState?.CompletedLocations == null) return false;
 
             if (client?.GameState?.CompletedLocations.Any(x => x != null && x.Name.Equals("Cleared: Zaroks Lair")) == true)
             {
-                Console.WriteLine("You've Defeated Zarok");
                 return true;
             }
             return false;
@@ -33,14 +32,13 @@ namespace MedievilArchipelago.Helpers
             int currentMapPosition = Memory.ReadByte(Addresses.CurrentMapPosition);
             if (client?.GameState == null || client.CurrentSession == null) return false;
 
-            if(currentLevel == 10 && currentCount == 20) return false;
+            if (currentLevel == 10 && currentCount == 20) return false;
 
             if (currentMapPosition == 8 && currentCount == 20) return false;
-            
+
 
             if (currentCount == maxChaliceCount)
             {
-                Console.WriteLine("You got all the chalices!");
                 return true;
             }
             return false;
@@ -56,7 +54,7 @@ namespace MedievilArchipelago.Helpers
                 return false;
             }
 
-            if(client?.Options == null) { return false; }
+            if (client?.Options == null) { return false; }
 
             int goalCondition = Int32.Parse(client.Options?.GetValueOrDefault("goal", "0").ToString());
 
@@ -66,6 +64,7 @@ namespace MedievilArchipelago.Helpers
 
                 if (goal)
                 {
+                    Console.WriteLine("You've Defeated Zarok!");
                     client.SendGoalCompletion();
                     return true;
                 }
@@ -77,6 +76,7 @@ namespace MedievilArchipelago.Helpers
 
                 if (goal)
                 {
+                    Console.WriteLine("You collected all the chalices!");
                     client.SendGoalCompletion();
                     return true;
                 }
@@ -89,6 +89,7 @@ namespace MedievilArchipelago.Helpers
 
                 if (zarokGoal && chaliceGoal)
                 {
+                    Console.WriteLine("You defeated Zarok and collected all the chalices!");
                     client.SendGoalCompletion();
                     return true;
                 }

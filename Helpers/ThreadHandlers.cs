@@ -206,7 +206,7 @@ namespace MedievilArchipelago.Helpers
             { "The Sleeping Village", new List<string> { "Chaos Rune: The Sleeping Village", "Earth Rune: The Sleeping Village", "Moon Rune: The Sleeping Village" } },
             { "Pools of the Ancient Dead", new List<string> { "Chaos Rune: Pools of the Ancient Dead" } },
             { "The Asylum Grounds", new List<string> { "Chaos Rune: The Asylum Grounds" } },
-            { "Inside The Asylum", new List<string> { "Earth Rune: Inside the Asylum" } },
+            { "Inside the Asylum", new List<string> { "Earth Rune: Inside the Asylum" } },
             { "Enchanted Earth", new List<string> { "Earth Rune: Enchanted Earth", "Star Rune: Enchanted Earth" } },
             { "The Gallows Gauntlet", new List<string> { "Star Rune: The Gallows Gauntlet" } },
             { "The Haunted Ruins", new List<string> { "Chaos Rune: The Haunted Ruins", "Earth Rune: The Haunted Ruins" } },

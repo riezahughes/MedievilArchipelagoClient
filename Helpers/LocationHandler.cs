@@ -1,25 +1,5 @@
-﻿using Archipelago.Core;
-using Archipelago.Core.Models;
-using Archipelago.Core.Util;
-using Archipelago.Core.Util.GPS;
-using Archipelago.MultiClient.Net.Models;
+﻿using Archipelago.Core.Models;
 using MedievilArchipelago.Models;
-using Newtonsoft.Json;
-using Serilog;
-using SharpDX.DXGI;
-using System;
-using System.Buffers.Text;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Location = Archipelago.Core.Models.Location;
 
 namespace MedievilArchipelago.Helpers
@@ -591,6 +571,7 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Book: Healing Fountain - TG", Addresses.TG_Book_HealingFountain, "1", "0"),
                 new GenericItemsData("Book: Gaze of an Angel - TG", Addresses.TG_Book_GazeOfAnAngel, "1", "0"),
                 new GenericItemsData("Book: Skull Key - TG", Addresses.TG_Book_SkullKey, "1", "0"),
+                new GenericItemsData("Book: The Chalice - TG", Addresses.TG_Book_Chalice, "1", "0"),
                 new GenericItemsData("Gargoyle: End of Level - TG", Addresses.TG_Gargoyle_EndOfLevel, "1", "0"),
                 new GenericItemsData("Cleared: The Graveyard", Addresses.TG_LevelStatus, "1", "16"),
                 new GenericItemsData("Chalice: The Graveyard", Addresses.TG_Pickup_Chalice, "1", "32896"),

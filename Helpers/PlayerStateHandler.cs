@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Archipelago.Core.Models;
+﻿using Archipelago.Core.Models;
 using Archipelago.Core.Util;
 using Archipelago.Core;
 using Archipelago.MultiClient.Net.Models;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Kokuban;
-using System.Threading;
 
 namespace MedievilArchipelago.Helpers
 {
@@ -96,8 +90,9 @@ namespace MedievilArchipelago.Helpers
 
                 if (bottleEnergy == 0 && currentLevel != 0 && isInTheGame())
                 {
-                    Console.WriteLine(bg + (fg + "[   ☠️💀 Deathlink Sent. " + deathResponse[listChoice] + " 💀☠️   ]"));
+                    string deathlinkMessage = (bg + (fg + "[   ☠️💀 Deathlink Sent from Medievil by " + client.CurrentSession.Players.ActivePlayer.Name + ". " + deathResponse[listChoice] + " 💀☠️   ]"));
                     deathlink.SendDeathLink(new DeathLink(client.CurrentSession.Players.ActivePlayer.Name));
+                    client.SendMessage(deathlinkMessage);
                     lastDeathTime = DateTime.Now;
                 }
             }

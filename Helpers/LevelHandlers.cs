@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Archipelago.Core.Models;
+﻿using Archipelago.Core.Models;
 using Archipelago.Core;
-using Microsoft.Extensions.Options;
 using Archipelago.Core.Util;
 
 namespace MedievilArchipelago.Helpers

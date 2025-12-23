@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Archipelago.Core.Models;
+﻿using Archipelago.Core.Models;
 using Archipelago.Core.Util;
 using Archipelago.Core;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Kokuban;
 using Newtonsoft.Json;
 using Serilog;
-using MedievilArchipelago.Helpers;
 using Archipelago.Core.Util.GPS;
-using System.Security.Cryptography.X509Certificates;
 
 namespace MedievilArchipelago.Helpers
 {
     internal class APHandlers
     {
+
         public static async void OnConnected(object sender, EventArgs args, ArchipelagoClient client)
         {
             if (client.CurrentSession == null)
@@ -48,7 +42,7 @@ namespace MedievilArchipelago.Helpers
             Console.WriteLine("Setting up player state..");
 
             #if DEBUG
-                Console.WriteLine($"OnConnected Firing. Itemcount: {client.GameState.ReceivedItems.Count}");
+                Console.WriteLine($"OnConnected Firing. Itemcount: {client.ItemState.ReceivedItems.Count}");
             #endif
 
             PlayerStateHandler.UpdatePlayerState(client, false);
@@ -181,7 +175,7 @@ namespace MedievilArchipelago.Helpers
         // added a guard so it doesn't fire prematurely
         public static void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, ArchipelagoClient client)
         {
-            if (client?.CurrentSession?.Items?.AllItemsReceived.Count == client?.GameState.ReceivedItems.Count())
+            if (client?.CurrentSession?.Items?.AllItemsReceived.Count == client?.ItemState.ReceivedItems.Count())
             {
                 PlayerStateHandler.UpdatePlayerState(client, false);
                 #if DEBUG

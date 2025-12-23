@@ -3,9 +3,7 @@
 using Archipelago.Core;
 using Archipelago.Core.GameClients;
 using Archipelago.Core.Models;
-using Archipelago.Core.Traps;
 using Archipelago.Core.Util;
-using Archipelago.Core.Util.GPS;
 using MedievilArchipelago;
 using Helpers = MedievilArchipelago.Helpers;
 using Archipelago.Core.Util.Overlay;
@@ -224,26 +222,19 @@ public class Program
             #endif
             Console.ReadKey();
             Environment.Exit(1);
-
         }
 
-        try { 
+        try {
 
-
-
-
-        var overlayOptions = new OverlayOptions();
-
-            overlayOptions.XOffset = 50;
-            overlayOptions.YOffset = 500;
-            overlayOptions.FontSize = 12;
-            overlayOptions.TextColor = Archipelago.Core.Util.Overlay.Color.Yellow;
-
-            var gameOverlay = new WindowsOverlayService(overlayOptions);
-
-            //var fontPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "MediEvilFont.ttf");
-            //Console.WriteLine(fontPath)
-            //gameOverlay.CreateFont(fontPath, 12);
+            var gameOverlay = new WindowsOverlayService(new OverlayOptions
+            {
+                
+                XOffset = 50,
+                YOffset = 500,
+                FontSize = 12,
+                DefaultTextColor = Archipelago.Core.Util.Overlay.Color.Yellow,
+                FadeDuration = 4.0f
+            });
 
             archipelagoClient.IntializeOverlayService(gameOverlay);
 
@@ -253,7 +244,6 @@ public class Program
                 Thread.Sleep(1000);
             }
 
-            archipelagoClient.ShouldSaveStateOnItemReceived = false;
             archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Helpers.APHandlers.Locations_CheckedLocationsUpdated;
 
 
@@ -284,7 +274,7 @@ public class Program
 
             firstRun = false;
 
-            _ = archipelagoClient.MonitorLocations(GameLocations, _cancellationTokenSource.Token);
+            _ = archipelagoClient.MonitorLocations(GameLocations);
             _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, url, _cancellationTokenSource);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
@@ -305,7 +295,7 @@ public class Program
                     }
                     else if (input?.Trim().ToLower() == "update")
                     {
-                        if (archipelagoClient.GameState.CompletedLocations != null)
+                        if (archipelagoClient.LocationState.CompletedLocations != null)
                         {
                             Helpers.PlayerStateHandler.UpdatePlayerState(archipelagoClient, false);
                             Console.WriteLine($"Player state updated. Total Count: {archipelagoClient.CurrentSession.Items.AllItemsReceived.Count}");

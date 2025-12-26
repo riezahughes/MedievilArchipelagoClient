@@ -198,7 +198,7 @@ public class Program
 
             
             int retryCount = 0;
-            Console.WriteLine("Waiting for connection...");
+            Console.WriteLine("Logging in...");
             while (archipelagoClient.IsLoggedIn == false)
             {
 
@@ -224,6 +224,21 @@ public class Program
             Environment.Exit(1);
         }
 
+        Console.WriteLine("Logged in!");
+
+        // used for checking memory locations
+
+        //var task = Memory.MonitorAddressForAction<byte>(
+        //    Addresses.ZL_Gargoyle_Entrance,
+        //    () => {
+        //        // Read as a single byte to avoid grabbing neighboring data
+        //        var val = Memory.Read<byte>(Addresses.ZL_Gargoyle_Entrance, Enums.Endianness.Big);
+
+        //        // Format as Hex in the console so it matches your scanner (0x40)
+        //        Console.WriteLine($"gargoyle changed! Current value: 0x{val:X2}");
+        //    },
+        //    value => value == 0);
+
         try {
 
             var gameOverlay = new WindowsOverlayService(new OverlayOptions
@@ -236,7 +251,7 @@ public class Program
                 FadeDuration = 4.0f
             });
 
-            archipelagoClient.IntializeOverlayService(gameOverlay);
+            //archipelagoClient.IntializeOverlayService(gameOverlay);
 
             while (archipelagoClient.CurrentSession == null)
             {
@@ -268,7 +283,7 @@ public class Program
 #endif
 
             //foreach (var location in GameLocations)
-            //{
+            //{`
             //    Console.WriteLine($"ID: {location.Id} - {location.Name}");
             //}
 

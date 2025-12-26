@@ -86,6 +86,8 @@ namespace MedievilArchipelago.Helpers
                 var amber = Memory.ReadByte(Addresses.AmberPiece);
                 var fairies = Memory.ReadByte(Addresses.FairyCount);
 
+
+
                 if (amber >= 7)
                 {
                     var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Chicken Drumsticks - TA");
@@ -95,7 +97,7 @@ namespace MedievilArchipelago.Helpers
                     }
                 }
 
-                if(fairies == 6)
+                else if(fairies == 6)
                 {
                     var location = builtLocations.FirstOrDefault(loc => loc.Name == "Chalice: Ant Hill");
                     if (location != null)
@@ -104,6 +106,11 @@ namespace MedievilArchipelago.Helpers
                     }
                 }
 
+                var completeLocation = builtLocations.FirstOrDefault(loc => loc.Name == "Cleared: Ant Hill");
+                if (completeLocation != null)
+                {
+                    client.SendLocation(completeLocation);
+                }
 
             }
 

@@ -36,6 +36,7 @@ namespace MedievilArchipelago
                 bool firstLoop = true;
 
                 ThreadHandlers.UpdateChestLocations(client, currentLocation);
+
                 if (currentLocation == 1 && runeSanityOption == 1)
                 {
 
@@ -96,7 +97,7 @@ namespace MedievilArchipelago
                             ThreadHandlers.UpdateInventoryWithAmber();
                         }
 
-                        if (!firstLoop && checkCurrentLevel < 17 && checkCurrentLevel > 0)
+                        if (!firstLoop && checkCurrentLevel < 23 && checkCurrentLevel > 0)
                         {
                             ThreadHandlers.UpdateChestLocations(client, checkCurrentLevel);
                         }

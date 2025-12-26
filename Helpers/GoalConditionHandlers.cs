@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Archipelago.Core.Models;
-using Archipelago.Core;
+﻿using Archipelago.Core;
 using MedievilArchipelago.Models;
 using Archipelago.Core.Util;
 
@@ -14,9 +8,9 @@ namespace MedievilArchipelago.Helpers
     {
         private static bool CheckZarokCondition(ArchipelagoClient client)
         {
-            if (client?.GameState?.CompletedLocations == null) return false;
+            if (client?.LocationState?.CompletedLocations == null) return false;
 
-            if (client?.GameState?.CompletedLocations.Any(x => x != null && x.Name.Equals("Cleared: Zaroks Lair")) == true)
+            if (client?.LocationState?.CompletedLocations.Any(x => x != null && x.Name.Equals("Cleared: Zaroks Lair")) == true)
             {
                 return true;
             }
@@ -30,8 +24,10 @@ namespace MedievilArchipelago.Helpers
             int currentCount = Memory.ReadShort(Addresses.ChaliceWorldMapCount);
             int currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
             int currentMapPosition = Memory.ReadByte(Addresses.CurrentMapPosition);
-            if (client?.GameState == null || client.CurrentSession == null) return false;
 
+            if (client?.LocationState == null || client.CurrentSession == null) return false;
+
+            // There is an overlap with pumpkin serpent. This resolved the conflict and won't have it fire early.
             if (currentLevel == 10 && currentCount == 20) return false;
 
             if (currentMapPosition == 8 && currentCount == 20) return false;
@@ -49,7 +45,7 @@ namespace MedievilArchipelago.Helpers
         public static bool CheckGoalCondition(ArchipelagoClient client)
         {
 
-            if (client?.GameState?.CompletedLocations == null)
+            if (client?.LocationState?.CompletedLocations == null)
             {
                 return false;
             }

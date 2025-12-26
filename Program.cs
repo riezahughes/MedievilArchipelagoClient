@@ -3,9 +3,7 @@
 using Archipelago.Core;
 using Archipelago.Core.GameClients;
 using Archipelago.Core.Models;
-using Archipelago.Core.Traps;
 using Archipelago.Core.Util;
-using Archipelago.Core.Util.GPS;
 using MedievilArchipelago;
 using Helpers = MedievilArchipelago.Helpers;
 using Archipelago.Core.Util.Overlay;
@@ -200,7 +198,7 @@ public class Program
 
             
             int retryCount = 0;
-            Console.WriteLine("Waiting for connection...");
+            Console.WriteLine("Logging in...");
             while (archipelagoClient.IsLoggedIn == false)
             {
 
@@ -224,28 +222,36 @@ public class Program
             #endif
             Console.ReadKey();
             Environment.Exit(1);
-
         }
 
-        try { 
+        Console.WriteLine("Logged in!");
 
+        // used for checking memory locations
 
+        //var task = Memory.MonitorAddressForAction<byte>(
+        //    Addresses.ZL_Gargoyle_Entrance,
+        //    () => {
+        //        // Read as a single byte to avoid grabbing neighboring data
+        //        var val = Memory.Read<byte>(Addresses.ZL_Gargoyle_Entrance, Enums.Endianness.Big);
 
+        //        // Format as Hex in the console so it matches your scanner (0x40)
+        //        Console.WriteLine($"gargoyle changed! Current value: 0x{val:X2}");
+        //    },
+        //    value => value == 0);
 
-        var overlayOptions = new OverlayOptions();
+        try {
 
-            overlayOptions.XOffset = 50;
-            overlayOptions.YOffset = 500;
-            overlayOptions.FontSize = 12;
-            overlayOptions.TextColor = Archipelago.Core.Util.Overlay.Color.Yellow;
+            var gameOverlay = new WindowsOverlayService(new OverlayOptions
+            {
+                
+                XOffset = 50,
+                YOffset = 500,
+                FontSize = 12,
+                DefaultTextColor = Archipelago.Core.Util.Overlay.Color.Yellow,
+                FadeDuration = 4.0f
+            });
 
-            var gameOverlay = new WindowsOverlayService(overlayOptions);
-
-            //var fontPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "MediEvilFont.ttf");
-            //Console.WriteLine(fontPath)
-            //gameOverlay.CreateFont(fontPath, 12);
-
-            archipelagoClient.IntializeOverlayService(gameOverlay);
+            //archipelagoClient.IntializeOverlayService(gameOverlay);
 
             while (archipelagoClient.CurrentSession == null)
             {
@@ -253,7 +259,6 @@ public class Program
                 Thread.Sleep(1000);
             }
 
-            archipelagoClient.ShouldSaveStateOnItemReceived = false;
             archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Helpers.APHandlers.Locations_CheckedLocationsUpdated;
 
 
@@ -263,6 +268,11 @@ public class Program
             archipelagoClient.GPSHandler = Helpers.APHandlers.Client_GPSHandler();
             archipelagoClient.GPSHandler.SetInterval(100);
             archipelagoClient.GPSHandler.PositionChanged += (sender, args) => Helpers.APHandlers.Client_GPSPositionChanged(archipelagoClient, GameLocations);
+            archipelagoClient.GPSHandler.MapChanged += (sender, args) =>
+            {
+                Console.WriteLine($"GPS_Medievil_{archipelagoClient.CurrentSession.Players.ActivePlayer}");
+                archipelagoClient.CurrentSession.DataStorage[$"GPS_Medievil_{archipelagoClient.CurrentSession.Players.ActivePlayer}"] = args.NewMapName;
+            };
             archipelagoClient.GPSHandler.Start();
 
 
@@ -278,13 +288,13 @@ public class Program
 #endif
 
             //foreach (var location in GameLocations)
-            //{
+            //{`
             //    Console.WriteLine($"ID: {location.Id} - {location.Name}");
             //}
 
             firstRun = false;
 
-            _ = archipelagoClient.MonitorLocations(GameLocations, _cancellationTokenSource.Token);
+            _ = archipelagoClient.MonitorLocations(GameLocations);
             _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, url, _cancellationTokenSource);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
@@ -305,7 +315,7 @@ public class Program
                     }
                     else if (input?.Trim().ToLower() == "update")
                     {
-                        if (archipelagoClient.GameState.CompletedLocations != null)
+                        if (archipelagoClient.LocationState.CompletedLocations != null)
                         {
                             Helpers.PlayerStateHandler.UpdatePlayerState(archipelagoClient, false);
                             Console.WriteLine($"Player state updated. Total Count: {archipelagoClient.CurrentSession.Items.AllItemsReceived.Count}");

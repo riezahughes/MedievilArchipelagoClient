@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Archipelago.Core.Models;
+﻿using Archipelago.Core.Models;
 using Archipelago.Core;
-using Microsoft.Extensions.Options;
 using Archipelago.Core.Util;
 
 namespace MedievilArchipelago.Helpers
@@ -92,6 +86,8 @@ namespace MedievilArchipelago.Helpers
                 var amber = Memory.ReadByte(Addresses.AmberPiece);
                 var fairies = Memory.ReadByte(Addresses.FairyCount);
 
+
+
                 if (amber >= 7)
                 {
                     var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Chicken Drumsticks - TA");
@@ -101,7 +97,7 @@ namespace MedievilArchipelago.Helpers
                     }
                 }
 
-                if(fairies == 6)
+                else if(fairies == 6)
                 {
                     var location = builtLocations.FirstOrDefault(loc => loc.Name == "Chalice: Ant Hill");
                     if (location != null)
@@ -110,6 +106,11 @@ namespace MedievilArchipelago.Helpers
                     }
                 }
 
+                var completeLocation = builtLocations.FirstOrDefault(loc => loc.Name == "Cleared: Ant Hill");
+                if (completeLocation != null)
+                {
+                    client.SendLocation(completeLocation);
+                }
 
             }
 

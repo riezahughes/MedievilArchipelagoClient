@@ -1,25 +1,5 @@
-﻿using Archipelago.Core;
-using Archipelago.Core.Models;
-using Archipelago.Core.Util;
-using Archipelago.Core.Util.GPS;
-using Archipelago.MultiClient.Net.Models;
+﻿using Archipelago.Core.Models;
 using MedievilArchipelago.Models;
-using Newtonsoft.Json;
-using Serilog;
-using SharpDX.DXGI;
-using System;
-using System.Buffers.Text;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Location = Archipelago.Core.Models.Location;
 
 namespace MedievilArchipelago.Helpers
@@ -483,6 +463,7 @@ namespace MedievilArchipelago.Helpers
                                     CheckValue = loc.Check
                                 });
 
+
                                 CompositeLocation location = new CompositeLocation()
                                 {
                                     Name = loc.Name,
@@ -591,6 +572,7 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Book: Healing Fountain - TG", Addresses.TG_Book_HealingFountain, "1", "0"),
                 new GenericItemsData("Book: Gaze of an Angel - TG", Addresses.TG_Book_GazeOfAnAngel, "1", "0"),
                 new GenericItemsData("Book: Skull Key - TG", Addresses.TG_Book_SkullKey, "1", "0"),
+                new GenericItemsData("Book: The Chalice - TG", Addresses.TG_Book_Chalice, "1", "0"),
                 new GenericItemsData("Gargoyle: End of Level - TG", Addresses.TG_Gargoyle_EndOfLevel, "1", "0"),
                 new GenericItemsData("Cleared: The Graveyard", Addresses.TG_LevelStatus, "1", "16"),
                 new GenericItemsData("Chalice: The Graveyard", Addresses.TG_Pickup_Chalice, "1", "32896"),
@@ -1012,7 +994,7 @@ namespace MedievilArchipelago.Helpers
         {
             List<GenericItemsData> pgLocations = new List<GenericItemsData>() {
 
-                new GenericItemsData("Time Rune: Pumpkin Gorge", Addresses.PG_Pickup_TimeRune, "9", "256"), // this is still fucky.
+                new GenericItemsData("Time Rune: Pumpkin Gorge", Addresses.PG_Pickup_TimeRune, "9", "257"), // this is still fucky.
                 new GenericItemsData("Chaos Rune: Pumpkin Gorge", Addresses.PG_Pickup_ChaosRune, "9", "32896"),
                 new GenericItemsData("Earth Rune: Pumpkin Gorge", Addresses.PG_Pickup_EarthRune, "9", "32896"),
                 new GenericItemsData("Moon Rune: Pumpkin Gorge", Addresses.PG_Pickup_MoonRune, "9", "32896"),
@@ -1162,10 +1144,10 @@ namespace MedievilArchipelago.Helpers
         private static List<GenericItemsData> GetZaroksLairData()
         {
             List<GenericItemsData> zlLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Equipment: Good Lightning - ZL", Addresses.ZL_Pickup_GoodLightning, "22", "32896", true),
-                new GenericItemsData("Equipment: Silver Shield Arena - ZL", Addresses.ZL_Pickup_SilverShield,"22", "32896", true),
-                new GenericItemsData("Gargoyle: Entrance - ZL", Addresses.ZL_Gargoyle_Entrance, "21", "0"),
-                new GenericItemsData("Cleared: Zaroks Lair", Addresses.WinConditionCredits, "22", "101"),
+                new GenericItemsData("Equipment: Good Lightning - ZL", Addresses.ZL_Pickup_GoodLightning, "23", "32896", true),
+                new GenericItemsData("Equipment: Silver Shield Arena - ZL", Addresses.ZL_Pickup_SilverShield,"23", "32896", true),
+                new GenericItemsData("Gargoyle: Entrance - ZL", Addresses.ZL_Gargoyle_Entrance, "23", "0"),
+                new GenericItemsData("Cleared: Zaroks Lair", Addresses.WinConditionCredits, "23", "101"),
             };
             return zlLocations;
         }

@@ -7,7 +7,6 @@ using System.Runtime.InteropServices.JavaScript;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using SharpDX.Direct2D1;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MedievilArchipelago
@@ -358,6 +357,7 @@ namespace MedievilArchipelago
         public const uint TG_Book_HealingFountain = 0x00013751;
         public const uint TG_Book_GazeOfAnAngel = 0x0001386f;
         public const uint TG_Book_SkullKey = 0x000138c4;
+        public const uint TG_Book_Chalice = 0x00013b83;
         public const uint TG_Gargoyle_EndOfLevel = 0x00013a12;
         public const uint TG_Pickup_Chalice = 0x0012fda4;
 
@@ -548,7 +548,7 @@ namespace MedievilArchipelago
         public const uint TSV_Book_BlacksmithsMonthly = 0x01ca8c;
         public const uint TSV_Book_MissingCrucifix = 0x01a5b6;
         public const uint TSV_Book_FountainRune = 0x01a638;
-        public const uint TSV_Book_MayorsBust = 0x01a8d3;
+        public const uint TSV_Book_MayorsBust = 0x01a8df;
         public const uint TSV_Book_HistoryOfGallowmere1 = 0x01aae1;
         public const uint TSV_Book_HistoryOfGallowmere2 = 0x01ace8;
         public const uint TSV_Book_HistoryOfGallowmere3 = 0x01b065;
@@ -808,6 +808,6 @@ namespace MedievilArchipelago
 
         public const uint ZL_Pickup_GoodLightning = 0x0012ED38;
         public const uint ZL_Pickup_SilverShield = 0x0012EDF8;
-        public const uint ZL_Gargoyle_Entrance = 0x0019f26e;
+        public const uint ZL_Gargoyle_Entrance = 0x00020ba3;
     }
 }

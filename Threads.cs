@@ -3,8 +3,6 @@ using Archipelago.Core.Util;
 using Serilog;
 using MedievilArchipelago.Helpers;
 using System.Net.NetworkInformation;
-using Microsoft.Extensions.Hosting;
-using System.Threading;
 
 
 namespace MedievilArchipelago
@@ -38,6 +36,7 @@ namespace MedievilArchipelago
                 bool firstLoop = true;
 
                 ThreadHandlers.UpdateChestLocations(client, currentLocation);
+
                 if (currentLocation == 1 && runeSanityOption == 1)
                 {
 
@@ -98,7 +97,7 @@ namespace MedievilArchipelago
                             ThreadHandlers.UpdateInventoryWithAmber();
                         }
 
-                        if (!firstLoop && checkCurrentLevel < 17 && checkCurrentLevel > 0)
+                        if (!firstLoop && checkCurrentLevel < 23 && checkCurrentLevel > 0)
                         {
                             ThreadHandlers.UpdateChestLocations(client, checkCurrentLevel);
                         }
@@ -108,8 +107,17 @@ namespace MedievilArchipelago
                         //    Memory.WriteByte(Addresses.CurrentLevel, 0);
                         //}
 
+                        if (currentLocation != 0)
+                        {
+                            // this needs to run every time you enter a level. It needs to delay due to it maybe triggering in the middle of a level loading and causing crashes
+                            //PlayerStateHandler.UpdatePlayerState(client, false);
+                            //Console.WriteLine("-");
+                            //Thread.Sleep(3);
+                        }
+
                         if (currentLocation != checkCurrentLevel)
                         {
+
                             //StartMenuToExit();
                             ThreadHandlers.SetCheatMenu(client);
 
@@ -121,7 +129,10 @@ namespace MedievilArchipelago
                                 }
                                 //SetRuneAxis();
                             }
+
                             currentLocation = checkCurrentLevel;
+
+
                         }
 
                         if(runeSanityOption == 1)

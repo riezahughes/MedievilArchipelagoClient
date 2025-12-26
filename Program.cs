@@ -268,6 +268,11 @@ public class Program
             archipelagoClient.GPSHandler = Helpers.APHandlers.Client_GPSHandler();
             archipelagoClient.GPSHandler.SetInterval(100);
             archipelagoClient.GPSHandler.PositionChanged += (sender, args) => Helpers.APHandlers.Client_GPSPositionChanged(archipelagoClient, GameLocations);
+            archipelagoClient.GPSHandler.MapChanged += (sender, args) =>
+            {
+                Console.WriteLine($"GPS_Medievil_{archipelagoClient.CurrentSession.Players.ActivePlayer}");
+                archipelagoClient.CurrentSession.DataStorage[$"GPS_Medievil_{archipelagoClient.CurrentSession.Players.ActivePlayer}"] = args.NewMapName;
+            };
             archipelagoClient.GPSHandler.Start();
 
 

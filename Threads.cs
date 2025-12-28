@@ -48,6 +48,11 @@ namespace MedievilArchipelago
                     ThreadHandlers.ShowCurrentRuneStatus(client, mapCoords);
                 }
 
+                if(currentLocation == 0)
+                {
+                    ItemHandlers.SendChaliceCountToDataStorage(client);
+                }
+
 
                 if(currentLocation != 0)
                 {
@@ -107,12 +112,16 @@ namespace MedievilArchipelago
                         //    Memory.WriteByte(Addresses.CurrentLevel, 0);
                         //}
 
-                        if (currentLocation != 0)
+                        if (currentLocation == 0)
+                        {
+                            ItemHandlers.SendChaliceCountToDataStorage(client);
+                        }
+
+                        if (currentLocation != 0 && PlayerStateHandler.isInTheGame())
                         {
                             // this needs to run every time you enter a level. It needs to delay due to it maybe triggering in the middle of a level loading and causing crashes
-                            //PlayerStateHandler.UpdatePlayerState(client, false);
-                            //Console.WriteLine("-");
-                            //Thread.Sleep(3);
+                            PlayerStateHandler.UpdatePlayerState(client, false);
+                            Thread.Sleep(3);
                         }
 
                         if (currentLocation != checkCurrentLevel)

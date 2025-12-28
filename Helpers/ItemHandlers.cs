@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Archipelago.Core;
 using Archipelago.Core.Models;
 using Archipelago.Core.Util;
 
@@ -11,6 +12,39 @@ namespace MedievilArchipelago.Helpers
         internal const int countMax = 32767;
         internal const int maxHealth = 300;
 
+
+        public static async void SendChaliceCountToDataStorage(ArchipelagoClient client)
+        {
+            // gets the current live count when you boot the game, not the current session count.
+            int currentChaliceCount = Memory.ReadShort(Addresses.ChaliceWorldMapCount);
+
+            // gets the chalice count from the location checks. Doesn't work if you're getting chalices from the cheat menu.
+            //int currentChaliceCount = client.LocationState.CompletedLocations.Count(loc =>
+            //{
+            //    Console.WriteLine(loc.Name);
+            //    return loc.Name.Contains("Chalice: ");
+            //});
+            
+            //Console.WriteLine(currentChaliceCount);
+
+            if (currentChaliceCount >= 20 && currentChaliceCount <= 24) currentChaliceCount = 20;
+
+
+            string team = client.CurrentSession.Players.ActivePlayer.Team.ToString();
+            string storageKey = $"Medievil_ChaliceCount_Team{team}_{client.CurrentSession.Players.ActivePlayer.Name}";
+
+            client.CustomValues[storageKey] = currentChaliceCount;
+
+            await client.SaveGameStateAsync();
+#if DEBUG
+            if(client.CustomValues.TryGetValue(storageKey, out var value))
+            {
+                Console.WriteLine($"\nKey is: ${storageKey}\nDatastorage Chalice Count: {value}");
+
+            }
+#endif
+
+        }
         public static Dictionary<string, int> WeaponEquipDictionary = new Dictionary<string, int>
         {
             {"Equipment: Small Sword", 0},

@@ -270,7 +270,7 @@ public class Program
             archipelagoClient.GPSHandler.PositionChanged += (sender, args) => Helpers.APHandlers.Client_GPSPositionChanged(archipelagoClient, GameLocations);
             archipelagoClient.GPSHandler.MapChanged += (sender, args) =>
             {
-                archipelagoClient.CurrentSession.DataStorage[$"GPS_Medievil_Team{archipelagoClient.CurrentSession.Players.ActivePlayer.Team.ToString()}{archipelagoClient.CurrentSession.Players.ActivePlayer}"] = args.NewMapName;
+                archipelagoClient.CurrentSession.DataStorage[$"Medievil_GPS_Team{archipelagoClient.CurrentSession.Players.ActivePlayer.Team.ToString()}{archipelagoClient.CurrentSession.Players.ActivePlayer}"] = args.NewMapName;
             };
             archipelagoClient.GPSHandler.Start();
 

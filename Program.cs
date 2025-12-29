@@ -270,7 +270,7 @@ public class Program
             archipelagoClient.GPSHandler.PositionChanged += (sender, args) => Helpers.APHandlers.Client_GPSPositionChanged(archipelagoClient, GameLocations);
             archipelagoClient.GPSHandler.MapChanged += (sender, args) =>
             {
-                archipelagoClient.CurrentSession.DataStorage[$"Medievil_GPS_Team{archipelagoClient.CurrentSession.Players.ActivePlayer.Team.ToString()}{archipelagoClient.CurrentSession.Players.ActivePlayer}"] = args.NewMapName;
+                archipelagoClient.CurrentSession.DataStorage[$"Medievil_GPS_Team{archipelagoClient.CurrentSession.Players.ActivePlayer.Team.ToString()}_{archipelagoClient.CurrentSession.Players.ActivePlayer}"] = args.NewMapName;
             };
             archipelagoClient.GPSHandler.Start();
 
@@ -311,6 +311,47 @@ public class Program
 
                         string hintString = input?.Trim().ToLower() == "hint" ? "!hint" : $"!hint {input.Substring(5).Trim()}";
                         archipelagoClient.SendMessage(hintString);
+                    }
+                    else if (input?.Trim().ToLower() == "goal")
+                    {
+                        if (archipelagoClient.LocationState.CompletedLocations != null)
+                        {
+                            int getCurrentGoal = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("goal", "0").ToString());
+                            var currentChaliceCount = Helpers.ItemHandlers.GetChaliceCount(archipelagoClient);
+                            int maxChaliceCount = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("chalice_win_count", "0").ToString());
+
+                            if (currentChaliceCount == 248)
+                            {
+                                currentChaliceCount = 0;
+                            }
+                            else if (currentChaliceCount > 20)
+                            {
+                                currentChaliceCount = 20;
+                            }
+
+
+
+                            bool ZarokDead = archipelagoClient?.LocationState?.CompletedLocations.Any(x => x != null && x.Name.Equals("Cleared: Zaroks Lair")) == true;
+
+                            switch (getCurrentGoal)
+                            {
+                                case 0:
+
+                                    Console.WriteLine("Current Goal: Defeat Zarok");
+                                    Console.WriteLine($"Zarok Defeated: {(ZarokDead ? "Yes" : "No")}");
+                                    break;
+                                case 1:
+                                    Console.WriteLine($"Current Goal: Collect {maxChaliceCount} Chalices");
+                                    Console.WriteLine($"Current Chalice Count: {currentChaliceCount} / {maxChaliceCount}");
+                                    break;
+                                default:
+                                    Console.WriteLine($"Current Goal: Beat Zarok + Collect {maxChaliceCount} Chalices");
+                                    Console.WriteLine($"Current Chalice Count: {currentChaliceCount} / {maxChaliceCount}");
+                                    Console.WriteLine($"Zarok Defeated: {(ZarokDead ? "Yes" : "No")}");
+                                    break;
+                            }
+
+                        }
                     }
                     else if (input?.Trim().ToLower() == "update")
                     {
@@ -360,24 +401,24 @@ public class Program
 
                     }
                     // allow manually handling traps if you're in dev mode (for testing)
-                    #if DEBUG
-                        else if (input?.Trim().ToLower() == "heavytrap")
-                        {
-                            Helpers.TrapHandlers.HeavyDanTrap();
-                        }
-                        else if (input?.Trim().ToLower() == "lighttrap")
-                        {
-                            Helpers.TrapHandlers.LightDanTrap();
-                        }
-                        else if (input?.Trim().ToLower() == "darknesstrap")
-                        {
-                            Helpers.TrapHandlers.DarknessTrap(0x01);
-                        }
-                        else if (input?.Trim().ToLower() == "hudtrap")
-                        {
-                            Helpers.TrapHandlers.HudlessTrap();
-                        }
-                    #endif
+#if DEBUG
+                    else if (input?.Trim().ToLower() == "heavytrap")
+                    {
+                        Helpers.TrapHandlers.HeavyDanTrap();
+                    }
+                    else if (input?.Trim().ToLower() == "lighttrap")
+                    {
+                        Helpers.TrapHandlers.LightDanTrap();
+                    }
+                    else if (input?.Trim().ToLower() == "darknesstrap")
+                    {
+                        Helpers.TrapHandlers.DarknessTrap(0x01);
+                    }
+                    else if (input?.Trim().ToLower() == "hudtrap")
+                    {
+                        Helpers.TrapHandlers.HudlessTrap();
+                    }
+#endif
                     else if (!string.IsNullOrWhiteSpace(input))
                     {
                         Console.WriteLine($"Unknown command: '{input}'");

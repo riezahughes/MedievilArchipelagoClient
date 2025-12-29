@@ -13,22 +13,28 @@ namespace MedievilArchipelago.Helpers
         internal const int maxHealth = 300;
 
 
+        public static int GetChaliceCount(ArchipelagoClient client)
+        {
+            int currentChaliceCount = client.LocationState.CompletedLocations.Count(loc =>
+            {
+                return loc.Name.Contains("Chalice: ");
+            });
+
+            return currentChaliceCount;
+        }
+
         public static async void SendChaliceCountToDataStorage(ArchipelagoClient client)
         {
             // gets the current live count when you boot the game, not the current session count.
-            int currentChaliceCount = Memory.ReadShort(Addresses.ChaliceWorldMapCount);
+            //int currentChaliceCount = Memory.ReadShort(Addresses.ChaliceWorldMapCount);
 
-            // gets the chalice count from the location checks. Doesn't work if you're getting chalices from the cheat menu.
-            //int currentChaliceCount = client.LocationState.CompletedLocations.Count(loc =>
-            //{
-            //    Console.WriteLine(loc.Name);
-            //    return loc.Name.Contains("Chalice: ");
-            //});
-            
+            // gets the chalice count from the location checks.Doesn't work if you're getting chalices from the cheat menu.
+
+            var currentChaliceCount = GetChaliceCount(client);
+
             //Console.WriteLine(currentChaliceCount);
 
-            if (currentChaliceCount >= 20 && currentChaliceCount <= 24) currentChaliceCount = 20;
-
+            //if (currentChaliceCount >= 20 && currentChaliceCount <= 24) currentChaliceCount = 20;
 
             string team = client.CurrentSession.Players.ActivePlayer.Team.ToString();
             string storageKey = $"Medievil_ChaliceCount_Team{team}_{client.CurrentSession.Players.ActivePlayer.Name}";

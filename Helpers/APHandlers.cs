@@ -70,6 +70,7 @@ namespace MedievilArchipelago.Helpers
             {
                 TrapHandlers.ResetTraps();
             }
+
         }
 
 

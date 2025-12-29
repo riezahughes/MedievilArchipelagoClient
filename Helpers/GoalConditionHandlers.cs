@@ -20,8 +20,16 @@ namespace MedievilArchipelago.Helpers
         private static bool CheckChaliceCondition(ArchipelagoClient client)
         {
             int antOption = Int32.Parse(client.Options?.GetValueOrDefault("include_ant_hill_in_checks", "0").ToString());
-            int maxChaliceCount = antOption == 1 ? 20 : 19;
-            int currentCount = Memory.ReadShort(Addresses.ChaliceWorldMapCount);
+            int maxChaliceCount = Int32.Parse(client.Options?.GetValueOrDefault("chalice_win_count", "0").ToString());
+
+            if(antOption == 0)
+            {
+                if(maxChaliceCount > 19)
+                {
+                    maxChaliceCount = 19;
+                }
+            }
+            int currentCount = ItemHandlers.GetChaliceCount(client);
             int currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
             int currentMapPosition = Memory.ReadByte(Addresses.CurrentMapPosition);
 
@@ -31,7 +39,6 @@ namespace MedievilArchipelago.Helpers
             if (currentLevel == 10 && currentCount >= 20 && currentCount <= 24) return false;
 
             if (currentMapPosition == 8 && currentCount >= 20 && currentCount <= 24) return false;
-
 
             if (currentCount == maxChaliceCount)
             {

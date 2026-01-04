@@ -48,13 +48,13 @@ namespace MedievilArchipelago
                     ThreadHandlers.ShowCurrentRuneStatus(client, mapCoords);
                 }
 
-                if(currentLocation == 0)
-                {
-                    ItemHandlers.SendChaliceCountToDataStorage(client);
-                }
+                //  if(currentLocation == 0)
+                //{
+                //  ItemHandlers.SendChaliceCountToDataStorage(client);
+                //}
 
 
-                if(currentLocation != 0)
+                if (currentLocation != 0)
                 {
                     if (openWorldOption == 1)
                     {
@@ -112,10 +112,10 @@ namespace MedievilArchipelago
                         //    Memory.WriteByte(Addresses.CurrentLevel, 0);
                         //}
 
-                        if (currentLocation == 0)
-                        {
-                            ItemHandlers.SendChaliceCountToDataStorage(client);
-                        }
+                        //  if (currentLocation == 0)
+                        // {
+                        //  ItemHandlers.SendChaliceCountToDataStorage(client);
+                        //}
 
                         if (currentLocation != 0 && PlayerStateHandler.isInTheGame())
                         {
@@ -144,7 +144,7 @@ namespace MedievilArchipelago
 
                         }
 
-                        if(runeSanityOption == 1)
+                        if (runeSanityOption == 1)
                         {
                             ThreadHandlers.ShowCurrentRuneStatus(client, checkMapCoords);
                         }
@@ -279,9 +279,9 @@ namespace MedievilArchipelago
                         Console.WriteLine("Connection has timed out. Background Task Stopped. Please Restart the Client.");
                         Log.Error(ex, "Error in passive logic checks thread.");
                     }
-                    #if DEBUG
-                        Console.Write(".");
-                    #endif
+#if DEBUG
+                    Console.Write(".");
+#endif
 
                     Thread.Sleep(10000);
                 }

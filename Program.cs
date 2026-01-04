@@ -10,6 +10,8 @@ using Archipelago.Core.Util.Overlay;
 using Archipelago.MultiClient.Net.Models;
 using Microsoft.Extensions.Configuration;
 using System.Text;
+using Archipelago.Core.Util.GPS;
+using Newtonsoft.Json.Linq;
 
 public class Program
 {
@@ -270,7 +272,9 @@ public class Program
             archipelagoClient.GPSHandler.PositionChanged += (sender, args) => Helpers.APHandlers.Client_GPSPositionChanged(archipelagoClient, GameLocations);
             archipelagoClient.GPSHandler.MapChanged += (sender, args) =>
             {
-                archipelagoClient.CurrentSession.DataStorage[$"Medievil_GPS_Team{archipelagoClient.CurrentSession.Players.ActivePlayer.Team.ToString()}_{archipelagoClient.CurrentSession.Players.ActivePlayer}"] = args.NewMapName;
+                PositionData Data = archipelagoClient.GPSHandler.GetCurrentPosition();
+                JObject Package = JObject.FromObject(Data);
+                archipelagoClient.CurrentSession.DataStorage[$"Medievil_GPS_Team{archipelagoClient.CurrentSession.Players.ActivePlayer.Team.ToString()}_{archipelagoClient.CurrentSession.Players.ActivePlayer}"] = Package;
             };
             archipelagoClient.GPSHandler.Start();
 

@@ -32,12 +32,21 @@ jobs:
       # - name: Publish a release (Mac)
       #   run: dotnet publish -f net8.0-windows10.0.19041.0 -c Release -r osx-x64 --self-contained true /p:PublishSingleFile=true /p:EnableCompressionInSingleFile=true /p:PublishAppxPackage=false
 
-      - name: Rename File
-        run: mv ./publish/MedievilArchipelago.exe ./publish/MedievilArchipelago_${{ github.ref_name }}_x64.exe
+      - name: Rename Files
+        run: |
+            mv ./publish/MedievilArchipelago.exe ./publish/MedievilArchipelago_${{ github.ref_name }}_x64.exe
+            mv ./Assets/Medievil-SCES-00311-AP-Textures.zip ./Assets/Medievil-SCES-00311-AP-Textures-${{ github.ref_name }}.zip
 
-      - name: Publish an artifact
+      - name: Publish new client
         uses: softprops/action-gh-release@v2
         with:
           files: "./publish/MedievilArchipelago_${{ github.ref_name }}_x64.exe"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Textures
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "./Assets/Medievil-SCES-0031-AP-Textures.exe"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

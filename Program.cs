@@ -103,6 +103,7 @@ public class Program
         {
             Memory.GlobalOffset = Memory.GetDuckstationOffset();
         }
+
         catch (Exception ex)
         {
             Console.WriteLine($"An unexpected error occurred while getting Duckstation memory offset: {ex.Message}");

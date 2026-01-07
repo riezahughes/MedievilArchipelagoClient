@@ -43,9 +43,12 @@ namespace MedievilArchipelago.Helpers
 
             #if DEBUG
                 Console.WriteLine($"OnConnected Firing. Itemcount: {client.ItemState.ReceivedItems.Count}");
-            #endif
+#endif
 
-            PlayerStateHandler.UpdatePlayerState(client, false);
+            if (PlayerStateHandler.isInTheGame())
+            {
+                PlayerStateHandler.UpdatePlayerState(client, false);
+            }
 
 
             // reset traps in case of client crashes
@@ -147,9 +150,7 @@ namespace MedievilArchipelago.Helpers
 
             // this message can use emoji's through the overlay. Look into maybe making it a little more obvious 
             // what each item is with a symbol
-            client.AddOverlayMessage(e.Message.ToString());
-
-            Log.Logger.Information(JsonConvert.SerializeObject(e.Message));
+            //client.AddOverlayMessage(e.Message.ToString());
 
             string prefix;
             Kokuban.AnsiEscape.AnsiStyle bg;

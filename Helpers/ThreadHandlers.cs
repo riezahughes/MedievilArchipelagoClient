@@ -29,7 +29,51 @@ namespace MedievilArchipelago.Helpers
             Memory.WriteByte(Addresses.TG_EarthRuneYAxis, 0x0000);
         }
 
-        static internal void UpdateChestLocations(ArchipelagoClient client, int id)
+        static internal void ChangeDropModels()
+        {
+            List<uint> drops = [
+                Addresses.Model_SmallSword,
+                Addresses.Model_BroadSword,
+                Addresses.Model_MagicSword,
+                Addresses.Model_Daggers,
+                Addresses.Model_Axe,
+                Addresses.Model_Club,
+                Addresses.Model_Xbow,
+                Addresses.Model_ChickenDrumsticks,
+                Addresses.Model_Arm,
+                Addresses.Model_Lightning,
+                Addresses.Model_Longbow,
+                Addresses.Model_Spear,
+                Addresses.Model_Hammer,
+                Addresses.Model_FlamingBow,
+                Addresses.Model_MagicBow,
+                Addresses.Model_GLightning,
+                Addresses.Model_DragonArmor,
+                Addresses.Model_CopperShields,
+                Addresses.Model_SilverShield,
+                Addresses.Model_GoldShield,
+                Addresses.Model_ChaosRune,
+                Addresses.Model_EarthRune,
+                Addresses.Model_MoonRune,
+                Addresses.Model_StarRune,
+                Addresses.Model_TimeRune,
+                Addresses.Model_Vial,
+                Addresses.Model_LifeBottle,
+                Addresses.Model_Chalice,
+                Addresses.Model_GoldPouch,
+                Addresses.Model_VialSecondary,
+                Addresses.Model_GoldChest,
+                Addresses.Model_Coin,
+                Addresses.Model_HarvesterPart,
+            ];
+
+            foreach (uint drop in drops)
+            {
+                Memory.WriteByte(drop, 0x0040);
+            }
+        }
+
+            static internal void UpdateChestLocations(ArchipelagoClient client, int id)
         {
             var chestEntityList = ChestContentsDictionary();
             foreach (ulong chestEntity in chestEntityList[id])

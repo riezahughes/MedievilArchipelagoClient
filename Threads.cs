@@ -35,6 +35,8 @@ namespace MedievilArchipelago
 
                 bool firstLoop = true;
 
+                ThreadHandlers.ChangeDropModels();
+
                 ThreadHandlers.UpdateChestLocations(client, currentLocation);
 
                 if (currentLocation == 1 && runeSanityOption == 1)
@@ -120,14 +122,15 @@ namespace MedievilArchipelago
                         if (currentLocation != 0 && PlayerStateHandler.isInTheGame())
                         {
                             // this needs to run every time you enter a level. It needs to delay due to it maybe triggering in the middle of a level loading and causing crashes
+                            Thread.Sleep(3000);
                             PlayerStateHandler.UpdatePlayerState(client, false);
-                            Thread.Sleep(3);
+                            
                         }
 
                         if (currentLocation != checkCurrentLevel)
                         {
 
-                            //StartMenuToExit();
+                            
                             ThreadHandlers.SetCheatMenu(client);
 
                             if (checkCurrentLevel != 0)

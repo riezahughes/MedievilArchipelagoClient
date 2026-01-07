@@ -250,7 +250,41 @@ namespace MedievilArchipelago
 
         public const uint HoH_Gargoyle_Entrance = 0x0001b6ce;
 
+        // model choice changes
 
+        public const uint Model_SmallSword = 0x000D52B0;
+        public const uint Model_BroadSword = 0x000D52B8;
+        public const uint Model_MagicSword = 0x000D52C0;
+        public const uint Model_Daggers = 0x000D52C8;
+        public const uint Model_Axe = 0x000D52D0;
+        public const uint Model_Club = 0x000D52D8;
+        public const uint Model_Xbow = 0x000D52E0;
+        public const uint Model_ChickenDrumsticks = 0x000D52E8;
+        public const uint Model_Arm = 0x000D52F0;
+        public const uint Model_Lightning = 0x000D52F8;
+        public const uint Model_Longbow = 0x000D5300;
+        public const uint Model_Spear = 0x000D5308;
+        public const uint Model_Hammer = 0x000D5310;
+        public const uint Model_FlamingBow = 0x000D5318;
+        public const uint Model_MagicBow = 0x000D5320;
+        public const uint Model_GLightning = 0x000D5328;
+        public const uint Model_DragonArmor = 0x000D5330;
+        public const uint Model_CopperShields = 0x000D5350;
+        public const uint Model_SilverShield = 0x000D5358;
+        public const uint Model_GoldShield = 0x000D5360;
+        public const uint Model_ChaosRune = 0x000D6674;
+        public const uint Model_EarthRune = 0x000D667C;
+        public const uint Model_MoonRune = 0x000D6684;
+        public const uint Model_StarRune = 0x000D668C;
+        public const uint Model_TimeRune = 0x000D6694;
+        public const uint Model_Vial = 0x000D6FD0;
+        public const uint Model_LifeBottle = 0x000D6FD8;
+        public const uint Model_Chalice = 0x000D6FE8;
+        public const uint Model_GoldPouch = 0x000D7008;
+        public const uint Model_VialSecondary = 0x000D7010;
+        public const uint Model_GoldChest = 0x000D7018;
+        public const uint Model_Coin = 0x000D7030;
+        public const uint Model_HarvesterPart = 0x000D7040;
 
         // key items
 

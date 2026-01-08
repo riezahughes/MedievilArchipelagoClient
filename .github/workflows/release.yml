@@ -47,6 +47,6 @@ jobs:
       - name: Publish Textures
         uses: softprops/action-gh-release@v2
         with:
-          files: "./Assets/Medievil-SCES-0031-AP-Textures.exe"
+          files: "./Assets/Medievil-SCES-00311-AP-Textures-${{ github.ref_name }}.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

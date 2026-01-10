@@ -269,7 +269,7 @@ public class Program
 
             // Set up GPS
             archipelagoClient.GPSHandler = Helpers.APHandlers.Client_GPSHandler();
-            archipelagoClient.GPSHandler.SetInterval(100);
+            archipelagoClient.GPSHandler.SetInterval(500);
             archipelagoClient.GPSHandler.PositionChanged += (sender, args) => Helpers.APHandlers.Client_GPSPositionChanged(archipelagoClient, GameLocations);
             archipelagoClient.GPSHandler.MapChanged += (sender, args) =>
             {

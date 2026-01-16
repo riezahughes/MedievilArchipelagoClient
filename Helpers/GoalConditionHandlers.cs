@@ -40,7 +40,7 @@ namespace MedievilArchipelago.Helpers
 
             if (currentMapPosition == 8 && currentCount >= 20 && currentCount <= 24) return false;
 
-            if (currentCount == maxChaliceCount)
+            if (currentCount >= maxChaliceCount)
             {
                 return true;
             }

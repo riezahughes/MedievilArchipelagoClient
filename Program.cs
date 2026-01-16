@@ -274,6 +274,7 @@ public class Program
             archipelagoClient.GPSHandler.MapChanged += (sender, args) =>
             {
                 PositionData Data = archipelagoClient.GPSHandler.GetCurrentPosition();
+                Data.Region = Helpers.ItemHandlers.GetChaliceCount(archipelagoClient).ToString();
                 JObject Package = JObject.FromObject(Data);
                 archipelagoClient.CurrentSession.DataStorage[$"Medievil_GPS_Team{archipelagoClient.CurrentSession.Players.ActivePlayer.Team.ToString()}_{archipelagoClient.CurrentSession.Players.ActivePlayer}"] = Package;
             };

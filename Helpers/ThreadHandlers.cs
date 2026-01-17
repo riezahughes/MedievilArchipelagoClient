@@ -73,15 +73,16 @@ namespace MedievilArchipelago.Helpers
             }
         }
 
-            static internal void UpdateChestLocations(ArchipelagoClient client, int id)
+        static internal void UpdateChestLocations(ArchipelagoClient client, int id)
         {
-            var chestEntityList = ChestContentsDictionary();
+        var chestEntityList = ChestContentsDictionary();
             foreach (ulong chestEntity in chestEntityList[id])
             {
-                Memory.WriteByte(chestEntity, 0x0008);
+                Memory.WriteByte(chestEntity, 0x08);
             }
 
         }
+
 
 
         static internal void UpdateAsylumDynamicDrops()
@@ -157,6 +158,26 @@ namespace MedievilArchipelago.Helpers
             Memory.WriteByte(exitList[0], 0x78);
         }
 
+        static internal int CountChalicesFromLevelStatus()
+        {
+            int currentChaliceCount = 0;
+            var playerStatus = ItemHandlers.StatusAndInventoryAddressDictionary();
+
+            // for every level, read the status in memory. For ever level that matches either 19 (cleared) or 3 (picked up chalace, but havn't finished hall) increase the chalice count
+            foreach (KeyValuePair<string, uint> ch in playerStatus["Level Status"])
+            {
+                int levelStatus = Memory.ReadByte(ch.Value);
+
+                if (levelStatus == 19 || levelStatus == 3)
+                {
+                    currentChaliceCount++;
+                }
+
+            }
+
+            return currentChaliceCount;
+        }
+
         static internal void UpdateHallOfHeroesTable()
         {
             // counting from base address to the item choice
@@ -182,6 +203,40 @@ namespace MedievilArchipelago.Helpers
             Memory.WriteByte(Addresses.HOH_DirkSteadfast2_drop, 0x08);
             Memory.WriteByte(Addresses.HOH_MegwynneStormbinder1_drop, 0x08);
             Memory.WriteByte(Addresses.HOH_MegwynneStormbinder2_drop, 0x08);
+        }
+
+        static internal Dictionary<int, uint> HallOfHeroesCheckList = new Dictionary<int, uint>
+        {
+            [1] = Addresses.HOH_CannyTim1,
+            [2] = Addresses.HOH_CannyTim2,
+            [3] = Addresses.HOH_StanyerIronHewer1,
+            [4] = Addresses.HOH_StanyerIronHewer2,
+            [5] = Addresses.HOH_WodenTheMighty1,
+            [6] = Addresses.HOH_WodenTheMighty2,
+            [7] = Addresses.HOH_Imanzi1,
+            [8] = Addresses.HOH_RavenHoovesTheArcher1,
+            [9] = Addresses.HOH_BloodmonathSkullCleaver1,
+            [10] = Addresses.HOH_RavenHoovesTheArcher2,
+            [11] = Addresses.HOH_KarlStungard1,
+            [12] = Addresses.HOH_BloodmonathSkullCleaver2,
+            [13] = Addresses.HOH_DirkSteadfast1,
+            [14] = Addresses.HOH_RavenHoovesTheArcher3,
+            [15] = Addresses.HOH_MegwynneStormbinder1,
+            [16] = Addresses.HOH_RavenHoovesTheArcher4,
+            [17] = Addresses.HOH_Imanzi2,
+            [18] = Addresses.HOH_KarlStungard2,
+            [19] = Addresses.HOH_DirkSteadfast2,
+            [20] = Addresses.HOH_MegwynneStormbinder2
+
+        };
+
+        static internal void UpdateHallOfHeroesChecks(int chaliceCount) 
+        {
+            byte[] updateValue = BitConverter.GetBytes(0x270F);
+            var dict = HallOfHeroesCheckList;
+
+            Memory.WriteByteArray(dict[chaliceCount], updateValue);
+
         }
 
         static internal void SetCheatMenu(ArchipelagoClient client)

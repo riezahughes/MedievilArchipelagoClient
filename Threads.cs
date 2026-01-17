@@ -10,8 +10,15 @@ namespace MedievilArchipelago
     public class MemoryCheckThreads
     {
 
+        static bool withinAsylum = false;
+        static bool updatedAmber = false;
+        static bool hallOfHeroesChecked = false;
+        static bool hallOfHeroesRewarded = false;
+        static bool chestsFilled = false;
         async public static Task PassiveLogicChecks(ArchipelagoClient client, string url, CancellationTokenSource cts)
         {
+
+
             await Task.Run(() =>
             {
                 Console.WriteLine("Background task running...");
@@ -22,22 +29,16 @@ namespace MedievilArchipelago
                 byte mapCoords = Memory.ReadByte(Addresses.CurrentMapPosition);
 
                 // created an array of bytes for the update value to be 9999
-                byte[] updateValue = BitConverter.GetBytes(0x270F);
 
                 int runeSanityOption = Int32.Parse(client.Options?.GetValueOrDefault("runesanity", "0").ToString());
+                int chaliceOption = Int32.Parse(client.Options?.GetValueOrDefault("include_chalices_in_checks", "0").ToString());
+                int antHillOption = Int32.Parse(client.Options?.GetValueOrDefault("include_ant_hill_in_checks", "0").ToString());
                 int openWorldOption = Int32.Parse(client.Options?.GetValueOrDefault("progression_option", "0").ToString());
-
-                //StartMenuToExit();
-                ThreadHandlers.SetCheatMenu(client);
 
                 // creates a hashset to compare against
                 HashSet<int> processedChaliceCounts = new HashSet<int>();
 
-                bool firstLoop = true;
-
                 ThreadHandlers.ChangeDropModels();
-
-                ThreadHandlers.UpdateChestLocations(client, currentLocation);
 
                 if (currentLocation == 1 && runeSanityOption == 1)
                 {
@@ -45,236 +46,256 @@ namespace MedievilArchipelago
                     Memory.WriteByte(Addresses.CurrentLevel, 0);
                 }
 
-                if (runeSanityOption == 1)
+                void SetupAsylumMonitor()
                 {
-                    ThreadHandlers.ShowCurrentRuneStatus(client, mapCoords);
+                    Memory.MonitorAddressForAction<byte>(
+                        Addresses.CurrentLevel,
+                        () =>
+                        {   
+                            if (withinAsylum == false)
+                            {
+                                ThreadHandlers.UpdateAsylumDynamicDrops();
+                                withinAsylum = true;
+#if DEBUG
+                                //Console.Write(".");
+                                Console.WriteLine("---------Asylum Monitor Done");
+#endif
+                            }
+                        },
+                        value => value == 14);
                 }
 
-                //  if(currentLocation == 0)
-                //{
-                //  ItemHandlers.SendChaliceCountToDataStorage(client);
-                //}
-
-
-                if (currentLocation != 0)
+                void SetupAnthillMonitor()
                 {
-                    if (openWorldOption == 1)
-                    {
-                        ThreadHandlers.OpenTheMap();
-                    }
-
-                    //SetRuneAxis();
+                    Memory.MonitorAddressForAction<ushort>(
+                        Addresses.TA_BossHealth,
+                        () =>
+                        {
+                            if (updatedAmber == false)
+                            {
+                                ThreadHandlers.UpdateInventoryWithAmber();
+                                updatedAmber = true;
+                            }
+#if DEBUG
+                            Console.WriteLine("---------AntHills Monitor Done");
+#endif
+                        },
+                        value => value == 1000);
                 }
 
-                if (currentLocation == 14)
+                void SetupLevelChestMonitor()
                 {
-                    ThreadHandlers.UpdateAsylumDynamicDrops();
+                    Memory.MonitorAddressForAction<ushort>(
+                        Addresses.CurrentLevel,
+                        () =>
+                        {
+                                Thread.Sleep(8000);
+                                short checkMapCoords = Memory.ReadShort(Addresses.CurrentMapPosition);
+                                var loc = Memory.ReadByte(Addresses.CurrentLevel);
+
+                                if (chestsFilled == false)
+                                {
+                                    ThreadHandlers.UpdateChestLocations(client, loc);
+                                    chestsFilled = true;
+                                }
+#if DEBUG
+                            Console.WriteLine("---------Chest Monitor Done");
+
+#endif
+                        },
+                        value => value < 23 && value > 0 && PlayerStateHandler.isInTheGame());
                 }
+
+                void SetupHallOfHeroesMonitor()
+                {
+                    Memory.MonitorAddressForAction<ushort>(
+                        Addresses.CurrentLevel,
+                        () =>
+                        {
+                            if (hallOfHeroesChecked == false)
+                            {
+                                ThreadHandlers.UpdateHallOfHeroesTable();
+#if DEBUG
+                                Console.WriteLine("---------HoH Array Update Monitor Done");
+#endif
+                                hallOfHeroesChecked = true;
+                            }
+                        },
+                        value => value == 18);
+                }
+
+                void SetupHallOfHeroesRewardsMonitor() { 
+                    Memory.MonitorAddressForAction<byte>(
+                        Addresses.HOH_ListenedToHero,
+                        () =>
+                        {
+                            int chaliceCount = ThreadHandlers.CountChalicesFromLevelStatus();
+                            byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
+                            short dialogueStatus = Memory.ReadShort(Addresses.HOH_ListenedToHero);
+
+                            if (hallOfHeroesRewarded == false)
+                            {
+                                ThreadHandlers.UpdateHallOfHeroesChecks(chaliceCount);
+#if DEBUG
+                                Console.WriteLine("---------HoH Check Update Monitor Done");
+#endif
+                                hallOfHeroesRewarded = true;
+                            }
+
+                        }, value => value == 16 && PlayerStateHandler.isInTheGame());
+                }
+
+
+                void SetupCheatMenuMonitor()
+                {
+                    Memory.MonitorAddressForAction<ushort>(
+                        Addresses.CurrentLevel,
+                        () =>
+                        {
+                            var mainMenuCheck = Memory.ReadShort(Addresses.CurrentMapPosition);
+
+                            if (mainMenuCheck != 0x0100) {
+                                ThreadHandlers.SetCheatMenu(client);
+#if DEBUG
+                                Console.WriteLine("---------Cheat Monitor Done");
+#endif
+                            }
+
+                        },
+                        value => value < 23 && value > 0 && PlayerStateHandler.isInTheGame());
+                }
+
+                void SetupOpenWorldMonitor()
+                {
+                    Memory.MonitorAddressForAction<ushort>(
+                        Addresses.CurrentLevel,
+                        () =>
+                        {
+                            ThreadHandlers.OpenTheMap();
+#if DEBUG
+                            Console.WriteLine("---------Open World Monitor Done");
+#endif
+                        },
+                        value => value < 23 && value > 0 && PlayerStateHandler.isInTheGame());
+                }
+
+                /*
+                 * Process Delayed Items (keep)
+                 * Check Goal Conditions (keep)
+                 * x Asylumn Dynamic Drops x 
+                 * x Amber Inventory Changes x
+                 * x Chest Location Changes per level
+                 * x Player State Update if you're not in the hub and level changes
+                 * x Open the World Map if there's a level change
+                 * x Set the Cheat Menu on level change
+                 * x Show Rune Status (does not work right now, can remove)
+                 * x Hall of heroes checks
+                 */
+
+                SetupAsylumMonitor();
+                SetupLevelChestMonitor();
+
+                if (chaliceOption == 1)
+                {
+                    SetupHallOfHeroesMonitor();
+                    SetupHallOfHeroesRewardsMonitor();
+                }
+
+                if (currentLocation == 7 && antHillOption == 1)
+                {
+                    SetupAnthillMonitor();
+                }
+
+                if (openWorldOption == 1)
+                {
+                    SetupOpenWorldMonitor();
+                }
+
+                SetupCheatMenuMonitor();
 
                 while (!cts.Token.IsCancellationRequested)
                 {
                     try
                     {
-                        // a really dumb way to check but it works. Removing for now. There's no need and people complained when hosting without any public internet access.
-                        //if (!url.Contains("localhost")) {
-                        //    PingReply reply = ping.Send("www.google.com", 1000);
-
-                        //    if (reply.Status == IPStatus.TimedOut)
-                        //    {
-                        //        cts.Cancel();
-                        //        Console.WriteLine("Connection has timed out. Background Task Stopped. Please Restart the Client.");
-                        //        throw new Exception("Connection has timed out");
-                        //    }
-                        //}
-
                         ThreadHandlers.ProcessDelayedItems(client);
 
                         // checks against current levels and updates chest entities
                         byte checkCurrentLevel = Memory.ReadByte(Addresses.CurrentLevel);
                         short checkQueenAntStatus = Memory.ReadShort(Addresses.TA_BossHealth);
-                        byte checkMapCoords = Memory.ReadByte(Addresses.CurrentMapPosition);
+                        short checkMapCoords = Memory.ReadShort(Addresses.CurrentMapPosition);
 
-                        if (currentLocation == 14)
+
+                        if(checkMapCoords == 0x0100)
                         {
-                            ThreadHandlers.UpdateAsylumDynamicDrops();
+                            if (openWorldOption == 1)
+                            {
+                                SetupOpenWorldMonitor();
+                            }
+                            SetupCheatMenuMonitor();
+                            ThreadHandlers.ChangeDropModels();
                         }
 
-                        if (currentLocation == 7 && checkQueenAntStatus == 0x03e8) // if we're in the ant hill and the queens hp has spawned
+
+                         // Sets up the drops for within the asylum correctly, so it doesn't ruin the randomizer
+                        if (currentLocation != 14 && PlayerStateHandler.isInTheGame() && checkMapCoords != 0x0100)
                         {
-                            ThreadHandlers.UpdateInventoryWithAmber();
+                            withinAsylum = false;
                         }
 
-                        if (!firstLoop && checkCurrentLevel < 23 && checkCurrentLevel > 0)
+                        // sets up the anthil amber choices at the boss fight in the anthill so it doesn't ruin the rewards
+                        if (antHillOption == 1 && currentLocation == 7 && updatedAmber == false && PlayerStateHandler.isInTheGame() && checkMapCoords != 0x0100)
                         {
-                            ThreadHandlers.UpdateChestLocations(client, checkCurrentLevel);
+                            SetupAnthillMonitor();
                         }
-                        // i think i'm losing my mind
-                        //if (currentLocation == 0 && openWorldOption == 1)
-                        //{
-                        //    Memory.WriteByte(Addresses.CurrentLevel, 0);
-                        //}
 
-                        //  if (currentLocation == 0)
-                        // {
-                        //  ItemHandlers.SendChaliceCountToDataStorage(client);
-                        //}
+                        if (currentLocation != 7 && PlayerStateHandler.isInTheGame() && checkMapCoords != 0x0100)
+                        {
+                            updatedAmber = false;
+                        }
+
+
+                        if (chaliceOption == 1 && currentLocation != 18 && PlayerStateHandler.isInTheGame() && checkMapCoords != 0x0100)
+                        {
+                            hallOfHeroesChecked = false;
+                            SetupHallOfHeroesMonitor();
+                        }
+
+                        if (chaliceOption == 1 && currentLocation != 18 && currentLocation != 0 && hallOfHeroesRewarded == true && PlayerStateHandler.isInTheGame() && checkMapCoords != 0x0100)
+                        {
+                            hallOfHeroesRewarded = false;
+                            SetupHallOfHeroesRewardsMonitor();
+                        }
 
                         if (currentLocation != 0 && PlayerStateHandler.isInTheGame())
                         {
                             // this needs to run every time you enter a level. It needs to delay due to it maybe triggering in the middle of a level loading and causing crashes
-                            Thread.Sleep(3000);
-                            PlayerStateHandler.UpdatePlayerState(client, false);
-                            
-                        }
-
-                        if (currentLocation != checkCurrentLevel)
-                        {
-
-                            
-                            ThreadHandlers.SetCheatMenu(client);
-
-                            if (checkCurrentLevel != 0)
+                            Thread.Sleep(8000);
+                            checkMapCoords = Memory.ReadShort(Addresses.CurrentMapPosition);
+                            if (checkMapCoords != 0x0100)
                             {
-                                if (openWorldOption == 1)
-                                {
-                                    ThreadHandlers.OpenTheMap();
-                                }
-                                //SetRuneAxis();
+                                PlayerStateHandler.UpdatePlayerState(client, false);
                             }
-
-                            currentLocation = checkCurrentLevel;
-
-
+                            
                         }
 
-                        if (runeSanityOption == 1)
+                        if (currentLocation != checkCurrentLevel && chestsFilled == true)
                         {
-                            ThreadHandlers.ShowCurrentRuneStatus(client, checkMapCoords);
+                            checkMapCoords = Memory.ReadShort(Addresses.CurrentMapPosition);
+                            if (checkMapCoords != 0x0100)
+                            {
+                                chestsFilled = false;
+                                SetupLevelChestMonitor();
+                            }
                         }
 
-                        firstLoop = false;
+                        if (currentLocation != checkCurrentLevel && checkMapCoords != 0x0100)
+                        {
+                            currentLocation = checkCurrentLevel;
+                        }
+
 
                         GoalConditionHandlers.CheckGoalCondition(client);
 
-                        int currentChaliceCount = 0;
-                        var playerStatus = ItemHandlers.StatusAndInventoryAddressDictionary();
-
-                        // for every level, read the status in memory. For ever level that matches either 19 (cleared) or 3 (picked up chalace, but havn't finished hall) increase the chalice count
-                        foreach (KeyValuePair<string, uint> ch in playerStatus["Level Status"])
-                        {
-                            int levelStatus = Memory.ReadByte(ch.Value);
-
-                            if (levelStatus == 19 || levelStatus == 3)
-                            {
-                                currentChaliceCount++;
-                            }
-
-                        }
-                        // updates hall of heroes item dropped
-
-                        byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
-
-                        if (currentLevel == 18)
-                        {
-                            ThreadHandlers.UpdateHallOfHeroesTable();
-                        }
-
-
-
-                        short dialogueStatus = Memory.ReadShort(Addresses.HOH_ListenedToHero);
-
-                        // for debugging
-                        //Console.WriteLine($"{currentLevel} - {dialogueStatus} - {!processedChaliceCounts.Contains(currentChaliceCount)} - {client.IsConnected}");
-
-                        if (currentLevel == 18 && dialogueStatus == 16 && !processedChaliceCounts.Contains(currentChaliceCount) && client.IsConnected)
-                        {
-
-                            // check chalice count against all HOH entries.
-                            switch (currentChaliceCount)
-                            {
-                                case 1:
-                                    Memory.WriteByteArray(Addresses.HOH_CannyTim1, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 2:
-                                    Memory.WriteByteArray(Addresses.HOH_CannyTim2, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 3:
-                                    Memory.WriteByteArray(Addresses.HOH_StanyerIronHewer1, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 4:
-                                    Memory.WriteByteArray(Addresses.HOH_StanyerIronHewer2, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 5:
-                                    Memory.WriteByteArray(Addresses.HOH_WodenTheMighty1, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 6:
-                                    Memory.WriteByteArray(Addresses.HOH_WodenTheMighty2, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 7:
-                                    Memory.WriteByteArray(Addresses.HOH_Imanzi1, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 8:
-                                    Memory.WriteByteArray(Addresses.HOH_RavenHoovesTheArcher1, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 9:
-                                    Memory.WriteByteArray(Addresses.HOH_BloodmonathSkullCleaver1, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 10:
-                                    Memory.WriteByteArray(Addresses.HOH_RavenHoovesTheArcher2, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 11:
-                                    Memory.WriteByteArray(Addresses.HOH_KarlStungard1, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 12:
-                                    Memory.WriteByteArray(Addresses.HOH_BloodmonathSkullCleaver2, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 13:
-                                    Memory.WriteByteArray(Addresses.HOH_DirkSteadfast1, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 14:
-                                    Memory.WriteByteArray(Addresses.HOH_RavenHoovesTheArcher3, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 15:
-                                    Memory.WriteByteArray(Addresses.HOH_MegwynneStormbinder1, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 16:
-                                    Memory.WriteByteArray(Addresses.HOH_RavenHoovesTheArcher4, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 17:
-                                    Memory.WriteByteArray(Addresses.HOH_Imanzi2, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 18:
-                                    Memory.WriteByteArray(Addresses.HOH_KarlStungard2, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 19:
-                                    Memory.WriteByteArray(Addresses.HOH_DirkSteadfast2, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                                case 20:
-                                    Memory.WriteByteArray(Addresses.HOH_MegwynneStormbinder2, updateValue);
-                                    processedChaliceCounts.Add(currentChaliceCount);
-                                    break;
-                            }
-
-                        }
                     }
                     catch (Exception ex)
                     {
@@ -283,10 +304,10 @@ namespace MedievilArchipelago
                         Log.Error(ex, "Error in passive logic checks thread.");
                     }
 #if DEBUG
-                    Console.Write(".");
+                    //Console.Write(".");
 #endif
 
-                    Thread.Sleep(10000);
+                    Thread.Sleep(3000);
                 }
             }, cts.Token);
 

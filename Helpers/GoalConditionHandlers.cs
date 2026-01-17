@@ -30,17 +30,10 @@ namespace MedievilArchipelago.Helpers
                 }
             }
             int currentCount = ItemHandlers.GetChaliceCount(client);
-            int currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
-            int currentMapPosition = Memory.ReadByte(Addresses.CurrentMapPosition);
 
             if (client?.LocationState == null || client.CurrentSession == null) return false;
 
-            // There is an overlap with pumpkin serpent. This resolved the conflict and won't have it fire early.
-            if (currentLevel == 10 && currentCount >= 20 && currentCount <= 24) return false;
-
-            if (currentMapPosition == 8 && currentCount >= 20 && currentCount <= 24) return false;
-
-            if (currentCount == maxChaliceCount)
+            if (currentCount >= maxChaliceCount)
             {
                 return true;
             }

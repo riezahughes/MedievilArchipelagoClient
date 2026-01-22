@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Runtime.InteropServices.JavaScript;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace MedievilArchipelago
+﻿namespace MedievilArchipelago
 {
     public static class Addresses
     {
@@ -84,16 +73,16 @@ namespace MedievilArchipelago
         // 0x1000 (4096) = 100%
         public const uint DaringDashSkill = 0x000F81C4;
 
-        public const uint WeaponIconX =	0x000DD78C;
-        public const uint WeaponIconY =	0x000DD78E;
-        public const uint ShieldIconX =	0x000DD798;
-        public const uint ShieldIconY =	0x000DD79A;
-        public const uint HealthbarX =	0x000DD7A4;
-        public const uint HealthbarY =	0x000DD7A6;
+        public const uint WeaponIconX = 0x000DD78C;
+        public const uint WeaponIconY = 0x000DD78E;
+        public const uint ShieldIconX = 0x000DD798;
+        public const uint ShieldIconY = 0x000DD79A;
+        public const uint HealthbarX = 0x000DD7A4;
+        public const uint HealthbarY = 0x000DD7A6;
         public const uint ChaliceIconX = 0x000DD7BC;
         public const uint ChaliceIconY = 0x000DD7BE;
-        public const uint MoneyIconX =	0x000DD7C8;
-        public const uint MoneyIconY =	0x000DD7CA;
+        public const uint MoneyIconX = 0x000DD7C8;
+        public const uint MoneyIconY = 0x000DD7CA;
 
         // Completed levels
         public const uint TG_LevelStatus = 0x000f81e1;
@@ -120,7 +109,7 @@ namespace MedievilArchipelago
 
         // Unlocking the Map
         public const uint MAP_Unlock1 = 0x000F8214;
-        public const uint MAP_Unlock2 = 0x000F8215;
+        //public const uint MAP_Unlock2 = 0x000F8215; // this ones a wee bawbag. It triggers copy protection
         public const uint MAP_Unlock3 = 0x000F8216;
         public const uint MAP_Unlock4 = 0x000F8217;
         public const uint MAP_Unlock5 = 0x000F8218;
@@ -146,7 +135,7 @@ namespace MedievilArchipelago
 
         // Quit characters on the start menu
         public const uint MENU_Quit1 = 0x000ed764;
-        public const uint MENU_Quit2 = 0x000ed765; 
+        public const uint MENU_Quit2 = 0x000ed765;
 
 
         // Rune Entity Locations

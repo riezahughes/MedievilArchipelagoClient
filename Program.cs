@@ -1,17 +1,17 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.Text;
 using Archipelago.Core;
 using Archipelago.Core.GameClients;
 using Archipelago.Core.Models;
 using Archipelago.Core.Util;
-using MedievilArchipelago;
-using Helpers = MedievilArchipelago.Helpers;
+using Archipelago.Core.Util.GPS;
 using Archipelago.Core.Util.Overlay;
 using Archipelago.MultiClient.Net.Models;
+using MedievilArchipelago;
 using Microsoft.Extensions.Configuration;
-using System.Text;
-using Archipelago.Core.Util.GPS;
 using Newtonsoft.Json.Linq;
+using Helpers = MedievilArchipelago.Helpers;
 
 public class Program
 {
@@ -37,7 +37,7 @@ public class Program
         string password;
 
         bool firstRun = true;
-        
+
 
 
         CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
@@ -79,10 +79,10 @@ public class Program
             }
         }
 
-        #if DEBUG
-        #else
+#if DEBUG
+#else
             Console.Clear();
-        #endif
+#endif
 
         bool connected = gameClient.Connect();
 
@@ -137,24 +137,24 @@ public class Program
 
         //};
 
-        #if DEBUG
-            // auto logs in with Local.json settings if it's set to dev (because laziness)
-            var configuration = new ConfigurationBuilder()
-                // Add the default appsettings.json file
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
-                .Build();
+#if DEBUG
+        // auto logs in with Local.json settings if it's set to dev (because laziness)
+        var configuration = new ConfigurationBuilder()
+            // Add the default appsettings.json file
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
+            .Build();
 
-            Console.WriteLine("Logging in using settings in appsettings.Local.json");
-            Console.WriteLine(configuration["port"]);
-            Console.WriteLine(configuration["slot"]);
-            Console.WriteLine(configuration["pass"]);
-            url = "wss://archipelago.gg";
-            port = configuration["port"];
-            slot = configuration["slot"];
-            password = configuration["pass"];
+        Console.WriteLine("Logging in using settings in appsettings.Local.json");
+        Console.WriteLine(configuration["port"]);
+        Console.WriteLine(configuration["slot"]);
+        Console.WriteLine(configuration["pass"]);
+        url = "wss://archipelago.gg";
+        port = configuration["port"];
+        slot = configuration["slot"];
+        password = configuration["pass"];
 
-        #else
+#else
             // start AP Login
 
             Console.WriteLine("Enter AP Domain: (archipelago.gg)");
@@ -182,7 +182,7 @@ public class Program
                 Console.WriteLine("Slot name cannot be empty. Please provide a valid slot name.");
                 return;
             }
-        #endif
+#endif
 
 
         Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
@@ -191,7 +191,7 @@ public class Program
         try
         {
 
-            
+
 
             await archipelagoClient.Connect(url + ":" + port, "Medievil");
 
@@ -199,13 +199,13 @@ public class Program
 
             await archipelagoClient?.Login(slot, password);
 
-            
+
             int retryCount = 0;
             Console.WriteLine("Logging in...");
             while (archipelagoClient.IsLoggedIn == false)
             {
 
-                if(retryCount >= 10)
+                if (retryCount >= 10)
                 {
                     throw new Exception("The Medievil Client was unable to log into Archipelago. Please make sure your room is running, that you are putting in the correct details and that you are online.");
 
@@ -220,9 +220,9 @@ public class Program
         catch (Exception ex)
         {
             Console.WriteLine($"\nAn error occurred while connecting to Archipelago: {ex.Message}");
-            #if DEBUG
-                Console.WriteLine(ex); // Print full exception for debugging
-            #endif
+#if DEBUG
+            Console.WriteLine(ex); // Print full exception for debugging
+#endif
             Console.ReadKey();
             Environment.Exit(1);
         }
@@ -242,11 +242,12 @@ public class Program
         //    },
         //    value => value == 0);
 
-        try {
+        try
+        {
 
             var gameOverlay = new WindowsOverlayService(new OverlayOptions
             {
-                
+
                 XOffset = 50,
                 YOffset = 500,
                 FontSize = 12,
@@ -298,6 +299,7 @@ public class Program
             //}
 
             firstRun = false;
+
 
             _ = archipelagoClient.MonitorLocations(GameLocations);
             _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, url, _cancellationTokenSource);

@@ -1,8 +1,8 @@
-﻿using Archipelago.Core;
+﻿using System.Net.NetworkInformation;
+using Archipelago.Core;
 using Archipelago.Core.Util;
-using Serilog;
 using MedievilArchipelago.Helpers;
-using System.Net.NetworkInformation;
+using Serilog;
 
 
 namespace MedievilArchipelago
@@ -51,7 +51,7 @@ namespace MedievilArchipelago
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.CurrentLevel,
                         () =>
-                        {   
+                        {
                             if (withinAsylum == false)
                             {
                                 ThreadHandlers.UpdateAsylumDynamicDrops();
@@ -89,15 +89,15 @@ namespace MedievilArchipelago
                         Addresses.CurrentLevel,
                         () =>
                         {
-                                Thread.Sleep(8000);
-                                short checkMapCoords = Memory.ReadShort(Addresses.CurrentMapPosition);
-                                var loc = Memory.ReadByte(Addresses.CurrentLevel);
+                            Thread.Sleep(8000);
+                            short checkMapCoords = Memory.ReadShort(Addresses.CurrentMapPosition);
+                            var loc = Memory.ReadByte(Addresses.CurrentLevel);
 
-                                if (chestsFilled == false)
-                                {
-                                    ThreadHandlers.UpdateChestLocations(client, loc);
-                                    chestsFilled = true;
-                                }
+                            if (chestsFilled == false)
+                            {
+                                ThreadHandlers.UpdateChestLocations(client, loc);
+                                chestsFilled = true;
+                            }
 #if DEBUG
                             Console.WriteLine("---------Chest Monitor Done");
 
@@ -124,7 +124,8 @@ namespace MedievilArchipelago
                         value => value == 18);
                 }
 
-                void SetupHallOfHeroesRewardsMonitor() { 
+                void SetupHallOfHeroesRewardsMonitor()
+                {
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.HOH_ListenedToHero,
                         () =>
@@ -154,7 +155,8 @@ namespace MedievilArchipelago
                         {
                             var mainMenuCheck = Memory.ReadShort(Addresses.CurrentMapPosition);
 
-                            if (mainMenuCheck != 0x0100) {
+                            if (mainMenuCheck != 0x0100)
+                            {
                                 ThreadHandlers.SetCheatMenu(client);
 #if DEBUG
                                 Console.WriteLine("---------Cheat Monitor Done");
@@ -225,7 +227,7 @@ namespace MedievilArchipelago
                         short checkMapCoords = Memory.ReadShort(Addresses.CurrentMapPosition);
 
 
-                        if(checkMapCoords == 0x0100)
+                        if (checkMapCoords == 0x0100)
                         {
                             if (openWorldOption == 1)
                             {
@@ -236,7 +238,7 @@ namespace MedievilArchipelago
                         }
 
 
-                         // Sets up the drops for within the asylum correctly, so it doesn't ruin the randomizer
+                        // Sets up the drops for within the asylum correctly, so it doesn't ruin the randomizer
                         if (currentLocation != 14 && PlayerStateHandler.isInTheGame() && checkMapCoords != 0x0100)
                         {
                             withinAsylum = false;
@@ -275,7 +277,7 @@ namespace MedievilArchipelago
                             {
                                 PlayerStateHandler.UpdatePlayerState(client, false);
                             }
-                            
+
                         }
 
                         if (currentLocation != checkCurrentLevel && chestsFilled == true)

@@ -1,5 +1,5 @@
-﻿using Archipelago.Core.Util;
-using Archipelago.Core;
+﻿using Archipelago.Core;
+using Archipelago.Core.Util;
 using Archipelago.MultiClient.Net.Models;
 
 namespace MedievilArchipelago.Helpers
@@ -64,7 +64,7 @@ namespace MedievilArchipelago.Helpers
                 Addresses.Model_VialSecondary,
                 Addresses.Model_GoldChest,
                 Addresses.Model_Coin,
-                Addresses.Model_HarvesterPart,
+                //Addresses.Model_HarvesterPart, // uses a different reference
             ];
 
             foreach (uint drop in drops)
@@ -75,7 +75,7 @@ namespace MedievilArchipelago.Helpers
 
         static internal void UpdateChestLocations(ArchipelagoClient client, int id)
         {
-        var chestEntityList = ChestContentsDictionary();
+            var chestEntityList = ChestContentsDictionary();
             foreach (ulong chestEntity in chestEntityList[id])
             {
                 Memory.WriteByte(chestEntity, 0x08);
@@ -230,7 +230,7 @@ namespace MedievilArchipelago.Helpers
 
         };
 
-        static internal void UpdateHallOfHeroesChecks(int chaliceCount) 
+        static internal void UpdateHallOfHeroesChecks(int chaliceCount)
         {
             byte[] updateValue = BitConverter.GetBytes(0x270F);
             var dict = HallOfHeroesCheckList;
@@ -359,6 +359,7 @@ namespace MedievilArchipelago.Helpers
                 Addresses.MAP_Unlock3,
                 Addresses.MAP_Unlock4,
                 Addresses.MAP_Unlock5,
+
                 Addresses.MAP_Unlock6,
                 Addresses.MAP_Unlock7,
                 Addresses.MAP_Unlock8,
@@ -366,12 +367,14 @@ namespace MedievilArchipelago.Helpers
                 Addresses.MAP_Unlock10,
                 Addresses.MAP_Unlock11,
                 Addresses.MAP_Unlock12,
+
                 Addresses.MAP_Unlock13,
                 Addresses.MAP_Unlock14,
                 Addresses.MAP_Unlock15,
                 Addresses.MAP_Unlock16,
                 Addresses.MAP_Unlock17,
                 Addresses.MAP_Unlock18,
+
                 Addresses.MAP_Unlock19,
                 Addresses.MAP_Unlock20,
                 Addresses.MAP_Unlock21,

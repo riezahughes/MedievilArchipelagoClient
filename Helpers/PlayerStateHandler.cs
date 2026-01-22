@@ -1,8 +1,8 @@
-﻿using Archipelago.Core.Models;
+﻿using Archipelago.Core;
+using Archipelago.Core.Models;
 using Archipelago.Core.Util;
-using Archipelago.Core;
-using Archipelago.MultiClient.Net.Models;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
+using Archipelago.MultiClient.Net.Models;
 using Kokuban;
 
 namespace MedievilArchipelago.Helpers
@@ -22,6 +22,18 @@ namespace MedievilArchipelago.Helpers
 
 
             if (currentGameStatus != 0x800f8198 || currentGold == 0x82a4 || currentMapPosition > 0x32)
+            {
+                return false;
+            }
+            return true;
+
+        }
+
+        public static bool isLoadedIn()
+        {
+            ulong currentlyLoadedIn = Memory.ReadUInt(Addresses.IsLoaded);
+
+            if (currentlyLoadedIn != 0x800ee8bc)
             {
                 return false;
             }

@@ -109,7 +109,7 @@
 
         // Unlocking the Map
         public const uint MAP_Unlock1 = 0x000F8214;
-        //public const uint MAP_Unlock2 = 0x000F8215; // this ones a wee bawbag. It triggers copy protection
+        //public const uint MAP_Unlock2 = 0x000F8215;
         public const uint MAP_Unlock3 = 0x000F8216;
         public const uint MAP_Unlock4 = 0x000F8217;
         public const uint MAP_Unlock5 = 0x000F8218;

@@ -48,7 +48,7 @@ namespace MedievilArchipelago.Helpers
                 Addresses.Model_FlamingBow,
                 Addresses.Model_MagicBow,
                 Addresses.Model_GLightning,
-                Addresses.Model_DragonArmor,
+                //Addresses.Model_DragonArmor,
                 Addresses.Model_CopperShields,
                 Addresses.Model_SilverShield,
                 Addresses.Model_GoldShield,

@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace MedievilArchipelago.Helpers
 {
-    internal class JingleHandler
+    public class JingleHandler
     {
         public static void DeathJingle()
         {
@@ -15,13 +15,16 @@ namespace MedievilArchipelago.Helpers
         {
             return new List<Action>
             {
-                Beeps,
+                Beeps0,
+                Beeps1,
                 Beeps2,
-                Beeps3
+                Beeps3,
+                Beeps4,
+                Beeps5
             };
         }
 
-        private static void Beeps()
+        private static void Beeps0()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -35,7 +38,7 @@ namespace MedievilArchipelago.Helpers
             }
         }
 
-        private static void Beeps2()
+        private static void Beeps1()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -48,7 +51,7 @@ namespace MedievilArchipelago.Helpers
             }
         }
 
-        private static void Beeps3()
+        private static void Beeps2()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -58,7 +61,43 @@ namespace MedievilArchipelago.Helpers
                 Thread.Sleep(2450);
             }
         }
+        private static void Beeps3()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Console.Beep(2000, 125);
+                Thread.Sleep(50);
+                Console.Beep(2000, 125);
+                Thread.Sleep(2700);
+            }
+        }
 
+        private static void Beeps4()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Console.Beep(1320, 625);
+                Thread.Sleep(50);
+                Console.Beep(1320, 625);
+                Thread.Sleep(50);
+                Console.Beep(1320, 625);
+                Thread.Sleep(50);
+                Console.Beep(2000, 975);
+            }
+        }
+        private static void Beeps5()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Console.Beep(1320, 650);
+                Thread.Sleep(25);
+                Console.Beep(1320, 650);
+                Thread.Sleep(25);
+                Console.Beep(1320, 650);
+                Thread.Sleep(25);
+                Console.Beep(2000, 975);
+            }
+        }
 
     }
 

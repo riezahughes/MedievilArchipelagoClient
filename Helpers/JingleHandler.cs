@@ -17,10 +17,7 @@ namespace MedievilArchipelago.Helpers
             {
                 Beeps0,
                 Beeps1,
-                Beeps2,
-                Beeps3,
-                Beeps4,
-                Beeps5
+                Beeps2
             };
         }
 
@@ -42,62 +39,28 @@ namespace MedievilArchipelago.Helpers
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                Console.Beep(1350, 300);
-                Thread.Sleep(50);
-                Console.Beep(1050, 300);
-                Thread.Sleep(50);
-                Console.Beep(750, 300);
-                Thread.Sleep(2000);
-            }
-        }
-
-        private static void Beeps2()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                Console.Beep(2000, 250);
-                Thread.Sleep(50);
-                Console.Beep(2000, 250);
-                Thread.Sleep(2450);
-            }
-        }
-        private static void Beeps3()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
                 Console.Beep(2000, 125);
                 Thread.Sleep(50);
                 Console.Beep(2000, 125);
                 Thread.Sleep(2700);
             }
         }
+        
+        private static void Beeps2()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Console.Beep(1750, 100);
+                Console.Beep(1500, 100);
+                Console.Beep(1250, 100);
+                Console.Beep(1000, 100);
+                Console.Beep(750, 100);
+                Thread.Sleep(2500);
 
-        private static void Beeps4()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                Console.Beep(1320, 625);
-                Thread.Sleep(50);
-                Console.Beep(1320, 625);
-                Thread.Sleep(50);
-                Console.Beep(1320, 625);
-                Thread.Sleep(50);
-                Console.Beep(2000, 975);
             }
         }
-        private static void Beeps5()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                Console.Beep(1320, 650);
-                Thread.Sleep(25);
-                Console.Beep(1320, 650);
-                Thread.Sleep(25);
-                Console.Beep(1320, 650);
-                Thread.Sleep(25);
-                Console.Beep(2000, 975);
-            }
-        }
+
+       
 
     }
 

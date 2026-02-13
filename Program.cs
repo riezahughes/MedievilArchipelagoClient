@@ -361,14 +361,16 @@ public class Program
 
                         }
                     }
+#if DEBUG
                     else if (input?.Trim().Contains("sound") == true)
                     {
                         try
                         {
                             int picked = Int32.Parse(input.Substring(5).Trim());
                             Console.WriteLine($"sound input number: {picked}");
-                            if (picked < Helpers.JingleHandler.Sounds().Count && picked > -1){
-                            Helpers.JingleHandler.Sounds()[picked]();
+                            if (picked < Helpers.JingleHandler.Sounds().Count && picked > -1)
+                            {
+                                Helpers.JingleHandler.Sounds()[picked]();
                             }
                             else Console.WriteLine($"out of list {picked}");
                         }
@@ -378,6 +380,7 @@ public class Program
                         }
 
                     }
+#endif
                     else if (input?.Trim().ToLower() == "update")
                     {
                         if (archipelagoClient.LocationState.CompletedLocations != null)

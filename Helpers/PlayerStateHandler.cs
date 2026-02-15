@@ -5,6 +5,7 @@ using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Archipelago.MultiClient.Net.Models;
 using Kokuban;
 
+
 namespace MedievilArchipelago.Helpers
 {
     internal class PlayerStateHandler
@@ -43,8 +44,10 @@ namespace MedievilArchipelago.Helpers
 
         public static void KillPlayer()
         {
+            JingleHandler.DeathJingle();
             Memory.WriteByte(Addresses.GameGlobalScene, 0x06);
         }
+
 
         public static void StartDeathlinkMonitor(DeathLinkService deathLink, ArchipelagoClient client)
         {

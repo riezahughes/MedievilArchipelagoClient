@@ -42,9 +42,12 @@ namespace MedievilArchipelago.Helpers
 
         }
 
-        public static void KillPlayer()
+        public static void KillPlayer(int deathsound)
         {
-            JingleHandler.DeathJingle();
+            if (deathsound == 1)
+            {
+                JingleHandler.DeathJingle();
+            }
             Memory.WriteByte(Addresses.GameGlobalScene, 0x06);
         }
 

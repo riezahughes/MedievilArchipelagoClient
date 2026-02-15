@@ -1,11 +1,10 @@
-﻿using Archipelago.Core.Models;
+﻿using Archipelago.Core;
+using Archipelago.Core.Models;
 using Archipelago.Core.Util;
-using Archipelago.Core;
+using Archipelago.Core.Util.GPS;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Kokuban;
-using Newtonsoft.Json;
 using Serilog;
-using Archipelago.Core.Util.GPS;
 
 namespace MedievilArchipelago.Helpers
 {
@@ -25,24 +24,25 @@ namespace MedievilArchipelago.Helpers
 
             // if deathlink goes here
             int deathlink = Int32.Parse(client.Options?.GetValueOrDefault("deathlink", "0").ToString());
+            int deathsound = Int32.Parse(client.Options?.GetValueOrDefault("deathsound", "0").ToString());
 
 
             DeathLinkService deathLinkClient = null;
 
             if (deathlink == 1)
             {
-                #if DEBUG
-                    Console.WriteLine("Deathlink is activated.");
-                #endif
+#if DEBUG
+                Console.WriteLine("Deathlink is activated.");
+#endif
                 deathLinkClient = client.EnableDeathLink();
-                deathLinkClient.OnDeathLinkReceived += (args) => PlayerStateHandler.KillPlayer();
+                deathLinkClient.OnDeathLinkReceived += (args) => PlayerStateHandler.KillPlayer(deathsound);
                 PlayerStateHandler.StartDeathlinkMonitor(deathLinkClient, client);
             }
 
             Console.WriteLine("Setting up player state..");
 
-            #if DEBUG
-                Console.WriteLine($"OnConnected Firing. Itemcount: {client.ItemState.ReceivedItems.Count}");
+#if DEBUG
+            Console.WriteLine($"OnConnected Firing. Itemcount: {client.ItemState.ReceivedItems.Count}");
 #endif
 
             if (PlayerStateHandler.isInTheGame())
@@ -80,7 +80,7 @@ namespace MedievilArchipelago.Helpers
 
         public static async void OnDisconnected(object sender, ConnectionChangedEventArgs args, ArchipelagoClient client, bool firstRun)
         {
-            if(firstRun == true)
+            if (firstRun == true)
             {
                 return;
             }
@@ -105,9 +105,9 @@ namespace MedievilArchipelago.Helpers
                     return;
                 }
 
-                #if DEBUG
-                    Console.WriteLine($"ItemReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
-                #endif
+#if DEBUG
+                Console.WriteLine($"ItemReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
+#endif
                 byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
                 int runeSanityOption = Int32.Parse(client.Options?.GetValueOrDefault("runesanity", "0").ToString());
                 int breakAmmoLimitOption = Int32.Parse(client.Options?.GetValueOrDefault("break_ammo_limit", "0").ToString());
@@ -143,9 +143,9 @@ namespace MedievilArchipelago.Helpers
 
         public static void Client_MessageReceived(object sender, MessageReceivedEventArgs e, ArchipelagoClient client, string slot)
         {
-            #if DEBUG
-                Console.WriteLine($"MessageReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
-            #endif
+#if DEBUG
+            Console.WriteLine($"MessageReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
+#endif
             var message = string.Join("", e.Message.Parts.Select(p => p.Text));
 
             // this message can use emoji's through the overlay. Look into maybe making it a little more obvious 
@@ -178,18 +178,18 @@ namespace MedievilArchipelago.Helpers
         public static void Client_LocationCompleted(object sender, LocationCompletedEventArgs e, ArchipelagoClient client)
         {
 
-                #if DEBUG
-                    Console.WriteLine($"LocationCompleted Firing. {e.CompletedLocation.Name} - {e.CompletedLocation.Id} Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
-                #endif
+#if DEBUG
+            Console.WriteLine($"LocationCompleted Firing. {e.CompletedLocation.Name} - {e.CompletedLocation.Id} Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
+#endif
 
         }
 
 
         public static void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCollection<long> newCheckedLocations)
         {
-            #if DEBUG
-                Console.WriteLine($"Location CheckedLocationsUpdated Firing.");
-            #endif
+#if DEBUG
+            Console.WriteLine($"Location CheckedLocationsUpdated Firing.");
+#endif
         }
 
         public static GPSHandler Client_GPSHandler()

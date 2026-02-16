@@ -326,6 +326,7 @@ public class Program
                         {
                             int getCurrentGoal = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("goal", "0").ToString());
                             var currentChaliceCount = Helpers.ItemHandlers.GetChaliceCount(archipelagoClient);
+                            var currentChaliceLocations = Helpers.ItemHandlers.GetChaliceCountNames(archipelagoClient);
                             int maxChaliceCount = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("chalice_win_count", "0").ToString());
 
                             if (currentChaliceCount == 248)
@@ -351,11 +352,22 @@ public class Program
                                 case 1:
                                     Console.WriteLine($"Current Goal: Collect {maxChaliceCount} Chalices");
                                     Console.WriteLine($"Current Chalice Count: {currentChaliceCount} / {maxChaliceCount}");
+                                    Console.Write("Currently have: ");
+                                    foreach (var chalice in currentChaliceLocations)
+                                    {
+                                        Console.WriteLine($"{chalice}, ");
+                                    }
+
                                     break;
                                 default:
                                     Console.WriteLine($"Current Goal: Beat Zarok + Collect {maxChaliceCount} Chalices");
-                                    Console.WriteLine($"Current Chalice Count: {currentChaliceCount} / {maxChaliceCount}");
                                     Console.WriteLine($"Zarok Defeated: {(ZarokDead ? "Yes" : "No")}");
+                                    Console.WriteLine($"Current Chalice Count: {currentChaliceCount} / {maxChaliceCount}");
+                                    Console.Write("Currently have: ");
+                                    foreach (var chalice in currentChaliceLocations)
+                                    {
+                                        Console.WriteLine($"{chalice}, ");
+                                    }
                                     break;
                             }
 

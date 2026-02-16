@@ -8,7 +8,7 @@ namespace MedievilArchipelago.Helpers
         /// <summary>
         /// Volume level from 0.0 (silent) to 1.0 (full volume). Default is 0.3.
         /// </summary>
-        public static float Volume { get; set; } = 0.06f;
+        public static float Volume { get; set; } = 0.03f;
 
         public static void DeathJingle()
         {

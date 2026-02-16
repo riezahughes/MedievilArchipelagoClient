@@ -7,7 +7,7 @@ namespace MedievilArchipelago.Helpers
 {
     internal class ItemHandlers
     {
-        
+
         internal const int percentageMax = 20480;
         internal const int countMax = 32767;
         internal const int maxHealth = 300;
@@ -21,6 +21,13 @@ namespace MedievilArchipelago.Helpers
             });
 
             return currentChaliceCount;
+        }
+
+        public static List<string> GetChaliceCountNames(ArchipelagoClient client)
+        {
+            List<string> currentChaliceLocations = client.LocationState.CompletedLocations.Select(loc => loc.Name).Where(name => name.Contains("Chalice: ")).ToList();
+
+            return currentChaliceLocations;
         }
 
         public static async void SendChaliceCountToDataStorage(ArchipelagoClient client)
@@ -43,7 +50,7 @@ namespace MedievilArchipelago.Helpers
 
             await client.SaveGameStateAsync();
 #if DEBUG
-            if(client.CustomValues.TryGetValue(storageKey, out var value))
+            if (client.CustomValues.TryGetValue(storageKey, out var value))
             {
                 Console.WriteLine($"\nKey is: ${storageKey}\nDatastorage Chalice Count: {value}");
 

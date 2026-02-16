@@ -143,7 +143,7 @@ namespace MedievilArchipelago
                                 hallOfHeroesRewarded = true;
                             }
 
-                        }, value => value == 16 && PlayerStateHandler.isInTheGame());
+                        }, value => value >= 16 && PlayerStateHandler.isInTheGame());
                 }
 
 

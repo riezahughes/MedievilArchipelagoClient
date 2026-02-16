@@ -53,7 +53,6 @@ namespace MedievilArchipelago.Helpers
             if (client.CustomValues.TryGetValue(storageKey, out var value))
             {
                 Console.WriteLine($"\nKey is: ${storageKey}\nDatastorage Chalice Count: {value}");
-
             }
 #endif
 
@@ -341,7 +340,7 @@ namespace MedievilArchipelago.Helpers
 
             if (itemName == "Life Bottle")
             {
-                SetItemMemoryValue(Addresses.LifeBottleSwitch, (300 * newNumberAmount - 1), 10000);
+                SetItemMemoryValue(Addresses.LifeBottleSwitch, (300 * newNumberAmount), 10000);
             }
 
             // if you're getting a piece of equipment like the longbow/crossbow/spear/etc give it some ammo.

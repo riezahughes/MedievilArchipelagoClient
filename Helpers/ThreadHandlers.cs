@@ -227,7 +227,6 @@ namespace MedievilArchipelago.Helpers
             [18] = Addresses.HOH_KarlStungard2,
             [19] = Addresses.HOH_DirkSteadfast2,
             [20] = Addresses.HOH_MegwynneStormbinder2
-
         };
 
         static internal void UpdateHallOfHeroesChecks(int chaliceCount)

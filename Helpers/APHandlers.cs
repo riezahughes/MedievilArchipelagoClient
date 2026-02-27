@@ -235,15 +235,15 @@ namespace MedievilArchipelago.Helpers
 
         public async static void SendBounce(ArchipelagoClient client, string trap, string action)
         {
-            var thing = client.GPSHandler.GetCurrentPosition();
-            thing.Region = action;
-            thing.MapName = trap;
-            var pack = new BouncePacket()
+            var package = client.GPSHandler.GetCurrentPosition();
+            package.MapName = trap;
+            package.Region = action;
+            var packet = new BouncePacket()
             {
-                Data = new Dictionary<string, JToken> { { "trap", JToken.FromObject(thing) } },
+                Data = new Dictionary<string, JToken> { { "trap", JToken.FromObject(package) } },
                 Slots = new List<int> { client.CurrentSession.Players.ActivePlayer }
             };
-            await client.SendBounceMessage(pack);
+            await client.SendBounceMessage(packet);
             return;
         }
     }

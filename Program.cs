@@ -146,10 +146,11 @@ public class Program
             .Build();
 
         Console.WriteLine("Logging in using settings in appsettings.Local.json");
+        Console.WriteLine(configuration["url"]);
         Console.WriteLine(configuration["port"]);
         Console.WriteLine(configuration["slot"]);
         Console.WriteLine(configuration["pass"]);
-        url = "wss://archipelago.gg";
+        url = configuration["url"];
         port = configuration["port"];
         slot = configuration["slot"];
         password = configuration["pass"];
@@ -452,11 +453,11 @@ public class Program
                     }
                     else if (input?.Trim().ToLower() == "darknesstrap")
                     {
-                        Helpers.TrapHandlers.DarknessTrap(0x01);
+                        Helpers.TrapHandlers.DarknessTrap(0x01, archipelagoClient);
                     }
                     else if (input?.Trim().ToLower() == "hudtrap")
                     {
-                        Helpers.TrapHandlers.HudlessTrap();
+                        Helpers.TrapHandlers.HudlessTrap(archipelagoClient);
                     }
 #endif
                     else if (!string.IsNullOrWhiteSpace(input))

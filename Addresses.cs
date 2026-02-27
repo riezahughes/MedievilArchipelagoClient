@@ -109,8 +109,8 @@
 
         // Unlocking the Map
         public const uint MAP_Unlock1 = 0x000F8214;
-        //public const uint MAP_Unlock2 = 0x000F8215;
-        public const uint MAP_Unlock3 = 0x000F8216;
+        public const uint MAP_Unlock2 = 0x000F8215;
+        //public const uint MAP_Unlock3 = 0x000F8216;
         public const uint MAP_Unlock4 = 0x000F8217;
         public const uint MAP_Unlock5 = 0x000F8218;
         public const uint MAP_Unlock6 = 0x000F8219;
@@ -725,7 +725,7 @@
         public const uint PG_Pickup_EnergyVialTopOfHill = 0x00132808;
         public const uint PG_Pickup_StarRune = 0x00131948;
         public const uint PG_Pickup_SilverShieldInChestAtTopOfHill = 0x00132c44;
-        public const uint PG_Pickup_TimeRune = 0x000ee974;
+        public const uint PG_Pickup_TimeRune = 0x000ee974; // Star rune door trigger
         public const uint PG_Pickup_EnergyVialBouldersAfterStarRune = 0x00132c88;
         public const uint PG_Pickup_GoldCoinsChestAtBouldersAfterStarRune = 0x00132cc8;
         public const uint PG_Pickup_EnergyVialVinePatchLeft = 0x00132c08;
@@ -737,7 +737,7 @@
         public const uint PG_Pickup_Chalice = 0x0012f108;
 
 
-        // Pumpkin Servent
+        // Pumpkin Serpent
         public const uint PS_Pickup_GoldCoinsBagBehindHouse1 = 0x001303b4;
         public const uint PS_Pickup_GoldCoinsBagBehindHouse2 = 0x001304f4;
         public const uint PS_Pickup_SilverShieldInChestNearLeeches = 0x00130570;

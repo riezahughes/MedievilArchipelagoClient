@@ -1,4 +1,5 @@
-﻿using Archipelago.Core.Traps;
+﻿using Archipelago.Core;
+using Archipelago.Core.Traps;
 using Archipelago.Core.Util;
 
 namespace MedievilArchipelago.Helpers
@@ -85,7 +86,7 @@ namespace MedievilArchipelago.Helpers
             }, TaskScheduler.Default);
         }
 
-        public static void DarknessTrap(int currentLevel)
+        public static void DarknessTrap(int currentLevel, ArchipelagoClient client)
         {
 
             byte[] byteArray = BitConverter.GetBytes(0x0600);
@@ -96,15 +97,17 @@ namespace MedievilArchipelago.Helpers
             if (currentLevel != 14)
             {
                 Memory.WriteByteArray(Addresses.RenderDistance, byteArray);
+                APHandlers.SendBounce(client, "Dark", "set");
                 Task.Delay(duration).ContinueWith(delegate
                 {
                     Memory.Write(Addresses.RenderDistance, defaultValue);
+                    APHandlers.SendBounce(client, "Dark", "reset");
                 }, TaskScheduler.Default);
 
             }
         }
 
-        public static void HudlessTrap()
+        public static void HudlessTrap(ArchipelagoClient client)
         {
 
             byte[] DefaultWeaponIconX = BitConverter.GetBytes(0x0018);
@@ -131,6 +134,7 @@ namespace MedievilArchipelago.Helpers
             Memory.Write(Addresses.ChaliceIconX, ChangedChaliceIconX);
             Memory.Write(Addresses.MoneyIconX, ChangedMoneyIconX);
 
+            APHandlers.SendBounce(client, "HUD", "set");
             Task.Delay(duration).ContinueWith(delegate
             {
                 Memory.Write(Addresses.WeaponIconX, DefaultWeaponIconX);
@@ -143,7 +147,9 @@ namespace MedievilArchipelago.Helpers
                 Memory.Write(Addresses.HealthbarY, DefaultHealthbarY);
                 Memory.Write(Addresses.ChaliceIconY, DefaultChaliceIconY);
                 Memory.Write(Addresses.MoneyIconY, DefaultMoneyIconY);
+                APHandlers.SendBounce(client, "HUD", "reset");
             }, TaskScheduler.Default);
+
 
         }
     }

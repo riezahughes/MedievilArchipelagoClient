@@ -5,6 +5,8 @@ using Archipelago.Core.Util.GPS;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Kokuban;
 using Serilog;
+using Archipelago.MultiClient.Net.Packets;
+using Newtonsoft.Json.Linq;
 
 namespace MedievilArchipelago.Helpers
 {
@@ -129,12 +131,13 @@ namespace MedievilArchipelago.Helpers
                     case var x when x.Name.ContainsAny("Broadsword", "Club", "Lightning"): ItemHandlers.ReceiveChargeType(x, breakChargeLimitOption); break;
                     case var x when x.Name.Contains("Trap: Heavy Dan"): TrapHandlers.HeavyDanTrap(); break;
                     case var x when x.Name.Contains("Trap: Light Dan"): TrapHandlers.LightDanTrap(); break;
-                    case var x when x.Name.Contains("Trap: Darkness"): TrapHandlers.DarknessTrap(currentLevel); break;
-                    case var x when x.Name.Contains("Trap: Hudless"): TrapHandlers.HudlessTrap(); break;
+                    case var x when x.Name.Contains("Trap: Darkness"): TrapHandlers.DarknessTrap(currentLevel, client); break;
+                    case var x when x.Name.Contains("Trap: Hudless"): TrapHandlers.HudlessTrap(client); break;
                     case var x when x.Name.Contains("Trap: Lag"): TrapHandlers.RunLagTrap(); break;
                     case null: Console.WriteLine("Received an item with null data. Skipping."); break;
                     default: Console.WriteLine($"Item not recognised. ({args.Item.Name}) Skipping"); break;
-                };
+                }
+                ;
 
                 PlayerStateHandler.UpdatePlayerState(client, false);
             }
@@ -227,6 +230,21 @@ namespace MedievilArchipelago.Helpers
             if (!PlayerStateHandler.isInTheGame()) return;
 
             LevelHandlers.CheckPositionalLocations(client, gameLocations);
+        }
+
+
+        public async static void SendBounce(ArchipelagoClient client, string trap, string action)
+        {
+            var package = client.GPSHandler.GetCurrentPosition();
+            package.MapName = trap;
+            package.Region = action;
+            var packet = new BouncePacket()
+            {
+                Data = new Dictionary<string, JToken> { { "trap", JToken.FromObject(package) } },
+                Slots = new List<int> { client.CurrentSession.Players.ActivePlayer }
+            };
+            await client.SendBounceMessage(packet);
+            return;
         }
     }
 }

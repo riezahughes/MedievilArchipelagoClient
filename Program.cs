@@ -2,13 +2,14 @@
 
 using System.Text;
 using Archipelago.Core;
-using Archipelago.Core.GameClients;
+using Archipelago.Core.Helpers;
 using Archipelago.Core.Models;
 using Archipelago.Core.Util;
 using Archipelago.Core.Util.GPS;
 using Archipelago.Core.Util.Overlay;
 using Archipelago.MultiClient.Net.Models;
 using MedievilArchipelago;
+using MedievilArchipelago.Helpers;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Helpers = MedievilArchipelago.Helpers;
@@ -20,24 +21,20 @@ public class Program
     private static async Task Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;
-        Console.Title = "Medievil Archipelago Client";
+        Console.Title = "💀 Medievil Archipelago Client";
 
         // set values
         const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
         const byte JP_OFFSET = 0; // could add more offsfets here
-
-
-
-        bool playerStateUpdating = false;
 
         // Connection details
         string url;
         string port;
         string slot = "";
         string password;
-
+        string gameName = "Medievil" +
+            "";
         bool firstRun = true;
-
 
 
         CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
@@ -53,8 +50,9 @@ public class Program
         // Make sure the connect is initialised
 
 
-        DuckstationClient gameClient = null;
+        GameClient gameClient = null;
         bool clientInitializedAndConnected = false; // Renamed for clarity
+
         int retryAttempt = 0;
 
         while (!clientInitializedAndConnected)
@@ -65,17 +63,13 @@ public class Program
 
             try
             {
-                gameClient = new DuckstationClient();
+                gameClient = new GameClient("duckstation-qt-x64-ReleaseLTCG");
                 clientInitializedAndConnected = true;
             }
             catch (Exception ex)
             {
-                // Catch any exception thrown during the DuckstationClient constructor call
-                // or any other unexpected error during the try block.
                 Console.WriteLine($"Could not find Duckstation open.");
-
-                // Wait for 5 seconds before the next retry
-                Thread.Sleep(5000); // 5000 milliseconds = 5 seconds
+                Thread.Sleep(5000);
             }
         }
 
@@ -88,28 +82,111 @@ public class Program
 
         var archipelagoClient = new ArchipelagoClient(gameClient);
 
-        // Register event handlers
-        archipelagoClient.Connected += (sender, args) => Helpers.APHandlers.OnConnected(sender, args, archipelagoClient);
-        archipelagoClient.Disconnected += (sender, args) => Helpers.APHandlers.OnDisconnected(sender, args, archipelagoClient, firstRun);
-        archipelagoClient.ItemReceived += (sender, args) => Helpers.APHandlers.ItemReceived(sender, args, archipelagoClient);
-        archipelagoClient.MessageReceived += (sender, args) => Helpers.APHandlers.Client_MessageReceived(sender, args, archipelagoClient, slot);
-        archipelagoClient.LocationCompleted += (sender, args) => Helpers.APHandlers.Client_LocationCompleted(sender, args, archipelagoClient);
-        archipelagoClient.EnableLocationsCondition = () => Helpers.PlayerStateHandler.isInTheGame();
-
         Console.WriteLine("Successfully connected to Duckstation.");
 
-        // get the duckstation offset
         try
         {
             Memory.GlobalOffset = Memory.GetDuckstationOffset();
+            Console.WriteLine($"Duckstation Memory Offset found at: 0x{Memory.GlobalOffset:X}");
         }
-
         catch (Exception ex)
         {
             Console.WriteLine($"An unexpected error occurred while getting Duckstation memory offset: {ex.Message}");
             Console.WriteLine(ex); // Print full exception for debugging
         }
 
+#if DEBUG
+        // auto logs in with Local.json settings if it's set to dev (because laziness)
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
+            .Build();
+
+        Console.WriteLine("Logging in using settings in appsettings.Local.json");
+        Console.WriteLine(configuration["port"]);
+        Console.WriteLine(configuration["slot"]);
+        Console.WriteLine(configuration["pass"]);
+        url = "wss://archipelago.gg";
+        port = configuration["port"];
+        slot = configuration["slot"];
+        password = configuration["pass"];
+
+#else
+        // start AP Login
+
+        Console.WriteLine("Enter AP Domain: (archipelago.gg)");
+        string lineUrl = Console.ReadLine();
+
+        url = string.IsNullOrWhiteSpace(lineUrl) ? "archipelago.gg" : lineUrl;
+
+        Console.WriteLine("Enter Port: eg, 80001");
+        port = Console.ReadLine();
+
+        Console.WriteLine("Enter Slot Name:");
+        slot = Console.ReadLine();
+
+        Console.WriteLine("Room Password:");
+        string linePassword = Console.ReadLine();
+        password = string.IsNullOrWhiteSpace(linePassword) ? null : linePassword;
+
+        Console.WriteLine("Details:");
+        Console.WriteLine($"URL:{url}:{port}");
+        Console.WriteLine($"Slot: {slot}");
+        Console.WriteLine($"Password: {password}");
+
+        if (string.IsNullOrWhiteSpace(slot))
+        {
+            Console.WriteLine("Slot name cannot be empty. Please provide a valid slot name.");
+            return;
+        }
+#endif
+
+        if (string.IsNullOrWhiteSpace(slot))
+        {
+            Console.WriteLine("Slot name cannot be empty. Please provide a valid slot name.");
+            return;
+        }
+
+        Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
+
+
+
+        try
+        {
+            await archipelagoClient.Connect(url + ":" + port, gameName);
+            Thread.Sleep(1000);
+            await archipelagoClient?.Login(slot, password);
+            int retryCount = 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"\nAn error occurred while connecting to Archipelago: {ex.Message}");
+#if DEBUG
+            Console.WriteLine(ex); // Print full exception for debugging
+#endif
+            Console.ReadKey();
+            Environment.Exit(1);
+        }
+
+        while (archipelagoClient.CurrentSession == null)
+        {
+            Console.WriteLine("Waiting for current session");
+            Thread.Sleep(1000);
+        }
+
+        archipelagoClient.Connected += (sender, args) => APHandlers.OnConnected(sender, args, archipelagoClient);
+        archipelagoClient.Disconnected += (sender, args) => APHandlers.OnDisconnected(sender, args, archipelagoClient, firstRun);
+        archipelagoClient.ItemManager.ItemReceived += (sender, args) => APHandlers.ItemReceived(sender, args, archipelagoClient);
+        archipelagoClient.MessageReceived += (sender, args) => APHandlers.Client_MessageReceived(sender, args, archipelagoClient, slot);
+        archipelagoClient.LocationManager.LocationCompleted += (sender, args) => APHandlers.Client_LocationCompleted(sender, args, archipelagoClient);
+        archipelagoClient.LocationManager.EnableLocationsCondition = () => PlayerStateHandler.isInTheGame();
+
+        archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += APHandlers.Locations_CheckedLocationsUpdated;
+
+        GameLocations = LocationHandlers.BuildLocationList(archipelagoClient.Options);
+
+
+        Console.WriteLine("Successfully connected to Duckstation.");
 
         // wait until you can read the euro/US
 
@@ -137,112 +214,6 @@ public class Program
 
         //};
 
-#if DEBUG
-        // auto logs in with Local.json settings if it's set to dev (because laziness)
-        var configuration = new ConfigurationBuilder()
-            // Add the default appsettings.json file
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
-            .Build();
-
-        Console.WriteLine("Logging in using settings in appsettings.Local.json");
-        Console.WriteLine(configuration["url"]);
-        Console.WriteLine(configuration["port"]);
-        Console.WriteLine(configuration["slot"]);
-        Console.WriteLine(configuration["pass"]);
-        url = configuration["url"];
-        port = configuration["port"];
-        slot = configuration["slot"];
-        password = configuration["pass"];
-
-#else
-            // start AP Login
-
-            Console.WriteLine("Enter AP Domain: (archipelago.gg)");
-            string lineUrl = Console.ReadLine();
-
-            url = string.IsNullOrWhiteSpace(lineUrl) ? "archipelago.gg" : lineUrl;
-
-            Console.WriteLine("Enter Port: eg, 80001");
-            port = Console.ReadLine();
-
-            Console.WriteLine("Enter Slot Name:");
-            slot = Console.ReadLine();
-
-            Console.WriteLine("Room Password:");
-            string linePassword = Console.ReadLine();
-            password = string.IsNullOrWhiteSpace(linePassword) ? null : linePassword;
-
-            Console.WriteLine("Details:");
-            Console.WriteLine($"URL:{url}:{port}");
-            Console.WriteLine($"Slot: {slot}");
-            Console.WriteLine($"Password: {password}");
-
-            if (string.IsNullOrWhiteSpace(slot))
-            {
-                Console.WriteLine("Slot name cannot be empty. Please provide a valid slot name.");
-                return;
-            }
-#endif
-
-
-        Console.WriteLine("Got the details! Attempting to connect to Archipelagos main server");
-
-
-        try
-        {
-
-
-
-            await archipelagoClient.Connect(url + ":" + port, "Medievil");
-
-            Thread.Sleep(1000);
-
-            await archipelagoClient?.Login(slot, password);
-
-
-            int retryCount = 0;
-            Console.WriteLine("Logging in...");
-            while (archipelagoClient.IsLoggedIn == false)
-            {
-
-                if (retryCount >= 10)
-                {
-                    throw new Exception("The Medievil Client was unable to log into Archipelago. Please make sure your room is running, that you are putting in the correct details and that you are online.");
-
-                }
-                await archipelagoClient?.Login(slot, password);
-                retryCount++;
-                Console.Write(".");
-                Thread.Sleep(1000);
-            }
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"\nAn error occurred while connecting to Archipelago: {ex.Message}");
-#if DEBUG
-            Console.WriteLine(ex); // Print full exception for debugging
-#endif
-            Console.ReadKey();
-            Environment.Exit(1);
-        }
-
-        Console.WriteLine("Logged in!");
-
-        // used for checking memory locations
-
-        //var task = Memory.MonitorAddressForAction<byte>(
-        //    Addresses.ZL_Gargoyle_Entrance,
-        //    () => {
-        //        // Read as a single byte to avoid grabbing neighboring data
-        //        var val = Memory.Read<byte>(Addresses.ZL_Gargoyle_Entrance, Enums.Endianness.Big);
-
-        //        // Format as Hex in the console so it matches your scanner (0x40)
-        //        Console.WriteLine($"gargoyle changed! Current value: 0x{val:X2}");
-        //    },
-        //    value => value == 0);
-
         try
         {
 
@@ -264,45 +235,27 @@ public class Program
                 Thread.Sleep(1000);
             }
 
-            archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += Helpers.APHandlers.Locations_CheckedLocationsUpdated;
-
-
-            GameLocations = Helpers.LocationHandlers.BuildLocationList(archipelagoClient.Options);
-
             // Set up GPS
-            archipelagoClient.GPSHandler = Helpers.APHandlers.Client_GPSHandler();
+            archipelagoClient.GPSHandler = APHandlers.Client_GPSHandler();
             archipelagoClient.GPSHandler.SetInterval(500);
-            archipelagoClient.GPSHandler.PositionChanged += (sender, args) => Helpers.APHandlers.Client_GPSPositionChanged(archipelagoClient, GameLocations);
+            archipelagoClient.GPSHandler.PositionChanged += (sender, args) => APHandlers.Client_GPSPositionChanged(archipelagoClient, GameLocations);
             archipelagoClient.GPSHandler.MapChanged += (sender, args) =>
             {
                 PositionData Data = archipelagoClient.GPSHandler.GetCurrentPosition();
-                Data.Region = Helpers.ItemHandlers.GetChaliceCount(archipelagoClient).ToString();
+                Data.Region = ItemHandlers.GetChaliceCount(archipelagoClient).ToString();
                 JObject Package = JObject.FromObject(Data);
                 archipelagoClient.CurrentSession.DataStorage[$"Medievil_GPS_Team{archipelagoClient.CurrentSession.Players.ActivePlayer.Team.ToString()}_{archipelagoClient.CurrentSession.Players.ActivePlayer}"] = Package;
             };
             archipelagoClient.GPSHandler.Start();
 
 
-#if DEBUG
-
-            //foreach (var opt in archipelagoClient.Options)
-            //{
-            //    Console.WriteLine($"Option: {opt.Key} - {opt.Value}");
-            //}
-
-#else
-            Console.Clear();
-#endif
-
-            //foreach (var location in GameLocations)
-            //{`
-            //    Console.WriteLine($"ID: {location.Id} - {location.Name}");
-            //}
-
             firstRun = false;
 
 
-            _ = archipelagoClient.MonitorLocations(GameLocations);
+            await archipelagoClient.ReceiveReady();
+
+
+            _ = archipelagoClient.LocationManager.MonitorLocationsAsync(archipelagoClient.CurrentSession, GameLocations, _cancellationTokenSource.Token);
             _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, url, _cancellationTokenSource);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
@@ -321,9 +274,14 @@ public class Program
                         string hintString = input?.Trim().ToLower() == "hint" ? "!hint" : $"!hint {input.Substring(5).Trim()}";
                         archipelagoClient.SendMessage(hintString);
                     }
+                    else if (input?.Trim().ToLower().Contains("release") == true)
+                    {
+                        Console.WriteLine("Manually sending goal completion ping to Archipelago server...");
+                        archipelagoClient.SendGoalCompletion();
+                    }
                     else if (input?.Trim().ToLower() == "goal")
                     {
-                        if (archipelagoClient.LocationState.CompletedLocations != null)
+                        if (archipelagoClient.CurrentSession.Locations.AllLocationsChecked != null)
                         {
                             int getCurrentGoal = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("goal", "0").ToString());
                             var currentChaliceCount = Helpers.ItemHandlers.GetChaliceCount(archipelagoClient);
@@ -340,8 +298,7 @@ public class Program
                             }
 
 
-
-                            bool ZarokDead = archipelagoClient?.LocationState?.CompletedLocations.Any(x => x != null && x.Name.Equals("Cleared: Zaroks Lair")) == true;
+                            bool ZarokDead = LocationHandlers.IsZarokDead(archipelagoClient);
 
                             switch (getCurrentGoal)
                             {
@@ -353,10 +310,13 @@ public class Program
                                 case 1:
                                     Console.WriteLine($"Current Goal: Collect {maxChaliceCount} Chalices");
                                     Console.WriteLine($"Current Chalice Count: {currentChaliceCount} / {maxChaliceCount}");
-                                    Console.Write("Currently have: ");
-                                    foreach (var chalice in currentChaliceLocations)
+                                    if (currentChaliceCount > 0)
                                     {
-                                        Console.WriteLine($"{chalice}, ");
+                                        Console.Write("Currently have: ");
+                                        foreach (var chalice in currentChaliceLocations)
+                                        {
+                                            Console.WriteLine($"{chalice}, ");
+                                        }
                                     }
 
                                     break;
@@ -396,7 +356,7 @@ public class Program
 #endif
                     else if (input?.Trim().ToLower() == "update")
                     {
-                        if (archipelagoClient.LocationState.CompletedLocations != null)
+                        if (archipelagoClient.CurrentSession.Locations.AllLocationsChecked != null)
                         {
                             Helpers.PlayerStateHandler.UpdatePlayerState(archipelagoClient, false);
                             Console.WriteLine($"Player state updated. Total Count: {archipelagoClient.CurrentSession.Items.AllItemsReceived.Count}");

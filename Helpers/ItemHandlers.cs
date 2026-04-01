@@ -15,19 +15,34 @@ namespace MedievilArchipelago.Helpers
 
         public static int GetChaliceCount(ArchipelagoClient client)
         {
-            int currentChaliceCount = client.LocationState.CompletedLocations.Count(loc =>
-            {
-                return loc.Name.Contains("Chalice: ");
-            });
 
-            return currentChaliceCount;
+            var filteredChaliceList = LocationHandlers.BuildLocationList(client.Options)
+                .Where(loc => loc.Name.Contains("Chalice: "))
+                .ToList();
+
+            List<long> filteredChaliceIds = filteredChaliceList.Select(loc => (long)loc.Id).ToList();
+
+            int matchCount = client.CurrentSession.Locations.AllLocationsChecked
+                .Intersect(filteredChaliceIds)  // Use the IDs, not the objects
+                .Count();
+
+            return matchCount;
         }
 
         public static List<string> GetChaliceCountNames(ArchipelagoClient client)
         {
-            List<string> currentChaliceLocations = client.LocationState.CompletedLocations.Select(loc => loc.Name).Where(name => name.Contains("Chalice: ")).ToList();
+            var filteredChaliceList = LocationHandlers.BuildLocationList(client.Options)
+                .Where(loc => loc.Name.Contains("Chalice: "))
+                .ToList();
 
-            return currentChaliceLocations;
+            var checkedIds = new HashSet<long>(client.CurrentSession.Locations.AllLocationsChecked);
+
+            List<string> matchingNames = filteredChaliceList
+                .Where(loc => checkedIds.Contains((long)loc.Id))
+                .Select(loc => loc.Name)
+                .ToList();
+
+            return matchingNames;
         }
 
         public static async void SendChaliceCountToDataStorage(ArchipelagoClient client)
@@ -46,7 +61,7 @@ namespace MedievilArchipelago.Helpers
             string team = client.CurrentSession.Players.ActivePlayer.Team.ToString();
             string storageKey = $"Medievil_ChaliceCount_Team{team}_{client.CurrentSession.Players.ActivePlayer.Name}";
 
-            client.CustomValues[storageKey] = currentChaliceCount;
+            client.CustomValues[storageKey] = currentChaliceCount.ToString();
 
             await client.SaveGameStateAsync();
 #if DEBUG

@@ -1,5 +1,4 @@
-﻿using System.Net.NetworkInformation;
-using Archipelago.Core;
+﻿using Archipelago.Core;
 using Archipelago.Core.Util;
 using MedievilArchipelago.Helpers;
 using Serilog;
@@ -22,8 +21,6 @@ namespace MedievilArchipelago
             await Task.Run(() =>
             {
                 Console.WriteLine("Background task running...");
-
-                Ping ping = new Ping();
 
                 byte currentLocation = Memory.ReadByte(Addresses.CurrentLevel);
                 byte mapCoords = Memory.ReadByte(Addresses.CurrentMapPosition);

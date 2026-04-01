@@ -1,6 +1,5 @@
 ﻿using Archipelago.Core;
 using MedievilArchipelago.Models;
-using Archipelago.Core.Util;
 
 namespace MedievilArchipelago.Helpers
 {
@@ -8,9 +7,9 @@ namespace MedievilArchipelago.Helpers
     {
         private static bool CheckZarokCondition(ArchipelagoClient client)
         {
-            if (client?.LocationState?.CompletedLocations == null) return false;
+            if (client?.CurrentSession.Locations.AllLocationsChecked == null) return false;
 
-            if (client?.LocationState?.CompletedLocations.Any(x => x != null && x.Name.Equals("Cleared: Zaroks Lair")) == true)
+            if (LocationHandlers.IsZarokDead(client))
             {
                 return true;
             }
@@ -22,16 +21,14 @@ namespace MedievilArchipelago.Helpers
             int antOption = Int32.Parse(client.Options?.GetValueOrDefault("include_ant_hill_in_checks", "0").ToString());
             int maxChaliceCount = Int32.Parse(client.Options?.GetValueOrDefault("chalice_win_count", "0").ToString());
 
-            if(antOption == 0)
+            if (antOption == 0)
             {
-                if(maxChaliceCount > 19)
+                if (maxChaliceCount > 19)
                 {
                     maxChaliceCount = 19;
                 }
             }
             int currentCount = ItemHandlers.GetChaliceCount(client);
-
-            if (client?.LocationState == null || client.CurrentSession == null) return false;
 
             if (currentCount >= maxChaliceCount)
             {
@@ -45,10 +42,7 @@ namespace MedievilArchipelago.Helpers
         public static bool CheckGoalCondition(ArchipelagoClient client)
         {
 
-            if (client?.LocationState?.CompletedLocations == null)
-            {
-                return false;
-            }
+            if (client?.CurrentSession.Locations.AllLocationsChecked == null) return false;
 
             if (client?.Options == null) { return false; }
 

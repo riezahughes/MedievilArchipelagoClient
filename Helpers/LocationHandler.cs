@@ -1,4 +1,5 @@
-﻿using Archipelago.Core.Models;
+﻿using Archipelago.Core;
+using Archipelago.Core.Models;
 using MedievilArchipelago.Models;
 using Location = Archipelago.Core.Models.Location;
 
@@ -6,7 +7,20 @@ namespace MedievilArchipelago.Helpers
 {
     public class LocationHandlers
     {
+        public static bool IsZarokDead(ArchipelagoClient client)
+        {
+            var filteredChaliceList = LocationHandlers.BuildLocationList(client.Options)
+                .Where(loc => loc.Name == ("Cleared: Zaroks Lair")).ToList();
 
+            var checkedIds = new HashSet<long>(client.CurrentSession.Locations.AllLocationsChecked);
+
+            List<string> matchingNames = filteredChaliceList
+                .Where(loc => checkedIds.Contains((long)loc.Id))
+                .Select(loc => loc.Name)
+                .ToList();
+
+            return matchingNames.Count() == 1;
+        }
         public static List<ILocation> BuildLocationList(Dictionary<string, object> options)
         {
             int base_id = 99250000;
@@ -369,7 +383,7 @@ namespace MedievilArchipelago.Helpers
                             }
                             else
                             {
-                                Console.WriteLine($"Gargoylesanity not on. ignoring {loc.Name}, id: {loc.Id}");
+                                //Console.WriteLine($"Gargoylesanity not on. ignoring {loc.Name}, id: {loc.Id}");
                             }
                             location_index++;
                             continue;
@@ -423,7 +437,7 @@ namespace MedievilArchipelago.Helpers
                             }
                             else
                             {
-                                Console.WriteLine($"BookSanity not on. ignoring {loc.Name}, id: {loc.Id}");
+                                //Console.WriteLine($"BookSanity not on. ignoring {loc.Name}, id: {loc.Id}");
                             }
                             location_index++;
                             continue;
@@ -479,9 +493,9 @@ namespace MedievilArchipelago.Helpers
                         }
                         else
                         {
-                            #if DEBUG
-                                Console.WriteLine($"Could not add {loc.Name}, id: {loc.Id}");
-                            #endif
+#if DEBUG
+                            //Console.WriteLine($"Could not add {loc.Name}, id: {loc.Id}");
+#endif
                             location_index++;
                         }
                     }

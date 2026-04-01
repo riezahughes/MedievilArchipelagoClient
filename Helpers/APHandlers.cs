@@ -3,10 +3,10 @@ using Archipelago.Core.Models;
 using Archipelago.Core.Util;
 using Archipelago.Core.Util.GPS;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
-using Kokuban;
-using Serilog;
 using Archipelago.MultiClient.Net.Packets;
+using Kokuban;
 using Newtonsoft.Json.Linq;
+using Serilog;
 
 namespace MedievilArchipelago.Helpers
 {
@@ -44,7 +44,7 @@ namespace MedievilArchipelago.Helpers
             Console.WriteLine("Setting up player state..");
 
 #if DEBUG
-            Console.WriteLine($"OnConnected Firing. Itemcount: {client.ItemState.ReceivedItems.Count}");
+            Console.WriteLine($"OnConnected Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
 #endif
 
             if (PlayerStateHandler.isInTheGame())

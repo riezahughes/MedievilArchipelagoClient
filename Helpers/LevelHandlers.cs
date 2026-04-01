@@ -1,5 +1,5 @@
-﻿using Archipelago.Core.Models;
-using Archipelago.Core;
+﻿using Archipelago.Core;
+using Archipelago.Core.Models;
 using Archipelago.Core.Util;
 
 namespace MedievilArchipelago.Helpers
@@ -24,14 +24,15 @@ namespace MedievilArchipelago.Helpers
             int gargoyleSanity = int.Parse(client.Options?.GetValueOrDefault("gargoylesanity", "0").ToString());
 
             // starting gargoyles
-            if (client.GPSHandler.MapId == 6 && client.GPSHandler.X >= 64189 && client.GPSHandler.X >= 60484 && client.GPSHandler.Y == 0 && client.GPSHandler.Z >= 94 && client.GPSHandler.Z >= 65436 && gargoyleSanity == 1) {
+            if (client.GPSHandler.MapId == 6 && client.GPSHandler.X >= 64189 && client.GPSHandler.X >= 60484 && client.GPSHandler.Y == 0 && client.GPSHandler.Z >= 94 && client.GPSHandler.Z >= 65436 && gargoyleSanity == 1)
+            {
                 var location1 = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Left - DC");
                 var location2 = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Right - DC");
                 if (location1 != null && location2 != null)
                 {
                     {
-                        client.SendLocation(location1);
-                        client.SendLocation(location2);
+                        client.SendLocationAsync(location1);
+                        client.SendLocationAsync(location2);
                     }
                 }
             }
@@ -43,7 +44,7 @@ namespace MedievilArchipelago.Helpers
                 var location = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Entrance - HH");
                 if (location != null)
                 {
-                    client.SendLocation(location);
+                    client.SendLocationAsync(location);
                 }
 
             }
@@ -54,7 +55,7 @@ namespace MedievilArchipelago.Helpers
                 var location1 = builtLocations.FirstOrDefault(loc => loc.Name == "Skill: Daring Dash");
                 if (location1 != null)
                 {
-                    client.SendLocation(location1);
+                    client.SendLocationAsync(location1);
                 }
 
                 var location2 = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Exit - RTG");
@@ -62,7 +63,7 @@ namespace MedievilArchipelago.Helpers
 
                 if (location2 != null && gargoyleSanity == 1)
                 {
-                    client.SendLocation(location2);
+                    client.SendLocationAsync(location2);
                 }
 
             }
@@ -74,7 +75,7 @@ namespace MedievilArchipelago.Helpers
                 var location = builtLocations.FirstOrDefault(loc => loc.Name == "Cleared: Enchanted Earth");
                 if (location != null)
                 {
-                    client.SendLocation(location);
+                    client.SendLocationAsync(location);
                 }
 
             }
@@ -93,23 +94,23 @@ namespace MedievilArchipelago.Helpers
                     var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Chicken Drumsticks - TA");
                     if (location != null)
                     {
-                        client.SendLocation(location);
+                        client.SendLocationAsync(location);
                     }
                 }
 
-                else if(fairies == 6)
+                else if (fairies == 6)
                 {
                     var location = builtLocations.FirstOrDefault(loc => loc.Name == "Chalice: Ant Hill");
                     if (location != null)
                     {
-                        client.SendLocation(location);
+                        client.SendLocationAsync(location);
                     }
                 }
 
                 var completeLocation = builtLocations.FirstOrDefault(loc => loc.Name == "Cleared: Ant Hill");
                 if (completeLocation != null)
                 {
-                    client.SendLocation(completeLocation);
+                    client.SendLocationAsync(completeLocation);
                 }
 
             }
@@ -122,7 +123,7 @@ namespace MedievilArchipelago.Helpers
                 if (location != null)
                 {
                     {
-                        client.SendLocation(location);
+                        client.SendLocationAsync(location);
                     }
                 }
             }
@@ -134,7 +135,7 @@ namespace MedievilArchipelago.Helpers
                 if (location != null)
                 {
                     {
-                        client.SendLocation(location);
+                        client.SendLocationAsync(location);
                     }
                 }
             }
@@ -147,7 +148,7 @@ namespace MedievilArchipelago.Helpers
                 if (location != null)
                 {
                     {
-                        client.SendLocation(location);
+                        client.SendLocationAsync(location);
                     }
                 }
             }
@@ -159,7 +160,7 @@ namespace MedievilArchipelago.Helpers
                 if (location != null)
                 {
                     {
-                        client.SendLocation(location);
+                        client.SendLocationAsync(location);
                     }
                 }
             }
@@ -172,7 +173,7 @@ namespace MedievilArchipelago.Helpers
                 if (location != null)
                 {
                     {
-                        client.SendLocation(location);
+                        client.SendLocationAsync(location);
                     }
                 }
             }
@@ -184,7 +185,7 @@ namespace MedievilArchipelago.Helpers
                 if (location != null)
                 {
                     {
-                        client.SendLocation(location);
+                        client.SendLocationAsync(location);
                     }
                 }
             }

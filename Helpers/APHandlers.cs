@@ -153,7 +153,7 @@ namespace MedievilArchipelago.Helpers
 
             // this message can use emoji's through the overlay. Look into maybe making it a little more obvious 
             // what each item is with a symbol
-            //client.AddOverlayMessage(e.Message.ToString());
+            client.AddOverlayMessage(e.Message.ToString());
 
             string prefix;
             Kokuban.AnsiEscape.AnsiStyle bg;

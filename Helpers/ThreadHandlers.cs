@@ -59,7 +59,7 @@ namespace MedievilArchipelago.Helpers
                 Addresses.Model_TimeRune,
                 Addresses.Model_Vial,
                 Addresses.Model_LifeBottle,
-                Addresses.Model_Chalice,
+                //Addresses.Model_Chalice,
                 Addresses.Model_GoldPouch,
                 Addresses.Model_VialSecondary,
                 Addresses.Model_GoldChest,

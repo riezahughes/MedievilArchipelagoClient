@@ -219,15 +219,14 @@ public class Program
 
             var gameOverlay = new WindowsOverlayService(new OverlayOptions
             {
-
                 XOffset = 50,
                 YOffset = 500,
                 FontSize = 12,
                 DefaultTextColor = Archipelago.Core.Util.Overlay.Color.Yellow,
-                FadeDuration = 4.0f
+                FadeDuration = 10.0f
             });
 
-            //archipelagoClient.IntializeOverlayService(gameOverlay);
+            archipelagoClient.IntializeOverlayService(gameOverlay);
 
             while (archipelagoClient.CurrentSession == null)
             {
@@ -446,4 +445,5 @@ public class Program
             Console.WriteLine("Shutting down...");
         }
     }
+
 }

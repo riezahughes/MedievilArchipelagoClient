@@ -32,8 +32,7 @@ public class Program
         string port;
         string slot = "";
         string password;
-        string gameName = "Medievil" +
-            "";
+        string gameName = "Medievil";
         bool firstRun = true;
 
 
@@ -94,6 +93,7 @@ public class Program
             Console.WriteLine($"An unexpected error occurred while getting Duckstation memory offset: {ex.Message}");
             Console.WriteLine(ex); // Print full exception for debugging
         }
+
 
 #if DEBUG
         // auto logs in with Local.json settings if it's set to dev (because laziness)
@@ -253,9 +253,49 @@ public class Program
 
             await archipelagoClient.ReceiveReady();
 
+            gameOverlay.AddRichTextPopup(new List<ColoredTextSpan>
+              {
+                  new ColoredTextSpan
+                  {
+                      Text = "Hello World",
+                      Color = Archipelago.Core.Util.Overlay.Color.Yellow,
+                      FontResourcePath = "MedievilArchipelago.Assets.MediEvilFont.ttf" // namespace.folder.filename
+                  }
+              });
 
+            gameOverlay.AddTextPopup("💀 Medievil is ready to go.");
+
+            int runeSanityOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("runesanity", "0").ToString());
+            int chaliceOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("include_chalices_in_checks", "0").ToString());
+            int antHillOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("include_ant_hill_in_checks", "0").ToString());
+            int openWorldOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("progression_option", "0").ToString());
+
+            byte initialLocation = Memory.ReadByte(Addresses.CurrentLevel);
+            if (initialLocation == 1 && runeSanityOption == 1)
+                Memory.WriteByte(Addresses.CurrentLevel, 0);
+
+            ThreadHandlers.ChangeDropModels();
+            ThreadHandlers.SetupDropModelsOnMenuReturn();
+            ThreadHandlers.SetupAsylumMonitor();
+            ThreadHandlers.SetupLevelChestMonitor(archipelagoClient);
+            ThreadHandlers.SetupPlayerStateMonitor(archipelagoClient);
+
+            if (chaliceOption == 1)
+            {
+                ThreadHandlers.SetupHallOfHeroesMonitor();
+                ThreadHandlers.SetupHallOfHeroesRewardsMonitor();
+            }
+
+            if (initialLocation == 7 && antHillOption == 1)
+                ThreadHandlers.SetupAnthillMonitor();
+
+            if (openWorldOption == 1)
+                ThreadHandlers.SetupOpenWorldMonitor();
+
+            ThreadHandlers.SetupCheatMenuMonitor(archipelagoClient);
+
+            _ = ThreadHandlers.StartBackgroundLoop(archipelagoClient, _cancellationTokenSource);
             _ = archipelagoClient.LocationManager.MonitorLocationsAsync(archipelagoClient.CurrentSession, GameLocations, _cancellationTokenSource.Token);
-            _ = MemoryCheckThreads.PassiveLogicChecks(archipelagoClient, url, _cancellationTokenSource);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {

@@ -1,11 +1,214 @@
 ﻿using Archipelago.Core;
 using Archipelago.Core.Util;
 using Archipelago.MultiClient.Net.Models;
+using Serilog;
 
 namespace MedievilArchipelago.Helpers
 {
     internal class ThreadHandlers
     {
+        internal static void SetupAsylumMonitor()
+        {
+            Memory.MonitorAddressForAction<byte>(
+                Addresses.CurrentLevel,
+                () =>
+                {
+                    UpdateAsylumDynamicDrops();
+#if DEBUG
+                    Console.WriteLine("---------Asylum Monitor Done");
+#endif
+                    Memory.MonitorAddressForAction<byte>(
+                        Addresses.CurrentLevel,
+                        () => SetupAsylumMonitor(),
+                        value => value != 14);
+                },
+                value => value == 14);
+        }
+
+        internal static void SetupAnthillMonitor()
+        {
+            Memory.MonitorAddressForAction<ushort>(
+                Addresses.TA_BossHealth,
+                () =>
+                {
+                    UpdateInventoryWithAmber();
+#if DEBUG
+                    Console.WriteLine("---------AntHills Monitor Done");
+#endif
+                    Memory.MonitorAddressForAction<byte>(
+                        Addresses.CurrentLevel,
+                        () => SetupAnthillMonitor(),
+                        value => value != 7);
+                },
+                value => value == 1000);
+        }
+
+        internal static void SetupLevelChestMonitor(ArchipelagoClient client)
+        {
+            Memory.MonitorAddressForAction<ushort>(
+                Addresses.CurrentLevel,
+                () =>
+                {
+                    Thread.Sleep(8000);
+                    var loc = Memory.ReadByte(Addresses.CurrentLevel);
+                    UpdateChestLocations(client, loc);
+#if DEBUG
+                    Console.WriteLine("---------Chest Monitor Done");
+#endif
+                    Memory.MonitorAddressForAction<ushort>(
+                        Addresses.CurrentLevel,
+                        () => SetupLevelChestMonitor(client),
+                        value => value == 0);
+                },
+                value => value < 23 && value > 0 && PlayerStateHandler.isInTheGame());
+        }
+
+        internal static void SetupHallOfHeroesMonitor()
+        {
+            Memory.MonitorAddressForAction<ushort>(
+                Addresses.CurrentLevel,
+                () =>
+                {
+                    Thread.Sleep(3000);
+                    UpdateHallOfHeroesTable();
+#if DEBUG
+                    Console.WriteLine("---------HoH Array Update Monitor Done");
+#endif
+                    Memory.MonitorAddressForAction<ushort>(
+                        Addresses.CurrentLevel,
+                        () => SetupHallOfHeroesMonitor(),
+                        value => value != 18);
+                },
+                value => value == 18 && PlayerStateHandler.isInTheGame());
+        }
+
+        internal static void SetupHallOfHeroesRewardsMonitor()
+        {
+            // Phase 1: wait to enter Hall of Heroes
+            Memory.MonitorAddressForAction<byte>(
+                Addresses.CurrentLevel,
+                () =>
+                {
+                    // Phase 2: wait for HOH_ListenedToHero to reset to 0 before arming the panel listener
+                    // (the level monitor can fire before the game has finished resetting the value)
+                    while (Memory.ReadByte(Addresses.HOH_ListenedToHero) != 0)
+                        Thread.Sleep(100);
+
+                    Memory.MonitorAddressForAction<byte>(
+                        Addresses.HOH_ListenedToHero,
+                        () =>
+                        {
+                            int chaliceCount = CountChalicesFromLevelStatus();
+                            UpdateHallOfHeroesChecks(chaliceCount);
+#if DEBUG
+                            Console.WriteLine("---------HoH Check Update Monitor Done");
+#endif
+                        },
+                        value => value >= 16);
+
+                    // Phase 3: when we leave HoH, re-arm from phase 1
+                    Memory.MonitorAddressForAction<byte>(
+                        Addresses.CurrentLevel,
+                        () => SetupHallOfHeroesRewardsMonitor(),
+                        value => value != 18);
+                },
+                value => value == 18 && PlayerStateHandler.isInTheGame());
+        }
+
+        internal static void SetupCheatMenuMonitor(ArchipelagoClient client)
+        {
+            Memory.MonitorAddressForAction<ushort>(
+                Addresses.CurrentLevel,
+                () =>
+                {
+                    var mainMenuCheck = Memory.ReadShort(Addresses.CurrentMapPosition);
+                    if (mainMenuCheck != 0x0100)
+                        SetCheatMenu(client);
+#if DEBUG
+                    Console.WriteLine("---------Cheat Monitor Done");
+#endif
+                    Memory.MonitorAddressForAction<ushort>(
+                        Addresses.CurrentLevel,
+                        () => SetupCheatMenuMonitor(client),
+                        value => value == 0);
+                },
+                value => value < 23 && value > 0 && PlayerStateHandler.isInTheGame());
+        }
+
+        internal static void SetupOpenWorldMonitor()
+        {
+            Memory.MonitorAddressForAction<ushort>(
+                Addresses.CurrentLevel,
+                () =>
+                {
+                    OpenTheMap();
+#if DEBUG
+                    Console.WriteLine("---------Open World Monitor Done");
+#endif
+                    Memory.MonitorAddressForAction<ushort>(
+                        Addresses.CurrentLevel,
+                        () => SetupOpenWorldMonitor(),
+                        value => value == 0);
+                },
+                value => value < 23 && value > 0 && PlayerStateHandler.isInTheGame());
+        }
+
+        internal static void SetupPlayerStateMonitor(ArchipelagoClient client)
+        {
+            Memory.MonitorAddressForAction<byte>(
+                Addresses.CurrentLevel,
+                () =>
+                {
+                    Thread.Sleep(8000);
+                    var mapCoords = Memory.ReadShort(Addresses.CurrentMapPosition);
+                    if (mapCoords != 0x0100)
+                        PlayerStateHandler.UpdatePlayerState(client, false);
+                    Memory.MonitorAddressForAction<byte>(
+                        Addresses.CurrentLevel,
+                        () => SetupPlayerStateMonitor(client),
+                        value => value == 0);
+                },
+                value => value > 0 && PlayerStateHandler.isInTheGame());
+        }
+
+        internal static void SetupDropModelsOnMenuReturn()
+        {
+            Memory.MonitorAddressForAction<ushort>(
+                Addresses.CurrentLevel,
+                () =>
+                {
+                    ChangeDropModels();
+                    Memory.MonitorAddressForAction<ushort>(
+                        Addresses.CurrentLevel,
+                        () => SetupDropModelsOnMenuReturn(),
+                        value => value != 0);
+                },
+                value => value == 0);
+        }
+
+        internal static async Task StartBackgroundLoop(ArchipelagoClient client, CancellationTokenSource cts)
+        {
+            await Task.Run(() =>
+            {
+                while (!cts.Token.IsCancellationRequested)
+                {
+                    try
+                    {
+                        ProcessDelayedItems(client);
+                        GoalConditionHandlers.CheckGoalCondition(client);
+                    }
+                    catch (Exception ex)
+                    {
+                        cts.Cancel();
+                        Console.WriteLine("Connection has timed out. Background Task Stopped. Please Restart the Client.");
+                        Log.Error(ex, "Error in passive logic checks thread.");
+                    }
+
+                    Thread.Sleep(3000);
+                }
+            }, cts.Token);
+        }
+
         static internal void ProcessDelayedItems(ArchipelagoClient client)
         {
 

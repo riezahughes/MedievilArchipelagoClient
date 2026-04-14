@@ -43,6 +43,25 @@ namespace MedievilArchipelago.Helpers
                 value => value == 1000);
         }
 
+        internal static void SetupSVSpawnMonitor()
+        {
+            Memory.MonitorAddressForAction<ushort>(
+                Addresses.CurrentLevel,
+                () =>
+                {
+                    Memory.Write(Addresses.SVTriggerEnemySpawn, 0x8080);
+
+#if DEBUG
+                    Console.WriteLine("---------AntHills Monitor Done");
+#endif
+                    Memory.MonitorAddressForAction<byte>(
+                        Addresses.CurrentLevel,
+                        () => SetupSVSpawnMonitor(),
+                        value => value != 8);
+                },
+                value => value == 8);
+        }
+
         internal static void SetupLevelChestMonitor(ArchipelagoClient client)
         {
             Memory.MonitorAddressForAction<ushort>(

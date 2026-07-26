@@ -1,36 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="Assets\MediEvilFont.ttf" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="appsettings.Local.json" Condition="Exists('appsettings.Local.json')">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Assets\MediEvilFont.ttf">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
+	<!-- Local dev machine: use your local checkout if present -->
+	<ItemGroup Condition="Exists('D:\Archipelago\dev\Archipelago.Core\Archipelago.Core.csproj')">
+		<ProjectReference Include="D:\Archipelago\dev\Archipelago.Core\Archipelago.Core.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Assets\MediEvilFont.ttf" />
-  </ItemGroup>
+	<!-- CI / anyone else: use the copy of main checked out by the workflow -->
+	<ItemGroup Condition="!Exists('D:\Archipelago\dev\Archipelago.Core\Archipelago.Core.csproj') AND Exists('$(MSBuildThisFileDirectory)external\Archipelago.Core\Archipelago.Core.csproj')">
+		<ProjectReference Include="$(MSBuildThisFileDirectory)external\Archipelago.Core\Archipelago.Core.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-	  <Content Include="appsettings.Local.json" Condition="Exists('appsettings.Local.json')">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Assets\MediEvilFont.ttf">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Archipelago.Core" Version="2.0.1" />
-    <PackageReference Include="Kokuban" Version="0.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
-    <PackageReference Include="NAudio" Version="2.2.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include=".github\workflows\release.yml" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<PackageReference Include="Kokuban" Version="0.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
+		<PackageReference Include="NAudio" Version="2.2.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include=".github\workflows\release.yml" />
+	</ItemGroup>
 </Project>

@@ -7,10 +7,8 @@ using Archipelago.Core.Models;
 using Archipelago.Core.Util;
 using Archipelago.Core.Util.GPS;
 using Archipelago.Core.Util.Overlay;
-using Archipelago.MultiClient.Net.Models;
 using MedievilArchipelago;
 using MedievilArchipelago.Helpers;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Helpers = MedievilArchipelago.Helpers;
 
@@ -74,7 +72,7 @@ public class Program
 
 #if DEBUG
 #else
-            Console.Clear();
+        Console.Clear();
 #endif
 
         bool connected = gameClient.Connect();
@@ -245,21 +243,13 @@ public class Program
                 JObject Package = JObject.FromObject(Data);
                 archipelagoClient.CurrentSession.DataStorage[$"Medievil_GPS_Team{archipelagoClient.CurrentSession.Players.ActivePlayer.Team.ToString()}_{archipelagoClient.CurrentSession.Players.ActivePlayer}"] = Package;
             };
-            archipelagoClient.GPSHandler.Start();
-
-
-            firstRun = false;
-
-
-            await archipelagoClient.ReceiveReady();
 
             gameOverlay.AddRichTextPopup(new List<ColoredTextSpan>
               {
                   new ColoredTextSpan
                   {
                       Text = "Hello World",
-                      Color = Archipelago.Core.Util.Overlay.Color.Yellow,
-                      FontResourcePath = "MedievilArchipelago.Assets.MediEvilFont.ttf" // namespace.folder.filename
+                      Color = Archipelago.Core.Util.Overlay.Color.Yellow
                   }
               });
 
@@ -277,6 +267,7 @@ public class Program
             ThreadHandlers.ChangeDropModels();
             ThreadHandlers.SetupDropModelsOnMenuReturn();
             ThreadHandlers.SetupAsylumMonitor();
+            ThreadHandlers.SetupSleepingVillageSpawnMonitor();
             ThreadHandlers.SetupLevelChestMonitor(archipelagoClient);
             ThreadHandlers.SetupPlayerStateMonitor(archipelagoClient);
 
@@ -293,6 +284,10 @@ public class Program
                 ThreadHandlers.SetupOpenWorldMonitor();
 
             ThreadHandlers.SetupCheatMenuMonitor(archipelagoClient);
+
+            firstRun = false;
+            archipelagoClient.GPSHandler.Start();
+            await archipelagoClient.ReceiveReady();
 
             _ = ThreadHandlers.StartBackgroundLoop(archipelagoClient, _cancellationTokenSource);
             _ = archipelagoClient.LocationManager.MonitorLocationsAsync(archipelagoClient.CurrentSession, GameLocations, _cancellationTokenSource.Token);

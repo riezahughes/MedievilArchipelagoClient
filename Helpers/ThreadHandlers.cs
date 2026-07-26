@@ -43,7 +43,7 @@ namespace MedievilArchipelago.Helpers
                 value => value == 1000);
         }
 
-        internal static void SetupSVSpawnMonitor()
+        internal static void SetupSleepingVillageSpawnMonitor()
         {
             Memory.MonitorAddressForAction<ushort>(
                 Addresses.CurrentLevel,
@@ -56,7 +56,7 @@ namespace MedievilArchipelago.Helpers
 #endif
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.CurrentLevel,
-                        () => SetupSVSpawnMonitor(),
+                        () => SetupSleepingVillageSpawnMonitor(),
                         value => value != 8);
                 },
                 value => value == 8);
@@ -66,9 +66,9 @@ namespace MedievilArchipelago.Helpers
         {
             Memory.MonitorAddressForAction<ushort>(
                 Addresses.CurrentLevel,
-                () =>
+                () => Task.Run(async () =>
                 {
-                    Thread.Sleep(8000);
+                    await Task.Delay(8000);
                     var loc = Memory.ReadByte(Addresses.CurrentLevel);
                     UpdateChestLocations(client, loc);
 #if DEBUG
@@ -78,7 +78,7 @@ namespace MedievilArchipelago.Helpers
                         Addresses.CurrentLevel,
                         () => SetupLevelChestMonitor(client),
                         value => value == 0);
-                },
+                }),
                 value => value < 23 && value > 0 && PlayerStateHandler.isInTheGame());
         }
 
@@ -86,9 +86,9 @@ namespace MedievilArchipelago.Helpers
         {
             Memory.MonitorAddressForAction<ushort>(
                 Addresses.CurrentLevel,
-                () =>
+                () => Task.Run(async () =>
                 {
-                    Thread.Sleep(3000);
+                    await Task.Delay(3000);
                     UpdateHallOfHeroesTable();
 #if DEBUG
                     Console.WriteLine("---------HoH Array Update Monitor Done");
@@ -97,7 +97,7 @@ namespace MedievilArchipelago.Helpers
                         Addresses.CurrentLevel,
                         () => SetupHallOfHeroesMonitor(),
                         value => value != 18);
-                },
+                }),
                 value => value == 18 && PlayerStateHandler.isInTheGame());
         }
 
@@ -106,12 +106,12 @@ namespace MedievilArchipelago.Helpers
             // Phase 1: wait to enter Hall of Heroes
             Memory.MonitorAddressForAction<byte>(
                 Addresses.CurrentLevel,
-                () =>
+                () => Task.Run(async () =>
                 {
                     // Phase 2: wait for HOH_ListenedToHero to reset to 0 before arming the panel listener
                     // (the level monitor can fire before the game has finished resetting the value)
                     while (Memory.ReadByte(Addresses.HOH_ListenedToHero) != 0)
-                        Thread.Sleep(100);
+                        await Task.Delay(100);
 
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.HOH_ListenedToHero,
@@ -130,7 +130,7 @@ namespace MedievilArchipelago.Helpers
                         Addresses.CurrentLevel,
                         () => SetupHallOfHeroesRewardsMonitor(),
                         value => value != 18);
-                },
+                }),
                 value => value == 18 && PlayerStateHandler.isInTheGame());
         }
 
@@ -176,9 +176,9 @@ namespace MedievilArchipelago.Helpers
         {
             Memory.MonitorAddressForAction<byte>(
                 Addresses.CurrentLevel,
-                () =>
+                () => Task.Run(async () =>
                 {
-                    Thread.Sleep(8000);
+                    await Task.Delay(8000);
                     var mapCoords = Memory.ReadShort(Addresses.CurrentMapPosition);
                     if (mapCoords != 0x0100)
                         PlayerStateHandler.UpdatePlayerState(client, false);
@@ -186,7 +186,7 @@ namespace MedievilArchipelago.Helpers
                         Addresses.CurrentLevel,
                         () => SetupPlayerStateMonitor(client),
                         value => value == 0);
-                },
+                }),
                 value => value > 0 && PlayerStateHandler.isInTheGame());
         }
 
@@ -207,7 +207,7 @@ namespace MedievilArchipelago.Helpers
 
         internal static async Task StartBackgroundLoop(ArchipelagoClient client, CancellationTokenSource cts)
         {
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 while (!cts.Token.IsCancellationRequested)
                 {
@@ -223,7 +223,7 @@ namespace MedievilArchipelago.Helpers
                         Log.Error(ex, "Error in passive logic checks thread.");
                     }
 
-                    Thread.Sleep(3000);
+                    await Task.Delay(3000, cts.Token);
                 }
             }, cts.Token);
         }

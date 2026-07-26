@@ -6,6 +6,15 @@
 		<Nullable>enable</Nullable>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
+
+	<!-- Keep external/ (checked-out Archipelago.Core source) out of this project's own compile/globs -->
+	<ItemGroup>
+		<Compile Remove="external\**" />
+		<Content Remove="external\**" />
+		<EmbeddedResource Remove="external\**" />
+		<None Remove="external\**" />
+	</ItemGroup>
+	
 	<ItemGroup>
 		<None Remove="Assets\MediEvilFont.ttf" />
 	</ItemGroup>

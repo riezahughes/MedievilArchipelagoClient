@@ -70,6 +70,8 @@
 
         public const uint GameGlobalScene = 0x000eeea4;
 
+        public const uint SVTriggerEnemySpawn = 0x0012f670;
+
         // 0x1000 (4096) = 100%
         public const uint DaringDashSkill = 0x000F81C4;
 

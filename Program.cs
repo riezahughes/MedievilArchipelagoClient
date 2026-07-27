@@ -11,7 +11,6 @@ using Archipelago.Core.Util.PlatformMemory;
 using MedievilArchipelago;
 using MedievilArchipelago.Helpers;
 using Newtonsoft.Json.Linq;
-using Serilog;
 using Helpers = MedievilArchipelago.Helpers;
 
 public class Program
@@ -23,9 +22,9 @@ public class Program
         Console.OutputEncoding = Encoding.UTF8;
         Console.Title = "💀 Medievil Archipelago Client";
 
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console()
-            .CreateLogger();
+        //Log.Logger = new LoggerConfiguration()
+        //    .WriteTo.Console()
+        //    .CreateLogger();
 
         // set values
         const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location

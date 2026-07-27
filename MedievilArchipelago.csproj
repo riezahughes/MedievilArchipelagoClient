@@ -27,14 +27,14 @@
 		</Content>
 	</ItemGroup>
 
-	<!-- Local dev machine: use your local checkout if present -->
-	<ItemGroup Condition="Exists('D:\Archipelago\dev\Archipelago.Core\Archipelago.Core.csproj')">
-		<ProjectReference Include="D:\Archipelago\dev\Archipelago.Core\Archipelago.Core.csproj"
+	<!-- Local dev machine: use your local fork checkout if present -->
+	<ItemGroup Condition="Exists('D:\Archipelago\dev\Archipelago.core.myrepo\Archipelago.Core\Archipelago.Core.csproj')">
+		<ProjectReference Include="D:\Archipelago\dev\Archipelago.core.myrepo\Archipelago.Core\Archipelago.Core.csproj"
 						   AdditionalProperties="AllowUnsafeBlocks=true" />
 	</ItemGroup>
-	
+
 	<!-- CI / anyone else: use the copy of main checked out by the workflow -->
-	<ItemGroup Condition="!Exists('D:\Archipelago\dev\Archipelago.Core\Archipelago.Core.csproj') AND Exists('$(MSBuildThisFileDirectory)external\Archipelago.Core\Archipelago.Core.csproj')">
+	<ItemGroup Condition="!Exists('D:\Archipelago\dev\Archipelago.core.myrepo\Archipelago.Core\Archipelago.Core.csproj') AND Exists('$(MSBuildThisFileDirectory)external\Archipelago.Core\Archipelago.Core.csproj')">
 		<ProjectReference Include="$(MSBuildThisFileDirectory)external\Archipelago.Core\Archipelago.Core.csproj"
 						   AdditionalProperties="AllowUnsafeBlocks=true" />
 	</ItemGroup>

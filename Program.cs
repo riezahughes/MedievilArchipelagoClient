@@ -7,9 +7,11 @@ using Archipelago.Core.Models;
 using Archipelago.Core.Util;
 using Archipelago.Core.Util.GPS;
 using Archipelago.Core.Util.Overlay;
+using Archipelago.Core.Util.PlatformMemory;
 using MedievilArchipelago;
 using MedievilArchipelago.Helpers;
 using Newtonsoft.Json.Linq;
+using Serilog;
 using Helpers = MedievilArchipelago.Helpers;
 
 public class Program
@@ -20,6 +22,10 @@ public class Program
     {
         Console.OutputEncoding = Encoding.UTF8;
         Console.Title = "💀 Medievil Archipelago Client";
+
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateLogger();
 
         // set values
         const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
@@ -47,8 +53,8 @@ public class Program
         // Make sure the connect is initialised
 
 
-        GameClient gameClient = null;
-        bool clientInitializedAndConnected = false; // Renamed for clarity
+        GameClient gameClient = new GameClient("duckstation-qt-x64-ReleaseLTCG");
+        bool clientInitializedAndConnected = false;
 
         int retryAttempt = 0;
 
@@ -60,12 +66,16 @@ public class Program
 
             try
             {
-                gameClient = new GameClient("duckstation-qt-x64-ReleaseLTCG");
-                clientInitializedAndConnected = true;
+                clientInitializedAndConnected = gameClient.Connect();
+                if (!clientInitializedAndConnected)
+                {
+                    Console.WriteLine($"Could not find Duckstation open. Retrying in 5 seconds...");
+                    Thread.Sleep(5000);
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Could not find Duckstation open.");
+                Console.WriteLine($"Could not find Duckstation open ({ex.Message}). Retrying in 5 seconds...");
                 Thread.Sleep(5000);
             }
         }
@@ -75,15 +85,13 @@ public class Program
         Console.Clear();
 #endif
 
-        bool connected = gameClient.Connect();
-
         var archipelagoClient = new ArchipelagoClient(gameClient);
 
         Console.WriteLine("Successfully connected to Duckstation.");
 
         try
         {
-            Memory.GlobalOffset = Memory.GetDuckstationOffset();
+            PlatformMemory.GlobalOffset = PlatformMemory.GetDuckstationOffset();
             Console.WriteLine($"Duckstation Memory Offset found at: 0x{Memory.GlobalOffset:X}");
         }
         catch (Exception ex)

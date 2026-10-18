@@ -29,6 +29,9 @@ namespace MedievilArchipelago.Helpers
 
         private static void PlayTone(int frequency, int durationMs)
         {
+            // NAudio's WaveOutEvent is Windows-only
+            if (!OperatingSystem.IsWindows()) return;
+
             var sine = new SignalGenerator()
             {
                 Gain = Volume,

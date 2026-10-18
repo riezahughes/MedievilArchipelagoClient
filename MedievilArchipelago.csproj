@@ -8,14 +8,6 @@
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 	</PropertyGroup>
 
-	<!-- Keep external/ (checked-out Archipelago.Core source) out of this project's own compile/globs -->
-	<ItemGroup>
-		<Compile Remove="external\**" />
-		<Content Remove="external\**" />
-		<EmbeddedResource Remove="external\**" />
-		<None Remove="external\**" />
-	</ItemGroup>
-	
 	<ItemGroup>
 		<None Remove="Assets\MediEvilFont.ttf" />
 	</ItemGroup>
@@ -34,10 +26,9 @@
 						   AdditionalProperties="AllowUnsafeBlocks=true" />
 	</ItemGroup>
 
-	<!-- CI / anyone else: use the copy of main checked out by the workflow -->
-	<ItemGroup Condition="!Exists('D:\Archipelago\dev\Archipelago.core.myrepo\Archipelago.Core\Archipelago.Core.csproj') AND Exists('$(MSBuildThisFileDirectory)external\Archipelago.Core\Archipelago.Core.csproj')">
-		<ProjectReference Include="$(MSBuildThisFileDirectory)external\Archipelago.Core\Archipelago.Core.csproj"
-						   AdditionalProperties="AllowUnsafeBlocks=true" />
+	<!-- CI / anyone else: use the published NuGet package -->
+	<ItemGroup Condition="!Exists('D:\Archipelago\dev\Archipelago.core.myrepo\Archipelago.Core\Archipelago.Core.csproj')">
+		<PackageReference Include="Archipelago.Core" Version="2.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>

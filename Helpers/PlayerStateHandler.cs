@@ -41,6 +41,38 @@ namespace MedievilArchipelago.Helpers
             return true;
 
         }
+        // Was part of trying to fix load save file sending last played lvl that is not needed (anymore) atm.
+        internal static void CheckStarted()
+        {
+            Memory.MonitorAddressForAction<ushort>(
+                Addresses.IsLoaded,
+                 () =>
+                {
+                    ushort read = Memory.ReadUShort(Addresses.IsLoaded);
+                    if (read == 528)
+                    {
+                    //Memory.WriteByte(Addresses.CurrentLevel, 18);
+                    }
+#if DEBUG
+                    Console.WriteLine("---------Game Started");
+#endif
+                    
+                    //Program.Started = true;
+                    Memory.MonitorAddressForAction<ushort>(
+                        Addresses.IsLoaded,
+                        () => 
+                        {
+                        //Program.Started = false;
+#if DEBUG
+                        Console.WriteLine("---------Game Menu");
+#endif
+                        CheckStarted();},
+                        value => value == 61084);
+                },
+                value => value == 59580 || value == 528);
+        }
+
+        
 
         public static void KillPlayer(int deathsound)
         {

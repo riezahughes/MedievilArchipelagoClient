@@ -8,10 +8,13 @@ using Archipelago.Core.Util;
 using Archipelago.Core.Util.GPS;
 using Archipelago.Core.Util.Overlay;
 using Archipelago.Core.Util.PlatformMemory;
+using Archipelago.MultiClient.Net.Models;
 using MedievilArchipelago;
 using MedievilArchipelago.Helpers;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Helpers = MedievilArchipelago.Helpers;
+
 
 public class Program
 {
@@ -255,7 +258,7 @@ public class Program
               {
                   new ColoredTextSpan
                   {
-                      Text = "Hello World",
+                      //Text = "Hello World",
                       Color = Archipelago.Core.Util.Overlay.Color.Yellow
                   }
               });
@@ -274,9 +277,11 @@ public class Program
             ThreadHandlers.ChangeDropModels();
             ThreadHandlers.SetupDropModelsOnMenuReturn();
             ThreadHandlers.SetupAsylumMonitor();
-            ThreadHandlers.SetupSleepingVillageSpawnMonitor();
+            //ThreadHandlers.SetupSleepingVillageSpawnMonitor();
             ThreadHandlers.SetupLevelChestMonitor(archipelagoClient);
             ThreadHandlers.SetupPlayerStateMonitor(archipelagoClient);
+            ThreadHandlers.PumpkinGorgeMonitor(archipelagoClient, GameLocations);
+            ThreadHandlers.Overworld(archipelagoClient);
 
             if (chaliceOption == 1)
             {
@@ -284,7 +289,7 @@ public class Program
                 ThreadHandlers.SetupHallOfHeroesRewardsMonitor();
             }
 
-            if (initialLocation == 7 && antHillOption == 1)
+            if (antHillOption == 1)
                 ThreadHandlers.SetupAnthillMonitor();
 
             if (openWorldOption == 1)

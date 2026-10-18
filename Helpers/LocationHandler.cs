@@ -192,7 +192,7 @@ namespace MedievilArchipelago.Helpers
                                     Address = loc.Address,
                                     CheckType = LocationCheckType.Short,
                                     CompareType = LocationCheckCompareType.Match,
-                                    CheckValue = loc.LevelId == "22" ? "500" : "801" // set zarok chests to wierd numbers so they don't trigger
+                                    CheckValue = loc.LevelId == "23" ? "500" : "801" // set zarok chests to wierd numbers so they don't trigger
                                 });
 
                                 CompositeLocation location = new CompositeLocation()

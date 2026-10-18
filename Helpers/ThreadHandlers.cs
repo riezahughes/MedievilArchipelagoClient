@@ -1,12 +1,17 @@
 ﻿using Archipelago.Core;
+using Archipelago.Core.Models;
 using Archipelago.Core.Util;
 using Archipelago.MultiClient.Net.Models;
 using Serilog;
+using Silk.NET.OpenGL;
 
 namespace MedievilArchipelago.Helpers
 {
     internal class ThreadHandlers
     {
+        
+
+
         internal static void SetupAsylumMonitor()
         {
             Memory.MonitorAddressForAction<byte>(
@@ -22,49 +27,132 @@ namespace MedievilArchipelago.Helpers
                         () => SetupAsylumMonitor(),
                         value => value != 14);
                 },
-                value => value == 14);
+                value => value == 14 && PlayerStateHandler.isInTheGame());
+        }
+
+        internal static void PumpkinGorgeMonitor(ArchipelagoClient client, List<ILocation> builtLocations)
+        {
+            
+#if DEBUG
+            Console.WriteLine("---------Setup Pumpkin Gorge Monitor");
+#endif
+            Memory.MonitorAddressForAction<byte>(Addresses.PG_TimeRune_Door,
+                () =>
+                {
+#if DEBUG
+                    Console.WriteLine("---------Pumpkin Gorge Door Open");
+#endif                        
+                    nint test = FindTimeRune();
+                    Console.WriteLine($"---------returned findtimerune {test:X}");
+                    Memory.MonitorAddressForAction<ushort>(
+                        Convert.ToUInt32(test),
+                        () =>   
+                            {
+                                if (Memory.ReadByte(Addresses.CurrentLevel) == 9)
+                                {
+                                    Console.WriteLine("---------Picked up rune");
+                                    LevelHandlers.SendTimeRune(client, builtLocations);
+                                }
+                                else
+                                    Console.WriteLine("---------Left level");
+                                    PumpkinGorgeMonitor(client, builtLocations);
+                            },
+                        value => (value == 32960 && Memory.ReadByte(Addresses.CurrentLevel) == 9) ||  Memory.ReadByte(Addresses.CurrentLevel) != 9);
+
+                }, 
+                value => value == 1 && Memory.ReadByte(Addresses.CurrentLevel) == 9 && PlayerStateHandler.isInTheGame());
+                
+        }
+
+        internal static nint FindTimeRune()
+        {
+            bool found = false;
+            Console.WriteLine($"---------find time rune start");
+            IntPtr result = 0;
+            var start = 0x001c0000;
+            while (found == false && start <= 0x00200000)
+            {
+            result = Memory.FindSignature(
+                        start:   start,
+                        size:    0x00100000,
+                        pattern: new byte[] { 0x50, 0x50, 0x02, 0x00},
+                        mask:    "xxxx");
+                        if (result != IntPtr.Zero)
+                            {Console.WriteLine($"bytes before {result-4:X}");                            
+                            Console.WriteLine(result-4);
+                            Console.WriteLine(Memory.ReadUShort(Convert.ToUInt32(result-4)));
+                            if (Memory.ReadUShort(Convert.ToUInt32(result - 0x04)) == 192)
+                            {
+                                Console.WriteLine($"Found at 0x00{result-4:X}");
+                                found = true;
+                                result = result -4;
+                            }
+                            else
+                            start = Convert.ToInt32(result);
+                            }
+                        else
+                            Console.WriteLine($"Did not find");
+            }
+#if DEBUG
+            if (start > 0x00200000)
+            Console.WriteLine("Did not find Time Rune");
+#endif
+            return result;
         }
 
         internal static void SetupAnthillMonitor()
         {
-            Memory.MonitorAddressForAction<ushort>(
-                Addresses.TA_BossHealth,
-                () =>
+            Memory.MonitorAddressForAction<byte>(
+                Addresses.CurrentLevel,
+                ()  => 
                 {
-                    UpdateInventoryWithAmber();
+                   
 #if DEBUG
-                    Console.WriteLine("---------AntHills Monitor Done");
+                    Console.WriteLine("---------Ant Hill Monitor Done");
 #endif
+                    Memory.MonitorAddressForAction<ushort>(
+                        Addresses.TA_BossHealth,
+                        () => UpdateInventoryWithAmber(),
+                        value => value == 1000);
+
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.CurrentLevel,
                         () => SetupAnthillMonitor(),
                         value => value != 7);
                 },
-                value => value == 1000);
+                value => value == 7 && PlayerStateHandler.isInTheGame());
         }
+
+        
 
         internal static void SetupSleepingVillageSpawnMonitor()
         {
-            Memory.MonitorAddressForAction<ushort>(
+            Memory.MonitorAddressForAction<byte>(
                 Addresses.CurrentLevel,
-                () =>
+                 () =>
                 {
-                    Memory.Write(Addresses.SVTriggerEnemySpawn, 0x8080);
-
 #if DEBUG
-                    Console.WriteLine("---------AntHills Monitor Done");
+                    Console.WriteLine("---------Sleeping Village Monitor start");
+#endif
+                    Task.Delay(4000);
+                    Memory.Write(Addresses.SVTriggerEnemySpawn, 0x8080);
+                    
+#if DEBUG
+                    Console.WriteLine("---------Sleeping Village Monitor Done");
 #endif
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.CurrentLevel,
                         () => SetupSleepingVillageSpawnMonitor(),
-                        value => value != 8);
+                        value => value != 11);
                 },
-                value => value == 8);
+                value => value == 11);
         }
 
+        // Does not account for going to ant caves from EE, so chest still club there.
+        
         internal static void SetupLevelChestMonitor(ArchipelagoClient client)
         {
-            Memory.MonitorAddressForAction<ushort>(
+            Memory.MonitorAddressForAction<byte>(
                 Addresses.CurrentLevel,
                 () => Task.Run(async () =>
                 {
@@ -74,17 +162,39 @@ namespace MedievilArchipelago.Helpers
 #if DEBUG
                     Console.WriteLine("---------Chest Monitor Done");
 #endif
-                    Memory.MonitorAddressForAction<ushort>(
+                   Memory.MonitorAddressForAction<byte>(
                         Addresses.CurrentLevel,
                         () => SetupLevelChestMonitor(client),
-                        value => value == 0);
+                        value => value == 0 || value ==24);
                 }),
-                value => value < 23 && value > 0 && PlayerStateHandler.isInTheGame());
+                value => value < 24 && value > 0 && PlayerStateHandler.isInTheGame());
         }
 
+        // Setting currentlvl to 24(programmers playground) to have that saved on memory card, 
+        // so loading save doesn't update currentlvl to latest lvlplayed
+        internal static void Overworld(ArchipelagoClient client)
+        {
+            Memory.MonitorAddressForAction<byte>(
+                Addresses.CurrentLevel,
+                ()  => Task.Run(async () =>
+                {
+                    await Task.Delay(2500);
+#if DEBUG
+                    Console.WriteLine("---------Overworld");
+                    Memory.WriteByte(Addresses.CurrentLevel, 24);
+                    Console.WriteLine("---------Changed to Playground");
+#endif
+
+                    Memory.MonitorAddressForAction<byte>(
+                        Addresses.CurrentLevel,
+                        () => Overworld(client),
+                        value => value != 24);
+                }),
+                value => value == 0 && PlayerStateHandler.isInTheGame());
+        }
         internal static void SetupHallOfHeroesMonitor()
         {
-            Memory.MonitorAddressForAction<ushort>(
+            Memory.MonitorAddressForAction<byte>(
                 Addresses.CurrentLevel,
                 () => Task.Run(async () =>
                 {
@@ -93,12 +203,12 @@ namespace MedievilArchipelago.Helpers
 #if DEBUG
                     Console.WriteLine("---------HoH Array Update Monitor Done");
 #endif
-                    Memory.MonitorAddressForAction<ushort>(
+                    Memory.MonitorAddressForAction<byte>(
                         Addresses.CurrentLevel,
                         () => SetupHallOfHeroesMonitor(),
                         value => value != 18);
                 }),
-                value => value == 18 && PlayerStateHandler.isInTheGame());
+                value => value == 18 &&PlayerStateHandler.isInTheGame());
         }
 
         internal static void SetupHallOfHeroesRewardsMonitor()
@@ -149,9 +259,9 @@ namespace MedievilArchipelago.Helpers
                     Memory.MonitorAddressForAction<ushort>(
                         Addresses.CurrentLevel,
                         () => SetupCheatMenuMonitor(client),
-                        value => value == 0);
+                        value => value == 0 || value == 24);
                 },
-                value => value < 23 && value > 0 && PlayerStateHandler.isInTheGame());
+                value => value < 24 && value > 0 && PlayerStateHandler.isInTheGame());
         }
 
         internal static void SetupOpenWorldMonitor()
@@ -167,7 +277,7 @@ namespace MedievilArchipelago.Helpers
                     Memory.MonitorAddressForAction<ushort>(
                         Addresses.CurrentLevel,
                         () => SetupOpenWorldMonitor(),
-                        value => value == 0);
+                        value => value == 0 || value == 24);
                 },
                 value => value < 23 && value > 0 && PlayerStateHandler.isInTheGame());
         }
@@ -185,7 +295,7 @@ namespace MedievilArchipelago.Helpers
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.CurrentLevel,
                         () => SetupPlayerStateMonitor(client),
-                        value => value == 0);
+                        value => value == 0 || value == 24);
                 }),
                 value => value > 0 && PlayerStateHandler.isInTheGame());
         }
@@ -196,13 +306,14 @@ namespace MedievilArchipelago.Helpers
                 Addresses.CurrentLevel,
                 () =>
                 {
+                    //Console.WriteLine("----------dropmodel change");
                     ChangeDropModels();
                     Memory.MonitorAddressForAction<ushort>(
                         Addresses.CurrentLevel,
                         () => SetupDropModelsOnMenuReturn(),
-                        value => value != 0);
+                        value => value != 0 && value != 24);
                 },
-                value => value == 0);
+                value => value == 0 || value == 24);
         }
 
         internal static async Task StartBackgroundLoop(ArchipelagoClient client, CancellationTokenSource cts)

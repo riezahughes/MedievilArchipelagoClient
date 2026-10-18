@@ -190,6 +190,13 @@ namespace MedievilArchipelago.Helpers
                 }
             }
         }
+
+        public static void SendTimeRune(ArchipelagoClient client, List<ILocation> builtLocations)
+        {
+            var location = builtLocations.FirstOrDefault(loc => loc.Name == "Time Rune: Pumpkin Gorge");
+            if (location != null)
+            client.SendLocationAsync(location);
+        }
         public static string GetLevelNameFromId(byte levelId)
         {
             var dict = new Dictionary<byte, string>
@@ -218,6 +225,7 @@ namespace MedievilArchipelago.Helpers
                 [0x15] = "The Time Device",
                 [0x16] = "The Lake",
                 [0x17] = "Zarok's Lair",
+                [0x18] = "Programmers Playground",
             };
 
             return dict[levelId];

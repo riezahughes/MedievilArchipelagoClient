@@ -297,7 +297,7 @@ namespace MedievilArchipelago.Helpers
         public static void UpdateCurrentItemValue(string itemName, int numberUpdate, uint itemMemoryAddress, bool isCountType, bool isEquipmentType, int breakLimit = 0)
         {
             var currentNumberAmount = Memory.ReadShort(itemMemoryAddress);
-
+            
             var chargeConversion = numberUpdate == 50 ? 2048 : numberUpdate == 20 ? 819 : 0;
 
             if (currentNumberAmount == -1 && itemName.ContainsAny("Ammo", "Charge"))
@@ -306,10 +306,11 @@ namespace MedievilArchipelago.Helpers
             }
 
 
-            // life bottles have 1 in the chamber before showing
-            if (itemName == "Life Bottle" && currentNumberAmount == 0)
+            // life bottles don't have 6 count, counteract by reducing by 1 on 6th+ bottle
+            
+            if (itemName == "Life Bottle" && currentNumberAmount > 6)
             {
-                currentNumberAmount = 1;
+                currentNumberAmount = Convert.ToInt16 (currentNumberAmount - 1);
             }
 
 
@@ -348,15 +349,19 @@ namespace MedievilArchipelago.Helpers
             var baseValue = isEquipmentType ? 0 : newNumberAmount;
 
             //Console.WriteLine($"Name: {itemName}, current: {currentNumberAmount}, adding: {numberUpdate}");
-
-            SetItemMemoryValue(itemMemoryAddress, baseValue, countMax);
-
-
+            
 
             if (itemName == "Life Bottle")
             {
-                SetItemMemoryValue(Addresses.LifeBottleSwitch, (300 * newNumberAmount), 10000);
+                SetItemMemoryValue(Addresses.LifeBottleSwitch, (300 * newNumberAmount), 3300);
             }
+            else
+            {
+                SetItemMemoryValue(itemMemoryAddress, baseValue, countMax);
+            }
+
+            
+            
 
             // if you're getting a piece of equipment like the longbow/crossbow/spear/etc give it some ammo.
             if (isEquipmentType && isCountType)

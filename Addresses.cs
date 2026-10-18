@@ -728,6 +728,7 @@
         public const uint PG_Pickup_StarRune = 0x00131948;
         public const uint PG_Pickup_SilverShieldInChestAtTopOfHill = 0x00132c44;
         public const uint PG_Pickup_TimeRune = 0x000ee974; // Star rune door trigger
+        public const uint PG_TimeRune_Door = 0x000ee974; // Star rune door trigger
         public const uint PG_Pickup_EnergyVialBouldersAfterStarRune = 0x00132c88;
         public const uint PG_Pickup_GoldCoinsChestAtBouldersAfterStarRune = 0x00132cc8;
         public const uint PG_Pickup_EnergyVialVinePatchLeft = 0x00132c08;

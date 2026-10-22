@@ -22,8 +22,7 @@
 
 	<!-- Local dev machine: use your local fork checkout if present -->
 	<ItemGroup Condition="Exists('D:\Archipelago\dev\Archipelago.core.myrepo\Archipelago.Core\Archipelago.Core.csproj')">
-		<ProjectReference Include="D:\Archipelago\dev\Archipelago.core.myrepo\Archipelago.Core\Archipelago.Core.csproj"
-						   AdditionalProperties="AllowUnsafeBlocks=true" />
+		<ProjectReference Include="D:\Archipelago\dev\Archipelago.core.myrepo\Archipelago.Core\Archipelago.Core.csproj" AdditionalProperties="AllowUnsafeBlocks=true" />
 	</ItemGroup>
 
 	<!-- CI / anyone else: use the published NuGet package -->
@@ -40,4 +39,5 @@
 	<ItemGroup>
 		<None Include=".github\workflows\release.yml" />
 	</ItemGroup>
+	<ProjectExtensions><VisualStudio><UserProperties appsettings_1local_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 </Project>

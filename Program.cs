@@ -267,16 +267,15 @@ public class Program
         try
         {
 
-            var gameOverlay = new WindowsOverlayService(new OverlayOptions
+            var toggleableOverlay = new ToggleableOverlayService(() => new WindowsOverlayService(new OverlayOptions
             {
                 XOffset = 50,
                 YOffset = 500,
                 FontSize = 12,
                 DefaultTextColor = Archipelago.Core.Util.Overlay.Color.Yellow,
                 FadeDuration = 10.0f
-            });
+            }));
 
-            var toggleableOverlay = new ToggleableOverlayService(gameOverlay);
             archipelagoClient.IntializeOverlayService(toggleableOverlay);
 
             while (archipelagoClient.CurrentSession == null)

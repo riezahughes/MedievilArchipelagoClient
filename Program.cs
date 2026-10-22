@@ -11,12 +11,12 @@ using Archipelago.Core.Util;
 using Archipelago.Core.Util.GPS;
 using Archipelago.Core.Util.Overlay;
 using Archipelago.Core.Util.PlatformMemory;
-using Archipelago.MultiClient.Net.Models;
 using Kokuban;
+using Archipelago.MultiClient.Net.Models;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 using MedievilArchipelago;
 using MedievilArchipelago.Helpers;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Helpers = MedievilArchipelago.Helpers;
 
@@ -58,9 +58,9 @@ public class Program
         Console.OutputEncoding = Encoding.UTF8;
         Console.Title = "💀 Medievil Archipelago Client";
 
-        //Log.Logger = new LoggerConfiguration()
-        //    .WriteTo.Console()
-        //    .CreateLogger();
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateLogger();
 
         // set values
         const byte US_OFFSET = 0x38; // this is ADDED to addresses to get their US location
@@ -276,7 +276,8 @@ public class Program
                 FadeDuration = 10.0f
             });
 
-            archipelagoClient.IntializeOverlayService(gameOverlay);
+            var toggleableOverlay = new ToggleableOverlayService(gameOverlay);
+            archipelagoClient.IntializeOverlayService(toggleableOverlay);
 
             while (archipelagoClient.CurrentSession == null)
             {
@@ -296,7 +297,7 @@ public class Program
                 archipelagoClient.CurrentSession.DataStorage[$"Medievil_GPS_Team{archipelagoClient.CurrentSession.Players.ActivePlayer.Team.ToString()}_{archipelagoClient.CurrentSession.Players.ActivePlayer}"] = Package;
             };
 
-            gameOverlay.AddRichTextPopup(new List<ColoredTextSpan>
+            toggleableOverlay.AddRichTextPopup(new List<ColoredTextSpan>
               {
                   new ColoredTextSpan
                   {
@@ -305,7 +306,7 @@ public class Program
                   }
               });
 
-            gameOverlay.AddTextPopup("💀 Medievil is ready to go.");
+            toggleableOverlay.AddTextPopup("💀 Medievil is ready to go.");
 
             int runeSanityOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("runesanity", "0").ToString());
             int chaliceOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("include_chalices_in_checks", "0").ToString());
@@ -508,6 +509,11 @@ public class Program
                         Helpers.TrapHandlers.HudlessTrap(archipelagoClient);
                     }
 #endif
+                    else if (input?.Trim().ToLower() == "overlay")
+                    {
+                        toggleableOverlay.Enabled = !toggleableOverlay.Enabled;
+                        Console.WriteLine($"Game overlay {(toggleableOverlay.Enabled ? "enabled" : "disabled")}.");
+                    }
                     else if (!string.IsNullOrWhiteSpace(input))
                     {
                         Console.WriteLine($"Unknown command: '{input}'");

@@ -364,8 +364,13 @@ public class Program
                     }
                     else if (input?.Trim().ToLower().Contains("release") == true)
                     {
-                        Console.WriteLine("Manually sending goal completion ping to Archipelago server...");
-                        archipelagoClient.SendGoalCompletion();
+                        if(PlayerStateHandler.isInTheGame() == true)
+                        {
+                            Console.WriteLine("Manually sending goal completion ping to Archipelago server...");
+                            archipelagoClient.SendGoalCompletion();
+                        } else {
+                            Console.WriteLine("You are not in a valid location to release the goal. Get In-game first");
+                        }
                     }
                     else if (input?.Trim().ToLower() == "goal")
                     {

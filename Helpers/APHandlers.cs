@@ -97,11 +97,10 @@ namespace MedievilArchipelago.Helpers
         // logic for item receiving goes here (gold, health, ammo, etc)
         public static void ItemReceived(object sender, ItemReceivedEventArgs args, ArchipelagoClient client)
         {
-            var isValidForDelay = args.Item.Name.ContainsAny("Ammo", "Charge", "Energy", "Trap:");
 
             if (client.CurrentSession != null)
             {
-                if (!PlayerStateHandler.isInTheGame() && isValidForDelay)
+                if (!PlayerStateHandler.isInTheGame())
                 {
                     Program.delayedItems.Add(args);
                     return;

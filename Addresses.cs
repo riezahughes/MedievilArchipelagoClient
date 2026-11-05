@@ -545,7 +545,7 @@
         public const uint EE_Pickup_EnergyVialShadowTalismanCave = 0x00130538;
         public const uint EE_Pickup_GoldCoinsBagInShadowTalismanCave = 0x00130538;
         public const uint EE_Pickup_GoldCoinsChestNearBarrier = 0x00130038;
-        public const uint EE_Pickup_StarRune = 0x0012f855;
+        public const uint EE_Pickup_StarRune = 0x001300f8;
         public const uint EE_Pickup_GoldCoinsChestLeftOfFountain = 0x0012fef8;
         public const uint EE_Pickup_GoldCoinsChestTopOfFountain = 0x0012feb8;
         public const uint EE_Pickup_GoldCoinsChestRightOfFountain = 0x0012ff38;

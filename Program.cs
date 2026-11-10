@@ -345,6 +345,7 @@ public class Program
                 ThreadHandlers.SetupOpenWorldMonitor();
 
             ThreadHandlers.SetupCheatMenuMonitor(archipelagoClient);
+            ThreadHandlers.SetupLevelUnlockMonitor(); // Need check for option
 
             firstRun = false;
             archipelagoClient.GPSHandler.Start();

@@ -24,7 +24,7 @@ namespace MedievilArchipelago.Helpers
             int gargoyleSanity = int.Parse(client.Options?.GetValueOrDefault("gargoylesanity", "0").ToString());
 
             // starting gargoyles
-            if (client.GPSHandler.MapId == 6 && client.GPSHandler.X >= 64189 && client.GPSHandler.X >= 60484 && client.GPSHandler.Y == 0 && client.GPSHandler.Z >= 94 && client.GPSHandler.Z >= 65436 && gargoyleSanity == 1)
+            if (client.GPSHandler.MapId == 6 && client.GPSHandler.X <= 64189 && client.GPSHandler.X >= 64084 && client.GPSHandler.Y == 0 && (client.GPSHandler.Z <= 94 || client.GPSHandler.Z >= 65436) && gargoyleSanity == 1)
             {
                 var location1 = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Left - DC");
                 var location2 = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Right - DC");
@@ -98,7 +98,7 @@ namespace MedievilArchipelago.Helpers
                     }
                 }
 
-                else if (fairies == 6)
+                if (fairies == 6)
                 {
                     var location = builtLocations.FirstOrDefault(loc => loc.Name == "Chalice: Ant Hill");
                     if (location != null)
@@ -166,29 +166,29 @@ namespace MedievilArchipelago.Helpers
             }
 
 
-            // Zarok Chest 1
-            if (client.GPSHandler.MapId == 23 && client.GPSHandler.X >= 64639 && client.GPSHandler.X <= 64693 && client.GPSHandler.Y >= 9 && client.GPSHandler.Y <= 13 && client.GPSHandler.Z >= 2820 && client.GPSHandler.Z <= 2939)
-            {
-                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Good Lightning - ZL");
-                if (location != null)
-                {
-                    {
-                        client.SendLocationAsync(location);
-                    }
-                }
-            }
+            // // Zarok Chest 1
+            // if (client.GPSHandler.MapId == 23 && client.GPSHandler.X >= 64639 && client.GPSHandler.X <= 64693 && client.GPSHandler.Y >= 9 && client.GPSHandler.Y <= 13 && client.GPSHandler.Z >= 2820 && client.GPSHandler.Z <= 2939)
+            // {
+            //     var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Good Lightning - ZL");
+            //     if (location != null)
+            //     {
+            //         {
+            //             client.SendLocationAsync(location);
+            //         }
+            //     }
+            // }
 
-            // Zarok Chest 2
-            if (client.GPSHandler.MapId == 23 && client.GPSHandler.X >= 768 && client.GPSHandler.X <= 999 && client.GPSHandler.Y >= 9 && client.GPSHandler.Y <= 13 && client.GPSHandler.Z >= 2830 && client.GPSHandler.Z <= 2965)
-            {
-                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Silver Shield Arena - ZL");
-                if (location != null)
-                {
-                    {
-                        client.SendLocationAsync(location);
-                    }
-                }
-            }
+            // // Zarok Chest 2
+            // if (client.GPSHandler.MapId == 23 && client.GPSHandler.X >= 768 && client.GPSHandler.X <= 999 && client.GPSHandler.Y >= 9 && client.GPSHandler.Y <= 13 && client.GPSHandler.Z >= 2830 && client.GPSHandler.Z <= 2965)
+            // {
+            //     var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Silver Shield Arena - ZL");
+            //     if (location != null)
+            //     {
+            //         {
+            //             client.SendLocationAsync(location);
+            //         }
+            //     }
+            // }
         }
 
         public static void SendTimeRune(ArchipelagoClient client, List<ILocation> builtLocations)

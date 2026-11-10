@@ -346,6 +346,7 @@ public class Program
 
             ThreadHandlers.SetupCheatMenuMonitor(archipelagoClient);
             ThreadHandlers.SetupLevelUnlockMonitor(); // Need check for option
+            Memory.WriteByte(Addresses.DC_Unlock, 1);
 
             firstRun = false;
             archipelagoClient.GPSHandler.Start();

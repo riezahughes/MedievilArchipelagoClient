@@ -480,7 +480,7 @@ namespace MedievilArchipelago.Helpers
 
             }
 
-            client.AddOverlayMessage(textMessage);
+            // client.AddOverlayMessage(textMessage); // overlay removed, so the rune status isn't shown anywhere for now
 
         }
 

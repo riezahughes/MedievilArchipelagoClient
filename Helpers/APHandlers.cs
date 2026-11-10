@@ -3,6 +3,8 @@ using Archipelago.Core.Models;
 using Archipelago.Core.Util;
 using Archipelago.Core.Util.GPS;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
+using Archipelago.MultiClient.Net.Enums;
+using Archipelago.MultiClient.Net.MessageLog.Messages;
 using Archipelago.MultiClient.Net.Packets;
 using Kokuban;
 using Newtonsoft.Json.Linq;
@@ -143,6 +145,23 @@ namespace MedievilArchipelago.Helpers
 
         }
 
+        // items coming in or going out are shown in the game's own popup window
+        private static void ShowInGamePopup(LogMessage message)
+        {
+            if (message is not ItemSendLogMessage itemMessage || message is HintItemSendLogMessage) return;
+
+            string itemName = itemMessage.Item.ItemName ?? "an item";
+            bool progression = itemMessage.Item.Flags.HasFlag(ItemFlags.Advancement);
+            bool trap = itemMessage.Item.Flags.HasFlag(ItemFlags.Trap);
+
+            if (itemMessage.IsReceiverTheActivePlayer && itemMessage.IsSenderTheActivePlayer)
+                PopupHandler.ItemFound(itemName, progression, trap);
+            else if (itemMessage.IsReceiverTheActivePlayer)
+                PopupHandler.ItemReceived(itemName, itemMessage.Sender.Name, progression, trap);
+            else if (itemMessage.IsSenderTheActivePlayer)
+                PopupHandler.ItemSent(itemName, itemMessage.Receiver.Name, progression, trap);
+        }
+
         public static void Client_MessageReceived(object sender, MessageReceivedEventArgs e, ArchipelagoClient client, string slot)
         {
 #if DEBUG
@@ -150,9 +169,12 @@ namespace MedievilArchipelago.Helpers
 #endif
             var message = string.Join("", e.Message.Parts.Select(p => p.Text));
 
-            // this message can use emoji's through the overlay. Look into maybe making it a little more obvious 
-            // what each item is with a symbol
-            client.AddOverlayMessage(e.Message.ToString());
+            // overlay removed, see PopupHandler
+            // // this message can use emoji's through the overlay. Look into maybe making it a little more obvious
+            // // what each item is with a symbol
+            // client.AddOverlayMessage(e.Message.ToString());
+
+            ShowInGamePopup(e.Message);
 
             string prefix;
             Kokuban.AnsiEscape.AnsiStyle bg;

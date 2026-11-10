@@ -9,7 +9,7 @@ using Archipelago.Core.Helpers;
 using Archipelago.Core.Models;
 using Archipelago.Core.Util;
 using Archipelago.Core.Util.GPS;
-using Archipelago.Core.Util.Overlay;
+// using Archipelago.Core.Util.Overlay;
 using Archipelago.Core.Util.PlatformMemory;
 using Kokuban;
 using Archipelago.MultiClient.Net.Models;
@@ -48,6 +48,12 @@ public class Program
             startInfo.ArgumentList.Add("-p");
             startInfo.ArgumentList.Add(Chalk.Magenta.Bold["  🔒 Password: "].ToString());
             startInfo.ArgumentList.Add(Environment.ProcessPath!);
+            // when launched through the dotnet host (e.g. the VS Code debugger), ProcessPath is "dotnet",
+            // so the app's .dll has to be passed along too or dotnet just prints its usage text
+            if (Path.GetFileNameWithoutExtension(Environment.ProcessPath!) == "dotnet")
+            {
+                startInfo.ArgumentList.Add(typeof(Program).Assembly.Location);
+            }
             foreach (var arg in args) startInfo.ArgumentList.Add(arg);
 
             using var elevated = Process.Start(startInfo)!;
@@ -267,16 +273,17 @@ public class Program
         try
         {
 
-            var toggleableOverlay = new ToggleableOverlayService(() => new WindowsOverlayService(new OverlayOptions
-            {
-                XOffset = 50,
-                YOffset = 500,
-                FontSize = 12,
-                DefaultTextColor = Archipelago.Core.Util.Overlay.Color.Yellow,
-                FadeDuration = 10.0f
-            }));
-
-            archipelagoClient.IntializeOverlayService(toggleableOverlay);
+            // Overlay removed: item messages are shown in the game's own popup window instead (see PopupHandler).
+            // var toggleableOverlay = new ToggleableOverlayService(() => new WindowsOverlayService(new OverlayOptions
+            // {
+            //     XOffset = 50,
+            //     YOffset = 500,
+            //     FontSize = 12,
+            //     DefaultTextColor = Archipelago.Core.Util.Overlay.Color.Yellow,
+            //     FadeDuration = 10.0f
+            // }));
+            //
+            // archipelagoClient.IntializeOverlayService(toggleableOverlay);
 
             while (archipelagoClient.CurrentSession == null)
             {
@@ -296,16 +303,16 @@ public class Program
                 archipelagoClient.CurrentSession.DataStorage[$"Medievil_GPS_Team{archipelagoClient.CurrentSession.Players.ActivePlayer.Team.ToString()}_{archipelagoClient.CurrentSession.Players.ActivePlayer}"] = Package;
             };
 
-            toggleableOverlay.AddRichTextPopup(new List<ColoredTextSpan>
-              {
-                  new ColoredTextSpan
-                  {
-                      //Text = "Hello World",
-                      Color = Archipelago.Core.Util.Overlay.Color.Yellow
-                  }
-              });
-
-            toggleableOverlay.AddTextPopup("💀 Medievil is ready to go.");
+            // toggleableOverlay.AddRichTextPopup(new List<ColoredTextSpan>
+            //   {
+            //       new ColoredTextSpan
+            //       {
+            //           //Text = "Hello World",
+            //           Color = Archipelago.Core.Util.Overlay.Color.Yellow
+            //       }
+            //   });
+            //
+            // toggleableOverlay.AddTextPopup("💀 Medievil is ready to go.");
 
             int runeSanityOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("runesanity", "0").ToString());
             int chaliceOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("include_chalices_in_checks", "0").ToString());
@@ -344,6 +351,7 @@ public class Program
             await archipelagoClient.ReceiveReady();
 
             _ = ThreadHandlers.StartBackgroundLoop(archipelagoClient, _cancellationTokenSource);
+            PopupHandler.Start(_cancellationTokenSource.Token);
             _ = archipelagoClient.LocationManager.MonitorLocationsAsync(archipelagoClient.CurrentSession, GameLocations, _cancellationTokenSource.Token);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
@@ -355,6 +363,52 @@ public class Program
                     {
                         _cancellationTokenSource.Cancel();
                         break;
+                    }
+                    // in-game popups (needs to be above the "hint" check, which matches any input containing "hint")
+                    // popup             - turns in-game popups on/off
+                    // popup debug       - prints the game's popup request slots
+                    // popup "my text"   - shows a test popup; text starting with '@' is used as-is, e.g. "@c3@b3@t3@>hi"
+                    else if (input?.Trim().ToLower() == "popup")
+                    {
+                        PopupHandler.Enabled = !PopupHandler.Enabled;
+                        Console.WriteLine($"In-game popups {(PopupHandler.Enabled ? "enabled" : "disabled")}.");
+                    }
+                    else if (input?.Trim().ToLower() == "popup debug")
+                    {
+                        PopupHandler.PrintDebug();
+                    }
+                    else if (input?.Trim().ToLower() == "popup colours" || input?.Trim().ToLower() == "popup colors")
+                    {
+                        // one popup per text colour (@c0 to @c15), shown one after another
+                        PopupHandler.ShowColourSamples();
+                        Console.WriteLine("Queued colour samples 0-15. They'll show one after another.");
+                    }
+                    else if (input?.Trim().ToLower() == "popup items")
+                    {
+                        // one popup of each item style
+                        PopupHandler.ItemReceived("Skull Key", "Bob", progression: true);
+                        PopupHandler.ItemReceived("Gold Pieces", "Bob", progression: false);
+                        PopupHandler.ItemSent("Vera Root", "Bob", progression: true);
+                        PopupHandler.ItemSent("Potion", "Bob", progression: false);
+                        PopupHandler.ItemReceived("Slowness Trap", "Bob", progression: false, trap: true);
+                        Console.WriteLine("Queued the item popup styles (progression, other, sent, sent, trap).");
+                    }
+                    else if (input?.Trim().ToLower().StartsWith("popup ") == true)
+                    {
+                        string message = input.Trim().Substring(6).Trim().Trim('"');
+                        if (string.IsNullOrWhiteSpace(message))
+                        {
+                            Console.WriteLine("Usage: popup \"here is my text\"");
+                        }
+                        else if (!PopupHandler.Enabled)
+                        {
+                            Console.WriteLine("In-game popups are off. Type 'popup' to turn them on.");
+                        }
+                        else
+                        {
+                            PopupHandler.Show(message);
+                            Console.WriteLine($"Queued in-game popup: {message}");
+                        }
                     }
                     else if (input?.Trim().ToLower().Contains("hint") == true)
                     {
@@ -513,11 +567,11 @@ public class Program
                         Helpers.TrapHandlers.HudlessTrap(archipelagoClient);
                     }
 #endif
-                    else if (input?.Trim().ToLower() == "overlay")
-                    {
-                        toggleableOverlay.Enabled = !toggleableOverlay.Enabled;
-                        Console.WriteLine($"Game overlay {(toggleableOverlay.Enabled ? "enabled" : "disabled")}.");
-                    }
+                    // else if (input?.Trim().ToLower() == "overlay")
+                    // {
+                    //     toggleableOverlay.Enabled = !toggleableOverlay.Enabled;
+                    //     Console.WriteLine($"Game overlay {(toggleableOverlay.Enabled ? "enabled" : "disabled")}.");
+                    // }
                     else if (!string.IsNullOrWhiteSpace(input))
                     {
                         Console.WriteLine($"Unknown command: '{input}'");

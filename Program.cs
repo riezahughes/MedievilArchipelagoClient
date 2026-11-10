@@ -352,6 +352,7 @@ public class Program
 
             _ = ThreadHandlers.StartBackgroundLoop(archipelagoClient, _cancellationTokenSource);
             PopupHandler.Start(_cancellationTokenSource.Token);
+            MapRunePopup.Start(archipelagoClient, _cancellationTokenSource.Token);
             _ = archipelagoClient.LocationManager.MonitorLocationsAsync(archipelagoClient.CurrentSession, GameLocations, _cancellationTokenSource.Token);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)

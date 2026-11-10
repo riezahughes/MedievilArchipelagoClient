@@ -57,15 +57,10 @@ namespace MedievilArchipelago.Helpers
         // how long to wait after a popup closes before showing the next one
         public static TimeSpan GapBetweenPopups { get; set; } = TimeSpan.FromMilliseconds(500);
 
-        // the game's popup window stack: count at gp+0x604 (gp = 0x800ED60C), 4 entries at 0x800EF3C8
-        private const uint OpenWindowCount = 0x000EDC10;
+        // the game's popup window stack holds at most 4 windows (see Addresses.PopupOpenWindowCount)
         private const int MaxWindows = 4;
 
-        // global message table: 4-byte string pointers, indexed by message ID
-        private const uint MessageTable = 0x000D98F4;
-
-        // 4 request slots, 12 bytes each: u32 id, u16 flags, s16 priority, s16, s16
-        private const uint RequestSlots = 0x000EF3D8;
+        // request slots (Addresses.PopupRequestSlots), 12 bytes each: u32 id, u16 flags, s16 priority, s16, s16
         private const int RequestSlotCount = 4;
         private const uint RequestSlotSize = 0x0C;
         private const uint EmptySlotId = 0x191;
@@ -77,15 +72,22 @@ namespace MedievilArchipelago.Helpers
         // and the start of the main game code (0x80021CEC).
         private static readonly (uint MessageId, uint Buffer)[] Channels =
         {
-            (168, 0x00021B00),
-            (169, 0x00021BE0),
+            (168, Addresses.PopupTextBuffer1),
+            (169, Addresses.PopupTextBuffer2),
         };
         private const int TextBufferSize = 0xE0;
         private static int _nextChannel;
 
         private static readonly ConcurrentQueue<string> _queue = new();
-        private static readonly SemaphoreSlim _signal = new(0);
         private static Task? _worker;
+
+        // the latest world-map popup (rune status of the hovered level); a newer one replaces it
+        private static string? _pendingMapPopup;
+
+        // the world map overlay (LANDMAP.BIN) is loaded when Addresses.LoadedOverlayId holds its ID
+        private const uint WorldMapOverlayId = 0x1A;
+
+        public static bool IsOnWorldMap() => Memory.ReadUInt(Addresses.LoadedOverlayId) == WorldMapOverlayId;
 
         // Queues a popup. If the text doesn't start with '@', the default timed hint style is put in front of it.
         // Safe to call from any thread; popups show one after another.
@@ -93,7 +95,14 @@ namespace MedievilArchipelago.Helpers
         {
             if (!Enabled || string.IsNullOrWhiteSpace(text)) return;
             _queue.Enqueue(text.StartsWith("@") ? text : DefaultStyle + text);
-            _signal.Release();
+        }
+
+        // Shows a popup on the world map. Only the latest one is kept, so moving the cursor quickly between
+        // levels doesn't pile them up. It's dropped if you leave the map before it shows.
+        public static void ShowOnMap(string text)
+        {
+            if (!Enabled || string.IsNullOrWhiteSpace(text)) return;
+            _pendingMapPopup = text;
         }
 
         // fromPlayer is the player whose world the item was found in
@@ -146,18 +155,23 @@ namespace MedievilArchipelago.Helpers
             {
                 try
                 {
-                    await _signal.WaitAsync(token);
+                    await Task.Delay(250, token);
 
-                    // wait until Dan is in a level, there's room for another window and a free request slot
-                    uint? slot;
-                    int windowsBefore;
-                    while (!PlayerStateHandler.isInTheGame()
-                           || (windowsBefore = Memory.ReadInt(OpenWindowCount)) >= MaxWindows - 1
-                           || windowsBefore < 0
-                           || (slot = FindEmptySlot()) == null)
-                        await Task.Delay(250, token);
+                    bool onMap = IsOnWorldMap();
+                    if (!onMap) _pendingMapPopup = null;
+                    if (!Enabled || (_queue.IsEmpty && _pendingMapPopup == null)) continue;
 
-                    if (!_queue.TryDequeue(out var text) || !Enabled) continue;
+                    // popups show in a level or on the world map, when there's room for another window and a
+                    // free request slot
+                    if (!onMap && !PlayerStateHandler.isInTheGame()) continue;
+                    int windowsBefore = Memory.ReadInt(Addresses.PopupOpenWindowCount);
+                    if (windowsBefore < 0 || windowsBefore >= MaxWindows - 1) continue;
+                    uint? slot = FindEmptySlot();
+                    if (slot == null) continue;
+
+                    // on the map the hovered level's rune popup goes first, otherwise the next queued popup
+                    string? text = onMap ? Interlocked.Exchange(ref _pendingMapPopup, null) : null;
+                    if (text == null && !_queue.TryDequeue(out text)) continue;
 
                     var (messageId, buffer) = Channels[_nextChannel];
                     _nextChannel = (_nextChannel + 1) % Channels.Length;
@@ -169,11 +183,11 @@ namespace MedievilArchipelago.Helpers
                         await Task.Delay(100, token);
 
                     // ...for our window to open (up to 2s)...
-                    for (int i = 0; i < 20 && Memory.ReadInt(OpenWindowCount) <= windowsBefore; i++)
+                    for (int i = 0; i < 20 && Memory.ReadInt(Addresses.PopupOpenWindowCount) <= windowsBefore; i++)
                         await Task.Delay(100, token);
 
                     // ...and for it to close again (up to 20s, in case something else keeps a window open)
-                    for (int i = 0; i < 200 && Memory.ReadInt(OpenWindowCount) > windowsBefore; i++)
+                    for (int i = 0; i < 200 && Memory.ReadInt(Addresses.PopupOpenWindowCount) > windowsBefore; i++)
                         await Task.Delay(100, token);
 
                     await Task.Delay(GapBetweenPopups, token);
@@ -199,7 +213,7 @@ namespace MedievilArchipelago.Helpers
             bytes.CopyTo(terminated, 0);
 
             Memory.Write(buffer, terminated);
-            Memory.Write(MessageTable + messageId * 4, 0x80000000u | buffer);
+            Memory.Write(Addresses.PopupMessageTable + messageId * 4, 0x80000000u | buffer);
 
             // same as 0x8005E32C(id, 1, 0x19, 0x19): fill in the slot, writing the id last so the game
             // never sees a half-written request
@@ -214,7 +228,7 @@ namespace MedievilArchipelago.Helpers
         {
             for (uint i = 0; i < RequestSlotCount; i++)
             {
-                uint slot = RequestSlots + i * RequestSlotSize;
+                uint slot = Addresses.PopupRequestSlots + i * RequestSlotSize;
                 if (Memory.ReadUInt(slot) == EmptySlotId) return slot;
             }
             return null;
@@ -238,15 +252,15 @@ namespace MedievilArchipelago.Helpers
         // prints the request slots and our message table entries, to help work out what the game does with them
         public static void PrintDebug()
         {
-            Console.WriteLine($"open windows: {Memory.ReadInt(OpenWindowCount)} (queue waits while this is {MaxWindows - 1} or more)");
+            Console.WriteLine($"open windows: {Memory.ReadInt(Addresses.PopupOpenWindowCount)} (queue waits while this is {MaxWindows - 1} or more)");
             for (uint i = 0; i < RequestSlotCount; i++)
             {
-                uint slot = RequestSlots + i * RequestSlotSize;
+                uint slot = Addresses.PopupRequestSlots + i * RequestSlotSize;
                 Console.WriteLine($"slot {i}: id 0x{Memory.ReadUInt(slot):X} flags 0x{Memory.ReadUShort(slot + 4):X4} " +
                                   $"priority {Memory.ReadShort(slot + 6)} {Memory.ReadShort(slot + 8)} {Memory.ReadShort(slot + 10)}");
             }
             foreach (var (messageId, _) in Channels)
-                Console.WriteLine($"message {messageId} -> 0x{Memory.ReadUInt(MessageTable + messageId * 4):X8}");
+                Console.WriteLine($"message {messageId} -> 0x{Memory.ReadUInt(Addresses.PopupMessageTable + messageId * 4):X8}");
         }
     }
 }

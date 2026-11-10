@@ -4,6 +4,22 @@
     {
         public const uint FakeAddress = 0x00000000; // This is a placeholder for an address that doesn't exist in the game. Used for testing.
 
+        // In-game popups (see Helpers/PopupHandler.cs)
+        public const uint PopupOpenWindowCount = 0x000EDC10; // gp+0x604 (gp = 0x800ED60C); window stack itself at 0x000EF3C8
+        public const uint PopupMessageTable = 0x000D98F4;    // 4-byte string pointers, indexed by message ID
+        public const uint PopupRequestSlots = 0x000EF3D8;    // 4 x 12-byte request slots
+        // our text buffers, in the unused gap between the end of the largest level overlay (ZL.BIN, ~0x000217B0)
+        // and the start of the main game code (0x00021CEC)
+        public const uint PopupTextBuffer1 = 0x00021B00;
+        public const uint PopupTextBuffer2 = 0x00021BE0;
+
+        // ID of the currently loaded overlay (0x1A = LANDMAP.BIN, the world map)
+        public const uint LoadedOverlayId = 0x00010000;
+
+        // World map (only valid while LANDMAP.BIN is loaded, see Helpers/MapRunePopup.cs)
+        public const uint WorldMapStatePointer = 0x00014FB0;  // pointer to map state; +0x18 = hovered level index
+        public const uint WorldMapLevelRecords = 0x0001493C;  // 0x24 bytes per level; +0 = name pointer
+
         // checks if you can control Dan
         public const uint InGameCheck = 0x000f88a0;
 

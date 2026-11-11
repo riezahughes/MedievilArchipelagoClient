@@ -345,7 +345,7 @@ public class Program
                 ThreadHandlers.SetupOpenWorldMonitor();
 
             ThreadHandlers.SetupCheatMenuMonitor(archipelagoClient);
-            ThreadHandlers.SetupLevelUnlockMonitor();
+            // ThreadHandlers.SetupLevelUnlockMonitor(); // not ready to be used.
 
             firstRun = false;
             archipelagoClient.GPSHandler.Start();
@@ -353,7 +353,10 @@ public class Program
 
             _ = ThreadHandlers.StartBackgroundLoop(archipelagoClient, _cancellationTokenSource);
             PopupHandler.Start(_cancellationTokenSource.Token);
-            MapRunePopup.Start(archipelagoClient, _cancellationTokenSource.Token);
+            
+            if(runeSanityOption == 1){
+                MapRunePopup.Start(archipelagoClient, _cancellationTokenSource.Token);
+            };
             _ = archipelagoClient.LocationManager.MonitorLocationsAsync(archipelagoClient.CurrentSession, GameLocations, _cancellationTokenSource.Token);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)

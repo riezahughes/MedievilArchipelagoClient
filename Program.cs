@@ -361,6 +361,9 @@ public class Program
             }
             ;
             _ = archipelagoClient.LocationManager.MonitorLocationsAsync(archipelagoClient.CurrentSession, GameLocations, _cancellationTokenSource.Token);
+            // runs on its own task and returns straight away, so it never holds up the location monitor
+            if (Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("shopsanity", "0").ToString()) == 1)
+                ShopHandler.Start(archipelagoClient, _cancellationTokenSource.Token);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {
@@ -384,6 +387,11 @@ public class Program
                     else if (input?.Trim().ToLower() == "popup debug")
                     {
                         PopupHandler.PrintDebug();
+                    }
+                    else if (input?.Trim().ToLower() == "shop debug")
+                    {
+                        // ShopSanity: prints the shop's SECOND HAND GOODS rows and the purchase token
+                        ShopHandler.PrintDebug();
                     }
                     else if (input?.Trim().ToLower() == "popup colours" || input?.Trim().ToLower() == "popup colors")
                     {

@@ -13,6 +13,15 @@
         public const uint PopupTextBuffer1 = 0x00021B00;
         public const uint PopupTextBuffer2 = 0x00021BE0;
 
+        // Merchant Gargoyle shop (see Helpers/ShopHandler.cs). All in MEDIEVIL.EXE's data, so valid everywhere.
+        public const uint ShopTable = 0x000DA2DC;             // 19 x 8 bytes: u8 slot, u8 icon, u16 name msg, u16 price, u16 amount
+        public const uint ShopSecondHandTitle = 0x000DA504;   // pointer to "SECOND HAND GOODS" (shop rows 8-18)
+        public const uint ShopMenuId = 0x800DA454;            // the shop menu's window descriptor
+        public const uint WindowStack = 0x000EF3C8;           // pointers to open windows, count at PopupOpenWindowCount
+        public const uint CurrentMenu = 0x000EDC1C;           // gp+0x610: menu being used; +0xC = selected row, row+0x17 = shop row
+        public const uint Inventory = 0x000F822C;             // 43 x u32: low half = amount (-1 none, < -1 stolen), high bit 0 = buy back
+        public const uint ShopTextBuffer = 0x000C8C00;        // our shop names, in an unused block of MEDIEVIL.EXE's data
+
         // ID of the currently loaded overlay (0x1A = LANDMAP.BIN, the world map)
         public const uint LoadedOverlayId = 0x00010000;
 

@@ -151,6 +151,7 @@ namespace MedievilArchipelago.Helpers
         private static void ShowInGamePopup(LogMessage message)
         {
             if (message is not ItemSendLogMessage itemMessage || message is HintItemSendLogMessage) return;
+            if (ShopHandler.IsShopLocation(itemMessage.Item.LocationId)) return;
 
             string itemName = itemMessage.Item.ItemName ?? "an item";
             bool progression = itemMessage.Item.Flags.HasFlag(ItemFlags.Advancement);

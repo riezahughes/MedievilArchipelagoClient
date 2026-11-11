@@ -10,7 +10,7 @@ namespace MedievilArchipelago.Helpers
     internal class ThreadHandlers
     {
 
-        internal static void SetupLevelUnlockMonitor()
+        internal static void SetupLevelUnlockMonitor(ArchipelagoClient client)
         {
             Memory.MonitorAddressForAction<byte>(
                 Addresses.CurrentMapPosition,
@@ -25,7 +25,7 @@ namespace MedievilArchipelago.Helpers
 #endif                    
                     // Check to see if you have item and reset/set buttons accordingly
                     // Start of memorylist add mapcursor for correct lvl, iso searching for correct address through dict/list.
-                    Buttons(Memory.ReadByte(Addresses.LevelUnlocks + inlevel) == 1);
+                    Buttons(Memory.ReadByte(Addresses.LevelUnlocks + inlevel) == 1 || LevelKeyHandler.HasLevelKeyForMapPosition(client, (byte)inlevel));
 
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.CurrentMapPosition,
@@ -33,7 +33,7 @@ namespace MedievilArchipelago.Helpers
                         {
                             // When changing map, reset buttons and reset monitor
                             Buttons(true);
-                            SetupLevelUnlockMonitor();
+                            SetupLevelUnlockMonitor(client);
                         },
 
                         value => value != inlevel);

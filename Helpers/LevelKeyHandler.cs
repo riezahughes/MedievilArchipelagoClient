@@ -55,6 +55,16 @@ namespace MedievilArchipelago.Helpers
 
         public static bool IsLevelKey(string itemName) => itemName != null && LevelKeys.ContainsKey(itemName);
 
+        private static readonly Dictionary<byte, byte> MapIndexToLevelId = new Dictionary<byte, byte>
+        {
+            [0] = 0x06, [1] = 0x01, [2] = 0x02, [3] = 0x03, [4] = 0x04, [5] = 0x05, [6] = 0x0F,
+            [7] = 0x09, [8] = 0x0A, [9] = 0x0B, [10] = 0x0D, [11] = 0x0E, [12] = 0x0C, [13] = 0x16,
+            [14] = 0x08, [15] = 0x11, [16] = 0x13, [17] = 0x10, [18] = 0x14, [19] = 0x15, [20] = 0x17,
+        };
+
+        public static bool HasLevelKeyForMapPosition(ArchipelagoClient client, byte mapPosition) =>
+            !MapIndexToLevelId.TryGetValue(mapPosition, out var levelId) || HasLevelKey(client, levelId);
+
         public static byte? GetLevelIdForKey(string itemName) =>
             itemName != null && LevelKeys.TryGetValue(itemName, out var levelId) ? levelId : null;
 

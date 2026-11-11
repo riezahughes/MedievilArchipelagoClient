@@ -70,6 +70,8 @@ namespace MedievilArchipelago.Helpers
         private static readonly StockItem?[] _rows = new StockItem?[RowCount];
 
         private static Dictionary<int, List<StockItem>> _stock = new();
+
+        public static bool IsShopLocation(long locationId) => _stock.Values.Any(items => items.Any(i => i.Id == locationId));
         private static readonly Dictionary<long, string> _names = new();
         private static readonly HashSet<long> _bought = new();        // bought, waiting for the server
         private static string _layoutKey = "";

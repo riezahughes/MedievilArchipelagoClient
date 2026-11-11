@@ -318,6 +318,7 @@ public class Program
             int chaliceOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("include_chalices_in_checks", "0").ToString());
             int antHillOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("include_ant_hill_in_checks", "0").ToString());
             int openWorldOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("progression_option", "0").ToString());
+            int keysanity = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("keysanity", "0").ToString());
 
             byte initialLocation = Memory.ReadByte(Addresses.CurrentLevel);
             if (initialLocation == 1 && runeSanityOption == 1)
@@ -345,8 +346,11 @@ public class Program
                 ThreadHandlers.SetupOpenWorldMonitor();
 
             ThreadHandlers.SetupCheatMenuMonitor(archipelagoClient);
-            ThreadHandlers.SetupLevelUnlockMonitor(); // Need check for option
-            Memory.WriteByte(Addresses.DC_Unlock, 1);
+            if (keysanity == 1)
+            {
+                ThreadHandlers.SetupLevelUnlockMonitor(archipelagoClient); // Need check for option
+                Memory.WriteByte(Addresses.DC_Unlock, 1);
+            }
 
             firstRun = false;
             archipelagoClient.GPSHandler.Start();

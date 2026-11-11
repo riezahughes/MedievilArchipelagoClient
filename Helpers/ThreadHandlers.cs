@@ -76,53 +76,6 @@ namespace MedievilArchipelago.Helpers
                 value => value == 14 && PlayerStateHandler.isInTheGame());
         }
 
-        internal static void SetupLevelUnlockMonitor()
-        {
-            Memory.MonitorAddressForAction<byte>(
-                Addresses.CurrentMapPosition,
-                () =>
-                {
-                    // Read current lvl.
-                    uint inlevel = Memory.ReadByte(Addresses.CurrentMapPosition);
-#if DEBUG
-                    Console.WriteLine($"---------Level Unlock Monitor Done {inlevel}");
-
-                    Console.WriteLine(Memory.ReadByte(Addresses.LevelUnlocks + inlevel));
-#endif                    
-                    // Check to see if you have item and reset/set buttons accordingly
-                    // Start of memorylist add mapcursor for correct lvl, iso searching for correct address through dict/list.
-                    Buttons(Memory.ReadByte(Addresses.LevelUnlocks + inlevel) == 1);
-
-                    Memory.MonitorAddressForAction<byte>(
-                        Addresses.CurrentMapPosition,
-                        () =>
-                        {
-                            // When changing map, reset buttons and reset monitor
-                            Buttons(true);
-                            SetupLevelUnlockMonitor();
-                        },
-
-                        value => value != inlevel);
-                },
-                value => value >= 0 && value < 24);
-        }
-
-        internal static void Buttons(bool reset)
-        {
-            if (reset)
-            {
-                Memory.WriteByte(Addresses.ButtonX, 32);
-                Memory.WriteByte(Addresses.ButtonSquare, 64);
-                Memory.WriteByte(Addresses.ButtonStart, 16);
-            }
-            else
-            {
-                Memory.WriteByte(Addresses.ButtonX, 0);
-                Memory.WriteByte(Addresses.ButtonSquare, 0);
-                Memory.WriteByte(Addresses.ButtonStart, 0);
-            }
-        }
-
 
 
         internal static void PumpkinGorgeMonitor(ArchipelagoClient client, List<ILocation> builtLocations)

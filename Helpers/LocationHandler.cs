@@ -167,7 +167,8 @@ namespace MedievilArchipelago.Helpers
                                 locations.Add(location);
                                 location_index++;
                                 continue;
-                            };
+                            }
+                            ;
                         }
 
                         if (loc.IsInChest) // if it's cleared and we don't have an option set 
@@ -206,7 +207,8 @@ namespace MedievilArchipelago.Helpers
                                 locations.Add(location);
                                 location_index++;
                                 continue;
-                            };
+                            }
+                            ;
                         }
 
                         if (loc.Name.Contains("Gauntlet Cleared:")) // if it's cleared and we don't have an option set 
@@ -245,7 +247,8 @@ namespace MedievilArchipelago.Helpers
                                 locations.Add(location);
                                 location_index++;
                                 continue;
-                            };
+                            }
+                            ;
                         }
 
                         if (loc.Name.Contains("Cleared: Zaroks Lair")) // if it's cleared and we don't have an option set 
@@ -497,7 +500,8 @@ namespace MedievilArchipelago.Helpers
                                 locations.Add(location);
                                 location_index++;
                                 continue;
-                            };
+                            }
+                            ;
                         }
                         else
                         {
@@ -524,26 +528,26 @@ namespace MedievilArchipelago.Helpers
         {
             List<GenericItemsData> hallOfHeroesVisits = new List<GenericItemsData>()
             {
-                new GenericItemsData("Chalice Reward 1", Addresses.HOH_CannyTim1, "18", "999"),
-                new GenericItemsData("Chalice Reward 2", Addresses.HOH_CannyTim2, "18", "999"),
-                new GenericItemsData("Chalice Reward 3", Addresses.HOH_StanyerIronHewer1, "18", "999"),
-                new GenericItemsData("Chalice Reward 4", Addresses.HOH_StanyerIronHewer2, "18", "999"),
-                new GenericItemsData("Chalice Reward 5", Addresses.HOH_WodenTheMighty1, "18", "999"),
-                new GenericItemsData("Chalice Reward 6", Addresses.HOH_WodenTheMighty2, "18", "999"),
-                new GenericItemsData("Chalice Reward 7", Addresses.HOH_Imanzi1, "18", "999"),
-                new GenericItemsData("Chalice Reward 8", Addresses.HOH_RavenHoovesTheArcher1, "18", "999"),
-                new GenericItemsData("Chalice Reward 9", Addresses.HOH_BloodmonathSkullCleaver1, "18", "999"),
-                new GenericItemsData("Chalice Reward 10", Addresses.HOH_RavenHoovesTheArcher2, "18", "999"),
-                new GenericItemsData("Chalice Reward 11", Addresses.HOH_KarlStungard1, "18", "999"),
-                new GenericItemsData("Chalice Reward 12", Addresses.HOH_BloodmonathSkullCleaver2, "18", "999"),
-                new GenericItemsData("Chalice Reward 13", Addresses.HOH_DirkSteadfast1, "18", "999"),
-                new GenericItemsData("Chalice Reward 14", Addresses.HOH_RavenHoovesTheArcher3, "18", "999"),
-                new GenericItemsData("Chalice Reward 15", Addresses.HOH_MegwynneStormbinder1, "18", "999"),
-                new GenericItemsData("Chalice Reward 16", Addresses.HOH_RavenHoovesTheArcher4, "18", "999"),
-                new GenericItemsData("Chalice Reward 17", Addresses.HOH_Imanzi2, "18", "999"),
-                new GenericItemsData("Chalice Reward 18", Addresses.HOH_KarlStungard2, "18", "999"),
-                new GenericItemsData("Chalice Reward 19", Addresses.HOH_DirkSteadfast2, "18", "999"),
-                new GenericItemsData("Chalice Reward 20", Addresses.HOH_MegwynneStormbinder2, "18", "999"),
+                new GenericItemsData("Chalice Reward 1", Addresses.HOH_CannyTim1, "18", "100"),
+                new GenericItemsData("Chalice Reward 2", Addresses.HOH_CannyTim2, "18", "100"),
+                new GenericItemsData("Chalice Reward 3", Addresses.HOH_StanyerIronHewer1, "18", "100"),
+                new GenericItemsData("Chalice Reward 4", Addresses.HOH_StanyerIronHewer2, "18", "100"),
+                new GenericItemsData("Chalice Reward 5", Addresses.HOH_WodenTheMighty1, "18", "100"),
+                new GenericItemsData("Chalice Reward 6", Addresses.HOH_WodenTheMighty2, "18", "100"),
+                new GenericItemsData("Chalice Reward 7", Addresses.HOH_Imanzi1, "18", "100"),
+                new GenericItemsData("Chalice Reward 8", Addresses.HOH_RavenHoovesTheArcher1, "18", "100"),
+                new GenericItemsData("Chalice Reward 9", Addresses.HOH_BloodmonathSkullCleaver1, "18", "100"),
+                new GenericItemsData("Chalice Reward 10", Addresses.HOH_RavenHoovesTheArcher2, "18", "100"),
+                new GenericItemsData("Chalice Reward 11", Addresses.HOH_KarlStungard1, "18", "100"),
+                new GenericItemsData("Chalice Reward 12", Addresses.HOH_BloodmonathSkullCleaver2, "18", "100"),
+                new GenericItemsData("Chalice Reward 13", Addresses.HOH_DirkSteadfast1, "18", "100"),
+                new GenericItemsData("Chalice Reward 14", Addresses.HOH_RavenHoovesTheArcher3, "18", "100"),
+                new GenericItemsData("Chalice Reward 15", Addresses.HOH_MegwynneStormbinder1, "18", "100"),
+                new GenericItemsData("Chalice Reward 16", Addresses.HOH_RavenHoovesTheArcher4, "18", "100"),
+                new GenericItemsData("Chalice Reward 17", Addresses.HOH_Imanzi2, "18", "100"),
+                new GenericItemsData("Chalice Reward 18", Addresses.HOH_KarlStungard2, "18", "100"),
+                new GenericItemsData("Chalice Reward 19", Addresses.HOH_DirkSteadfast2, "18", "100"),
+                new GenericItemsData("Chalice Reward 20", Addresses.HOH_MegwynneStormbinder2, "18", "100"),
                 new GenericItemsData("Book: Heores of Eld - HH", Addresses.HOH_Book_HeroesOfEld, "18", "9999"),
                 new GenericItemsData("Book: Heores of Eld - HH", Addresses.HOH_Book_WorthyHero, "18", "9999"),
                 new GenericItemsData("Gargoyle: Entrance - HH", Addresses.HOH_Gargoyle_Entrance, "18", "19999"),
@@ -1206,7 +1210,7 @@ namespace MedievilArchipelago.Helpers
         {
             List<GenericItemsData> rtgLocations = new List<GenericItemsData>() {
                 new GenericItemsData("Star Rune: Return to the Graveyard", Addresses.RTG_Pickup_StarRune, "2", "32896"),
-                new GenericItemsData("Skill: Daring Dash", Addresses.RTG_Pickup_DaringDash, "2", "199999"),
+                new GenericItemsData("Skill: Daring Dash", Addresses.RTG_Pickup_DaringDash, "25", "199999"),
                 new GenericItemsData("Energy Vial: Undertakers Entrance - RTG", Addresses.RTG_Pickup_EnergyVialUndertakersEntrance, "2", "32896"),
                 new GenericItemsData("Energy Vial: Cliffs Right - RTG", Addresses.RTG_Pickup_EnergyVialCliffsRight, "2", "32896"),
                 new GenericItemsData("Energy Vial: Cliffs Left - RTG", Addresses.RTG_Pickup_EnergyVialCliffsLeft, "2", "32896"),

@@ -345,7 +345,8 @@ public class Program
                 ThreadHandlers.SetupOpenWorldMonitor();
 
             ThreadHandlers.SetupCheatMenuMonitor(archipelagoClient);
-            // ThreadHandlers.SetupLevelUnlockMonitor(); // not ready to be used.
+            ThreadHandlers.SetupLevelUnlockMonitor(); // Need check for option
+            Memory.WriteByte(Addresses.DC_Unlock, 1);
 
             firstRun = false;
             archipelagoClient.GPSHandler.Start();
@@ -353,10 +354,12 @@ public class Program
 
             _ = ThreadHandlers.StartBackgroundLoop(archipelagoClient, _cancellationTokenSource);
             PopupHandler.Start(_cancellationTokenSource.Token);
-            
-            if(runeSanityOption == 1){
+
+            if (runeSanityOption == 1)
+            {
                 MapRunePopup.Start(archipelagoClient, _cancellationTokenSource.Token);
-            };
+            }
+            ;
             _ = archipelagoClient.LocationManager.MonitorLocationsAsync(archipelagoClient.CurrentSession, GameLocations, _cancellationTokenSource.Token);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
@@ -423,11 +426,13 @@ public class Program
                     }
                     else if (input?.Trim().ToLower().Contains("release") == true)
                     {
-                        if(PlayerStateHandler.isInTheGame() == true)
+                        if (PlayerStateHandler.isInTheGame() == true)
                         {
                             Console.WriteLine("Manually sending goal completion ping to Archipelago server...");
                             archipelagoClient.SendGoalCompletion();
-                        } else {
+                        }
+                        else
+                        {
                             Console.WriteLine("You are not in a valid location to release the goal. Get In-game first");
                         }
                     }

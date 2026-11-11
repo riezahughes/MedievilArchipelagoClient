@@ -68,16 +68,18 @@
             0x18=Programmers's Playground (Freezes)
          */
 
+        // Used this for now as free space
         public const uint LevelUnlocks = 0x00000A00;
+
         // Other buttons are there as well, cannot stop movement or move with other buttons, that is handled somewhere else
         public const uint ButtonX = 0x000CDE3E; // byte, default 0x20
         public const uint ButtonSquare = 0x000CDE5E; // byte, default 0x40
         public const uint ButtonStart = 0x000CDF1F; // byte, default 0x10
-        
+
         public const uint DanRespawnPositionX = 0x000f8886;
         public const uint DanRespawnPositionY = 0x000f8888;
         public const uint DanRespawnPositionZ = 0x000f888a;
-        
+
         public const uint DanForwardSpeed = 0x000d5110;
 
         public const uint DanJumpHeight = 0x000d5126;
@@ -107,6 +109,30 @@
         public const uint ChaliceIconY = 0x000DD7BE;
         public const uint MoneyIconX = 0x000DD7C8;
         public const uint MoneyIconY = 0x000DD7CA;
+
+        // Level Unlock Items
+        public const uint DC_Unlock = 0x00000A00; // Dan's Crypt
+        public const uint TG_Unlock = 0x00000A01; // The Graveyard
+        public const uint RTG_Unlock = 0x00000A02; // Return To The Graveyard
+        public const uint CH_Unlock = 0x00000A03; // Cemetery Hill
+        public const uint HM_Unlock = 0x00000A04; // The Haunted Mausoleum
+        public const uint SF_Unlock = 0x00000A05; // Scarecrow Fields
+        public const uint EE_Unlock = 0x00000A06; // Enchanted Earth
+        public const uint PG_Unlock = 0x00000A07; // Pumpkin Gorge
+        public const uint PS_Unlock = 0x00000A08; // Pumpkin Serpent
+        public const uint TSV_Unlock = 0x00000A09; // The Sleeping Village
+        public const uint AG_Unlock = 0x00000A0A; // Asylum Grounds
+        public const uint IA_Unlock = 0x00000A0B; // Inside The Asylum
+        public const uint PAD_Unlock = 0x00000A0C; // Pools Of The Ancient Dead
+        public const uint TL_Unlock = 0x00000A0D; // The Lake
+        public const uint CC_Unlock = 0x00000A0E; // The Crystal Caverns
+        public const uint HR_Unlock = 0x00000A0F; // The Haunted Ruins
+        public const uint GS_Unlock = 0x00000A10; // The Ghost Ship
+        public const uint GG_Unlock = 0x00000A11; // The Gallows Gauntlet
+        public const uint EH_Unlock = 0x00000A12; // The Entrance Hall
+        public const uint TD_Unlock = 0x00000A13; // The Time Device
+        public const uint ZL_Unlock = 0x00000A14; // Zarok's Lair
+
 
         // Completed levels
         public const uint TG_LevelStatus = 0x000f81e1;
@@ -212,26 +238,26 @@
 
         // List of Hall of Heroes encounters
 
-        public const uint HOH_CannyTim1 = 0x001408b0;
-        public const uint HOH_CannyTim2 = 0x001408b4;
-        public const uint HOH_StanyerIronHewer1 = 0x001408b8;
-        public const uint HOH_StanyerIronHewer2 = 0x001408bc;
-        public const uint HOH_WodenTheMighty1 = 0x001408c0;
-        public const uint HOH_WodenTheMighty2 = 0x001408c4;
-        public const uint HOH_RavenHoovesTheArcher1 = 0x001408c8;
-        public const uint HOH_RavenHoovesTheArcher2 = 0x001408cc;
-        public const uint HOH_RavenHoovesTheArcher3 = 0x001408d0;
-        public const uint HOH_RavenHoovesTheArcher4 = 0x001408d4;
-        public const uint HOH_Imanzi1 = 0x001408d8;
-        public const uint HOH_Imanzi2 = 0x001408dc;
-        public const uint HOH_DirkSteadfast1 = 0x001408e0;
-        public const uint HOH_DirkSteadfast2 = 0x001408e4;
-        public const uint HOH_KarlStungard1 = 0x001408e8;
-        public const uint HOH_KarlStungard2 = 0x001408ec;
-        public const uint HOH_BloodmonathSkullCleaver1 = 0x001408f0;
-        public const uint HOH_BloodmonathSkullCleaver2 = 0x001408f4;
-        public const uint HOH_MegwynneStormbinder1 = 0x001408f8;
-        public const uint HOH_MegwynneStormbinder2 = 0x001408fc;
+        public const uint HOH_CannyTim1 = 0x00000A20;
+        public const uint HOH_CannyTim2 = 0x00000A21;
+        public const uint HOH_StanyerIronHewer1 = 0x00000A22;
+        public const uint HOH_StanyerIronHewer2 = 0x00000A23;
+        public const uint HOH_WodenTheMighty1 = 0x00000A24;
+        public const uint HOH_WodenTheMighty2 = 0x00000A25;
+        public const uint HOH_RavenHoovesTheArcher1 = 0x00000A26;
+        public const uint HOH_RavenHoovesTheArcher2 = 0x00000A27;
+        public const uint HOH_RavenHoovesTheArcher3 = 0x00000A28;
+        public const uint HOH_RavenHoovesTheArcher4 = 0x00000A29;
+        public const uint HOH_Imanzi1 = 0x00000A2A;
+        public const uint HOH_Imanzi2 = 0x00000A2B;
+        public const uint HOH_DirkSteadfast1 = 0x00000A2C;
+        public const uint HOH_DirkSteadfast2 = 0x00000A2D;
+        public const uint HOH_KarlStungard1 = 0x00000A2E;
+        public const uint HOH_KarlStungard2 = 0x00000A2F;
+        public const uint HOH_BloodmonathSkullCleaver1 = 0x00000A30;
+        public const uint HOH_BloodmonathSkullCleaver2 = 0x00000A31;
+        public const uint HOH_MegwynneStormbinder1 = 0x00000A32;
+        public const uint HOH_MegwynneStormbinder2 = 0x00000A33;
 
         public const uint HOH_CannyTim1_drop = 0x00019782;
         public const uint HOH_CannyTim2_drop = 0x0001978a;

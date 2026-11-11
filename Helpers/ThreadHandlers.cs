@@ -9,7 +9,53 @@ namespace MedievilArchipelago.Helpers
 {
     internal class ThreadHandlers
     {
-        
+
+        internal static void SetupLevelUnlockMonitor()
+        {
+            Memory.MonitorAddressForAction<byte>(
+                Addresses.CurrentMapPosition,
+                () =>
+                {
+                    // Read current lvl.
+                    uint inlevel = Memory.ReadByte(Addresses.CurrentMapPosition);
+#if DEBUG
+                    Console.WriteLine($"---------Level Unlock Monitor Done {inlevel}");
+
+                    Console.WriteLine(Memory.ReadByte(Addresses.LevelUnlocks + inlevel));
+#endif                    
+                    // Check to see if you have item and reset/set buttons accordingly
+                    // Start of memorylist add mapcursor for correct lvl, iso searching for correct address through dict/list.
+                    Buttons(Memory.ReadByte(Addresses.LevelUnlocks + inlevel) == 1);
+
+                    Memory.MonitorAddressForAction<byte>(
+                        Addresses.CurrentMapPosition,
+                        () =>
+                        {
+                            // When changing map, reset buttons and reset monitor
+                            Buttons(true);
+                            SetupLevelUnlockMonitor();
+                        },
+
+                        value => value != inlevel);
+                },
+                value => value >= 0 && value < 21);
+        }
+
+        internal static void Buttons(bool reset)
+        {
+            if (reset)
+            {
+                Memory.WriteByte(Addresses.ButtonX, 32);
+                Memory.WriteByte(Addresses.ButtonSquare, 64);
+                Memory.WriteByte(Addresses.ButtonStart, 16);
+            }
+            else
+            {
+                Memory.WriteByte(Addresses.ButtonX, 0);
+                Memory.WriteByte(Addresses.ButtonSquare, 0);
+                Memory.WriteByte(Addresses.ButtonStart, 0);
+            }
+        }
 
 
         internal static void SetupAsylumMonitor()
@@ -46,16 +92,16 @@ namespace MedievilArchipelago.Helpers
                     // Check to see if you have item and reset/set buttons accordingly
                     // Start of memorylist add mapcursor for correct lvl, iso searching for correct address through dict/list.
                     Buttons(Memory.ReadByte(Addresses.LevelUnlocks + inlevel) == 1);
-            
+
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.CurrentMapPosition,
-                        () => 
+                        () =>
                         {
                             // When changing map, reset buttons and reset monitor
                             Buttons(true);
                             SetupLevelUnlockMonitor();
                         },
-                        
+
                         value => value != inlevel);
                 },
                 value => value >= 0 && value < 24);
@@ -77,41 +123,41 @@ namespace MedievilArchipelago.Helpers
             }
         }
 
-       
+
 
         internal static void PumpkinGorgeMonitor(ArchipelagoClient client, List<ILocation> builtLocations)
         {
-            
+
 #if DEBUG
             Console.WriteLine("---------Setup Pumpkin Gorge Monitor");
 #endif
             Memory.MonitorAddressForAction<byte>(Addresses.PG_TimeRune_Door,
                 () =>
                 {
-                    nint runeAddress = FindTimeRune();
 
+                    nint runeAddress = FindTimeRune();
                     Memory.MonitorAddressForAction<ushort>(
                         Convert.ToUInt32(runeAddress),
-                        () =>   
+                        () =>
                             {
                                 if (Memory.ReadByte(Addresses.CurrentLevel) == 9)
                                 {
                                     LevelHandlers.SendTimeRune(client, builtLocations);
                                 }
                                 else
-                                {   
+                                {
                                     // Set the time rune search value to 0, since memory might not reset and potenially find the previous pattern on a revisit
-                                    
+
                                     byte[] updateValue = BitConverter.GetBytes(0);
                                     Memory.WriteByteArray(Convert.ToUInt32(runeAddress + 4), updateValue);
                                     PumpkinGorgeMonitor(client, builtLocations);
                                 }
                             },
-                        value => (value == 32960 && Memory.ReadByte(Addresses.CurrentLevel) == 9) ||  Memory.ReadByte(Addresses.CurrentLevel) != 9);
+                        value => (value == 32960 && Memory.ReadByte(Addresses.CurrentLevel) == 9) || Memory.ReadByte(Addresses.CurrentLevel) != 9);
 
-                }, 
+                },
                 value => value == 1 && Memory.ReadByte(Addresses.CurrentLevel) == 9 && PlayerStateHandler.isInTheGame());
-                
+
         }
 
         internal static nint FindTimeRune()
@@ -122,10 +168,10 @@ namespace MedievilArchipelago.Helpers
             while (found == false && start <= 0x00200000)
             {
                 result = Memory.FindSignature(
-                    start:   start,
-                    size:    0x00100000,
-                    pattern: new byte[] { 0x50, 0x50, 0x02, 0x00},
-                    mask:    "xxxx");
+                            start: start,
+                            size: 0x00100000,
+                            pattern: new byte[] { 0x50, 0x50, 0x02, 0x00 },
+                            mask: "xxxx");
                 if (result != IntPtr.Zero)
                 {
                     if (Memory.ReadUShort(Convert.ToUInt32(result - 0x04)) == 192)
@@ -138,18 +184,16 @@ namespace MedievilArchipelago.Helpers
                         start = Convert.ToInt32(result);
                     }
                 }
+#if DEBUG
                 else
                 {
-#if DEBUG
-                    Console.WriteLine($"Did not find time rune, keep looking");
-#endif
+                    Console.WriteLine($"Did not find Time Rune, keep looking");
                 }
+#endif
             }
 #if DEBUG
             if (start > 0x00200000)
-            {
                 Console.WriteLine("Did not find Time Rune in memory");
-            }
 #endif
             return result;
         }
@@ -158,9 +202,9 @@ namespace MedievilArchipelago.Helpers
         {
             Memory.MonitorAddressForAction<byte>(
                 Addresses.CurrentLevel,
-                ()  => 
+                () =>
                 {
-                   
+
 #if DEBUG
                     Console.WriteLine("---------Ant Hill Monitor Done");
 #endif
@@ -177,7 +221,7 @@ namespace MedievilArchipelago.Helpers
                 value => value == 7 && PlayerStateHandler.isInTheGame());
         }
 
-        
+
 
         internal static void SetupSleepingVillageSpawnMonitor()
         {
@@ -190,7 +234,7 @@ namespace MedievilArchipelago.Helpers
 #endif
                     Task.Delay(4000);
                     Memory.Write(Addresses.SVTriggerEnemySpawn, 0x8080);
-                    
+
 #if DEBUG
                     Console.WriteLine("---------Sleeping Village Monitor Done");
 #endif
@@ -203,14 +247,14 @@ namespace MedievilArchipelago.Helpers
         }
 
         // Does not account for going to ant caves from EE, so chest still club there.
-        
+
         internal static void SetupLevelChestMonitor(ArchipelagoClient client)
         {
             Memory.MonitorAddressForAction<byte>(
                 Addresses.CurrentLevel,
                 () => Task.Run(async () =>
                 {
-                 
+
                     await Task.Delay(8000);
                     var loc = Memory.ReadByte(Addresses.CurrentLevel);
 
@@ -218,10 +262,10 @@ namespace MedievilArchipelago.Helpers
 #if DEBUG
                     Console.WriteLine("---------Chest Monitor Done");
 #endif
-                   Memory.MonitorAddressForAction<byte>(
-                        Addresses.CurrentLevel,
-                        () => SetupLevelChestMonitor(client),
-                        value => value == 0 || value ==24);
+                    Memory.MonitorAddressForAction<byte>(
+                         Addresses.CurrentLevel,
+                         () => SetupLevelChestMonitor(client),
+                         value => value == 0 || value == 24);
                 }),
                 value => value < 24 && value > 0 && PlayerStateHandler.isInTheGame());
         }
@@ -232,9 +276,9 @@ namespace MedievilArchipelago.Helpers
         {
             Memory.MonitorAddressForAction<byte>(
                 Addresses.CurrentLevel,
-                ()  => Task.Run(async () =>
+                () => Task.Run(async () =>
                 {
-                    await Task.Delay(2500);
+
 #if DEBUG
                     Console.WriteLine("---------Overworld");
 #endif
@@ -242,6 +286,10 @@ namespace MedievilArchipelago.Helpers
 #if DEBUG
                     Console.WriteLine("---------Changed to Playground");
 #endif
+                    await Task.Delay(2500);
+
+                    Memory.WriteByte(Addresses.CurrentLevel, 24);
+
 
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.CurrentLevel,
@@ -266,7 +314,7 @@ namespace MedievilArchipelago.Helpers
                         () => SetupHallOfHeroesMonitor(),
                         value => value != 18);
                 }),
-                value => value == 18 &&PlayerStateHandler.isInTheGame());
+                value => value == 18 && PlayerStateHandler.isInTheGame());
         }
 
         internal static void SetupHallOfHeroesRewardsMonitor()
@@ -622,10 +670,10 @@ namespace MedievilArchipelago.Helpers
 
         static internal void UpdateHallOfHeroesChecks(int chaliceCount)
         {
-            byte[] updateValue = BitConverter.GetBytes(0x03e7);
+            byte updateValue = 0x64;
             var dict = HallOfHeroesCheckList;
 
-            Memory.WriteByteArray(dict[chaliceCount], updateValue);
+            Memory.WriteByte(dict[chaliceCount], updateValue);
 
         }
 

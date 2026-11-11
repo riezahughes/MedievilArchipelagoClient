@@ -24,6 +24,18 @@
         public const uint Inventory = 0x000F822C;             // 43 x u32: low half = amount (-1 none, < -1 stolen), high bit 0 = buy back
         public const uint ShopTextBuffer = 0x000F4F00;        // our shop names + title (12 x 0x20), see PopupTextBuffer1
 
+        // Exit to map (see Helpers/ExitToMapHandler.cs)
+        public const uint GameMode = 0x000EEE9C;               // 3 = in a level, 4 = world map
+        public const uint LevelBeingPlayed = 0x000EEE64;
+        public const uint PendingExitState = 0x000EEEA4;       // 5 = level exit, handled by the game's main loop
+        public const uint LevelRecordsPointer = 0x000EDB74;    // gp+0x568: +0x30 cleared-levels bits, +level+0x34 flags (bit0 cleared, bit3 don't mark cleared)
+        public const uint NewlyClearedFlag = 0x000EDBDC;       // gp+0x5D4: set on a level exit, makes the map mark the level (bit 4) and show "Save progress?"
+        public const uint MapPromptPending = 0x00014F90;       // LANDMAP.BIN only: 1 = set bit 4 on the level just left and show "Save progress?" once its countdown ends
+        public const uint AsylumGroundsExitDestination = 0x000D8826; // u16 in the level transition table (0x800D8794, 12 bytes per level): 0xE = Inside the Asylum, 0 = world map
+        public const uint PauseMenuId = 0x800DD4F4;            // the pause menu's window descriptor
+        public const uint PauseRestartRecord = 0x000DD1F4;     // pause menu record: u32 message ID, u32 handler, 3 x u32, u32 flags (+0x14)
+        public const uint ExitMessageText = 0x000D92A0;        // text of message 303 ("Go To Level:"), 16 bytes available
+
         // ID of the currently loaded overlay (0x1A = LANDMAP.BIN, the world map)
         public const uint LoadedOverlayId = 0x00010000;
 

@@ -65,6 +65,11 @@ namespace MedievilArchipelago.Helpers
         private const uint RequestSlotSize = 0x0C;
         private const uint EmptySlotId = 0x191;
 
+        // The slot's field at +0x08 is a start delay: the game's own calls pass 0x19 and the window opens about 1s
+        // after the request. With 1 it opens in about 0.1s. (The field at +0x0A has to stay 0x19, anything else
+        // makes the game drop the request.)
+        private const short RequestDelay = 1;
+
         // Two message IDs that no level or the main game uses (also free: 170, 199, 298, 299, 328, 331-333, 345,
         // 346, 358, 359), each with its own text buffer. They're used in turn so a new message never changes the
         // text of one that's still on screen.
@@ -87,6 +92,11 @@ namespace MedievilArchipelago.Helpers
         private const uint WorldMapOverlayId = 0x1A;
 
         public static bool IsOnWorldMap() => Memory.ReadUInt(Addresses.LoadedOverlayId) == WorldMapOverlayId;
+
+        // the game's level ID for the Hall of Heroes (see LevelHandlers)
+        private const int HallOfHeroesLevelId = 0x12;
+
+        public static bool IsInHallOfHeroes() => Memory.ReadByte(Addresses.CurrentLevel) == HallOfHeroesLevelId;
 
         // Queues a popup. If the text doesn't start with '@', the default timed hint style is put in front of it.
         // Safe to call from any thread; popups show one after another.
@@ -163,6 +173,11 @@ namespace MedievilArchipelago.Helpers
                     // popups show in a level or on the world map, when there's room for another window and a
                     // free request slot
                     if (!onMap && !PlayerStateHandler.isInTheGame()) continue;
+
+                    // the Hall of Heroes runs its own dialogue, and a popup arriving during it breaks it, so
+                    // popups wait in the queue until the player leaves
+                    if (IsInHallOfHeroes()) continue;
+
                     int windowsBefore = Memory.ReadInt(Addresses.PopupOpenWindowCount);
                     if (windowsBefore < 0 || windowsBefore >= MaxWindows - 1) continue;
                     uint? slot = FindEmptySlot();
@@ -218,7 +233,7 @@ namespace MedievilArchipelago.Helpers
             // never sees a half-written request
             Memory.Write(slot + 0x04, (ushort)0);     // flags
             Memory.Write(slot + 0x06, (short)1);      // priority
-            Memory.Write(slot + 0x08, (short)0x19);
+            Memory.Write(slot + 0x08, RequestDelay);
             Memory.Write(slot + 0x0A, (short)0x19);
             Memory.Write(slot + 0x00, messageId);
         }

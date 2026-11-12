@@ -81,6 +81,9 @@ namespace MedievilArchipelago.Helpers
             // Scarecrow Fields: merchant 0 is at the level start (Dan's spawn point), merchant 1 is next to the
             // chalice (its pickup object, SF_Pickup_Chalice - 0x24, has X/Z at +0x0C/+0x10). ~17000 units apart.
             [0x05] = new (short, short)[] { (-117, -15078), (-5689, 902) },
+            // Return to the Graveyard: merchant 0 is the main one, merchant 1 is the one up on the cliffs
+            // ("Return to the Graveyard Cliff" in the AP world). Dan's position beside each, ~16000 units apart.
+            [0x02] = new (short, short)[] { (-1282, 14047), (14711, 10114) },
         };
 
         public static bool IsShopLocation(long locationId) => _stock.Values.Any(items => items.Any(i => i.Id == locationId));
@@ -202,9 +205,9 @@ namespace MedievilArchipelago.Helpers
                 }
             }
         }
-
         // the shop is open when a window on the game's window stack was opened from the shop menu
-        private static bool IsShopOpen()
+        private static bool IsShopOpen() => IsMenuOpen(Addresses.ShopMenuId);
+        internal static bool IsMenuOpen(uint menuId)
         {
             int count = Memory.ReadInt(Addresses.PopupOpenWindowCount);
             if (count <= 0 || count > 8) return false;
@@ -214,7 +217,7 @@ namespace MedievilArchipelago.Helpers
                 if (!IsRamPointer(window)) continue;
                 uint request = Memory.ReadUInt((window & 0x1FFFFF) + 4);
                 if (!IsRamPointer(request)) continue;
-                if (Memory.ReadUInt(request & 0x1FFFFF) == Addresses.ShopMenuId) return true;
+                if (Memory.ReadUInt(request & 0x1FFFFF) == menuId) return true;
             }
             return false;
         }

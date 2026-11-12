@@ -58,6 +58,25 @@ namespace MedievilArchipelago.Helpers
         }
 
 
+        // Dan's Crypt is the first level, so passing the copy protection check there covers the Hilltop Mausoleum
+        internal static void SetupCopyProtectionMonitor()
+        {
+            Memory.MonitorAddressForAction<byte>(
+                Addresses.CurrentLevel,
+                () =>
+                {
+                    Memory.Write(Addresses.CopyProtection, Addresses.CopyProtectionPassed);
+#if DEBUG
+                    Console.WriteLine("---------Copy Protection Monitor Done");
+#endif
+                    Memory.MonitorAddressForAction<byte>(
+                        Addresses.CurrentLevel,
+                        () => SetupCopyProtectionMonitor(),
+                        value => value != 6);
+                },
+                value => value == 6 && PlayerStateHandler.isInTheGame());
+        }
+
         internal static void SetupAsylumMonitor()
         {
             Memory.MonitorAddressForAction<byte>(

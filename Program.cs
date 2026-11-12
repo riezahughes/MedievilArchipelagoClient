@@ -326,6 +326,7 @@ public class Program
 
             ThreadHandlers.ChangeDropModels();
             ThreadHandlers.SetupDropModelsOnMenuReturn();
+            ThreadHandlers.SetupCopyProtectionMonitor();
             ThreadHandlers.SetupAsylumMonitor();
             //ThreadHandlers.SetupSleepingVillageSpawnMonitor();
             ThreadHandlers.SetupLevelChestMonitor(archipelagoClient);

@@ -45,7 +45,6 @@
         // Copy protection: unless this is 0xFFFBFFFF, entering the Hilltop Mausoleum crashes to a disc load screen.
         // Set on loading into Dan's Crypt (ThreadHandlers.SetupCopyProtectionMonitor).
         public const uint CopyProtection = 0x000f81dc;
-        public const uint CopyProtectionPassed = 0xFFFBFFFF;
 
         // Cheat menu. Comes in two flavours. 0x01 or 0x02
         public const uint CheatMenu = 0x000EEE76;

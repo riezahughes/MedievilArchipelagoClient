@@ -556,6 +556,16 @@ public class Program
                             Console.WriteLine(weapon.ItemName);
                         }
 
+                        if(keysanity == 1){
+                            var unlocks = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Unlock") select item;
+                            Console.WriteLine("Current Level Unlocks: ");
+
+                            foreach (var unlock in unlocks.OrderBy(item => item.ItemName))
+                            {
+                                Console.WriteLine(unlock.ItemName);
+                            }                  
+                        }
+
                         Console.WriteLine("Current Key Items: ");
                         foreach (var item in items.OrderBy(item => item.ItemName))
                         {

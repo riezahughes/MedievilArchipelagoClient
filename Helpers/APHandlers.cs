@@ -118,6 +118,8 @@ namespace MedievilArchipelago.Helpers
 
                 switch (args.Item)
                 {
+                    // level keys go first: unique names like "Fight Club" would otherwise match the weapon cases below
+                    case var x when x != null && LevelKeyHandler.IsLevelKey(x.Name): LevelKeyHandler.ReceiveLevelKey(x); break;
                     // incoming runes need added here
                     case var x when x.Name.ContainsAny("Rune") && runeSanityOption == 1: ItemHandlers.ReceiveRune(currentLevel, x); break;
                     case var x when x.Name.ContainsAny("Skill"): ItemHandlers.ReceiveSkill(x); break;
@@ -149,6 +151,7 @@ namespace MedievilArchipelago.Helpers
         private static void ShowInGamePopup(LogMessage message)
         {
             if (message is not ItemSendLogMessage itemMessage || message is HintItemSendLogMessage) return;
+            if (ShopHandler.IsShopLocation(itemMessage.Item.LocationId)) return;
 
             string itemName = itemMessage.Item.ItemName ?? "an item";
             bool progression = itemMessage.Item.Flags.HasFlag(ItemFlags.Advancement);

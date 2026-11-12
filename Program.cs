@@ -318,6 +318,7 @@ public class Program
             int chaliceOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("include_chalices_in_checks", "0").ToString());
             int antHillOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("include_ant_hill_in_checks", "0").ToString());
             int openWorldOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("progression_option", "0").ToString());
+            int keysanity = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("keysanity", "0").ToString());
 
             byte initialLocation = Memory.ReadByte(Addresses.CurrentLevel);
             if (initialLocation == 1 && runeSanityOption == 1)
@@ -345,7 +346,11 @@ public class Program
                 ThreadHandlers.SetupOpenWorldMonitor();
 
             ThreadHandlers.SetupCheatMenuMonitor(archipelagoClient);
-            // ThreadHandlers.SetupLevelUnlockMonitor(); // not ready to be used.
+            if (keysanity == 1)
+            {
+                ThreadHandlers.SetupLevelUnlockMonitor(archipelagoClient); // Need check for option
+                Memory.WriteByte(Addresses.DC_Unlock, 1);
+            }
 
             firstRun = false;
             archipelagoClient.GPSHandler.Start();
@@ -353,11 +358,16 @@ public class Program
 
             _ = ThreadHandlers.StartBackgroundLoop(archipelagoClient, _cancellationTokenSource);
             PopupHandler.Start(_cancellationTokenSource.Token);
-            
-            if(runeSanityOption == 1){
+
+            if (runeSanityOption == 1)
+            {
                 MapRunePopup.Start(archipelagoClient, _cancellationTokenSource.Token);
-            };
+            }
+            ;
             _ = archipelagoClient.LocationManager.MonitorLocationsAsync(archipelagoClient.CurrentSession, GameLocations, _cancellationTokenSource.Token);
+            // runs on its own task and returns straight away, so it never holds up the location monitor
+            if (Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("shopsanity", "0").ToString()) == 1)
+                ShopHandler.Start(archipelagoClient, _cancellationTokenSource.Token);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {
@@ -381,6 +391,11 @@ public class Program
                     else if (input?.Trim().ToLower() == "popup debug")
                     {
                         PopupHandler.PrintDebug();
+                    }
+                    else if (input?.Trim().ToLower() == "shop debug")
+                    {
+                        // ShopSanity: prints the shop's SECOND HAND GOODS rows and the purchase token
+                        ShopHandler.PrintDebug();
                     }
                     else if (input?.Trim().ToLower() == "popup colours" || input?.Trim().ToLower() == "popup colors")
                     {
@@ -423,11 +438,13 @@ public class Program
                     }
                     else if (input?.Trim().ToLower().Contains("release") == true)
                     {
-                        if(PlayerStateHandler.isInTheGame() == true)
+                        if (PlayerStateHandler.isInTheGame() == true)
                         {
                             Console.WriteLine("Manually sending goal completion ping to Archipelago server...");
                             archipelagoClient.SendGoalCompletion();
-                        } else {
+                        }
+                        else
+                        {
                             Console.WriteLine("You are not in a valid location to release the goal. Get In-game first");
                         }
                     }
@@ -537,6 +554,16 @@ public class Program
                         foreach (var weapon in equipment.OrderBy(item => item.ItemName))
                         {
                             Console.WriteLine(weapon.ItemName);
+                        }
+
+                        if(keysanity == 1){
+                            var unlocks = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Unlock") select item;
+                            Console.WriteLine("Current Level Unlocks: ");
+
+                            foreach (var unlock in unlocks.OrderBy(item => item.ItemName))
+                            {
+                                Console.WriteLine(unlock.ItemName);
+                            }                  
                         }
 
                         Console.WriteLine("Current Key Items: ");

@@ -98,7 +98,6 @@ namespace MedievilArchipelago.Helpers
                     }
                 }
 
-                // Need to check each separately
                 if (fairies == 6)
                 {
                     var location = builtLocations.FirstOrDefault(loc => loc.Name == "Chalice: Ant Hill");
@@ -167,7 +166,7 @@ namespace MedievilArchipelago.Helpers
             }
 
 
-            // Zarok Chest 1
+            // // Zarok Chest 1
             // if (client.GPSHandler.MapId == 23 && client.GPSHandler.X >= 64639 && client.GPSHandler.X <= 64693 && client.GPSHandler.Y >= 9 && client.GPSHandler.Y <= 13 && client.GPSHandler.Z >= 2820 && client.GPSHandler.Z <= 2939)
             // {
             //     var location = builtLocations.FirstOrDefault(loc => loc.Name == "Equipment: Good Lightning - ZL");
@@ -196,7 +195,7 @@ namespace MedievilArchipelago.Helpers
         {
             var location = builtLocations.FirstOrDefault(loc => loc.Name == "Time Rune: Pumpkin Gorge");
             if (location != null)
-            client.SendLocationAsync(location);
+                client.SendLocationAsync(location);
         }
         public static string GetLevelNameFromId(byte levelId)
         {

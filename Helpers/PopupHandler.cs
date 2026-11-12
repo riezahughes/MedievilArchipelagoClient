@@ -68,8 +68,7 @@ namespace MedievilArchipelago.Helpers
         // Two message IDs that no level or the main game uses (also free: 170, 199, 298, 299, 328, 331-333, 345,
         // 346, 358, 359), each with its own text buffer. They're used in turn so a new message never changes the
         // text of one that's still on screen.
-        // The buffers sit in the unused gap between the end of the largest level overlay (ZL.BIN, ~0x800217B0)
-        // and the start of the main game code (0x80021CEC).
+        // The buffers sit in the unused tail of libcd's directory cache (see Addresses.PopupTextBuffer1).
         private static readonly (uint MessageId, uint Buffer)[] Channels =
         {
             (168, Addresses.PopupTextBuffer1),

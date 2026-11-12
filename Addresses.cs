@@ -8,10 +8,21 @@
         public const uint PopupOpenWindowCount = 0x000EDC10; // gp+0x604 (gp = 0x800ED60C); window stack itself at 0x000EF3C8
         public const uint PopupMessageTable = 0x000D98F4;    // 4-byte string pointers, indexed by message ID
         public const uint PopupRequestSlots = 0x000EF3D8;    // 4 x 12-byte request slots
-        // our text buffers, in the unused gap between the end of the largest level overlay (ZL.BIN, ~0x000217B0)
-        // and the start of the main game code (0x00021CEC)
-        public const uint PopupTextBuffer1 = 0x00021B00;
-        public const uint PopupTextBuffer2 = 0x00021BE0;
+        // Our text buffers live in the tail of libcd's directory cache (MEDIEVIL.EXE BSS, 128 x 0x2C entries at
+        // 0x000F4BDC-0x000F61DC). The disc only has 3 directories (root, OVERLAYS, XA), so CD_newmedia only fills
+        // entries 0-2 and zeroes a terminator in entry 3 (0x000F4C64); from entry 4 (0x000F4C8C) up is never
+        // touched. BSS, so it's at the same place in every level, but cleared on boot (we rewrite on every use).
+        public const uint PopupTextBuffer1 = 0x000F4D00;      // 0xE0 bytes
+        public const uint PopupTextBuffer2 = 0x000F4DE0;      // 0xE0 bytes
+
+        // Merchant Gargoyle shop (see Helpers/ShopHandler.cs). All in MEDIEVIL.EXE's data, so valid everywhere.
+        public const uint ShopTable = 0x000DA2DC;             // 19 x 8 bytes: u8 slot, u8 icon, u16 name msg, u16 price, u16 amount
+        public const uint ShopSecondHandTitle = 0x000DA504;   // pointer to "SECOND HAND GOODS" (shop rows 8-18)
+        public const uint ShopMenuId = 0x800DA454;            // the shop menu's window descriptor
+        public const uint WindowStack = 0x000EF3C8;           // pointers to open windows, count at PopupOpenWindowCount
+        public const uint CurrentMenu = 0x000EDC1C;           // gp+0x610: menu being used; +0xC = selected row, row+0x17 = shop row
+        public const uint Inventory = 0x000F822C;             // 43 x u32: low half = amount (-1 none, < -1 stolen), high bit 0 = buy back
+        public const uint ShopTextBuffer = 0x000F4F00;        // our shop names + title (12 x 0x20), see PopupTextBuffer1
 
         // ID of the currently loaded overlay (0x1A = LANDMAP.BIN, the world map)
         public const uint LoadedOverlayId = 0x00010000;
@@ -68,16 +79,18 @@
             0x18=Programmers's Playground (Freezes)
          */
 
+        // Used this for now as free space
         public const uint LevelUnlocks = 0x00000A00;
+
         // Other buttons are there as well, cannot stop movement or move with other buttons, that is handled somewhere else
         public const uint ButtonX = 0x000CDE3E; // byte, default 0x20
         public const uint ButtonSquare = 0x000CDE5E; // byte, default 0x40
         public const uint ButtonStart = 0x000CDF1F; // byte, default 0x10
-        
+
         public const uint DanRespawnPositionX = 0x000f8886;
         public const uint DanRespawnPositionY = 0x000f8888;
         public const uint DanRespawnPositionZ = 0x000f888a;
-        
+
         public const uint DanForwardSpeed = 0x000d5110;
 
         public const uint DanJumpHeight = 0x000d5126;
@@ -107,6 +120,30 @@
         public const uint ChaliceIconY = 0x000DD7BE;
         public const uint MoneyIconX = 0x000DD7C8;
         public const uint MoneyIconY = 0x000DD7CA;
+
+        // Level Unlock Items
+        public const uint DC_Unlock = 0x00000A00; // Dan's Crypt
+        public const uint TG_Unlock = 0x00000A01; // The Graveyard
+        public const uint RTG_Unlock = 0x00000A02; // Return To The Graveyard
+        public const uint CH_Unlock = 0x00000A03; // Cemetery Hill
+        public const uint HM_Unlock = 0x00000A04; // The Haunted Mausoleum
+        public const uint SF_Unlock = 0x00000A05; // Scarecrow Fields
+        public const uint EE_Unlock = 0x00000A06; // Enchanted Earth
+        public const uint PG_Unlock = 0x00000A07; // Pumpkin Gorge
+        public const uint PS_Unlock = 0x00000A08; // Pumpkin Serpent
+        public const uint TSV_Unlock = 0x00000A09; // The Sleeping Village
+        public const uint AG_Unlock = 0x00000A0A; // Asylum Grounds
+        public const uint IA_Unlock = 0x00000A0B; // Inside The Asylum
+        public const uint PAD_Unlock = 0x00000A0C; // Pools Of The Ancient Dead
+        public const uint TL_Unlock = 0x00000A0D; // The Lake
+        public const uint CC_Unlock = 0x00000A0E; // The Crystal Caverns
+        public const uint HR_Unlock = 0x00000A0F; // The Haunted Ruins
+        public const uint GS_Unlock = 0x00000A10; // The Ghost Ship
+        public const uint GG_Unlock = 0x00000A11; // The Gallows Gauntlet
+        public const uint EH_Unlock = 0x00000A12; // The Entrance Hall
+        public const uint TD_Unlock = 0x00000A13; // The Time Device
+        public const uint ZL_Unlock = 0x00000A14; // Zarok's Lair
+
 
         // Completed levels
         public const uint TG_LevelStatus = 0x000f81e1;
@@ -212,26 +249,26 @@
 
         // List of Hall of Heroes encounters
 
-        public const uint HOH_CannyTim1 = 0x001408b0;
-        public const uint HOH_CannyTim2 = 0x001408b4;
-        public const uint HOH_StanyerIronHewer1 = 0x001408b8;
-        public const uint HOH_StanyerIronHewer2 = 0x001408bc;
-        public const uint HOH_WodenTheMighty1 = 0x001408c0;
-        public const uint HOH_WodenTheMighty2 = 0x001408c4;
-        public const uint HOH_RavenHoovesTheArcher1 = 0x001408c8;
-        public const uint HOH_RavenHoovesTheArcher2 = 0x001408cc;
-        public const uint HOH_RavenHoovesTheArcher3 = 0x001408d0;
-        public const uint HOH_RavenHoovesTheArcher4 = 0x001408d4;
-        public const uint HOH_Imanzi1 = 0x001408d8;
-        public const uint HOH_Imanzi2 = 0x001408dc;
-        public const uint HOH_DirkSteadfast1 = 0x001408e0;
-        public const uint HOH_DirkSteadfast2 = 0x001408e4;
-        public const uint HOH_KarlStungard1 = 0x001408e8;
-        public const uint HOH_KarlStungard2 = 0x001408ec;
-        public const uint HOH_BloodmonathSkullCleaver1 = 0x001408f0;
-        public const uint HOH_BloodmonathSkullCleaver2 = 0x001408f4;
-        public const uint HOH_MegwynneStormbinder1 = 0x001408f8;
-        public const uint HOH_MegwynneStormbinder2 = 0x001408fc;
+        public const uint HOH_CannyTim1 = 0x00000A20;
+        public const uint HOH_CannyTim2 = 0x00000A21;
+        public const uint HOH_StanyerIronHewer1 = 0x00000A22;
+        public const uint HOH_StanyerIronHewer2 = 0x00000A23;
+        public const uint HOH_WodenTheMighty1 = 0x00000A24;
+        public const uint HOH_WodenTheMighty2 = 0x00000A25;
+        public const uint HOH_RavenHoovesTheArcher1 = 0x00000A26;
+        public const uint HOH_RavenHoovesTheArcher2 = 0x00000A27;
+        public const uint HOH_RavenHoovesTheArcher3 = 0x00000A28;
+        public const uint HOH_RavenHoovesTheArcher4 = 0x00000A29;
+        public const uint HOH_Imanzi1 = 0x00000A2A;
+        public const uint HOH_Imanzi2 = 0x00000A2B;
+        public const uint HOH_DirkSteadfast1 = 0x00000A2C;
+        public const uint HOH_DirkSteadfast2 = 0x00000A2D;
+        public const uint HOH_KarlStungard1 = 0x00000A2E;
+        public const uint HOH_KarlStungard2 = 0x00000A2F;
+        public const uint HOH_BloodmonathSkullCleaver1 = 0x00000A30;
+        public const uint HOH_BloodmonathSkullCleaver2 = 0x00000A31;
+        public const uint HOH_MegwynneStormbinder1 = 0x00000A32;
+        public const uint HOH_MegwynneStormbinder2 = 0x00000A33;
 
         public const uint HOH_CannyTim1_drop = 0x00019782;
         public const uint HOH_CannyTim2_drop = 0x0001978a;

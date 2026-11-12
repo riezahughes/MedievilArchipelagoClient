@@ -41,7 +41,7 @@ namespace MedievilArchipelago.Helpers
             ["Smashed Pumpkin"] = 0x09,
             ["Witches Request"] = 0x0A,
             ["Key to the City"] = 0x0B,
-            ["Soul Detector"] = 0x0C,
+            ["Boating Licence"] = 0x0C,
             ["Jack's Invitation"] = 0x0D,
             ["Fight Club"] = 0x0E,
             ["Demonic Amulet"] = 0x0F,
@@ -50,7 +50,7 @@ namespace MedievilArchipelago.Helpers
             ["Stowaway’s Spirit"] = 0x13, // curly apostrophe, matching the apworld's item name
             ["Ancient Knocker"] = 0x14,
             ["Alarm Clock"] = 0x15,
-            ["Boating Licence"] = 0x16,
+            ["Lake Key"] = 0x16,
         };
 
         public static bool IsLevelKey(string itemName) => itemName != null && LevelKeys.ContainsKey(itemName);

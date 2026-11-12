@@ -8,10 +8,12 @@
         public const uint PopupOpenWindowCount = 0x000EDC10; // gp+0x604 (gp = 0x800ED60C); window stack itself at 0x000EF3C8
         public const uint PopupMessageTable = 0x000D98F4;    // 4-byte string pointers, indexed by message ID
         public const uint PopupRequestSlots = 0x000EF3D8;    // 4 x 12-byte request slots
-        // our text buffers, in the unused gap between the end of the largest level overlay (ZL.BIN, ~0x000217B0)
-        // and the start of the main game code (0x00021CEC)
-        public const uint PopupTextBuffer1 = 0x00021B00;
-        public const uint PopupTextBuffer2 = 0x00021BE0;
+        // Our text buffers live in the tail of libcd's directory cache (MEDIEVIL.EXE BSS, 128 x 0x2C entries at
+        // 0x000F4BDC-0x000F61DC). The disc only has 3 directories (root, OVERLAYS, XA), so CD_newmedia only fills
+        // entries 0-2 and zeroes a terminator in entry 3 (0x000F4C64); from entry 4 (0x000F4C8C) up is never
+        // touched. BSS, so it's at the same place in every level, but cleared on boot (we rewrite on every use).
+        public const uint PopupTextBuffer1 = 0x000F4D00;      // 0xE0 bytes
+        public const uint PopupTextBuffer2 = 0x000F4DE0;      // 0xE0 bytes
 
         // Merchant Gargoyle shop (see Helpers/ShopHandler.cs). All in MEDIEVIL.EXE's data, so valid everywhere.
         public const uint ShopTable = 0x000DA2DC;             // 19 x 8 bytes: u8 slot, u8 icon, u16 name msg, u16 price, u16 amount
@@ -20,7 +22,7 @@
         public const uint WindowStack = 0x000EF3C8;           // pointers to open windows, count at PopupOpenWindowCount
         public const uint CurrentMenu = 0x000EDC1C;           // gp+0x610: menu being used; +0xC = selected row, row+0x17 = shop row
         public const uint Inventory = 0x000F822C;             // 43 x u32: low half = amount (-1 none, < -1 stolen), high bit 0 = buy back
-        public const uint ShopTextBuffer = 0x000C8C00;        // our shop names, in an unused block of MEDIEVIL.EXE's data
+        public const uint ShopTextBuffer = 0x000F4F00;        // our shop names + title (12 x 0x20), see PopupTextBuffer1
 
         // ID of the currently loaded overlay (0x1A = LANDMAP.BIN, the world map)
         public const uint LoadedOverlayId = 0x00010000;

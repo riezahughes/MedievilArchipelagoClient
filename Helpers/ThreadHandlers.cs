@@ -65,7 +65,7 @@ namespace MedievilArchipelago.Helpers
                 Addresses.CurrentLevel,
                 () =>
                 {
-                    Memory.Write(Addresses.CopyProtection, 0xFFFBFFFF);
+                    Memory.Write(Addresses.CopyProtection, 0xFFBFFFFF);
 #if DEBUG
                     Console.WriteLine("---------Copy Protection Monitor Done");
 #endif

@@ -87,6 +87,11 @@
         public const uint ButtonSquare = 0x000CDE5E; // byte, default 0x40
         public const uint ButtonStart = 0x000CDF1F; // byte, default 0x10
 
+        // where Dan is right now (s16s); the respawn position below is the last checkpoint
+        public const uint DanPositionX = 0x000EE40C;
+        public const uint DanPositionY = 0x000EE40E;
+        public const uint DanPositionZ = 0x000EE410;
+
         public const uint DanRespawnPositionX = 0x000f8886;
         public const uint DanRespawnPositionY = 0x000f8888;
         public const uint DanRespawnPositionZ = 0x000f888a;

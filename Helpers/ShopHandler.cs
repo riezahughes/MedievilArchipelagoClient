@@ -55,10 +55,12 @@ namespace MedievilArchipelago.Helpers
         };
         private const uint VanillaTitle = 0x800C5E94; // "SECOND HAND GOODS"
 
-        // Message IDs for our row names, one per row. Checked against every overlay's {string, ID} message list and
-        // the main game: empty in MEDIEVIL.EXE's table and never registered by any level (PopupHandler has 168
-        // and 169). Note 328-333/358 are used by the Ant Caves and 345/346 by Pumpkin Serpent, so they're avoided.
-        private static readonly uint[] RowMessageIds = { 102, 119, 122, 123, 129, 142, 143, 170, 237, 298, 299 };
+        // Message IDs for our row names, one per row. Levels register their own text as {u32 ID, string pointer}
+        // pairs (e.g. Pumpkin Gorge's book is 237), overwriting the table on load, so these must be IDs that are
+        // empty in MEDIEVIL.EXE's table (0x000D98F4, ~419 entries) AND never registered by any overlay. Scanning
+        // every overlay leaves exactly 0, 9, 14, 168-170, 199, 298, 299, 406, 411, 413-415; 0 is skipped and
+        // PopupHandler has 168 and 169, which leaves these 11.
+        private static readonly uint[] RowMessageIds = { 9, 14, 170, 199, 298, 299, 406, 411, 413, 414, 415 };
         private const uint NameSize = 0x20;
         private const uint TitleBuffer = Addresses.ShopTextBuffer + RowCount * NameSize;
         private const string Title = "ARCHIPELAGO WARES";
@@ -69,7 +71,17 @@ namespace MedievilArchipelago.Helpers
         // what's in each row of the current layout: an AP item, or null (vanilla or hidden)
         private static readonly StockItem?[] _rows = new StockItem?[RowCount];
 
-        private static Dictionary<int, List<StockItem>> _stock = new();
+        // by the AP world's shop key: the level ID, plus ".<merchant>" for a level's later merchants
+        private static Dictionary<string, List<StockItem>> _stock = new();
+
+        // Levels with more than one Merchant Gargoyle: where each merchant stands (X, Z), in merchant order.
+        // The shop is whichever merchant Dan is nearest to.
+        private static readonly Dictionary<int, (short X, short Z)[]> MerchantPositions = new()
+        {
+            // Scarecrow Fields: merchant 0 is at the level start (Dan's spawn point), merchant 1 is next to the
+            // chalice (its pickup object, SF_Pickup_Chalice - 0x24, has X/Z at +0x0C/+0x10). ~17000 units apart.
+            [0x05] = new (short, short)[] { (-117, -15078), (-5689, 902) },
+        };
 
         public static bool IsShopLocation(long locationId) => _stock.Values.Any(items => items.Any(i => i.Id == locationId));
         private static readonly Dictionary<long, string> _names = new();
@@ -114,7 +126,7 @@ namespace MedievilArchipelago.Helpers
 
             foreach (var (level, items) in JObject.FromObject(raw))
             {
-                _stock[int.Parse(level)] = items!.Select(i => new StockItem((long)i["id"]!, (int)i["price"]!)).ToList();
+                _stock[level] = items!.Select(i => new StockItem((long)i["id"]!, (int)i["price"]!)).ToList();
             }
             return _stock.Count > 0;
         }
@@ -209,22 +221,42 @@ namespace MedievilArchipelago.Helpers
 
         private static bool IsRamPointer(uint p) => p >= 0x80000000 && p < 0x80200000;
 
+        // the AP world's key for the merchant Dan is at: the level, and in a level with several merchants
+        // the nearest one ("5" or "5.1" in Scarecrow Fields)
+        private static string CurrentShopKey()
+        {
+            int level = Memory.ReadByte(Addresses.CurrentLevel);
+            if (!MerchantPositions.TryGetValue(level, out var merchants)) return level.ToString();
+
+            int x = Memory.ReadShort(Addresses.DanPositionX), z = Memory.ReadShort(Addresses.DanPositionZ);
+            int nearest = 0;
+            long best = long.MaxValue;
+            for (int m = 0; m < merchants.Length; m++)
+            {
+                long dx = x - merchants[m].X, dz = z - merchants[m].Z;
+                if (dx * dx + dz * dz < best) (best, nearest) = (dx * dx + dz * dz, m);
+            }
+            return nearest == 0 ? level.ToString() : $"{level}.{nearest}";
+        }
+
         // the client prints this so levels with merchants can be confirmed (and added to the AP world's list)
         private static void OnShopOpened()
         {
-            int level = Memory.ReadByte(Addresses.CurrentLevel);
+            string shop = CurrentShopKey();
             int left = _rows.Count(r => r != null && !_bought.Contains(r.Id));
-            Console.WriteLine(_stock.ContainsKey(level)
-                ? $"ShopSanity: Merchant Gargoyle opened in level {level} with {left} Archipelago items for sale."
-                : $"ShopSanity: Merchant Gargoyle opened in level {level}, which has no Archipelago stock.");
+            Console.WriteLine(_stock.ContainsKey(shop)
+                ? $"ShopSanity: Merchant Gargoyle {shop} opened with {left} Archipelago items for sale " +
+                  $"(Dan at {Memory.ReadShort(Addresses.DanPositionX)}, {Memory.ReadShort(Addresses.DanPositionZ)})."
+                : $"ShopSanity: Merchant Gargoyle {shop} opened, which has no Archipelago stock " +
+                  $"(Dan at {Memory.ReadShort(Addresses.DanPositionX)}, {Memory.ReadShort(Addresses.DanPositionZ)}).");
         }
 
         // Works out what goes in rows 8-18 and writes it, but only when something changed.
         private static void Layout(ArchipelagoClient client)
         {
-            int level = Memory.ReadByte(Addresses.CurrentLevel);
+            string shop = CurrentShopKey();
             var checkedIds = client.CurrentSession.Locations.AllLocationsChecked;
-            var forSale = _stock.TryGetValue(level, out var items)
+            var forSale = _stock.TryGetValue(shop, out var items)
                 ? items.Where(i => !checkedIds.Contains(i.Id) && !_bought.Contains(i.Id)).ToList()
                 : new List<StockItem>();
 
@@ -232,7 +264,7 @@ namespace MedievilArchipelago.Helpers
             var stolen = Enumerable.Range(0, RowCount).Where(r => IsListedForBuyBack(VanillaRows[r][0])).ToList();
             var apItems = forSale.Take(RowCount - stolen.Count).ToList();
 
-            string key = $"{level}|{string.Join(",", stolen)}|{string.Join(",", apItems.Select(i => i.Id))}";
+            string key = $"{shop}|{string.Join(",", stolen)}|{string.Join(",", apItems.Select(i => i.Id))}";
             if (key == _layoutKey) return;
             _layoutKey = key;
 

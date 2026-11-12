@@ -190,6 +190,7 @@ namespace MedievilArchipelago.Helpers
             bool hasEquipableWeapon = false;
             int talismanCount = 0;
             bool hasTalisman = false;
+            var progressiveCopies = new Dictionary<string, int>();
 
             foreach (ItemInfo itemInf in itemsCollected)
             {
@@ -214,6 +215,16 @@ namespace MedievilArchipelago.Helpers
                         // no plans yet
                         break;
                     case var x when x.Name.Contains("Skill"): ItemHandlers.ReceiveSkill(x); break;
+                    case var x when ItemHandlers.IsProgressiveEquipment(x.Name):
+                        // each copy gives the weapon for its tier (and the ones below, which does nothing if already held)
+                        progressiveCopies[x.Name] = progressiveCopies.GetValueOrDefault(x.Name) + 1;
+                        // the weapons given count as received, so the reset below doesn't take them away again
+                        usedItems.AddRange(ItemHandlers.ReceiveProgressiveEquipment(x.Name, progressiveCopies[x.Name]));
+                        if (!x.Name.Contains("Shield"))
+                        {
+                            hasEquipableWeapon = true;
+                        }
+                        break;
                     case var x when x.Name.Contains("Equipment"):
                         ItemHandlers.ReceiveEquipment(x);
                         if (!x.Name.Contains("Shield"))

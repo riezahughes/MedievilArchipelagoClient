@@ -490,6 +490,34 @@ namespace MedievilArchipelago.Helpers
             UpdateCurrentItemValue(name, amount, addressDict["Ammo"][name], false, true, breakChargeLimit);
         }
 
+        // Progressive equipment (the progressive_sword / progressive_bow / progressive_shield options). The Nth copy
+        // gives the Nth weapon in the list, named as in the "Equipment" address dictionary.
+        public static readonly Dictionary<string, string[]> ProgressiveEquipment = new()
+        {
+            ["Equipment: Progressive Sword"] = new[] { "Small Sword", "Broadsword", "Magic Sword" },
+            ["Equipment: Progressive Bow"] = new[] { "Crossbow", "Longbow", "Fire Longbow", "Magic Longbow" },
+            ["Equipment: Progressive Shield"] = new[] { "Copper Shield", "Silver Shield", "Gold Shield" },
+        };
+
+        public static bool IsProgressiveEquipment(string itemName) => ProgressiveEquipment.ContainsKey(itemName);
+
+        // Gives the weapon for every tier up to the number of copies held, and returns their item names.
+        // Giving a weapon the player already has changes nothing, so this is safe to repeat (items arriving late
+        // or out of order, or the whole inventory being rebuilt).
+        public static List<string> ReceiveProgressiveEquipment(string progressiveName, int copies)
+        {
+            var given = new List<string>();
+            if (!ProgressiveEquipment.TryGetValue(progressiveName, out var tiers)) return given;
+
+            for (int i = 0; i < Math.Min(copies, tiers.Length); i++)
+            {
+                var weapon = new Item { Name = $"Equipment: {tiers[i]}" };
+                ReceiveEquipment(weapon);
+                given.Add(weapon.Name);
+            }
+            return given;
+        }
+
         public static void ReceiveEquipment(Item item)
         {
             var addressDict = StatusAndInventoryAddressDictionary();

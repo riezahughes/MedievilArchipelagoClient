@@ -125,6 +125,10 @@ namespace MedievilArchipelago.Helpers
                     // incoming runes need added here
                     case var x when x.Name.ContainsAny("Rune") && runeSanityOption == 1: ItemHandlers.ReceiveRune(currentLevel, x); break;
                     case var x when x.Name.ContainsAny("Skill"): ItemHandlers.ReceiveSkill(x); break;
+                    // progressive weapons go above plain equipment: each copy gives the next weapon up
+                    case var x when x != null && ItemHandlers.IsProgressiveEquipment(x.Name):
+                        ItemHandlers.ReceiveProgressiveEquipment(x.Name, client.CurrentSession.Items.AllItemsReceived.Count(i => i.ItemName == x.Name));
+                        break;
                     case var x when x.Name.ContainsAny("Equipment"): ItemHandlers.ReceiveEquipment(x); break;
                     case var x when x.Name.ContainsAny("Life Bottle"): ItemHandlers.ReceiveLifeBottle(); break;
                     case var x when x.Name.ContainsAny("Soul Helmet"): ItemHandlers.ReceiveSoulHelmet(); break;

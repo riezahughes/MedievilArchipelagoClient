@@ -92,6 +92,12 @@
         public const uint DanPositionY = 0x000EE40E;
         public const uint DanPositionZ = 0x000EE410;
 
+        // a second copy of Dan's position in the same struct (X and Z match DanPosition, Y sits 6 higher).
+        // Moving Dan writes both (see ZaroksLairGateHandler).
+        public const uint DanPositionCopyX = 0x000EE3D8;
+        public const uint DanPositionCopyY = 0x000EE3DA;
+        public const uint DanPositionCopyZ = 0x000EE3DC;
+
         public const uint DanRespawnPositionX = 0x000f8886;
         public const uint DanRespawnPositionY = 0x000f8888;
         public const uint DanRespawnPositionZ = 0x000f888a;

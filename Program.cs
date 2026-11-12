@@ -359,6 +359,10 @@ public class Program
             _ = ThreadHandlers.StartBackgroundLoop(archipelagoClient, _cancellationTokenSource);
             PopupHandler.Start(_cancellationTokenSource.Token);
 
+            // Knights of Gallowmere: keeps Dan away from the arena trigger in Zarok's Lair until he has enough
+            if (ZaroksLairGateHandler.KnightsRequired(archipelagoClient) > 0)
+                _ = ZaroksLairGateHandler.Start(archipelagoClient, _cancellationTokenSource.Token);
+
             if (runeSanityOption == 1)
             {
                 MapRunePopup.Start(archipelagoClient, _cancellationTokenSource.Token);

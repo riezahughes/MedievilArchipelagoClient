@@ -120,6 +120,8 @@ namespace MedievilArchipelago.Helpers
                 {
                     // level keys go first: unique names like "Fight Club" would otherwise match the weapon cases below
                     case var x when x != null && LevelKeyHandler.IsLevelKey(x.Name): LevelKeyHandler.ReceiveLevelKey(x); break;
+                    // knights aren't written to memory: ZaroksLairGateHandler counts them from the received items
+                    case var x when x != null && x.Name == ZaroksLairGateHandler.KnightItemName: Console.WriteLine($"Knights of Gallowmere: {ZaroksLairGateHandler.KnightsReceived(client)}/{ZaroksLairGateHandler.KnightsRequired(client)}"); break;
                     // incoming runes need added here
                     case var x when x.Name.ContainsAny("Rune") && runeSanityOption == 1: ItemHandlers.ReceiveRune(currentLevel, x); break;
                     case var x when x.Name.ContainsAny("Skill"): ItemHandlers.ReceiveSkill(x); break;

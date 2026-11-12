@@ -3,7 +3,7 @@ using Archipelago.Core.Models;
 
 namespace MedievilArchipelago.Helpers
 {
-    // KeySanity: each level (bar Dan's Crypt, the Ant Hill and Zarok's Lair) has a key in the item pool.
+    // KeySanity: each level (bar Dan's Crypt and the Ant Hill) has a key in the item pool.
     // The apworld's keysanity_naming option picks one of two names for every key, so both are listed here.
     // Level IDs are the game's CurrentLevel values (see LevelHandlers.GetLevelNameFromId).
     internal static class LevelKeyHandler
@@ -30,6 +30,7 @@ namespace MedievilArchipelago.Helpers
             ["The Entrance Hall Unlock"] = 0x14,
             ["The Time Device Unlock"] = 0x15,
             ["The Lake Unlock"] = 0x16,
+            ["Zaroks Lair Unlock"] = 0x17,
 
             // keysanity_naming: unique_name
             ["Angelic Call"] = 0x01,
@@ -51,6 +52,7 @@ namespace MedievilArchipelago.Helpers
             ["Ancient Knocker"] = 0x14,
             ["Alarm Clock"] = 0x15,
             ["Lake Key"] = 0x16,
+            ["False Heroes Hope"] = 0x17,
         };
 
         public static bool IsLevelKey(string itemName) => itemName != null && LevelKeys.ContainsKey(itemName);

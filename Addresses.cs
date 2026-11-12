@@ -187,7 +187,7 @@
         // Unlocking the Map
         public const uint MAP_Unlock1 = 0x000F8214;
         public const uint MAP_Unlock2 = 0x000F8215;
-        //public const uint MAP_Unlock3 = 0x000F8216;
+        public const uint MAP_Unlock3 = 0x000F8216; // path to The Hilltop Mausoleum (safe now that CopyProtection is set)
         public const uint MAP_Unlock4 = 0x000F8217;
         public const uint MAP_Unlock5 = 0x000F8218;
         public const uint MAP_Unlock6 = 0x000F8219;

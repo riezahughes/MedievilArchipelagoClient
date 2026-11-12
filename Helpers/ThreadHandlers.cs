@@ -767,7 +767,7 @@ namespace MedievilArchipelago.Helpers
             {
                 Addresses.MAP_Unlock1,
                 Addresses.MAP_Unlock2,
-                //Addresses.MAP_Unlock3,
+                Addresses.MAP_Unlock3,
                 Addresses.MAP_Unlock4,
                 Addresses.MAP_Unlock5,
 

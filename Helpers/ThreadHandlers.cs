@@ -591,11 +591,7 @@ namespace MedievilArchipelago.Helpers
                                 byte[] openedMap = BitConverter.GetBytes(Memory.ReadUInt(Addresses.CopyProtection));
                                 //Console.WriteLine($"------------byte[] {openedMap:x}");
 
-                                if(inLevel == 23)
-                                {
-                                    Memory.WriteByteArray(Addresses.Zarok_Complete, BitConverter.GetBytes(0x8005A464));
-
-                                }
+                                
                                 // Check for cursor over To Map and x pressed or no longer in pause
                                 Memory.MonitorAddressForAction<uint>(
                                     pausePointer,
@@ -611,6 +607,11 @@ namespace MedievilArchipelago.Helpers
                                             //     Memory.WriteByte(Addresses.CurrentLevel, Convert.ToByte(Memory.ReadByte(Addresses.CurrentLevel - 0x04)));
                                             //     Memory.WriteByte(Addresses.TG_LevelStatus - 0x01 + inLevel,Convert.ToByte(Memory.ReadByte(Addresses.TG_LevelStatus -0x01 + inLevel)- 0x02));
                                             // }
+                                            if(inLevel == 23)
+                                            {
+                                                Memory.WriteByteArray(Addresses.Zarok_Complete, BitConverter.GetBytes(0x8005A464));
+                                            }
+
                                             await Task.Delay(100);
                                             // Reset mapfog to before To Map
                                             Memory.WriteByteArray(Addresses.CopyProtection, openedMap);
@@ -633,10 +634,6 @@ namespace MedievilArchipelago.Helpers
                                         else
                                         {
                                             //Console.WriteLine("------left pause menu");
-                                            if(inLevel == 23)
-                                            {
-                                                Memory.WriteByteArray(Addresses.Zarok_Complete, BitConverter.GetBytes(0x8005A3D4));
-                                            }
                                             ToMapMonitor();
                                         }
                                         

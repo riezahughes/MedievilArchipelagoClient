@@ -622,6 +622,10 @@ namespace MedievilArchipelago.Helpers
                                                     
                                                     Memory.WriteByte(Addresses.Cleared_Level_Byte, 0x00);
                                                     //Console.WriteLine("------Level reset?");
+                                                    if(inLevel == 23)
+                                                    {
+                                                        Memory.WriteByteArray(Addresses.Zarok_Complete, BitConverter.GetBytes(0x8005A3D4));
+                                                    }
                                                     ToMapMonitor();
                                                 },
                                                 value => value == 0x01);

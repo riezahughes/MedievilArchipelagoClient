@@ -5,6 +5,7 @@
         public const uint FakeAddress = 0x00000000; // This is a placeholder for an address that doesn't exist in the game. Used for testing.
 
         // In-game popups (see Helpers/PopupHandler.cs)
+        public const uint OpenPopup = 0x000EDC0C; // Which popup is open: 0x00 none/APpopup, 0x01 pause, 0x02 book/gargoyle, 0x03 inventory, 0x05 map buttons.
         public const uint PopupOpenWindowCount = 0x000EDC10; // gp+0x604 (gp = 0x800ED60C); window stack itself at 0x000EF3C8
         public const uint PopupMessageTable = 0x000D98F4;    // 4-byte string pointers, indexed by message ID
         public const uint PopupRequestSlots = 0x000EF3D8;    // 4 x 12-byte request slots
@@ -38,6 +39,7 @@
 
         // Current Level
         public const uint CurrentLevel = 0x000eee68;
+        public const uint Game_State = 0x000eee9c; // 0x02 title screen, 0x03 in level, 0x04 map, 0x05 fmv before level enter, 0x06 and 0x09 fmv at game start. 
 
         // Current Map POS (could randomize it for fun i guess)
         public const uint CurrentMapPosition = 0x000f81d8;
@@ -88,6 +90,7 @@
 
         // Other buttons are there as well, cannot stop movement or move with other buttons, that is handled somewhere else
         public const uint ButtonX = 0x000CDE3E; // byte, default 0x20
+        public const uint ButtonX_MenuPress = 0x000CDE5A; // Is 0xFFFF when button is pressed and does something extra(confirm in menu), not when attacking
         public const uint ButtonSquare = 0x000CDE5E; // byte, default 0x40
         public const uint ButtonStart = 0x000CDF1F; // byte, default 0x10
 
@@ -213,6 +216,14 @@
         public const uint MENU_Quit1 = 0x000ed764;
         public const uint MENU_Quit2 = 0x000ed765;
 
+        public const uint Restart_Function = 0x000dd1f8; // Pointer to restart function
+        public const uint Restart_Text = 0x000ed75c; // Start of Restart text
+        public const uint Restart_Visibility = 0x000dd209; // What cheat lvl it is visible at
+        public const ulong Text_ToMap = 0x000070614d206f54; 
+        public const ulong Text_Restart = 0x0074726174736552; 
+
+        public const uint Cleared_Level_Byte = 0x00014f90; // Sets level as cleared when kept at 0x01
+        public const uint Level_Clear_Reset = 0x00014fa0; // Gets set to 0x01 to reset state?
 
         // Rune Entity Locations
 

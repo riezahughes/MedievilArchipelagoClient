@@ -218,6 +218,19 @@ namespace MedievilArchipelago.Helpers
                 value => value == 11);
         }
 
+        internal static void RandomStart()
+        {
+            Memory.MonitorAddressForAction<byte>(
+                Addresses.CurrentLevel,
+                () => {
+                Memory.WriteByte(Addresses.CurrentLevel, 0x09);
+                
+                },
+                value => value == 1);
+        }
+
+
+
         // Does not account for going to ant caves from EE, so chest still club there.
 
         internal static void SetupLevelChestMonitor(ArchipelagoClient client)
@@ -239,7 +252,7 @@ namespace MedievilArchipelago.Helpers
                          () => SetupLevelChestMonitor(client),
                          value => value == 0 || value == 24);
                 }),
-                value => value < 24 && value > 0 && PlayerStateHandler.isInTheGame());
+                value => value < 24 && value > 0 && PlayerStateHandler.isInTheGame() && Memory.ReadByte(Addresses.Game_State) == 0x03);
         }
 
         // Setting currentlvl to 24(programmers playground) to have that saved on memory card, 
@@ -519,6 +532,100 @@ namespace MedievilArchipelago.Helpers
             {
                 Memory.WriteByte(address, 0x01);
             }
+        }
+
+        static internal void SetupToMapMonitor()
+        {
+            // Check for in level
+            Memory.MonitorAddressForAction<byte>(
+                Addresses.Game_State,
+                () => 
+                {
+                    
+                    
+                    
+                },
+                value => value == 3 );
+        }
+        static internal void ToMapMonitor()
+        {
+            // Set to always visible unless on uncleared(new game) Dan's Crypt
+            if(Memory.ReadBit(Addresses.DC_LevelStatus,4))
+            {
+                Memory.WriteByte(Addresses.Restart_Visibility, 0x00);
+                // Uses Complete Level's function
+                Memory.WriteByte(Addresses.Restart_Function, 0x44);
+                // Rename to To Map
+                byte[] newText = BitConverter.GetBytes(Addresses.Text_ToMap);
+                Memory.WriteByteArray(Addresses.Restart_Text, newText);
+            }
+            else
+            {
+                // Reset to default Restart behaviour
+                Memory.WriteByte(Addresses.Restart_Visibility, 0x02);
+                Memory.WriteByte(Addresses.Restart_Function, 0x08);
+                byte[] newText = BitConverter.GetBytes(Addresses.Text_Restart);
+                Memory.WriteByteArray(Addresses.Restart_Text, newText);
+            }
+            
+            Memory.MonitorAddressForAction<byte>(
+                Addresses.CurrentLevel,
+                () => 
+                {
+                    Memory.MonitorAddressForAction<byte>(
+                        Addresses.OpenPopup,
+                        () =>
+                        {
+                            uint inLevel = Memory.ReadByte(Addresses.CurrentLevel);
+                            uint pausePointer = Memory.ReadUInt(Addresses.CurrentMenu) - 0x7FFFFFF4;
+                            //Console.WriteLine($"------pause menu {pausePointer:x}");
+                            // Read current mapfog
+                            byte[] openedMap = BitConverter.GetBytes(Memory.ReadUInt(Addresses.CopyProtection));
+                            //Console.WriteLine($"------------byte[] {openedMap:x}");
+                            // Check for cursor over To Map and x pressed or no longer in pause
+                            Memory.MonitorAddressForAction<uint>(
+                                pausePointer,
+                                async () => 
+                                {
+                                    // If still paused
+                                    if( Memory.ReadByte(Addresses.DanFrozen) == 1)
+                                    {
+                                        //Console.WriteLine("------To Map pressed");
+                                        
+                                        if(Memory.ReadBit(0x000da266,5))
+                                        {
+                                            Memory.WriteByte(Addresses.CurrentLevel, Convert.ToByte(Memory.ReadByte(Addresses.CurrentLevel - 0x04)));
+                                            Memory.WriteByte(Addresses.TG_LevelStatus - 0x01 + inLevel,Convert.ToByte(Memory.ReadByte(Addresses.TG_LevelStatus -0x01 + inLevel)- 0x02));
+                                        }
+                                        await Task.Delay(100);
+                                        // Reset mapfog to before To Map
+                                        Memory.WriteByteArray(Addresses.CopyProtection, openedMap);
+                                        // Monitor for when the level clear cleanup ends? and overwrite the write cleared lvl command
+                                        Memory.MonitorAddressForAction<uint>(
+                                            Addresses.Level_Clear_Reset,
+                                            () => 
+                                            {
+                                                
+                                                Memory.WriteByte(Addresses.Cleared_Level_Byte, 0x00);
+                                                //Console.WriteLine("------Level reset?");
+                                                ToMapMonitor();
+                                                
+                                                
+                                            },
+                                            value => value == 0x01);
+                                    }
+                                    else
+                                    {
+                                        //Console.WriteLine("------left pause menu");
+                                        ToMapMonitor();
+                                    }
+                                    
+                                },
+                                value => value == 0x800DD1F4 && PlayerStateHandler.isInTheGame() && Memory.ReadUShort(Addresses.ButtonX_MenuPress) == 0xFFFF  || Memory.ReadByte(Addresses.DanFrozen) != 1);
+                        },
+                        value => value == 1 && Memory.ReadByte(Addresses.Game_State) == 3 && PlayerStateHandler.isInTheGame());
+                },
+                value => value > 0 && value < 24 && Memory.ReadByte(Addresses.Game_State) == 3 && PlayerStateHandler.isInTheGame());
         }
 
         static internal void ShowCurrentRuneStatus(ArchipelagoClient client, byte currentMapLevel)

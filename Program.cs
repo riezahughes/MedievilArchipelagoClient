@@ -326,13 +326,15 @@ public class Program
 
             ThreadHandlers.ChangeDropModels();
             ThreadHandlers.SetupDropModelsOnMenuReturn();
-            ThreadHandlers.SetupCopyProtectionMonitor();
+            //ThreadHandlers.SetupCopyProtectionMonitor();
             ThreadHandlers.SetupAsylumMonitor();
             //ThreadHandlers.SetupSleepingVillageSpawnMonitor();
             ThreadHandlers.SetupLevelChestMonitor(archipelagoClient);
             ThreadHandlers.SetupPlayerStateMonitor(archipelagoClient);
             ThreadHandlers.PumpkinGorgeMonitor(archipelagoClient, GameLocations);
+            ThreadHandlers.ToMapMonitor();
             ThreadHandlers.Overworld(archipelagoClient);
+            //ThreadHandlers.RandomStart();
 
             if (chaliceOption == 1)
             {
@@ -344,7 +346,8 @@ public class Program
                 ThreadHandlers.SetupAnthillMonitor();
 
             if (openWorldOption == 1)
-                ThreadHandlers.SetupOpenWorldMonitor();
+                //ThreadHandlers.SetupOpenWorldMonitor();
+                ThreadHandlers.SetupCopyProtectionMonitor();
 
             ThreadHandlers.SetupCheatMenuMonitor(archipelagoClient);
             if (keysanity == 1)

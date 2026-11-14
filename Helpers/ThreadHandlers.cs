@@ -250,7 +250,7 @@ namespace MedievilArchipelago.Helpers
                     Memory.MonitorAddressForAction<byte>(
                          Addresses.CurrentLevel,
                          () => SetupLevelChestMonitor(client),
-                         value => value == 0 || value == 24);
+                         value => value != loc);
                 }),
                 value => value < 24 && value > 0 && PlayerStateHandler.isInTheGame() && Memory.ReadByte(Addresses.Game_State) == 0x03);
         }
@@ -568,10 +568,15 @@ namespace MedievilArchipelago.Helpers
                 Memory.WriteByteArray(Addresses.Restart_Text, newText);
             }
             
+            
             Memory.MonitorAddressForAction<byte>(
                 Addresses.CurrentLevel,
                 () => 
                 {
+                    // Set Ant Caves as visited so you don't end up there from ee
+                    Memory.WriteBit(Addresses.TA_LevelStatus, 0, true);
+
+                    // Check for pause menu open
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.OpenPopup,
                         () =>
@@ -579,9 +584,11 @@ namespace MedievilArchipelago.Helpers
                             uint inLevel = Memory.ReadByte(Addresses.CurrentLevel);
                             uint pausePointer = Memory.ReadUInt(Addresses.CurrentMenu) - 0x7FFFFFF4;
                             //Console.WriteLine($"------pause menu {pausePointer:x}");
+
                             // Read current mapfog
                             byte[] openedMap = BitConverter.GetBytes(Memory.ReadUInt(Addresses.CopyProtection));
                             //Console.WriteLine($"------------byte[] {openedMap:x}");
+                            
                             // Check for cursor over To Map and x pressed or no longer in pause
                             Memory.MonitorAddressForAction<uint>(
                                 pausePointer,
@@ -592,11 +599,11 @@ namespace MedievilArchipelago.Helpers
                                     {
                                         //Console.WriteLine("------To Map pressed");
                                         
-                                        if(Memory.ReadBit(0x000da266,5))
-                                        {
-                                            Memory.WriteByte(Addresses.CurrentLevel, Convert.ToByte(Memory.ReadByte(Addresses.CurrentLevel - 0x04)));
-                                            Memory.WriteByte(Addresses.TG_LevelStatus - 0x01 + inLevel,Convert.ToByte(Memory.ReadByte(Addresses.TG_LevelStatus -0x01 + inLevel)- 0x02));
-                                        }
+                                        // if(Memory.ReadBit(0x000da266,5))
+                                        // {
+                                        //     Memory.WriteByte(Addresses.CurrentLevel, Convert.ToByte(Memory.ReadByte(Addresses.CurrentLevel - 0x04)));
+                                        //     Memory.WriteByte(Addresses.TG_LevelStatus - 0x01 + inLevel,Convert.ToByte(Memory.ReadByte(Addresses.TG_LevelStatus -0x01 + inLevel)- 0x02));
+                                        // }
                                         await Task.Delay(100);
                                         // Reset mapfog to before To Map
                                         Memory.WriteByteArray(Addresses.CopyProtection, openedMap);
@@ -609,8 +616,6 @@ namespace MedievilArchipelago.Helpers
                                                 Memory.WriteByte(Addresses.Cleared_Level_Byte, 0x00);
                                                 //Console.WriteLine("------Level reset?");
                                                 ToMapMonitor();
-                                                
-                                                
                                             },
                                             value => value == 0x01);
                                     }

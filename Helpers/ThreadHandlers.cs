@@ -554,7 +554,7 @@ namespace MedievilArchipelago.Helpers
                 () => 
                 {
                     // Set to always visible unless on uncleared(new game) Dan's Crypt
-                    if(Memory.ReadBit(Addresses.DC_LevelStatus,4) && Memory.ReadByte(Addresses.CurrentLevel) != 23 && Memory.ReadByte(Addresses.CurrentLevel) != 18)
+                    if(Memory.ReadBit(Addresses.DC_LevelStatus,4)  && Memory.ReadByte(Addresses.CurrentLevel) != 18)
                     {
                         Memory.WriteByte(Addresses.Restart_Visibility, 0x00);
                         // Uses Complete Level's function
@@ -591,6 +591,11 @@ namespace MedievilArchipelago.Helpers
                                 byte[] openedMap = BitConverter.GetBytes(Memory.ReadUInt(Addresses.CopyProtection));
                                 //Console.WriteLine($"------------byte[] {openedMap:x}");
 
+                                if(inLevel == 23)
+                                {
+                                    Memory.WriteByteArray(Addresses.Zarok_Complete, BitConverter.GetBytes(0x8005A464));
+
+                                }
                                 // Check for cursor over To Map and x pressed or no longer in pause
                                 Memory.MonitorAddressForAction<uint>(
                                     pausePointer,
@@ -624,6 +629,10 @@ namespace MedievilArchipelago.Helpers
                                         else
                                         {
                                             //Console.WriteLine("------left pause menu");
+                                            if(inLevel == 23)
+                                            {
+                                                Memory.WriteByteArray(Addresses.Zarok_Complete, BitConverter.GetBytes(0x8005A3D4));
+                                            }
                                             ToMapMonitor();
                                         }
                                         

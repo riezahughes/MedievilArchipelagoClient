@@ -221,6 +221,7 @@
         public const uint Restart_Visibility = 0x000dd209; // What cheat lvl it is visible at
         public const ulong Text_ToMap = 0x000070614d206f54; 
         public const ulong Text_Restart = 0x0074726174736552; 
+        public const uint Zarok_Complete = 0x000C5E50; // pointer to zarok ending
 
         public const uint Cleared_Level_Byte = 0x00014f90; // Sets level as cleared when kept at 0x01
         public const uint Level_Clear_Reset = 0x00014fa0; // Gets set to 0x01 to reset state?

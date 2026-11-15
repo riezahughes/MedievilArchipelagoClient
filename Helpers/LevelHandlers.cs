@@ -21,7 +21,7 @@ namespace MedievilArchipelago.Helpers
                 return;
             }
 
-            int gargoyleSanity = int.Parse(client.Options?.GetValueOrDefault("gargoylesanity", "0").ToString());
+            int gargoyleSanity = OptionHandler.Int(client.Options, "gargoylesanity");
 
             // starting gargoyles
             if (client.GPSHandler.MapId == 6 && client.GPSHandler.X <= 64189 && client.GPSHandler.X >= 64084 && client.GPSHandler.Y == 0 && (client.GPSHandler.Z <= 94 || client.GPSHandler.Z >= 65436) && gargoyleSanity == 1)

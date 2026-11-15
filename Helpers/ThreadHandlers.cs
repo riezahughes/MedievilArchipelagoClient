@@ -656,7 +656,7 @@ namespace MedievilArchipelago.Helpers
                 return;
             }
 
-            int cheatMenu = Int32.Parse(client.Options?.GetValueOrDefault("cheat_menu", "0").ToString());
+            int cheatMenu = OptionHandler.Int(client.Options, "cheat_menu");
 
             switch (cheatMenu)
             {

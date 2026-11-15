@@ -14,10 +14,13 @@ namespace MedievilArchipelago.Helpers
         private const uint VanillaFlags = 0x200;
         private const uint AsylumGroundsLevel = 0x0D;
         private const ushort InsideTheAsylumLevel = 0x0E;
+        private const uint ZarokLevel = 0x17;
+        private const uint ZarokEndingExiting = 0x8005A464;
+        private const uint ZarokEndingDefault = 0x8005A3D4;
         private const byte CompletedBit = 0x01;
         private const byte SuppressCompletionBit = 0x08;
         private static readonly byte[] Label = Encoding.ASCII.GetBytes("Go To Map\0");
-        private static readonly HashSet<uint> UnsupportedLevels = new() { 0x12, 0x17, 0x18 };
+        private static readonly HashSet<uint> UnsupportedLevels = new() { 0x12, 0x18 };
 
         private static readonly TimeSpan PatchDelay = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan PatchRefresh = TimeSpan.FromSeconds(5);
@@ -36,6 +39,8 @@ namespace MedievilArchipelago.Helpers
         private static uint _armedRecords;
         private static uint _savedClearedMask;
         private static byte _savedVisited;
+        private static byte _savedFlags;
+        private const byte ClearedLocationBit = 0x10;
         private static DateTime _closedSince;
         private static DateTime _guardMapUntil;
 
@@ -135,6 +140,7 @@ namespace MedievilArchipelago.Helpers
             _armedRecords = records;
             _savedClearedMask = Memory.ReadUInt(records + 0x30);
             _savedVisited = Memory.ReadByte(records + level + 0x50);
+            _savedFlags = flags;
             _ownsBit = (flags & SuppressCompletionBit) == 0;
             if (_ownsBit) Memory.WriteByte(flagsAddress, (byte)(flags | SuppressCompletionBit));
             if (level == AsylumGroundsLevel)
@@ -142,6 +148,7 @@ namespace MedievilArchipelago.Helpers
                 Memory.Write(Addresses.AsylumGroundsExitDestination, (ushort)0);
                 _redirectedExit = true;
             }
+            if (level == ZarokLevel) Memory.Write(Addresses.ZarokEndingPointer, ZarokEndingExiting);
             _armed = true;
         }
 
@@ -154,9 +161,15 @@ namespace MedievilArchipelago.Helpers
                 if ((flags & SuppressCompletionBit) != 0) Memory.WriteByte(flagsAddress, (byte)(flags & ~SuppressCompletionBit));
             }
             UndoRedirect();
+            RestoreZarokEnding();
             _armed = false;
             _ownsBit = false;
             _closedSince = default;
+        }
+
+        private static void RestoreZarokEnding()
+        {
+            if (_armedLevel == ZarokLevel) Memory.Write(Addresses.ZarokEndingPointer, ZarokEndingDefault);
         }
 
         private static void UndoRedirect()
@@ -178,11 +191,15 @@ namespace MedievilArchipelago.Helpers
             {
                 Memory.Write(_armedRecords + 0x30, _savedClearedMask);
                 Memory.WriteByte(_armedRecords + _armedLevel + 0x50, _savedVisited);
+                // the "Cleared:" locations watch bit 4 of this same flags byte, so put it back as it was
+                uint flagsAddress = _armedRecords + _armedLevel + 0x34;
+                Memory.WriteByte(flagsAddress, (byte)((Memory.ReadByte(flagsAddress) & ~ClearedLocationBit) | (_savedFlags & ClearedLocationBit)));
                 Memory.Write(Addresses.NewlyClearedFlag, 0u);
                 _guardMapUntil = DateTime.UtcNow + MapPromptGuard;
                 Console.WriteLine($"Left {LevelHandlers.GetLevelNameFromId((byte)_armedLevel)} for the map without clearing it.");
             }
             UndoRedirect();
+            RestoreZarokEnding();
             _armed = false;
             _ownsBit = false;
             _closedSince = default;

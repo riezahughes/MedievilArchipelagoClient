@@ -27,8 +27,8 @@ namespace MedievilArchipelago.Helpers
             Log.Logger.Information($"Playing {client.CurrentSession.ConnectionInfo.Game} as {client.CurrentSession.Players.GetPlayerName(client.CurrentSession.ConnectionInfo.Slot)}");
 
             // if deathlink goes here
-            int deathlink = Int32.Parse(client.Options?.GetValueOrDefault("deathlink", "0").ToString());
-            int deathsound = Int32.Parse(client.Options?.GetValueOrDefault("deathsound", "0").ToString());
+            int deathlink = OptionHandler.Int(client.Options, "deathlink");
+            int deathsound = OptionHandler.Int(client.Options, "deathsound");
 
 
             DeathLinkService deathLinkClient = null;
@@ -112,9 +112,9 @@ namespace MedievilArchipelago.Helpers
                 Console.WriteLine($"ItemReceived Firing. Itemcount: {client.CurrentSession.Items.AllItemsReceived.Count}");
 #endif
                 byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
-                int runeSanityOption = Int32.Parse(client.Options?.GetValueOrDefault("runesanity", "0").ToString());
-                int breakAmmoLimitOption = Int32.Parse(client.Options?.GetValueOrDefault("break_ammo_limit", "0").ToString());
-                int breakChargeLimitOption = Int32.Parse(client.Options?.GetValueOrDefault("break_percentage_limit", "0").ToString());
+                int runeSanityOption = OptionHandler.Int(client.Options, "runesanity");
+                int breakAmmoLimitOption = OptionHandler.Int(client.Options, "break_ammo_limit");
+                int breakChargeLimitOption = OptionHandler.Int(client.Options, "break_percentage_limit");
 
                 switch (args.Item)
                 {

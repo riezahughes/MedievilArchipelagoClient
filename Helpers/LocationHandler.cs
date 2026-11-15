@@ -26,8 +26,8 @@ namespace MedievilArchipelago.Helpers
             int base_id = 99250000;
             int region_offset = 1000;
 
-            int gargoyleSanity = int.Parse(options?.GetValueOrDefault("gargoylesanity", "0").ToString());
-            int bookSanity = int.Parse(options?.GetValueOrDefault("booksanity", "0").ToString());
+            int gargoyleSanity = OptionHandler.Int(options, "gargoylesanity");
+            int bookSanity = OptionHandler.Int(options, "booksanity");
 
             List<string> table_order = [
                 "Map",

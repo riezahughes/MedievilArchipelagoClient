@@ -65,7 +65,7 @@ namespace MedievilArchipelago.Helpers
 #endif
 
         public static int KnightsRequired(ArchipelagoClient client) =>
-            Int32.Parse(client.Options?.GetValueOrDefault("knights_to_find", "0").ToString());
+            OptionHandler.Int(client.Options, "knights_to_find");
 
         public static int KnightsReceived(ArchipelagoClient client) =>
             client.CurrentSession.Items.AllItemsReceived.Count(item => item.ItemName == KnightItemName);

@@ -314,11 +314,11 @@ public class Program
             //
             // toggleableOverlay.AddTextPopup("💀 Medievil is ready to go.");
 
-            int runeSanityOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("runesanity", "0").ToString());
-            int chaliceOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("include_chalices_in_checks", "0").ToString());
-            int antHillOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("include_ant_hill_in_checks", "0").ToString());
-            int openWorldOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("progression_option", "0").ToString());
-            int keysanity = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("keysanity", "0").ToString());
+            int runeSanityOption = OptionHandler.Int(archipelagoClient.Options, "runesanity");
+            int chaliceOption = OptionHandler.Int(archipelagoClient.Options, "include_chalices_in_checks");
+            int antHillOption = OptionHandler.Int(archipelagoClient.Options, "include_ant_hill_in_checks");
+            int openWorldOption = OptionHandler.Int(archipelagoClient.Options, "progression_option");
+            int keysanity = OptionHandler.Int(archipelagoClient.Options, "keysanity");
 
             byte initialLocation = Memory.ReadByte(Addresses.CurrentLevel);
             if (initialLocation == 1 && runeSanityOption == 1)
@@ -357,6 +357,10 @@ public class Program
             archipelagoClient.GPSHandler.Start();
             await archipelagoClient.ReceiveReady();
 
+            // ReceiveReady can finish on the socket's send-loop thread (when the item index save completes). Without this yield the rest of
+            // setup, including the blocking Console.ReadLine loop below, runs on that thread and no packet is ever sent again.
+            await Task.Yield();
+
             _ = ThreadHandlers.StartBackgroundLoop(archipelagoClient, _cancellationTokenSource);
             PopupHandler.Start(_cancellationTokenSource.Token);
             ExitToMapHandler.Start(_cancellationTokenSource.Token);
@@ -372,7 +376,7 @@ public class Program
             ;
             _ = archipelagoClient.LocationManager.MonitorLocationsAsync(archipelagoClient.CurrentSession, GameLocations, _cancellationTokenSource.Token);
             // runs on its own task and returns straight away, so it never holds up the location monitor
-            if (Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("shopsanity", "0").ToString()) == 1)
+            if (OptionHandler.Int(archipelagoClient.Options, "shopsanity") == 1)
                 ShopHandler.Start(archipelagoClient, _cancellationTokenSource.Token);
 
             while (!_cancellationTokenSource.Token.IsCancellationRequested)
@@ -458,10 +462,10 @@ public class Program
                     {
                         if (archipelagoClient.CurrentSession.Locations.AllLocationsChecked != null)
                         {
-                            int getCurrentGoal = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("goal", "0").ToString());
+                            int getCurrentGoal = OptionHandler.Int(archipelagoClient.Options, "goal");
                             var currentChaliceCount = Helpers.ItemHandlers.GetChaliceCount(archipelagoClient);
                             var currentChaliceLocations = Helpers.ItemHandlers.GetChaliceCountNames(archipelagoClient);
-                            int maxChaliceCount = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("chalice_win_count", "0").ToString());
+                            int maxChaliceCount = OptionHandler.Int(archipelagoClient.Options, "chalice_win_count");
 
                             if (currentChaliceCount == 248)
                             {

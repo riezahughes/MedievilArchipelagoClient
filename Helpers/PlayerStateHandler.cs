@@ -164,9 +164,9 @@ namespace MedievilArchipelago.Helpers
 
             short currentWeapon = Memory.ReadShort(Addresses.ItemEquipped);
             byte currentLevel = Memory.ReadByte(Addresses.CurrentLevel);
-            int runeSanityOption = Int32.Parse(client.Options?.GetValueOrDefault("runesanity", "0").ToString());
-            //int breakAmmoLimitOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("break_ammo_limit", "0").ToString());
-            ////int breakChargeLimitOption = Int32.Parse(archipelagoClient.Options?.GetValueOrDefault("break_percentage_limit", "0").ToString());
+            int runeSanityOption = OptionHandler.Int(client.Options, "runesanity");
+            //int breakAmmoLimitOption = OptionHandler.Int(archipelagoClient.Options, "break_ammo_limit");
+            ////int breakChargeLimitOption = OptionHandler.Int(archipelagoClient.Options, "break_percentage_limit");
 
             //Console.WriteLine(breakChargeLimitOption);
             //Console.WriteLine(breakAmmoLimitOption);

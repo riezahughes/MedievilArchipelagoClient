@@ -221,7 +221,10 @@
         public const uint Restart_Visibility = 0x000dd209; // What cheat lvl it is visible at
         public const ulong Text_ToMap = 0x000070614d206f54; 
         public const ulong Text_Restart = 0x0074726174736552; 
-        public const uint Zarok_Complete = 0x000C5E50; // pointer to zarok ending
+        public const uint Zarok_Complete = 0x000C5E50; // level-complete (exit code 5) jump-table entry; its handler plays the ending in Zarok's Lair
+        public const uint LevelComplete_Default = 0x8005A3D4; // marks the level cleared, then ending if Zarok's Lair, else map/next level
+        public const uint LevelComplete_SkipZarokEnding = 0x8005A464; // skips the cleared marking and the Zarok's Lair ending check
+        public const uint PauseMenu_RestartRow = 0x800DD1F4; // pause menu item that Restart / To Map uses
 
         public const uint Cleared_Level_Byte = 0x00014f90; // Sets level as cleared when kept at 0x01
         public const uint Level_Clear_Reset = 0x00014fa0; // Gets set to 0x01 to reset state?

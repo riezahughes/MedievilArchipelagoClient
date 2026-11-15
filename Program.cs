@@ -332,7 +332,6 @@ public class Program
             ThreadHandlers.SetupLevelChestMonitor(archipelagoClient);
             ThreadHandlers.SetupPlayerStateMonitor(archipelagoClient);
             ThreadHandlers.PumpkinGorgeMonitor(archipelagoClient, GameLocations);
-            ThreadHandlers.ToMapMonitor();
             ThreadHandlers.Overworld(archipelagoClient);
             //ThreadHandlers.RandomStart();
 
@@ -362,6 +361,7 @@ public class Program
 
             _ = ThreadHandlers.StartBackgroundLoop(archipelagoClient, _cancellationTokenSource);
             PopupHandler.Start(_cancellationTokenSource.Token);
+            _ = ToMapHandler.Start(_cancellationTokenSource.Token);
 
             // Knights of Gallowmere: keeps Dan away from the arena trigger in Zarok's Lair until he has enough
             if (ZaroksLairGateHandler.KnightsRequired(archipelagoClient) > 0)

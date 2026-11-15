@@ -225,6 +225,8 @@
         public const uint LevelComplete_Default = 0x8005A3D4; // marks the level cleared, then ending if Zarok's Lair, else map/next level
         public const uint LevelComplete_SkipZarokEnding = 0x8005A464; // skips the cleared marking and the Zarok's Lair ending check
         public const uint PauseMenu_RestartRow = 0x800DD1F4; // pause menu item that Restart / To Map uses
+        public const uint LevelExitRequest = 0x000EEEA4; // 0 while playing; 4 restart, 5 level complete (also Complete Level / To Map)
+        public const uint LevelNewlyCleared = 0x000EDBE0; // gp+0x5d4: 1 = level just cleared for the first time; the map copies it into Cleared_Level_Byte on entry
 
         public const uint Cleared_Level_Byte = 0x00014f90; // Sets level as cleared when kept at 0x01
         public const uint Level_Clear_Reset = 0x00014fa0; // Gets set to 0x01 to reset state?

@@ -237,9 +237,9 @@ namespace MedievilArchipelago.Helpers
                     Memory.MonitorAddressForAction<byte>(
                          Addresses.CurrentLevel,
                          () => SetupLevelChestMonitor(client),
-                         value => value == 0 || value == 24);
+                         value => value != loc);
                 }),
-                value => value < 24 && value > 0 && PlayerStateHandler.isInTheGame());
+                value => value < 24 && value > 0 && PlayerStateHandler.isInTheGame() && Memory.ReadByte(Addresses.GameMode) == 3);
         }
 
         // Resetting currentlvl to 0 after a load game, since that sets it to the name of load file.

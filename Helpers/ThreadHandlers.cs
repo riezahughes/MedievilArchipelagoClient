@@ -59,19 +59,19 @@ namespace MedievilArchipelago.Helpers
 
 
         // Dan's Crypt is the first level, so passing the copy protection check there covers the Hilltop Mausoleum
-        internal static void SetupCopyProtectionMonitor()
+        internal static void MapFogMonitor()
         {
             Memory.MonitorAddressForAction<byte>(
                 Addresses.CurrentLevel,
                 () =>
                 {
-                    Memory.Write(Addresses.CopyProtection, 0xFFBFFFFF);
+                    Memory.Write(Addresses.MapFogAddress, 0xFFBFFFFF);
 #if DEBUG
                     Console.WriteLine("---------Copy Protection Monitor Done");
 #endif
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.CurrentLevel,
-                        () => SetupCopyProtectionMonitor(),
+                        () => MapFogMonitor(),
                         value => value != 6);
                 },
                 value => value == 6 && PlayerStateHandler.isInTheGame());
@@ -342,24 +342,6 @@ namespace MedievilArchipelago.Helpers
                 value => value < 24 && value > 0 && PlayerStateHandler.isInTheGame());
         }
 
-        internal static void SetupOpenWorldMonitor()
-        {
-            Memory.MonitorAddressForAction<ushort>(
-                Addresses.CurrentLevel,
-                () =>
-                {
-                    OpenTheMap();
-#if DEBUG
-                    Console.WriteLine("---------Open World Monitor Done");
-#endif
-                    Memory.MonitorAddressForAction<ushort>(
-                        Addresses.CurrentLevel,
-                        () => SetupOpenWorldMonitor(),
-                        value => value == 0 || value == 24);
-                },
-                value => value < 24 && value > 0 && PlayerStateHandler.isInTheGame());
-        }
-
         internal static void SetupPlayerStateMonitor(ArchipelagoClient client)
         {
             Memory.MonitorAddressForAction<byte>(
@@ -509,15 +491,6 @@ namespace MedievilArchipelago.Helpers
             foreach (uint drop in drops)
             {
                 Memory.WriteByte(drop, 0x07);
-            }
-        }
-
-        static internal void OpenTheMap()
-        {
-            var mapList = OpenMapMemoryLocations();
-            foreach (uint address in mapList)
-            {
-                Memory.WriteByte(address, 0x01);
             }
         }
 

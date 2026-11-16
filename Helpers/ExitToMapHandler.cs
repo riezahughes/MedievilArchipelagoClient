@@ -95,19 +95,40 @@ namespace MedievilArchipelago.Helpers
                 return;
             }
 
-            if (DateTime.UtcNow - _levelStarted < PatchDelay) return;
-            if (DateTime.UtcNow - _lastPatch >= PatchRefresh) ApplyRecord();
+            // a save state can swap the level under us while armed
+            if (_armed && level != _armedLevel) Disarm();
 
+            // Arm before the PatchDelay check: the pause record stays patched from the last level, so "Go To Map" can be
+            // picked straight after a level start (e.g. loading a save state from the map). Unarmed, Zarok's Lair rolls the credits.
             bool paused = ShopHandler.IsMenuOpen(Addresses.PauseMenuId);
             if (paused)
             {
                 _closedSince = default;
                 if (!_armed) Arm(level);
+                else Reassert();
             }
             else if (_armed)
             {
                 if (_closedSince == default) _closedSince = DateTime.UtcNow;
                 if (DateTime.UtcNow - _closedSince >= CloseDebounce && Memory.ReadUInt(Addresses.PendingExitState) == 0) Disarm();
+            }
+
+            if (DateTime.UtcNow - _levelStarted < PatchDelay) return;
+            if (DateTime.UtcNow - _lastPatch >= PatchRefresh) ApplyRecord();
+        }
+
+        // Save states undo our RAM writes, so while armed keep the Zarok redirect, the Asylum redirect and our bit 3 in place
+        private static void Reassert()
+        {
+            if (_armedLevel == ZarokLevel && Memory.ReadUInt(Addresses.ZarokEndingPointer) != ZarokEndingExiting)
+                Memory.Write(Addresses.ZarokEndingPointer, ZarokEndingExiting);
+            if (_redirectedExit && Memory.ReadUShort(Addresses.AsylumGroundsExitDestination) != 0)
+                Memory.Write(Addresses.AsylumGroundsExitDestination, (ushort)0);
+            if (_ownsBit)
+            {
+                uint flagsAddress = _armedRecords + _armedLevel + 0x34;
+                byte flags = Memory.ReadByte(flagsAddress);
+                if ((flags & SuppressCompletionBit) == 0) Memory.WriteByte(flagsAddress, (byte)(flags | SuppressCompletionBit));
             }
         }
 
@@ -187,17 +208,26 @@ namespace MedievilArchipelago.Helpers
 
         private static void FinishExit()
         {
-            if (_ownsBit && (Memory.ReadByte(_armedRecords + _armedLevel + 0x34) & CompletedBit) == 0)
+            uint flagsAddress = _armedRecords + _armedLevel + 0x34;
+            byte flags = Memory.ReadByte(flagsAddress);
+            // the level-complete handler clears our bit 3 itself, but Zarok's redirect skips that handler, so drop it here
+            // (left set, the next Arm wouldn't own it)
+            if (_ownsBit && (flags & SuppressCompletionBit) != 0)
             {
-                Memory.Write(_armedRecords + 0x30, _savedClearedMask);
-                Memory.WriteByte(_armedRecords + _armedLevel + 0x50, _savedVisited);
-                // the "Cleared:" locations watch bit 4 of this same flags byte, so put it back as it was
-                uint flagsAddress = _armedRecords + _armedLevel + 0x34;
-                Memory.WriteByte(flagsAddress, (byte)((Memory.ReadByte(flagsAddress) & ~ClearedLocationBit) | (_savedFlags & ClearedLocationBit)));
-                Memory.Write(Addresses.NewlyClearedFlag, 0u);
-                _guardMapUntil = DateTime.UtcNow + MapPromptGuard;
-                Console.WriteLine($"Left {LevelHandlers.GetLevelNameFromId((byte)_armedLevel)} for the map without clearing it.");
+                flags = (byte)(flags & ~SuppressCompletionBit);
+                Memory.WriteByte(flagsAddress, flags);
             }
+            // Armed means the pause menu was open, so reaching the map can only be "Go To Map": always undo what the exit did.
+            // Don't make this depend on owning bit 3: some levels set it themselves (Enchanted Earth does), and skipping this
+            // leaves the "newly cleared" flag up, so the map marks the level cleared.
+            Memory.Write(_armedRecords + 0x30, _savedClearedMask);
+            Memory.WriteByte(_armedRecords + _armedLevel + 0x50, _savedVisited);
+            // the "Cleared:" locations watch bit 4 of this same flags byte, so put it back as it was
+            Memory.WriteByte(flagsAddress, (byte)((flags & ~ClearedLocationBit) | (_savedFlags & ClearedLocationBit)));
+            Memory.Write(Addresses.NewlyClearedFlag, 0u);
+            _guardMapUntil = DateTime.UtcNow + MapPromptGuard;
+            if ((_savedFlags & CompletedBit) == 0)
+                Console.WriteLine($"Left {LevelHandlers.GetLevelNameFromId((byte)_armedLevel)} for the map without clearing it.");
             UndoRedirect();
             RestoreZarokEnding();
             _armed = false;

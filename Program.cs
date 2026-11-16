@@ -326,7 +326,6 @@ public class Program
 
             ThreadHandlers.ChangeDropModels();
             ThreadHandlers.SetupDropModelsOnMenuReturn();
-            ThreadHandlers.SetupCopyProtectionMonitor();
             ThreadHandlers.SetupAsylumMonitor();
             //ThreadHandlers.SetupSleepingVillageSpawnMonitor();
             ThreadHandlers.SetupLevelChestMonitor(archipelagoClient);
@@ -344,7 +343,7 @@ public class Program
                 ThreadHandlers.SetupAnthillMonitor();
 
             if (openWorldOption == 1)
-                ThreadHandlers.SetupOpenWorldMonitor();
+                ThreadHandlers.MapFogMonitor();
 
             ThreadHandlers.SetupCheatMenuMonitor(archipelagoClient);
             if (keysanity == 1)
@@ -354,11 +353,9 @@ public class Program
             }
 
             firstRun = false;
+
             archipelagoClient.GPSHandler.Start();
             await archipelagoClient.ReceiveReady();
-
-            // ReceiveReady can finish on the socket's send-loop thread (when the item index save completes). Without this yield the rest of
-            // setup, including the blocking Console.ReadLine loop below, runs on that thread and no packet is ever sent again.
             await Task.Yield();
 
             _ = ThreadHandlers.StartBackgroundLoop(archipelagoClient, _cancellationTokenSource);
@@ -555,9 +552,7 @@ public class Program
                     else if (input?.Trim().ToLower() == "items")
                     {
                         var items = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Key Item") select item;
-
                         var bottles = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Bottle") select item;
-
                         var equipment = from item in archipelagoClient.CurrentSession.Items.AllItemsReceived where item.ItemName.Contains("Equipment") select item;
 
                         Console.WriteLine("Current Equipment: ");

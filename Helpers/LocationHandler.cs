@@ -292,7 +292,7 @@ namespace MedievilArchipelago.Helpers
                                         Name = "Cleared Level",
                                         Address = loc.Address,
                                         CheckType = LocationCheckType.Bit,
-                                        AddressBit = 4
+                                        AddressBit = loc.Name == "Cleared: Dan's Crypt" ? 0 : 4
                                     });
                                 }
 

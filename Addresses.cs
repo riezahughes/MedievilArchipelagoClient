@@ -30,7 +30,7 @@
         public const uint PendingExitState = 0x000EEEA4;       // 5 = level exit, handled by the game's main loop
         public const uint LevelRecordsPointer = 0x000EDB74;    // gp+0x568: +0x30 cleared-levels bits, +level+0x34 flags (bit0 cleared, bit3 don't mark cleared)
         public const uint ZarokEndingPointer = 0x000C5E50;      // Zarok's level: must be 0x8005A464 while exiting, or the ending credits play
-        public const uint NewlyClearedFlag = 0x000EDBDC;       // gp+0x5D4: set on a level exit, makes the map mark the level (bit 4) and show "Save progress?"
+        public const uint NewlyClearedFlag = 0x000EDBE0;       // gp+0x5D4 (gp = 0x800ED60C): set on a level exit, makes the map mark the level (bit 4) and show "Save progress?". 0x000EDBDC (gp+0x5D0) is the main loop's next game state: never write it
         public const uint MapPromptPending = 0x00014F90;       // LANDMAP.BIN only: 1 = set bit 4 on the level just left and show "Save progress?" once its countdown ends
         public const uint AsylumGroundsExitDestination = 0x000D8826; // u16 in the level transition table (0x800D8794, 12 bytes per level): 0xE = Inside the Asylum, 0 = world map
         public const uint PauseMenuId = 0x800DD4F4;            // the pause menu's window descriptor
@@ -57,7 +57,7 @@
 
         // Copy protection: unless this is 0xFFFBFFFF, entering the Hilltop Mausoleum crashes to a disc load screen.
         // Set on loading into Dan's Crypt (ThreadHandlers.SetupCopyProtectionMonitor).
-        public const uint CopyProtection = 0x000f81dc;
+        public const uint MapFogAddress = 0x000f81dc;
 
         // Cheat menu. Comes in two flavours. 0x01 or 0x02
         public const uint CheatMenu = 0x000EEE76;

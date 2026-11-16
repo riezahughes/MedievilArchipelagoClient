@@ -434,15 +434,30 @@
         // Level Pickups
 
         // Dans Crypt
+        // Two layouts. The first load of a run (new game) has an extra sound bank on the heap just before the entity
+        // records, so they sit 0xC38 higher than on every later visit. Pickups and the chest move; books and gargoyles
+        // (level overlay text) don't. DansCryptLayoutHandler swaps to the DC_Return_ set once you've left the level.
         public const uint DC_Pickup_Shortsword = 0x0012dfb4;
         public const uint DC_Pickup_StarRune = 0x0012e0f4;
         public const uint DC_Pickup_GoldCoinsOverWater = 0x0012e134;
         public const uint DC_Pickup_CopperShield = 0x0012e5b0;
         public const uint DC_Pickup_LifeBottle = 0x0012e234;
         public const uint DC_Pickup_Daggers = 0x0012e1f4;
-        public const uint DC_Pickup_LifeBottleWall = 0x0012d93c;
-        public const uint DC_Pickup_GoldCoinsBehindWallLeft = 0x0012d8fc;
-        public const uint DC_Pickup_GoldCoinsBehindWallRight = 0x0012d8bc;
+        public const uint DC_Pickup_LifeBottleWall = 0x0012e574;
+        public const uint DC_Pickup_GoldCoinsBehindWallLeft = 0x0012e534;
+        public const uint DC_Pickup_GoldCoinsBehindWallRight = 0x0012e4f4;
+
+        // Dans Crypt after you've left it once
+        public const uint DC_Return_Pickup_Shortsword = 0x0012d37c;
+        public const uint DC_Return_Pickup_StarRune = 0x0012d4bc;
+        public const uint DC_Return_Pickup_GoldCoinsOverWater = 0x0012d4fc;
+        public const uint DC_Return_Pickup_CopperShield = 0x0012d978;
+        public const uint DC_Return_Pickup_LifeBottle = 0x0012d5fc;
+        public const uint DC_Return_Pickup_Daggers = 0x0012d5bc;
+        public const uint DC_Return_Pickup_LifeBottleWall = 0x0012d93c;
+        public const uint DC_Return_Pickup_GoldCoinsBehindWallLeft = 0x0012d8fc;
+        public const uint DC_Return_Pickup_GoldCoinsBehindWallRight = 0x0012d8bc;
+        public const byte DC_LeftLevelBit = 0x10;              // DC_LevelStatus bit 4: the world map sets it every time it runs
         public const uint DC_Book_UsingCrypt = 0x000113f5;
         public const uint DC_Book_UnlockingRunes = 0x0001171f;
         public const uint DC_Book_PressingSelect = 0x000114ac;

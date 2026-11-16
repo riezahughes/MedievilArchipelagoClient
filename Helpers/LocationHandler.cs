@@ -21,7 +21,8 @@ namespace MedievilArchipelago.Helpers
 
             return matchingNames.Count() == 1;
         }
-        public static List<ILocation> BuildLocationList(Dictionary<string, object> options)
+        // dansCryptReturned: use Dan's Crypt's addresses for after you've left it once (see DansCryptLayoutHandler)
+        public static List<ILocation> BuildLocationList(Dictionary<string, object> options, bool dansCryptReturned = false)
         {
             int base_id = 99250000;
             int region_offset = 1000;
@@ -69,7 +70,7 @@ namespace MedievilArchipelago.Helpers
 
             // Level Locations
             allLevelLocations.Add("Hall of Heroes", GetHallOfHeroesData());
-            allLevelLocations.Add("Dan's Crypt", GetDansCryptData());
+            allLevelLocations.Add("Dan's Crypt", GetDansCryptData(dansCryptReturned));
             allLevelLocations.Add("The Graveyard", GetTheGraveyardData());
             allLevelLocations.Add("Cemetery Hill", GetCemeteryHillData());
             allLevelLocations.Add("The Hilltop Mausoleum", GetHilltopMausoleumData());
@@ -91,7 +92,7 @@ namespace MedievilArchipelago.Helpers
             allLevelLocations.Add("The Entrance Hall", GetTheEntranceHallData());
             allLevelLocations.Add("The Time Device", GetTheTimeDeviceData());
             allLevelLocations.Add("Zaroks Lair", GetZaroksLairData());
-            allLevelLocations.Add("Dan's Crypt Locked Items", GetDansCryptLockedItems());
+            allLevelLocations.Add("Dan's Crypt Locked Items", GetDansCryptLockedItems(dansCryptReturned));
             allLevelLocations.Add("Cemetery Hill Locked Items", GetCemeteryHillLockedItems());
             allLevelLocations.Add("Hilltop Mausoleum Locked Items", GetHilltopMausoleumLockedItems());
             allLevelLocations.Add("Scarecrow Fields Locked Items", GetScarecrowFieldsLockedItems());
@@ -555,15 +556,15 @@ namespace MedievilArchipelago.Helpers
             return hallOfHeroesVisits;
         }
 
-        private static List<GenericItemsData> GetDansCryptData()
+        private static List<GenericItemsData> GetDansCryptData(bool returned)
         {
             List<GenericItemsData> dcLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Star Rune: Dan's Crypt", Addresses.DC_Pickup_StarRune, "6", "32896"),
-                new GenericItemsData("Life Bottle: Dan's Crypt", Addresses.DC_Pickup_LifeBottle,  "6", "32896"),
-                new GenericItemsData("Equipment: Small Sword - DC", Addresses.DC_Pickup_Shortsword,  "6", "32896"),
-                new GenericItemsData("Equipment: Copper Shield in Chest - DC", Addresses.DC_Pickup_CopperShield,  "6", "32896", true),
-                new GenericItemsData("Equipment: Daggers - DC", Addresses.DC_Pickup_Daggers,  "6", "32896"),
-                new GenericItemsData("Gold Coins: Over the water - DC",Addresses.DC_Pickup_GoldCoinsOverWater,  "6", "32896"),
+                new GenericItemsData("Star Rune: Dan's Crypt", returned ? Addresses.DC_Return_Pickup_StarRune : Addresses.DC_Pickup_StarRune, "6", "32896"),
+                new GenericItemsData("Life Bottle: Dan's Crypt", returned ? Addresses.DC_Return_Pickup_LifeBottle : Addresses.DC_Pickup_LifeBottle,  "6", "32896"),
+                new GenericItemsData("Equipment: Small Sword - DC", returned ? Addresses.DC_Return_Pickup_Shortsword : Addresses.DC_Pickup_Shortsword,  "6", "32896"),
+                new GenericItemsData("Equipment: Copper Shield in Chest - DC", returned ? Addresses.DC_Return_Pickup_CopperShield : Addresses.DC_Pickup_CopperShield,  "6", "32896", true),
+                new GenericItemsData("Equipment: Daggers - DC", returned ? Addresses.DC_Return_Pickup_Daggers : Addresses.DC_Pickup_Daggers,  "6", "32896"),
+                new GenericItemsData("Gold Coins: Over the water - DC",returned ? Addresses.DC_Return_Pickup_GoldCoinsOverWater : Addresses.DC_Pickup_GoldCoinsOverWater,  "6", "32896"),
                 new GenericItemsData("Book: Unlocking Runes - DC", Addresses.DC_Book_UnlockingRunes, "6", "0"),
                 new GenericItemsData("Book: Using Crypt - DC", Addresses.DC_Book_UsingCrypt, "6", "0"),
                 new GenericItemsData("Book: Pressing Select - DC", Addresses.DC_Book_PressingSelect, "6", "0"),
@@ -1144,12 +1145,12 @@ namespace MedievilArchipelago.Helpers
             return zlLocations;
         }
 
-        private static List<GenericItemsData> GetDansCryptLockedItems()
+        private static List<GenericItemsData> GetDansCryptLockedItems(bool returned)
         {
             List<GenericItemsData> chLocations = new List<GenericItemsData>() {
-                new GenericItemsData("Life Bottle: Dan's Crypt - Behind Wall",Addresses.DC_Pickup_LifeBottleWall,  "6", "32896"),
-                new GenericItemsData("Gold Coins: Behind Wall in Crypt - Left - DC", Addresses.DC_Pickup_GoldCoinsBehindWallLeft,  "6", "32896"),
-                new GenericItemsData("Gold Coins: Behind Wall in Crypt - Right - DC", Addresses.DC_Pickup_GoldCoinsBehindWallRight,  "6", "32896"),
+                new GenericItemsData("Life Bottle: Dan's Crypt - Behind Wall",returned ? Addresses.DC_Return_Pickup_LifeBottleWall : Addresses.DC_Pickup_LifeBottleWall,  "6", "32896"),
+                new GenericItemsData("Gold Coins: Behind Wall in Crypt - Left - DC", returned ? Addresses.DC_Return_Pickup_GoldCoinsBehindWallLeft : Addresses.DC_Pickup_GoldCoinsBehindWallLeft,  "6", "32896"),
+                new GenericItemsData("Gold Coins: Behind Wall in Crypt - Right - DC", returned ? Addresses.DC_Return_Pickup_GoldCoinsBehindWallRight : Addresses.DC_Pickup_GoldCoinsBehindWallRight,  "6", "32896"),
             };
             return chLocations;
         }

@@ -239,7 +239,7 @@ public class Program
 
         archipelagoClient.CurrentSession.Locations.CheckedLocationsUpdated += APHandlers.Locations_CheckedLocationsUpdated;
 
-        GameLocations = LocationHandlers.BuildLocationList(archipelagoClient.Options);
+        GameLocations = LocationHandlers.BuildLocationList(archipelagoClient.Options, DansCryptLayoutHandler.CheckAlreadyLeft());
 
 
         Console.WriteLine("Successfully connected to Duckstation.");
@@ -372,6 +372,7 @@ public class Program
             }
             ;
             _ = archipelagoClient.LocationManager.MonitorLocationsAsync(archipelagoClient.CurrentSession, GameLocations, _cancellationTokenSource.Token);
+            DansCryptLayoutHandler.Start(archipelagoClient);
             // runs on its own task and returns straight away, so it never holds up the location monitor
             if (OptionHandler.Int(archipelagoClient.Options, "shopsanity") == 1)
                 ShopHandler.Start(archipelagoClient, _cancellationTokenSource.Token);

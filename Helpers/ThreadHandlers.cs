@@ -712,7 +712,7 @@ namespace MedievilArchipelago.Helpers
                 [3] = [Addresses.CH_Pickup_Club + contents_offset, Addresses.CH_Pickup_CopperShield1stOnHill + contents_offset, Addresses.CH_Pickup_CopperShield2ndOnHill + contents_offset, Addresses.CH_Pickup_CopperShield3rdOnHill + contents_offset],
                 [4] = [Addresses.HM_Pickup_ClubBrokenBenches + contents_offset, Addresses.HM_Pickup_DaggersBlockPuzzle + contents_offset],
                 [5] = [Addresses.SF_Pickup_ClubInsideHut + contents_offset, Addresses.SF_Pickup_CopperShieldChestInTheBarn + contents_offset, Addresses.SF_Pickup_SilverShieldBehindWindmill + contents_offset],
-                [6] = [Addresses.DC_Pickup_CopperShield + contents_offset],
+                [6] = [(DansCryptLayoutHandler.Returned ? Addresses.DC_Return_Pickup_CopperShield : Addresses.DC_Pickup_CopperShield) + contents_offset],
                 [7] = [Addresses.TA_Pickup_ClubChestAtBarrier + contents_offset],
                 [8] = [], // crystal caves
                 [9] = [Addresses.PG_Pickup_ClubInChestInTunnel + contents_offset, Addresses.PG_Pickup_SilverShieldInChestAtTopOfHill + contents_offset],

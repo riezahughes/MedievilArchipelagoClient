@@ -34,7 +34,8 @@ namespace MedievilArchipelago.Helpers
 
         private const byte TokenSlot = 22;   // Lake Key, left in the game but never used
         private const byte HiddenSlot = 37;  // Chalice: its buy back bit is never set, so the row isn't listed
-        private const byte GoldIcon = 38;    // Gold Pieces
+        private const byte BoughtSlot = 107; // previews as a tick, so a bought row reads as done
+        private const byte GoldIcon = 38;   // Gold Pieces
         private const uint TokenArmed = 0x0001FFFF;   // not owned (-1), buy back bit set
         private const uint TokenIdle = 0x0000FFFF;    // not owned
 
@@ -330,8 +331,8 @@ namespace MedievilArchipelago.Helpers
             else
             {
                 _bought.Add(bought.Id);
-                // the row stays on screen until the shop closes, so point it at the hidden slot: buying it again fails
-                Memory.WriteByte(RowAddress(Array.IndexOf(_rows, bought)), HiddenSlot);
+                // the row stays on screen until the shop closes, so point it at the tick slot: buying it again fails
+                Memory.WriteByte(RowAddress(Array.IndexOf(_rows, bought)), BoughtSlot);
                 Console.WriteLine($"ShopSanity: bought {_names.GetValueOrDefault(bought.Id, "AP Item")} for {bought.Price} gold.");
                 SendPending(client, justBought: true);
             }

@@ -99,7 +99,7 @@ namespace MedievilArchipelago.Helpers
         // True when KeySanity is off, the level has no key, or the key for it has been received.
         public static bool HasLevelKey(ArchipelagoClient client, byte levelId)
         {
-            int keySanityOption = Int32.Parse(client.Options?.GetValueOrDefault("keysanity", "0").ToString());
+            int keySanityOption = OptionHandler.Int(client.Options, "keysanity");
             if (keySanityOption != 1) return true;
             if (!LevelKeys.ContainsValue(levelId)) return true;
 

@@ -18,8 +18,8 @@ namespace MedievilArchipelago.Helpers
 
         private static bool CheckChaliceCondition(ArchipelagoClient client)
         {
-            int antOption = Int32.Parse(client.Options?.GetValueOrDefault("include_ant_hill_in_checks", "0").ToString());
-            int maxChaliceCount = Int32.Parse(client.Options?.GetValueOrDefault("chalice_win_count", "0").ToString());
+            int antOption = OptionHandler.Int(client.Options, "include_ant_hill_in_checks");
+            int maxChaliceCount = OptionHandler.Int(client.Options, "chalice_win_count");
 
             if (antOption == 0)
             {
@@ -46,7 +46,7 @@ namespace MedievilArchipelago.Helpers
 
             if (client?.Options == null) { return false; }
 
-            int goalCondition = Int32.Parse(client.Options?.GetValueOrDefault("goal", "0").ToString());
+            int goalCondition = OptionHandler.Int(client.Options, "goal");
 
             if (goalCondition == PlayerGoals.DEFEAT_ZAROK)
             {

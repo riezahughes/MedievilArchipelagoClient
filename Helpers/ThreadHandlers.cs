@@ -59,19 +59,19 @@ namespace MedievilArchipelago.Helpers
 
 
         // Dan's Crypt is the first level, so passing the copy protection check there covers the Hilltop Mausoleum
-        internal static void SetupCopyProtectionMonitor()
+        internal static void MapFogMonitor()
         {
             Memory.MonitorAddressForAction<byte>(
                 Addresses.CurrentLevel,
                 () =>
                 {
-                    Memory.Write(Addresses.CopyProtection, 0xFFBFFFFF);
+                    Memory.Write(Addresses.MapFogAddress, 0xFFBFFFFF);
 #if DEBUG
                     Console.WriteLine("---------Copy Protection Monitor Done");
 #endif
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.CurrentLevel,
-                        () => SetupCopyProtectionMonitor(),
+                        () => MapFogMonitor(),
                         value => value != 6);
                 },
                 value => value == 6 && PlayerStateHandler.isInTheGame());
@@ -342,24 +342,6 @@ namespace MedievilArchipelago.Helpers
                 value => value < 24 && value > 0 && PlayerStateHandler.isInTheGame());
         }
 
-        internal static void SetupOpenWorldMonitor()
-        {
-            Memory.MonitorAddressForAction<ushort>(
-                Addresses.CurrentLevel,
-                () =>
-                {
-                    OpenTheMap();
-#if DEBUG
-                    Console.WriteLine("---------Open World Monitor Done");
-#endif
-                    Memory.MonitorAddressForAction<ushort>(
-                        Addresses.CurrentLevel,
-                        () => SetupOpenWorldMonitor(),
-                        value => value == 0 || value == 24);
-                },
-                value => value < 24 && value > 0 && PlayerStateHandler.isInTheGame());
-        }
-
         internal static void SetupPlayerStateMonitor(ArchipelagoClient client)
         {
             Memory.MonitorAddressForAction<byte>(
@@ -512,15 +494,6 @@ namespace MedievilArchipelago.Helpers
             }
         }
 
-        static internal void OpenTheMap()
-        {
-            var mapList = OpenMapMemoryLocations();
-            foreach (uint address in mapList)
-            {
-                Memory.WriteByte(address, 0x01);
-            }
-        }
-
         static internal void ShowCurrentRuneStatus(ArchipelagoClient client, byte currentMapLevel)
         {
             var currentDanStatus = Memory.ReadUShort(Addresses.IsLoaded);
@@ -656,7 +629,7 @@ namespace MedievilArchipelago.Helpers
                 return;
             }
 
-            int cheatMenu = Int32.Parse(client.Options?.GetValueOrDefault("cheat_menu", "0").ToString());
+            int cheatMenu = OptionHandler.Int(client.Options, "cheat_menu");
 
             switch (cheatMenu)
             {
@@ -739,7 +712,7 @@ namespace MedievilArchipelago.Helpers
                 [3] = [Addresses.CH_Pickup_Club + contents_offset, Addresses.CH_Pickup_CopperShield1stOnHill + contents_offset, Addresses.CH_Pickup_CopperShield2ndOnHill + contents_offset, Addresses.CH_Pickup_CopperShield3rdOnHill + contents_offset],
                 [4] = [Addresses.HM_Pickup_ClubBrokenBenches + contents_offset, Addresses.HM_Pickup_DaggersBlockPuzzle + contents_offset],
                 [5] = [Addresses.SF_Pickup_ClubInsideHut + contents_offset, Addresses.SF_Pickup_CopperShieldChestInTheBarn + contents_offset, Addresses.SF_Pickup_SilverShieldBehindWindmill + contents_offset],
-                [6] = [Addresses.DC_Pickup_CopperShield + contents_offset],
+                [6] = [(DansCryptLayoutHandler.Returned ? Addresses.DC_Return_Pickup_CopperShield : Addresses.DC_Pickup_CopperShield) + contents_offset],
                 [7] = [Addresses.TA_Pickup_ClubChestAtBarrier + contents_offset],
                 [8] = [], // crystal caves
                 [9] = [Addresses.PG_Pickup_ClubInChestInTunnel + contents_offset, Addresses.PG_Pickup_SilverShieldInChestAtTopOfHill + contents_offset],

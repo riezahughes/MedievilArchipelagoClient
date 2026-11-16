@@ -242,31 +242,24 @@ namespace MedievilArchipelago.Helpers
                 value => value < 24 && value > 0 && PlayerStateHandler.isInTheGame());
         }
 
-        // Setting currentlvl to 24(programmers playground) to have that saved on memory card, 
-        // so loading save doesn't update currentlvl to latest lvlplayed
-        internal static void Overworld(ArchipelagoClient client)
+        // Resetting currentlvl to 0 after a load game, since that sets it to the name of load file.
+        // Mainly for tracker not going to map of load file name.
+        internal static void Overworld()
         {
             Memory.MonitorAddressForAction<byte>(
                 Addresses.CurrentLevel,
                 () => Task.Run(async () =>
                 {
-
 #if DEBUG
                     Console.WriteLine("---------Overworld");
 #endif
-                    Memory.WriteByte(Addresses.CurrentLevel, 24);
-#if DEBUG
-                    Console.WriteLine("---------Changed to Playground");
-#endif
                     await Task.Delay(2500);
-
-                    Memory.WriteByte(Addresses.CurrentLevel, 24);
-
+                    Memory.WriteByte(Addresses.CurrentLevel, 0);
 
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.CurrentLevel,
-                        () => Overworld(client),
-                        value => value != 24);
+                        () => Overworld(),
+                        value => value != 0);
                 }),
                 value => value == 0 && PlayerStateHandler.isInTheGame());
         }
@@ -301,17 +294,21 @@ namespace MedievilArchipelago.Helpers
                     while (Memory.ReadByte(Addresses.HOH_ListenedToHero) != 0)
                         await Task.Delay(100);
 
+                    // Kept looking if you didn't talk to hero, which could then trigger elsewhere.
                     Memory.MonitorAddressForAction<byte>(
                         Addresses.HOH_ListenedToHero,
                         () =>
                         {
-                            int chaliceCount = CountChalicesFromLevelStatus();
-                            UpdateHallOfHeroesChecks(chaliceCount);
+                            if (Memory.ReadByte(Addresses.CurrentLevel) == 18)
+                            {
+                                int chaliceCount = CountChalicesFromLevelStatus();
+                                UpdateHallOfHeroesChecks(chaliceCount);
+                            }
 #if DEBUG
                             Console.WriteLine("---------HoH Check Update Monitor Done");
 #endif
                         },
-                        value => value >= 16);
+                        value => value >= 16 || Memory.ReadByte(Addresses.CurrentLevel) != 18);
 
                     // Phase 3: when we leave HoH, re-arm from phase 1
                     Memory.MonitorAddressForAction<byte>(
@@ -547,12 +544,11 @@ namespace MedievilArchipelago.Helpers
             int currentChaliceCount = 0;
             var playerStatus = ItemHandlers.StatusAndInventoryAddressDictionary();
 
-            // for every level, read the status in memory. For ever level that matches either 19 (cleared) or 3 (picked up chalace, but havn't finished hall) increase the chalice count
+            // for every level, read the status in memory, if chalice bit is set, increase count
             foreach (KeyValuePair<string, uint> ch in playerStatus["Level Status"])
             {
-                int levelStatus = Memory.ReadByte(ch.Value);
-
-                if (levelStatus == 19 || levelStatus == 3)
+                bool levelStatus = Memory.ReadBit(ch.Value, 1);
+                if (levelStatus)
                 {
                     currentChaliceCount++;
                 }

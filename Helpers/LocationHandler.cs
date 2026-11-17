@@ -551,7 +551,7 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Chalice Reward 20", Addresses.HOH_MegwynneStormbinder2, "18", "100"),
                 new GenericItemsData("Book: Heores of Eld - HH", Addresses.HOH_Book_HeroesOfEld, "18", "9999"),
                 new GenericItemsData("Book: Heores of Eld - HH", Addresses.HOH_Book_WorthyHero, "18", "9999"),
-                new GenericItemsData("Gargoyle: Entrance - HH", Addresses.HOH_Gargoyle_Entrance, "18", "19999"),
+                new GenericItemsData("Gargoyle: Entrance - HH", Addresses.HOH_Gargoyle_Entrance, "25", "19999"),
             };
             return hallOfHeroesVisits;
         }
@@ -739,7 +739,7 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Fairy 5 - TA", Addresses.FairyCount, "7", "5"),
                 new GenericItemsData("Fairy 6 - TA", Addresses.FairyCount, "7", "6"),
                 new GenericItemsData("Equipment: Club in Chest at Barrier - TA", Addresses.TA_Pickup_ClubChestAtBarrier, "7", "32896", true),
-                new GenericItemsData("Equipment: Chicken Drumsticks - TA", Addresses.TA_LevelStatus, "7", "16"),
+                new GenericItemsData("Equipment: Chicken Drumsticks - TA", Addresses.TA_LevelStatus, "25", "16"),
                 new GenericItemsData("Energy Vial: Before Fairy 1 - TA", Addresses.TA_Pickup_EnergyVialBeforeFairy1, "7", "32896"),
                 new GenericItemsData("Energy Vial: After Amber 2 - TA", Addresses.TA_Pickup_EnergyVialAfterAmber2, "7", "32896"),
                 new GenericItemsData("Energy Vial: Fairy 2 Room Center - TA", Addresses.TA_Pickup_EnergyVialFairy2RoomCenter, "7", "32896"),
@@ -749,8 +749,8 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Book: Fairy Portal - TA", Addresses.AH_Book_FairyPortal, "7", "0"),
                 new GenericItemsData("Book: Queen Ant - TA", Addresses.AH_Book_QueenAnt, "7", "0"),
                 new GenericItemsData("Gargoyle: Entrance - TA", Addresses.AH_Gargoyle_Entrance, "7", "0"),
-                new GenericItemsData("Cleared: Ant Hill", Addresses.TA_LevelStatus, "7", "16"),
-                new GenericItemsData("Chalice: Ant Hill", Addresses.TA_LevelStatus, "7", "19"),
+                new GenericItemsData("Cleared: Ant Hill", Addresses.TA_LevelStatus, "25", "16"),
+                new GenericItemsData("Chalice: Ant Hill", Addresses.TA_LevelStatus, "25", "19"),
             };
             return ahLocations;
         }
@@ -1241,7 +1241,7 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Gold Coins: Chest Near Barrier - EE", Addresses.EE_Pickup_GoldCoinsChestNearBarrier, "15", "32896"),
                 new GenericItemsData("Book: Take the Talisman - EE", Addresses.EE_Book_TakeTheTalisman, "15", "0"),
                 new GenericItemsData("Gargoyle: Outside Demon Exit - EE", Addresses.EE_Gargoyle_OutsideDemonExit, "15", "0"),
-                new GenericItemsData("Cleared: Enchanted Earth", Addresses.EE_LevelStatus, "15", "19999"),
+                new GenericItemsData("Cleared: Enchanted Earth", Addresses.EE_LevelStatus, "25", "19999"),
                 new GenericItemsData("Chalice: Enchanted Earth", Addresses.EE_Pickup_Chalice, "15", "32896"),
             };
             return eeLocations;

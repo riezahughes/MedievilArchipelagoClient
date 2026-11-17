@@ -189,7 +189,7 @@
         public const uint PAD_LevelStatus = 0x000F81EC;
         public const uint AG_LevelStatus = 0x000F81ED;
         public const uint IA_LevelStatus = 0x000F81EE;
-        public const uint EE_LevelStatus = 0x000ee96e; // the level switch is 0x000F81EF, however it interferes with the anthill;
+        public const uint EE_LevelStatus = 0x000F81EF; //  Used 0x000ee96e before, 
         public const uint GG_LevelStatus = 0x000F81F0;
         public const uint HR_LevelStatus = 0x000F81F1;
         public const uint GS_LevelStatus = 0x000F81F3;

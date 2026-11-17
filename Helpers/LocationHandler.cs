@@ -551,7 +551,7 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Chalice Reward 20", Addresses.HOH_MegwynneStormbinder2, "18", "100"),
                 new GenericItemsData("Book: Heores of Eld - HH", Addresses.HOH_Book_HeroesOfEld, "18", "9999"),
                 new GenericItemsData("Book: Heores of Eld - HH", Addresses.HOH_Book_WorthyHero, "18", "9999"),
-                new GenericItemsData("Gargoyle: Entrance - HH", Addresses.HOH_Gargoyle_Entrance, "25", "19999"),
+                new GenericItemsData("Gargoyle: Entrance - HH", Addresses.HOH_Gargoyle_Entrance, "18", "19999"),
             };
             return hallOfHeroesVisits;
         }
@@ -769,7 +769,6 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Book: Dragon Bird - EE", Addresses.EE_Book_DragonBird, "15", "0"),
                 new GenericItemsData("Book: Keep Out - EE", Addresses.EE_Book_KeepOut, "15", "0"),
                 new GenericItemsData("Gargoyle: Outside Demon Entrance - EE", Addresses.EE_Gargoyle_OutsideDemonEntrance, "15", "0"),
-                new GenericItemsData("Gargoyle: Outside Demon Exit - EE", Addresses.EE_Gargoyle_OutsideDemonExit, "15", "0"),
             };
             return eeLocations;
         }
@@ -1219,7 +1218,7 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Gold Coins: Undertakers Entrance - RTG", Addresses.RTG_Pickup_GoldCoinsUndertakersEntrance, "2", "32896"),
                 new GenericItemsData("Gold Coins: Cliffs Left - RTG", Addresses.RTG_Pickup_GoldCoinsCliffsLeft, "2", "32896"),
                 new GenericItemsData("Book: Daring Dash - RTG", Addresses.RTG_Book_DaringDash, "2", "0"),
-                new GenericItemsData("Gargoyle: Exit - RTG", Addresses.RTG_Gargoyle_Exit, "25", "199999"),
+                new GenericItemsData("Gargoyle: Exit - RTG", Addresses.RTG_Gargoyle_Exit, "2", "0"),
                 new GenericItemsData("Cleared: Return to the Graveyard", Addresses.RTG_LevelStatus, "2", "16"),
                 new GenericItemsData("Chalice: Return to the Graveyard", Addresses.RTG_Pickup_Chalice, "2", "32896"),
             };

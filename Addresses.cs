@@ -561,7 +561,7 @@
         public const uint RTG_Book_SecretAreas = 0x00018db4;
         public const uint RTG_Book_SkullKey = 0x00018f80;
         public const uint RTG_Book_DaringDash = 0x0001901b;
-        public const uint RTG_Gargoyle_Exit = 0x000f09e3;
+        public const uint RTG_Gargoyle_Exit = 0x00018e6c;
         public const uint RTG_Pickup_Chalice = 0x001302f8;
 
         // Scarecrow Fields

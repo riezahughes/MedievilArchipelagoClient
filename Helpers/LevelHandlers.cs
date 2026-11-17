@@ -39,18 +39,19 @@ namespace MedievilArchipelago.Helpers
 
             // HoH Gargoyle
 
-            if (client.GPSHandler.MapId == 18 && client.GPSHandler.Y == 0 && client.GPSHandler.Z >= 65166 && client.GPSHandler.Z <= 65465 && gargoyleSanity == 1)
-            {
-                var location = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Entrance - HH");
-                if (location != null)
-                {
-                    client.SendLocationAsync(location);
-                }
+            // if (client.GPSHandler.MapId == 18 && client.GPSHandler.Y == 0 && client.GPSHandler.Z >= 65166 && client.GPSHandler.Z <= 65465 && gargoyleSanity == 1)
+            // {
+            //     var location = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Entrance - HH");
+            //     if (location != null)
+            //     {
+            //         Console.WriteLine("levelhandler");
+            //         client.SendLocationAsync(location);
+            //     }
 
-            }
+            // }
 
-            // RtG Gargoyle + Daring Dash
-            if (client.GPSHandler.MapId == 2 && client.GPSHandler.X >= 19333 && client.GPSHandler.X <= 19455 && client.GPSHandler.Y >= 65057 && client.GPSHandler.Y <= 65072 && client.GPSHandler.Z >= 5925 && client.GPSHandler.Z <= 6667)
+            // RtG Daring Dash
+            if (client.GPSHandler.MapId == 2 && client.GPSHandler.X >= 19127 && client.GPSHandler.X <= 20169 && client.GPSHandler.Y >= 65055 && client.GPSHandler.Y <= 65093 && client.GPSHandler.Z >= 5732 && client.GPSHandler.Z <= 6710)
             {
                 var location1 = builtLocations.FirstOrDefault(loc => loc.Name == "Skill: Daring Dash");
                 if (location1 != null)
@@ -58,13 +59,13 @@ namespace MedievilArchipelago.Helpers
                     client.SendLocationAsync(location1);
                 }
 
-                var location2 = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Exit - RTG");
+                // var location2 = builtLocations.FirstOrDefault(loc => loc.Name == "Gargoyle: Exit - RTG");
 
 
-                if (location2 != null && gargoyleSanity == 1)
-                {
-                    client.SendLocationAsync(location2);
-                }
+                // if (location2 != null && gargoyleSanity == 1)
+                // {
+                //     client.SendLocationAsync(location2);
+                // }
 
             }
 

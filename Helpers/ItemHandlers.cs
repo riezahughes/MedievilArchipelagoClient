@@ -353,7 +353,7 @@ namespace MedievilArchipelago.Helpers
 
             if (itemName == "Life Bottle")
             {
-                SetItemMemoryValue(Addresses.LifeBottleSwitch, (300 * newNumberAmount), 3300);
+                SetItemMemoryValue(Addresses.LifeBottleSwitch, (300 * newNumberAmount), 6000);
             }
             else
             {

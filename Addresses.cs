@@ -189,7 +189,7 @@
         public const uint PAD_LevelStatus = 0x000F81EC;
         public const uint AG_LevelStatus = 0x000F81ED;
         public const uint IA_LevelStatus = 0x000F81EE;
-        public const uint EE_LevelStatus = 0x000ee96e; // the level switch is 0x000F81EF, however it interferes with the anthill;
+        public const uint EE_LevelStatus = 0x000F81EF; //  Used 0x000ee96e before, 
         public const uint GG_LevelStatus = 0x000F81F0;
         public const uint HR_LevelStatus = 0x000F81F1;
         public const uint GS_LevelStatus = 0x000F81F3;
@@ -561,7 +561,7 @@
         public const uint RTG_Book_SecretAreas = 0x00018db4;
         public const uint RTG_Book_SkullKey = 0x00018f80;
         public const uint RTG_Book_DaringDash = 0x0001901b;
-        public const uint RTG_Gargoyle_Exit = 0x000f09e3;
+        public const uint RTG_Gargoyle_Exit = 0x00018e6c;
         public const uint RTG_Pickup_Chalice = 0x001302f8;
 
         // Scarecrow Fields

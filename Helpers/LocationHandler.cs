@@ -739,7 +739,7 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Fairy 5 - TA", Addresses.FairyCount, "7", "5"),
                 new GenericItemsData("Fairy 6 - TA", Addresses.FairyCount, "7", "6"),
                 new GenericItemsData("Equipment: Club in Chest at Barrier - TA", Addresses.TA_Pickup_ClubChestAtBarrier, "7", "32896", true),
-                new GenericItemsData("Equipment: Chicken Drumsticks - TA", Addresses.TA_LevelStatus, "7", "16"),
+                new GenericItemsData("Equipment: Chicken Drumsticks - TA", Addresses.TA_LevelStatus, "25", "16"),
                 new GenericItemsData("Energy Vial: Before Fairy 1 - TA", Addresses.TA_Pickup_EnergyVialBeforeFairy1, "7", "32896"),
                 new GenericItemsData("Energy Vial: After Amber 2 - TA", Addresses.TA_Pickup_EnergyVialAfterAmber2, "7", "32896"),
                 new GenericItemsData("Energy Vial: Fairy 2 Room Center - TA", Addresses.TA_Pickup_EnergyVialFairy2RoomCenter, "7", "32896"),
@@ -749,8 +749,8 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Book: Fairy Portal - TA", Addresses.AH_Book_FairyPortal, "7", "0"),
                 new GenericItemsData("Book: Queen Ant - TA", Addresses.AH_Book_QueenAnt, "7", "0"),
                 new GenericItemsData("Gargoyle: Entrance - TA", Addresses.AH_Gargoyle_Entrance, "7", "0"),
-                new GenericItemsData("Cleared: Ant Hill", Addresses.TA_LevelStatus, "7", "16"),
-                new GenericItemsData("Chalice: Ant Hill", Addresses.TA_LevelStatus, "7", "19"),
+                new GenericItemsData("Cleared: Ant Hill", Addresses.TA_LevelStatus, "25", "16"),
+                new GenericItemsData("Chalice: Ant Hill", Addresses.TA_LevelStatus, "25", "19"),
             };
             return ahLocations;
         }
@@ -769,7 +769,6 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Book: Dragon Bird - EE", Addresses.EE_Book_DragonBird, "15", "0"),
                 new GenericItemsData("Book: Keep Out - EE", Addresses.EE_Book_KeepOut, "15", "0"),
                 new GenericItemsData("Gargoyle: Outside Demon Entrance - EE", Addresses.EE_Gargoyle_OutsideDemonEntrance, "15", "0"),
-                new GenericItemsData("Gargoyle: Outside Demon Exit - EE", Addresses.EE_Gargoyle_OutsideDemonExit, "15", "0"),
             };
             return eeLocations;
         }
@@ -1219,7 +1218,7 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Gold Coins: Undertakers Entrance - RTG", Addresses.RTG_Pickup_GoldCoinsUndertakersEntrance, "2", "32896"),
                 new GenericItemsData("Gold Coins: Cliffs Left - RTG", Addresses.RTG_Pickup_GoldCoinsCliffsLeft, "2", "32896"),
                 new GenericItemsData("Book: Daring Dash - RTG", Addresses.RTG_Book_DaringDash, "2", "0"),
-                new GenericItemsData("Gargoyle: Exit - RTG", Addresses.RTG_Gargoyle_Exit, "25", "199999"),
+                new GenericItemsData("Gargoyle: Exit - RTG", Addresses.RTG_Gargoyle_Exit, "2", "0"),
                 new GenericItemsData("Cleared: Return to the Graveyard", Addresses.RTG_LevelStatus, "2", "16"),
                 new GenericItemsData("Chalice: Return to the Graveyard", Addresses.RTG_Pickup_Chalice, "2", "32896"),
             };
@@ -1241,7 +1240,7 @@ namespace MedievilArchipelago.Helpers
                 new GenericItemsData("Gold Coins: Chest Near Barrier - EE", Addresses.EE_Pickup_GoldCoinsChestNearBarrier, "15", "32896"),
                 new GenericItemsData("Book: Take the Talisman - EE", Addresses.EE_Book_TakeTheTalisman, "15", "0"),
                 new GenericItemsData("Gargoyle: Outside Demon Exit - EE", Addresses.EE_Gargoyle_OutsideDemonExit, "15", "0"),
-                new GenericItemsData("Cleared: Enchanted Earth", Addresses.EE_LevelStatus, "15", "19999"),
+                new GenericItemsData("Cleared: Enchanted Earth", Addresses.EE_LevelStatus, "25", "19999"),
                 new GenericItemsData("Chalice: Enchanted Earth", Addresses.EE_Pickup_Chalice, "15", "32896"),
             };
             return eeLocations;

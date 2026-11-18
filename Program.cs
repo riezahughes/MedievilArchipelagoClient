@@ -331,7 +331,7 @@ public class Program
             ThreadHandlers.SetupLevelChestMonitor(archipelagoClient);
             ThreadHandlers.SetupPlayerStateMonitor(archipelagoClient);
             ThreadHandlers.PumpkinGorgeMonitor(archipelagoClient, GameLocations);
-            ThreadHandlers.Overworld(archipelagoClient);
+            ThreadHandlers.Overworld();
 
             if (chaliceOption == 1)
             {

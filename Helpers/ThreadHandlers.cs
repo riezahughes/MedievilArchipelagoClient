@@ -614,7 +614,10 @@ namespace MedievilArchipelago.Helpers
             byte updateValue = 0x64;
             var dict = HallOfHeroesCheckList;
 
-            Memory.WriteByte(dict[chaliceCount], updateValue);
+            for (int i = 1; i <= chaliceCount; i++)
+            {
+                Memory.WriteByte(dict[i], updateValue);
+            }
 
         }
 

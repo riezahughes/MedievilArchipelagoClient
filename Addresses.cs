@@ -367,7 +367,7 @@
         // key items
 
         public const uint DragonGem = 0x000f82c8;
-        public const uint KingPeregrinesCrown = 0x00000000; // not sure about this one yet. Will probably need to check. 0x000f82bc
+        public const uint KingPeregrinesCrown = 0x000f82bc; // not sure about this one yet. Will probably need to check. 0x000f82bc
         public const uint SoulHelmet = 0x000F8290;
         public const uint WitchesTalisman = 0x000f829c;
         public const uint SafeKey = 0x000F82A8;

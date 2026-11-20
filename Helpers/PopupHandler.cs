@@ -70,6 +70,13 @@ namespace MedievilArchipelago.Helpers
         // makes the game drop the request.)
         private const short RequestDelay = 1;
 
+        // The slot's priority (+0x06). Lower numbers win. The game's request code (0x8005E5EC) only lets a new request
+        // take over an open window when its number is strictly lower than the open window's; otherwise it waits,
+        // and a request with a 0x19-frame timeout (books, gargoyles, hints) is dropped before it ever shows. The game's
+        // own requests use 0-2, so ours has to be higher: then they close our popup and open straight away,
+        // instead of being blocked until it times out. (The game only accepts priorities up to 5.)
+        private const short RequestPriority = 3;
+
         // Two message IDs that no level or the main game uses (also free: 170, 199, 298, 299, 328, 331-333, 345,
         // 346, 358, 359), each with its own text buffer. They're used in turn so a new message never changes the
         // text of one that's still on screen.
@@ -229,10 +236,10 @@ namespace MedievilArchipelago.Helpers
             Memory.Write(buffer, terminated);
             Memory.Write(Addresses.PopupMessageTable + messageId * 4, 0x80000000u | buffer);
 
-            // same as 0x8005E32C(id, 1, 0x19, 0x19): fill in the slot, writing the id last so the game
+            // like 0x8005E32C(id, RequestPriority, RequestDelay, 0x19): fill in the slot, writing the id last so the game
             // never sees a half-written request
             Memory.Write(slot + 0x04, (ushort)0);     // flags
-            Memory.Write(slot + 0x06, (short)1);      // priority
+            Memory.Write(slot + 0x06, RequestPriority);
             Memory.Write(slot + 0x08, RequestDelay);
             Memory.Write(slot + 0x0A, (short)0x19);
             Memory.Write(slot + 0x00, messageId);

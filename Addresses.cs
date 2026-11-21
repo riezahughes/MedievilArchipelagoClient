@@ -278,25 +278,25 @@
         // List of Hall of Heroes encounters
 
         public const uint HOH_CannyTim1 = 0x00000A20;
-        public const uint HOH_CannyTim2 = 0x00000A21;
-        public const uint HOH_StanyerIronHewer1 = 0x00000A22;
-        public const uint HOH_StanyerIronHewer2 = 0x00000A23;
-        public const uint HOH_WodenTheMighty1 = 0x00000A24;
-        public const uint HOH_WodenTheMighty2 = 0x00000A25;
-        public const uint HOH_RavenHoovesTheArcher1 = 0x00000A26;
-        public const uint HOH_RavenHoovesTheArcher2 = 0x00000A27;
-        public const uint HOH_RavenHoovesTheArcher3 = 0x00000A28;
-        public const uint HOH_RavenHoovesTheArcher4 = 0x00000A29;
-        public const uint HOH_Imanzi1 = 0x00000A2A;
-        public const uint HOH_Imanzi2 = 0x00000A2B;
-        public const uint HOH_DirkSteadfast1 = 0x00000A2C;
-        public const uint HOH_DirkSteadfast2 = 0x00000A2D;
-        public const uint HOH_KarlStungard1 = 0x00000A2E;
-        public const uint HOH_KarlStungard2 = 0x00000A2F;
-        public const uint HOH_BloodmonathSkullCleaver1 = 0x00000A30;
-        public const uint HOH_BloodmonathSkullCleaver2 = 0x00000A31;
-        public const uint HOH_MegwynneStormbinder1 = 0x00000A32;
-        public const uint HOH_MegwynneStormbinder2 = 0x00000A33;
+        public const uint HOH_CannyTim2 = 0x00000A24;
+        public const uint HOH_StanyerIronHewer1 = 0x00000A28;
+        public const uint HOH_StanyerIronHewer2 = 0x00000A2C;
+        public const uint HOH_WodenTheMighty1 = 0x00000A30;
+        public const uint HOH_WodenTheMighty2 = 0x00000A34;
+        public const uint HOH_RavenHoovesTheArcher1 = 0x00000A38;
+        public const uint HOH_RavenHoovesTheArcher2 = 0x00000A3C;
+        public const uint HOH_RavenHoovesTheArcher3 = 0x00000A40;
+        public const uint HOH_RavenHoovesTheArcher4 = 0x00000A44;
+        public const uint HOH_Imanzi1 = 0x00000A48;
+        public const uint HOH_Imanzi2 = 0x00000A4C;
+        public const uint HOH_DirkSteadfast1 = 0x00000A50;
+        public const uint HOH_DirkSteadfast2 = 0x00000A54;
+        public const uint HOH_KarlStungard1 = 0x00000A58;
+        public const uint HOH_KarlStungard2 = 0x00000A5C;
+        public const uint HOH_BloodmonathSkullCleaver1 = 0x00000A60;
+        public const uint HOH_BloodmonathSkullCleaver2 = 0x00000A64;
+        public const uint HOH_MegwynneStormbinder1 = 0x00000A68;
+        public const uint HOH_MegwynneStormbinder2 = 0x00000A6C;
 
         public const uint HOH_CannyTim1_drop = 0x00019782;
         public const uint HOH_CannyTim2_drop = 0x0001978a;
@@ -367,7 +367,7 @@
         // key items
 
         public const uint DragonGem = 0x000f82c8;
-        public const uint KingPeregrinesCrown = 0x00000000; // not sure about this one yet. Will probably need to check.
+        public const uint KingPeregrinesCrown = 0x000f82bc; // not sure about this one yet. Will probably need to check. 0x000f82bc
         public const uint SoulHelmet = 0x000F8290;
         public const uint WitchesTalisman = 0x000f829c;
         public const uint SafeKey = 0x000F82A8;
